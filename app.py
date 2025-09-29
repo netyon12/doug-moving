@@ -127,13 +127,13 @@ def login():
     if not User.query.filter_by(role='admin').first():
         print("Nenhum admin encontrado, criando um novo...")
         # Criptografa a senha que você quer usar
-        hashed_password = generate_password_hash('sua_senha_forte', method='pbkdf2:sha256')
+        hashed_password = generate_password_hash('admin', method='pbkdf2:sha256')
         # Cria o novo usuário admin
-        admin_user = User(email='admin@example.com', password=hashed_password, role='admin')
+        admin_user = User(email='admin@netyonsolutions.com', password=hashed_password, role='admin')
         # Adiciona ao banco de dados
         db.session.add(admin_user)
         db.session.commit()
-        print("Admin 'admin@example.com' criado com sucesso!")
+        print("Admin 'admin@netyonsolutions.com' criado com sucesso!")
     # --- FIM DO BLOCO TEMPORÁRIO ---
 
 
