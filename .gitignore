@@ -20,3 +20,5 @@ env/
 # Arquivos de configuração do editor
 .vscode/
 .idea/
+
+*.xlsx
