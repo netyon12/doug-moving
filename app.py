@@ -121,6 +121,22 @@ class LogCancelamentoMotorista(db.Model):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
+    # --- BLOCO TEMPORÁRIO PARA CRIAR O ADMIN ---
+    # Verifica se já existe algum usuário com a role 'admin'
+    if not User.query.filter_by(role='admin').first():
+        print("Nenhum admin encontrado, criando um novo...")
+        # Criptografa a senha que você quer usar
+        hashed_password = generate_password_hash('sua_senha_forte', method='pbkdf2:sha256')
+        # Cria o novo usuário admin
+        admin_user = User(email='admin@example.com', password=hashed_password, role='admin')
+        # Adiciona ao banco de dados
+        db.session.add(admin_user)
+        db.session.commit()
+        print("Admin 'admin@example.com' criado com sucesso!")
+    # --- FIM DO BLOCO TEMPORÁRIO ---
+
+
     if current_user.is_authenticated:
         return redirect(url_for('home'))
     if request.method == 'POST':
