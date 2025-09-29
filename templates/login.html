@@ -15,7 +15,7 @@
                     </div>
                     <div class="card-body">
                         <!-- Exibir mensagens flash -->
-                        {% with messages = get_flashed_messages(with_categories=true ) %}
+                        {% with messages = get_flashed_messages(with_categories=true  ) %}
                             {% if messages %}
                                 {% for category, message in messages %}
                                     <div class="alert alert-{{ category }}">{{ message }}</div>
@@ -36,9 +36,7 @@
                             </div>
                         </form>
                     </div>
-                    <div class="card-footer text-center">
-                        <a href="{{ url_for('register') }}">Não tem uma conta? Cadastre-se</a>
-                    </div>
+                    <!-- O rodapé com o link de cadastro foi removido daqui -->
                 </div>
             </div>
         </div>

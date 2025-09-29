@@ -1,52 +1,79 @@
-import click
 import os
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+import click
+import csv
+from io import StringIO
+from flask import Response
 
-# --- 1. CONFIGURAÇÃO INICIAL ---
+# --- 1. CONFIGURAÇÃO INICIAL (sem alterações) ---
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DATABASE_URL', 'sqlite:///doug_moving.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///doug_moving.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# Use uma chave segura
 app.config['SECRET_KEY'] = 'uma-chave-secreta-muito-forte-e-diferente'
 db = SQLAlchemy(app)
 
-# --- 2. CONFIGURAÇÃO DO FLASK-LOGIN ---
+# --- 2. CONFIGURAÇÃO DO FLASK-LOGIN (sem alterações) ---
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'  # Rota para redirecionar usuários não logados
+login_manager.login_view = 'login'
 login_manager.login_message = "Por favor, faça o login para acessar esta página."
 login_manager.login_message_category = "info"
-
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- 3. MODELOS DO BANCO DE DADOS ---
+# --- 3. NOVOS MODELOS DO BANCO DE DADOS ---
 
-
+# O modelo User agora é a base para login, com 'role' diferenciando os perfis.
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    # 'solicitante' ou 'motorista'
-    role = db.Column(db.String(20), nullable=False)
+    role = db.Column(db.String(20), nullable=False)  # 'admin', 'supervisor', 'motorista'
+    supervisor_profile = db.relationship('Supervisor', back_populates='user', uselist=False)
+    motorista_profile = db.relationship('Motorista', back_populates='user', uselist=False)
 
+# NOVO MODELO: Supervisor (antigo Solicitante) com campos detalhados.
+class Supervisor(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    empresa = db.Column(db.String(100), nullable=False)
+    endereco = db.Column(db.String(200))
+    telefone = db.Column(db.String(20))
+    observacoes = db.Column(db.Text)
+    
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship('User', back_populates='supervisor_profile')
 
+# MODELO ATUALIZADO: Motorista com novos campos.
 class Motorista(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
+    telefone = db.Column(db.String(20))
+    endereco = db.Column(db.String(200))
+    bloco_origem = db.Column(db.String(50))
     status = db.Column(db.String(20), nullable=False, default='Disponível')
+    
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref='motorista_profile', uselist=False)
+    user = db.relationship('User', back_populates='motorista_profile')
     corridas = db.relationship('Corrida', backref='motorista', lazy=True)
 
+# NOVO MODELO: Funcionário, que não tem login, mas pertence a uma empresa.
+class Funcionario(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    empresa = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100))
+    telefone = db.Column(db.String(20))
+    endereco = db.Column(db.String(200))
+    bloco_origem = db.Column(db.String(50))
 
+# MODELO ATUALIZADO: Corrida, agora ligada a um Funcionário.
 class Corrida(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     origem = db.Column(db.String(200), nullable=False)
@@ -54,23 +81,36 @@ class Corrida(db.Model):
     horario_busca = db.Column(db.DateTime, nullable=False)
     passageiros = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(20), nullable=False, default='Pendente')
-
-    # --- NOVOS CAMPOS DE TIMESTAMP ---
-    data_solicitacao = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow)
-    # Pode ser nulo até o aceite
+    
+    data_solicitacao = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     data_aceite = db.Column(db.DateTime, nullable=True)
-    # Pode ser nulo até a finalização
     data_finalizacao = db.Column(db.DateTime, nullable=True)
-
+    
+    # A corrida agora é solicitada por um Supervisor (através do seu User)
     solicitante_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     solicitante = db.relationship('User', backref='corridas_solicitadas')
-    motorista_id = db.Column(
-        db.Integer, db.ForeignKey('motorista.id'), nullable=True)
+    
+    motorista_id = db.Column(db.Integer, db.ForeignKey('motorista.id'), nullable=True)
+    
+    # Novo campo para identificar o funcionário transportado
+    funcionario_id = db.Column(db.Integer, db.ForeignKey('funcionario.id'), nullable=True)
+    funcionario = db.relationship('Funcionario', backref='corridas')
 
 
-# --- 4. ROTAS DE AUTENTICAÇÃO ---
+# NOVO MODELO PARA AUDITORIA DE CANCELAMENTOS
+class LogCancelamentoMotorista(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    
+    corrida_id = db.Column(db.Integer, db.ForeignKey('corrida.id'), nullable=False)
+    motorista_id = db.Column(db.Integer, db.ForeignKey('motorista.id'), nullable=False)
+    
+    corrida = db.relationship('Corrida', backref='cancelamentos_log')
+    motorista = db.relationship('Motorista', backref='cancelamentos_log')
 
+
+
+# --- 4. ROTAS DE AUTENTICAÇÃO (Login e Logout permanecem, Register será removida) ---
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -80,41 +120,15 @@ def login():
         user = User.query.filter_by(email=request.form['email']).first()
         if user and check_password_hash(user.password, request.form['password']):
             login_user(user)
-            # A linha abaixo já faz o redirecionamento correto via 'home'
             return redirect(url_for('home'))
         else:
             flash('Email ou senha inválidos. Tente novamente.', 'danger')
     return render_template('login.html')
 
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-    if request.method == 'POST':
-        email = request.form['email']
-        if User.query.filter_by(email=email).first():
-            flash('Este email já está cadastrado. Tente fazer o login.', 'warning')
-            return redirect(url_for('register'))
-
-        hashed_password = generate_password_hash(
-            request.form['password'], method='pbkdf2:sha256')
-        role = request.form['role']
-        new_user = User(email=email, password=hashed_password, role=role)
-        db.session.add(new_user)
-        db.session.commit()
-
-        if role == 'motorista':
-            nome_motorista = email.split('@')[0].capitalize()
-            novo_motorista = Motorista(
-                nome=nome_motorista, user_id=new_user.id, status='Disponível')
-            db.session.add(novo_motorista)
-            db.session.commit()
-
-        flash('Cadastro realizado com sucesso! Faça o login para continuar.', 'success')
-        return redirect(url_for('login'))
-    return render_template('register.html')
-
+# A rota de registro público será desativada, pois o admin fará os cadastros.
+# @app.route('/register', methods=['GET', 'POST'])
+# def register():
+#     ...
 
 @app.route('/logout')
 @login_required
@@ -122,60 +136,289 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# --- 5. ROTAS PRINCIPAIS E DASHBOARDS ---
-
+# --- 5. ROTAS PRINCIPAIS E DASHBOARDS (Serão reescritas) ---
 
 @app.route('/')
 @login_required
 def home():
+    # A lógica de redirecionamento será ajustada para os novos perfis
     if current_user.role == 'admin':
-        return redirect(url_for('admin_dashboard'))  # <<-- NOVA LINHA
+        return redirect(url_for('admin_dashboard'))
+    elif current_user.role == 'supervisor':
+        return redirect(url_for('dashboard_supervisor')) # Novo nome
     elif current_user.role == 'motorista':
         return redirect(url_for('dashboard_motorista'))
     else:
-        return redirect(url_for('dashboard_solicitante'))
+        return "<h1>Perfil de usuário desconhecido.</h1>"
 
-
-@app.route('/dashboard/solicitante', methods=['GET', 'POST'])
+# A rota do admin será o nosso foco principal para adicionar os cadastros
+@app.route('/admin/dashboard')
 @login_required
-def dashboard_solicitante():
-    if current_user.role != 'solicitante':
+def admin_dashboard():
+    if current_user.role != 'admin':
+        flash('Acesso negado.', 'danger')
         return redirect(url_for('home'))
 
+    aba_ativa = request.args.get('aba', 'corridas')
+    
+    # Lógica de Filtro para Corridas
+    data_inicio_str = request.args.get('data_inicio', '')
+    data_fim_str = request.args.get('data_fim', '')
+    
+    corridas_query = Corrida.query
+    if data_inicio_str:
+        data_inicio = datetime.strptime(data_inicio_str, '%Y-%m-%d')
+        corridas_query = corridas_query.filter(Corrida.data_solicitacao >= data_inicio)
+    if data_fim_str:
+        data_fim = datetime.strptime(data_fim_str, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
+        corridas_query = corridas_query.filter(Corrida.data_solicitacao <= data_fim)
+
+    dados = {
+        'motoristas': Motorista.query.order_by(Motorista.nome).all(),
+        'supervisores': Supervisor.query.order_by(Supervisor.nome).all(),
+        'funcionarios': Funcionario.query.order_by(Funcionario.nome).all(),
+        'corridas': corridas_query.order_by(Corrida.id.desc()).all()
+    }
+    
+    return render_template('admin_dashboard.html', 
+                           dados=dados,
+                           aba_ativa=aba_ativa,
+                           data_inicio=data_inicio_str, # Passa os filtros para o template
+                           data_fim=data_fim_str)
+
+
+## se funcionar, pode apagar depois essa parte de baixo (era quando mostrava todos os cadastros na mesma tela no dash do admin)
+    # Buscando todos os dados para o painel
+    #todos_os_motoristas = Motorista.query.all()
+    #todos_os_supervisores = Supervisor.query.all() # Adicionar esta linha
+    #todos_os_funcionarios = Funcionario.query.all() # Adicionar esta linha
+    #todas_as_corridas = Corrida.query.all()
+    
+    #return render_template('admin_dashboard.html', 
+     #                      motoristas=todos_os_motoristas, 
+     #                      supervisores=todos_os_supervisores, # Passar para o template
+     #                      funcionarios=todos_os_funcionarios, # Passar para o template
+     #                      corridas=todas_as_corridas)
+
+
+# As rotas antigas do solicitante e motorista estão aqui como referência.
+# Vamos reescrevê-las ou adaptá-las.
+
+# @app.route('/dashboard/solicitante', methods=['GET', 'POST'])
+# ...
+
+# @app.route('/dashboard/motorista')
+# ...
+
+
+# --- 6. ROTAS DE CADASTRO PELO ADMIN ---
+
+@app.route('/admin/cadastrar_motorista', methods=['GET', 'POST'])
+@login_required
+def cadastrar_motorista():
+    # 1. Garante que apenas o admin acesse esta página
+    if current_user.role != 'admin':
+        flash('Acesso negado.', 'danger')
+        return redirect(url_for('home'))
+
+    # 2. Se o formulário for enviado (método POST)
+    if request.method == 'POST':
+        email = request.form.get('email')
+        
+        # Verifica se o email já existe na tabela User
+        if User.query.filter_by(email=email).first():
+            flash('Este email já está cadastrado. Tente outro.', 'warning')
+            return redirect(url_for('cadastrar_motorista'))
+
+        # Cria o registro na tabela User para o login
+        hashed_password = generate_password_hash(request.form.get('senha'), method='pbkdf2:sha256')
+        new_user = User(
+            email=email,
+            password=hashed_password,
+            role='motorista'
+        )
+        db.session.add(new_user)
+        db.session.commit() # Commit para que o new_user.id seja gerado
+
+        # Cria o registro na tabela Motorista com os detalhes
+        novo_motorista = Motorista(
+            nome=request.form.get('nome'),
+            telefone=request.form.get('telefone'),
+            endereco=request.form.get('endereco'),
+            bloco_origem=request.form.get('bloco_origem'),
+            user_id=new_user.id  # Associa o motorista ao usuário recém-criado
+        )
+        db.session.add(novo_motorista)
+        db.session.commit()
+
+        flash(f'Motorista {novo_motorista.nome} cadastrado com sucesso!', 'success')
+        return redirect(url_for('admin_dashboard'))
+
+    # 3. Se for um acesso normal (método GET), apenas mostra a página com o formulário
+    return render_template('cadastrar_motorista.html')
+
+
+
+@app.route('/admin/cadastrar_supervisor', methods=['GET', 'POST'])
+@login_required
+def cadastrar_supervisor():
+    # 1. Garante que apenas o admin acesse
+    if current_user.role != 'admin':
+        flash('Acesso negado.', 'danger')
+        return redirect(url_for('home'))
+
+    # 2. Se o formulário for enviado (método POST)
+    if request.method == 'POST':
+        email = request.form.get('email')
+        
+        # Verifica se o email já existe
+        if User.query.filter_by(email=email).first():
+            flash('Este email já está cadastrado. Tente outro.', 'warning')
+            return redirect(url_for('cadastrar_supervisor'))
+
+        # Cria o registro na tabela User para o login
+        hashed_password = generate_password_hash(request.form.get('senha'), method='pbkdf2:sha256')
+        new_user = User(
+            email=email,
+            password=hashed_password,
+            role='supervisor'
+        )
+        db.session.add(new_user)
+        db.session.commit()
+
+        # Cria o registro na tabela Supervisor com os detalhes
+        novo_supervisor = Supervisor(
+            nome=request.form.get('nome'),
+            empresa=request.form.get('empresa'),
+            endereco=request.form.get('endereco'),
+            telefone=request.form.get('telefone'),
+            observacoes=request.form.get('observacoes'),
+            user_id=new_user.id
+        )
+        db.session.add(novo_supervisor)
+        db.session.commit()
+
+        flash(f'Supervisor {novo_supervisor.nome} cadastrado com sucesso!', 'success')
+        return redirect(url_for('admin_dashboard'))
+
+    # 3. Se for um acesso GET, apenas mostra a página com o formulário
+    return render_template('cadastrar_supervisor.html')
+
+
+
+@app.route('/admin/cadastrar_funcionario', methods=['GET', 'POST'])
+@login_required
+def cadastrar_funcionario():
+    # 1. Garante que apenas o admin acesse
+    if current_user.role != 'admin':
+        flash('Acesso negado.', 'danger')
+        return redirect(url_for('home'))
+
+    # 2. Se o formulário for enviado (método POST)
+    if request.method == 'POST':
+        # Como não há login, não precisamos verificar email duplicado ou criar User.
+        # Apenas criamos o registro do funcionário.
+        novo_funcionario = Funcionario(
+            nome=request.form.get('nome'),
+            empresa=request.form.get('empresa'),
+            email=request.form.get('email'),
+            telefone=request.form.get('telefone'),
+            endereco=request.form.get('endereco'),
+            bloco_origem=request.form.get('bloco_origem')
+        )
+        db.session.add(novo_funcionario)
+        db.session.commit()
+
+        flash(f'Funcionário {novo_funcionario.nome} cadastrado com sucesso!', 'success')
+        return redirect(url_for('admin_dashboard'))
+
+    # 3. Se for um acesso GET, apenas mostra a página com o formulário
+    return render_template('cadastrar_funcionario.html')
+
+
+@app.route('/dashboard/supervisor', methods=['GET', 'POST'])
+@login_required
+def dashboard_supervisor():
+    # 1. Garante que apenas supervisores acessem
+    if current_user.role != 'supervisor':
+        flash('Acesso negado.', 'danger')
+        return redirect(url_for('home'))
+
+    # Busca o perfil detalhado do supervisor logado
+    supervisor_profile = current_user.supervisor_profile 
+    funcionarios_da_empresa = Funcionario.query.filter_by(empresa=supervisor_profile.empresa).all()
+
+    if not supervisor_profile:
+        flash('Perfil de supervisor não encontrado.', 'danger')
+        return redirect(url_for('logout'))
+
+    # 2. Se o formulário for enviado (método POST)
     if request.method == 'POST':
         nova_corrida = Corrida(
-            origem=request.form['origem'],
-            destino=request.form['destino'],
-            horario_busca=datetime.fromisoformat(
-                request.form['horario_busca']),
-            passageiros=int(request.form['passageiros']),
-            solicitante_id=current_user.id
+            origem=request.form.get('origem'),
+            destino=request.form.get('destino'),
+            horario_busca=datetime.fromisoformat(request.form.get('horario_busca')),
+            passageiros=int(request.form.get('passageiros')),
+            funcionario_id=request.form.get('funcionario_id'), # Pega o ID do funcionário selecionado
+            solicitante_id=current_user.id # O solicitante é o supervisor logado
         )
         db.session.add(nova_corrida)
         db.session.commit()
         flash('Corrida solicitada com sucesso!', 'success')
-        return redirect(url_for('dashboard_solicitante'))
+        return redirect(url_for('dashboard_supervisor'))
 
-    corridas_solicitadas = Corrida.query.filter_by(
-        solicitante_id=current_user.id).order_by(Corrida.id.desc()).all()
-    return render_template('dashboard_solicitante.html', corridas=corridas_solicitadas)
+    # 3. Se for um acesso normal (método GET)
+    
+    # Busca os funcionários que pertencem à mesma empresa do supervisor
+    funcionarios_da_empresa = Funcionario.query.filter_by(empresa=supervisor_profile.empresa).all()
+    
+    # Busca o histórico de corridas solicitadas por este supervisor
+    corridas_solicitadas = Corrida.query.filter_by(solicitante_id=current_user.id).order_by(Corrida.id.desc()).all()
+
+    # Renderiza o template, passando a lista de funcionários e o histórico de corridas
+    return render_template('dashboard_supervisor.html', 
+                           corridas=corridas_solicitadas, 
+                           funcionarios=funcionarios_da_empresa)
+
+
+
 
 
 @app.route('/dashboard/motorista')
 @login_required
 def dashboard_motorista():
+    # 1. Garante que apenas motoristas acessem
     if current_user.role != 'motorista':
+        flash('Acesso negado.', 'danger')
         return redirect(url_for('home'))
 
-    motorista = Motorista.query.filter_by(user_id=current_user.id).first()
-    corridas_pendentes = Corrida.query.filter_by(status='Pendente').all()
+    # Busca o perfil detalhado do motorista logado
+    motorista_profile = current_user.motorista_profile
+    if not motorista_profile:
+        flash('Perfil de motorista não encontrado.', 'danger')
+        return redirect(url_for('logout'))
+
+    # 2. Busca os dados para exibir no painel
+    # Corridas com status 'Pendente' que ainda não têm motorista
+    corridas_pendentes = Corrida.query.filter_by(status='Pendente', motorista_id=None).all()
+    
+    # A corrida que este motorista específico está fazendo no momento
     corrida_atual = Corrida.query.filter_by(
-        motorista_id=motorista.id, status='Em Andamento').first()
+        motorista_id=motorista_profile.id, 
+        status='Em Andamento'
+    ).first()
 
-    return render_template('dashboard_motorista.html', motorista=motorista, corridas_pendentes=corridas_pendentes, corrida_atual=corrida_atual)
+    # 3. Renderiza o template, passando os dados
+    return render_template('dashboard_motorista.html', 
+                           motorista=motorista_profile, 
+                           corridas_pendentes=corridas_pendentes, 
+                           corrida_atual=corrida_atual)
 
-# --- 6. AÇÕES DO MOTORISTA ---
 
+
+
+
+# --- 7. AÇÕES DO MOTORISTA ---
 
 @app.route('/motorista/pegar-corrida/<int:corrida_id>')
 @login_required
@@ -183,7 +426,7 @@ def pegar_corrida(corrida_id):
     if current_user.role != 'motorista':
         return redirect(url_for('home'))
 
-    motorista = Motorista.query.filter_by(user_id=current_user.id).first()
+    motorista = current_user.motorista_profile
     if motorista.status != 'Disponível':
         flash('Você precisa finalizar sua corrida atual antes de pegar outra.', 'warning')
         return redirect(url_for('dashboard_motorista'))
@@ -192,12 +435,10 @@ def pegar_corrida(corrida_id):
     if corrida.status == 'Pendente':
         corrida.motorista_id = motorista.id
         corrida.status = 'Em Andamento'
+        corrida.data_aceite = datetime.utcnow() # Registra o momento do aceite
         motorista.status = 'Ocupado'
-        corrida.data_aceite = datetime.utcnow()  # <-- ADICIONAR ESTA LINHA
         db.session.commit()
-
-        flash(
-            f'Você pegou a corrida de {corrida.origem} para {corrida.destino}.', 'success')
+        flash(f'Você pegou a corrida para o funcionário {corrida.funcionario.nome}.', 'success')
     else:
         flash('Esta corrida não está mais disponível.', 'warning')
 
@@ -210,15 +451,14 @@ def finalizar_corrida(corrida_id):
     if current_user.role != 'motorista':
         return redirect(url_for('home'))
 
-    motorista = Motorista.query.filter_by(user_id=current_user.id).first()
+    motorista = current_user.motorista_profile
     corrida = Corrida.query.get_or_404(corrida_id)
 
     if corrida.motorista_id == motorista.id and corrida.status == 'Em Andamento':
         corrida.status = 'Finalizada'
+        corrida.data_finalizacao = datetime.utcnow() # Registra o momento da finalização
         motorista.status = 'Disponível'
-        corrida.data_finalizacao = datetime.utcnow()  # <-- ADICIONAR ESTA LINHA
         db.session.commit()
-
         flash('Corrida finalizada com sucesso! Você está disponível novamente.', 'success')
     else:
         flash('Ação inválida ou a corrida não pertence a você.', 'danger')
@@ -226,60 +466,146 @@ def finalizar_corrida(corrida_id):
     return redirect(url_for('dashboard_motorista'))
 
 
-@app.route('/admin/dashboard')
+@app.route('/supervisor/cancelar-corrida/<int:corrida_id>')
 @login_required
-def admin_dashboard():
-    if current_user.role != 'admin':
+def cancelar_corrida_supervisor(corrida_id):
+    if current_user.role != 'supervisor':
         flash('Acesso negado.', 'danger')
         return redirect(url_for('home'))
 
-    # --- LÓGICA DE FILTRO ---
-    status_filtro = request.args.get('status', default=None, type=str)
+    corrida = Corrida.query.get_or_404(corrida_id)
 
-    query_corridas = Corrida.query  # Começa com a query base
+    # Garante que o supervisor só pode cancelar suas próprias corridas e que estejam pendentes
+    if corrida.solicitante_id != current_user.id:
+        flash('Você não tem permissão para cancelar esta corrida.', 'danger')
+        return redirect(url_for('dashboard_supervisor'))
 
-    if status_filtro and status_filtro != 'todos':
-        query_corridas = query_corridas.filter(Corrida.status == status_filtro)
+    if corrida.status != 'Pendente':
+        flash('Esta corrida não pode mais ser cancelada, pois já foi aceita por um motorista.', 'warning')
+        return redirect(url_for('dashboard_supervisor'))
 
-    todas_as_corridas = query_corridas.order_by(Corrida.id.desc()).all()
-    # --- FIM DA LÓGICA DE FILTRO ---
-
-    todos_os_motoristas = Motorista.query.all()
-
-    return render_template('admin_dashboard.html',
-                           motoristas=todos_os_motoristas,
-                           corridas=todas_as_corridas,
-                           status_atual=status_filtro)  # Passa o filtro atual para o template
+    corrida.status = 'Cancelado'
+    db.session.commit()
+    flash('A solicitação de corrida foi cancelada.', 'success')
+    return redirect(url_for('dashboard_supervisor'))
 
 
-# --- 8. COMANDOS DE ADMINISTRAÇÃO ---
 
 
+@app.route('/motorista/cancelar-aceite/<int:corrida_id>')
+@login_required
+def cancelar_aceite_motorista(corrida_id):
+    if current_user.role != 'motorista':
+        flash('Acesso negado.', 'danger')
+        return redirect(url_for('home'))
+
+    corrida = Corrida.query.get_or_404(corrida_id)
+    motorista = current_user.motorista_profile
+
+    # Garante que o motorista só pode cancelar a corrida que é dele e está em andamento
+    if corrida.motorista_id != motorista.id or corrida.status != 'Em Andamento':
+        flash('Ação inválida.', 'danger')
+        return redirect(url_for('dashboard_motorista'))
+
+    # Cria o log de auditoria
+    novo_log = LogCancelamentoMotorista(
+        corrida_id=corrida.id,
+        motorista_id=motorista.id
+    )
+    db.session.add(novo_log)
+
+    # Reseta o status da corrida e do motorista
+    corrida.status = 'Pendente'
+    corrida.motorista_id = None # Desvincula o motorista da corrida
+    corrida.data_aceite = None # Limpa a data de aceite
+    motorista.status = 'Disponível'
+    
+    db.session.commit()
+    flash('O aceite da corrida foi cancelado. A corrida está disponível para outros motoristas.', 'success')
+    return redirect(url_for('dashboard_motorista'))
+
+
+
+
+# Rota para a exportação
+@app.route('/admin/exportar_corridas_csv')
+@login_required
+def exportar_corridas_csv():
+    if current_user.role != 'admin':
+        return redirect(url_for('home'))
+
+    # Pega os mesmos filtros da URL que usamos no dashboard
+    data_inicio_str = request.args.get('data_inicio')
+    data_fim_str = request.args.get('data_fim')
+
+    query = Corrida.query
+
+    # Aplica os filtros de data se eles existirem
+    if data_inicio_str:
+        data_inicio = datetime.strptime(data_inicio_str, '%Y-%m-%d')
+        query = query.filter(Corrida.data_solicitacao >= data_inicio)
+    if data_fim_str:
+        data_fim = datetime.strptime(data_fim_str, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
+        query = query.filter(Corrida.data_solicitacao <= data_fim)
+
+    corridas_filtradas = query.order_by(Corrida.id.desc()).all()
+
+    # Lógica para gerar o CSV
+    def generate():
+        data = StringIO()
+        writer = csv.writer(data)
+
+        # Escreve o cabeçalho
+        writer.writerow(('ID', 'Funcionario', 'Empresa', 'Origem', 'Destino', 'Status', 'Motorista', 'Data Solicitacao', 'Data Aceite', 'Data Finalizacao'))
+        yield data.getvalue()
+        data.seek(0)
+        data.truncate(0)
+
+        # Escreve as linhas de dados
+        for corrida in corridas_filtradas:
+            writer.writerow((
+                corrida.id,
+                corrida.funcionario.nome if corrida.funcionario else '',
+                corrida.funcionario.empresa if corrida.funcionario else '',
+                corrida.origem,
+                corrida.destino,
+                corrida.status,
+                corrida.motorista.nome if corrida.motorista else '',
+                corrida.data_solicitacao.strftime('%Y-%m-%d %H:%M:%S') if corrida.data_solicitacao else '',
+                corrida.data_aceite.strftime('%Y-%m-%d %H:%M:%S') if corrida.data_aceite else '',
+                corrida.data_finalizacao.strftime('%Y-%m-%d %H:%M:%S') if corrida.data_finalizacao else ''
+            ))
+            yield data.getvalue()
+            data.seek(0)
+            data.truncate(0)
+
+    # Cria a resposta para o navegador forçar o download
+    response = Response(generate(), mimetype='text/csv')
+    response.headers.set("Content-Disposition", "attachment", filename="corridas.csv")
+    return response
+
+
+
+# --- 8. COMANDOS DE ADMINISTRAÇÃO (sem alterações) ---
 @app.cli.command("create-admin")
 @click.argument("email")
 @click.argument("password")
 def create_admin(email, password):
     """Cria um novo usuário administrador."""
-    # Verifica se o app está no contexto correto para acessar o db
     with app.app_context():
         if User.query.filter_by(email=email).first():
             print(f"Erro: O email '{email}' já existe.")
             return
-
-        hashed_password = generate_password_hash(
-            password, method='pbkdf2:sha256')
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         admin_user = User(email=email, password=hashed_password, role='admin')
         db.session.add(admin_user)
         db.session.commit()
         print(f"Administrador '{email}' criado com sucesso!")
 
-
-
-
-
-
-# --- 7. INICIALIZAÇÃO ---
+# --- 9. INICIALIZAÇÃO ---
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()  # Cria as tabelas se não existirem
+        # Este comando irá criar as novas tabelas no seu banco de dados local
+        db.create_all()
     app.run(debug=True, port=5000)
+

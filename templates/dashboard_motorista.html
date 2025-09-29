@@ -8,12 +8,15 @@
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">DOUG Moving (Motorista )</a>
+            <a class="navbar-brand" href="#">DOUG Moving</a>
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
                         <span class="navbar-text me-3">
-                            Olá, {{ motorista.nome }}
+                            Bem-vindo, {{ motorista.nome }}! (Status: 
+                            <span class="fw-bold {% if motorista.status == 'Disponível' %}text-success{% else %}text-danger{% endif %}">
+                                {{ motorista.status }}
+                            </span> )
                         </span>
                     </li>
                     <li class="nav-item">
@@ -29,85 +32,77 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} mt-3" role="alert">{{ message }}</div>
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
 
-        <div class="row">
-            <!-- Status e Corrida Atual -->
-            <div class="col-md-4">
-                <div class="card text-center">
-                    <div class="card-header"><h4>Meu Status</h4></div>
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <span class="badge fs-4 bg-{{ 'success' if motorista.status == 'Disponível' else 'danger' }}">
-                                {{ motorista.status }}
-                            </span>
-                        </h5>
-                    </div>
-                </div>
-                {% if corrida_atual %}
-                <div class="card mt-4">
-                    <div class="card-header"><h4>Corrida em Andamento</h4></div>
-                    <div class="card-body">
-                        <p><strong>De:</strong> {{ corrida_atual.origem }}</p>
-                        <p><strong>Para:</strong> {{ corrida_atual.destino }}</p>
-                        <p><strong>Passageiros:</strong> {{ corrida_atual.passageiros }}</p>
-                        <div class="d-grid">
-                            <a href="{{ url_for('finalizar_corrida', corrida_id=corrida_atual.id) }}" class="btn btn-danger">Finalizar Corrida</a>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
+        <!-- Se o motorista estiver ocupado, mostra a corrida atual -->
+        {% if corrida_atual %}
+        <div class="card text-white bg-primary mb-4">
+            <div class="card-header">
+                <h3>Sua Corrida Atual</h3>
             </div>
+            <div class="card-body">
+                <h5 class="card-title">De: {{ corrida_atual.origem }} Para: {{ corrida_atual.destino }}</h5>
+                <p class="card-text">
+                    Passageiro: <strong>{{ corrida_atual.funcionario.nome }}</strong>  
 
-            <!-- Corridas Pendentes -->
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header"><h4>Corridas Aguardando Motorista</h4></div>
-                    <div class="card-body">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Origem</th>
-                                    <th>Destino</th>
-                                    <th>Horário</th>
-                                    <th>Ação</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for corrida in corridas_pendentes %}
-                                <tr>
-                                    <td>{{ corrida.origem }}</td>
-                                    <td>{{ corrida.destino }}</td>
-                                    <td>{{ corrida.horario_busca.strftime('%d/%m %H:%M') }}</td>
-                                    <td>
-                                        {% if motorista.status == 'Disponível' %}
-                                            <a href="{{ url_for('pegar_corrida', corrida_id=corrida.id) }}" class="btn btn-sm btn-success">Pegar Corrida</a>
-                                        {% else %}
-                                            <button class="btn btn-sm btn-secondary" disabled>Ocupado</button>
-                                        {% endif %}
-                                    </td>
-                                </tr>
+                    Horário de Busca: {{ corrida_atual.horario_busca.strftime('%d/%m/%Y %H:%M') }}
+                </p>
+                <a href="{{ url_for('finalizar_corrida', corrida_id=corrida_atual.id) }}" class="btn btn-light fw-bold">Finalizar Corrida</a>
+                <a href="{{ url_for('cancelar_aceite_motorista', corrida_id=corrida_atual.id) }}" class="btn btn-danger fw-bold ms-2" onclick="return confirm('Tem certeza que deseja cancelar o aceite desta corrida? Ela voltará para a lista de disponíveis.');">Cancelar Aceite</a>
+                
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Lista de Corridas Pendentes -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Corridas Disponíveis</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Funcionário</th>
+                            <th>Origem</th>
+                            <th>Destino</th>
+                            <th>Horário</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for corrida in corridas_pendentes %}
+                        <tr>
+                            <td>{{ corrida.funcionario.nome }}</td>
+                            <td>{{ corrida.origem }}</td>
+                            <td>{{ corrida.destino }}</td>
+                            <td>{{ corrida.horario_busca.strftime('%d/%m/%Y %H:%M') }}</td>
+                            <td>
+                                {% if motorista.status == 'Disponível' %}
+                                <a href="{{ url_for('pegar_corrida', corrida_id=corrida.id) }}" class="btn btn-sm btn-success">Pegar Corrida</a>
                                 {% else %}
-                                <tr>
-                                    <td colspan="4" class="text-center">Nenhuma corrida pendente no momento.</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                <button class="btn btn-sm btn-secondary" disabled>Ocupado</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center">Nenhuma corrida disponível no momento.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <footer class="text-center text-muted py-4 mt-5">
-    <div class="container">
-        <p class="mb-0">Desenvolvido por <strong>Netyon Solutions</strong></p>
-    </div>
+        <div class="container">
+            <p class="mb-0">Desenvolvido por <strong>Netyon Solutions</strong></p>
+        </div>
     </footer>
-
 </body>
 </html>
