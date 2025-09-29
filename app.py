@@ -596,6 +596,30 @@ def create_admin(email, password):
 
 
 
+
+
+# --- NOVOS COMANDOS PARA GERENCIAR O BANCO DE DADOS ---
+@app.cli.command('db-drop')
+def db_drop():
+    """Apaga todas as tabelas do banco de dados."""
+    db.drop_all()
+    print('Banco de dados apagado com sucesso.')
+
+@app.cli.command('db-create')
+def db_create():
+    """Cria todas as tabelas do banco de dados a partir dos modelos."""
+    db.create_all()
+    print('Banco de dados criado com sucesso.')
+
+
+
+
+
+
+
+
+
+
 ######################################################### --- 9. INICIALIZAÇÃO ---
 if __name__ == '__main__':
     with app.app_context():
