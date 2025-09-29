@@ -8,6 +8,7 @@ import click
 import csv
 from io import StringIO
 from flask import Response
+from flask_migrate import Migrate
 
 # --- 1. CONFIGURAÇÃO INICIAL (sem alterações) ---
 app = Flask(__name__)
@@ -15,6 +16,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:/
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'uma-chave-secreta-muito-forte-e-diferente'
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # --- 2. CONFIGURAÇÃO DO FLASK-LOGIN (sem alterações) ---
 login_manager = LoginManager()
