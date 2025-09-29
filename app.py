@@ -589,6 +589,77 @@ def exportar_corridas_csv():
 
 
 
+## Rota para Editar o perfil, podendo alterar o login e senha (chamando o editar_perfil.html)
+
+# No seu app.py, substitua a rota editar_perfil pela versão abaixo
+
+@app.route('/editar-perfil', methods=['GET', 'POST'])
+@login_required
+def editar_perfil():
+    if request.method == 'POST':
+        action = request.form.get('action')
+
+        # --- LÓGICA PARA ATUALIZAR O E-MAIL ---
+        if action == 'update_profile':
+            novo_email = request.form.get('email')
+            password_check = request.form.get('password_check')
+
+            if not password_check:
+                flash('Você precisa informar sua senha atual para alterar o e-mail.', 'warning')
+                return redirect(url_for('editar_perfil'))
+
+            if not check_password_hash(current_user.password, password_check):
+                flash('Senha incorreta. Não foi possível alterar o e-mail.', 'danger')
+                return redirect(url_for('editar_perfil'))
+
+            if novo_email != current_user.email:
+                existing_user = User.query.filter_by(email=novo_email).first()
+                if existing_user:
+                    flash('Este e-mail já está em uso por outra conta.', 'warning')
+                    return redirect(url_for('editar_perfil'))
+            
+            current_user.email = novo_email
+            db.session.commit()
+            flash('Seu e-mail foi atualizado com sucesso!', 'success')
+            return redirect(url_for('editar_perfil'))
+
+        # --- LÓGICA PARA ATUALIZAR A SENHA ---
+        elif action == 'update_password':
+            senha_atual = request.form.get('senha_atual')
+            nova_senha = request.form.get('nova_senha')
+            
+            # Se o campo senha_atual estiver vazio, o usuário não quer alterar a senha.
+            if not senha_atual:
+                flash('Nenhuma alteração de senha foi feita.', 'info')
+                return redirect(url_for('editar_perfil'))
+
+            confirmar_senha = request.form.get('confirmar_senha')
+            if not nova_senha or not confirmar_senha:
+                flash('Para alterar a senha, preencha os campos de nova senha e confirmação.', 'warning')
+                return redirect(url_for('editar_perfil'))
+
+            if not check_password_hash(current_user.password, senha_atual):
+                flash('A senha atual está incorreta.', 'danger')
+                return redirect(url_for('editar_perfil'))
+
+            if nova_senha != confirmar_senha:
+                flash('A nova senha e a confirmação não correspondem.', 'danger')
+                return redirect(url_for('editar_perfil'))
+
+            current_user.password = generate_password_hash(nova_senha, method='pbkdf2:sha256')
+            db.session.commit()
+            flash('Sua senha foi alterada com sucesso!', 'success')
+            return redirect(url_for('editar_perfil'))
+
+    return render_template('editar_perfil.html')
+
+
+
+
+
+
+
+
 
 
 #################################################### --- 8. COMANDOS DE ADMINISTRAÇÃO (sem alterações) ---
@@ -611,8 +682,9 @@ def create_admin(email, password):
 
 
 
-
-
+## Para funcionar precisa fazer isso:
+## Confirme rapidamente em Settings > Build & Deploy no Render que o comando ainda é:
+## pip install -r requirements.txt && flask db-drop && flask db-create
 
 # --- NOVOS COMANDOS PARA GERENCIAR O BANCO DE DADOS ---
 @app.cli.command('db-drop')

@@ -1,0 +1,42 @@
+<!-- templates/editar_perfil.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Editar Perfil</h3>
+    <p>Olá, <strong>{{ current_user.email }}</strong>. Aqui você pode alterar seus dados de acesso.</p>
+
+    <!-- Formulário para Alterar E-mail de Login -->
+    <form method="POST" action="{{ url_for('editar_perfil' ) }}" class="mb-5 border p-4 rounded">
+        <h4>Alterar E-mail</h4>
+        <div class="mb-3">
+            <label for="email" class="form-label">Novo E-mail</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="password_check_email" class="form-label">Confirme sua Senha Atual</label>
+            <input type="password" class="form-control" id="password_check_email" name="password_check" required>
+            <small class="form-text text-muted">Para sua segurança, precisamos que confirme sua identidade.</small>
+        </div>
+        <button type="submit" name="action" value="update_profile" class="btn btn-primary">Salvar Novo E-mail</button>
+    </form>
+
+    <!-- Formulário para Alterar Senha -->
+    <form method="POST" action="{{ url_for('editar_perfil') }}" class="mt-4 border p-4 rounded">
+        <h4>Alterar Senha</h4>
+        <div class="mb-3">
+            <label for="senha_atual" class="form-label">Senha Atual</label>
+            <input type="password" class="form-control" id="senha_atual" name="senha_atual" placeholder="Deixe em branco se não quiser alterar">
+        </div>
+        <div class="mb-3">
+            <label for="nova_senha" class="form-label">Nova Senha</label>
+            <input type="password" class="form-control" id="nova_senha" name="nova_senha">
+        </div>
+        <div class="mb-3">
+            <label for="confirmar_senha" class="form-label">Confirmar Nova Senha</label>
+            <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha">
+        </div>
+        <button type="submit" name="action" value="update_password" class="btn btn-secondary">Alterar Senha</button>
+    </form>
+</div>
+{% endblock %}
