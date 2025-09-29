@@ -10,7 +10,9 @@ from io import StringIO
 from flask import Response
 from flask_migrate import Migrate
 
-# --- 1. CONFIGURAÇÃO INICIAL (sem alterações) ---
+######################################### --- 1. CONFIGURAÇÃO INICIAL (sem alterações) ---
+
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///doug_moving.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -29,7 +31,10 @@ login_manager.login_message_category = "info"
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- 3. NOVOS MODELOS DO BANCO DE DADOS ---
+
+
+
+################################################## --- 3. NOVOS MODELOS DO BANCO DE DADOS ---
 
 # O modelo User agora é a base para login, com 'role' diferenciando os perfis.
 class User(UserMixin, db.Model):
@@ -112,7 +117,7 @@ class LogCancelamentoMotorista(db.Model):
 
 
 
-# --- 4. ROTAS DE AUTENTICAÇÃO (Login e Logout permanecem, Register será removida) ---
+################################# --- 4. ROTAS DE AUTENTICAÇÃO (Login e Logout permanecem, Register será removida) ---
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -127,10 +132,7 @@ def login():
             flash('Email ou senha inválidos. Tente novamente.', 'danger')
     return render_template('login.html')
 
-# A rota de registro público será desativada, pois o admin fará os cadastros.
-# @app.route('/register', methods=['GET', 'POST'])
-# def register():
-#     ...
+
 
 @app.route('/logout')
 @login_required
@@ -138,7 +140,8 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-# --- 5. ROTAS PRINCIPAIS E DASHBOARDS (Serão reescritas) ---
+
+######################################### --- 5. ROTAS PRINCIPAIS E DASHBOARDS (Serão reescritas) ---
 
 @app.route('/')
 @login_required
@@ -152,6 +155,7 @@ def home():
         return redirect(url_for('dashboard_motorista'))
     else:
         return "<h1>Perfil de usuário desconhecido.</h1>"
+
 
 # A rota do admin será o nosso foco principal para adicionar os cadastros
 @app.route('/admin/dashboard')
@@ -189,28 +193,6 @@ def admin_dashboard():
                            data_fim=data_fim_str)
 
 
-## se funcionar, pode apagar depois essa parte de baixo (era quando mostrava todos os cadastros na mesma tela no dash do admin)
-    # Buscando todos os dados para o painel
-    #todos_os_motoristas = Motorista.query.all()
-    #todos_os_supervisores = Supervisor.query.all() # Adicionar esta linha
-    #todos_os_funcionarios = Funcionario.query.all() # Adicionar esta linha
-    #todas_as_corridas = Corrida.query.all()
-    
-    #return render_template('admin_dashboard.html', 
-     #                      motoristas=todos_os_motoristas, 
-     #                      supervisores=todos_os_supervisores, # Passar para o template
-     #                      funcionarios=todos_os_funcionarios, # Passar para o template
-     #                      corridas=todas_as_corridas)
-
-
-# As rotas antigas do solicitante e motorista estão aqui como referência.
-# Vamos reescrevê-las ou adaptá-las.
-
-# @app.route('/dashboard/solicitante', methods=['GET', 'POST'])
-# ...
-
-# @app.route('/dashboard/motorista')
-# ...
 
 
 # --- 6. ROTAS DE CADASTRO PELO ADMIN ---
@@ -529,7 +511,7 @@ def cancelar_aceite_motorista(corrida_id):
 
 
 
-# Rota para a exportação
+########################3 Rota para a exportação do CSV
 @app.route('/admin/exportar_corridas_csv')
 @login_required
 def exportar_corridas_csv():
@@ -552,7 +534,10 @@ def exportar_corridas_csv():
 
     corridas_filtradas = query.order_by(Corrida.id.desc()).all()
 
-    # Lógica para gerar o CSV
+    
+    
+    
+    ######################### Lógica para gerar o CSV
     def generate():
         data = StringIO()
         writer = csv.writer(data)
@@ -588,7 +573,9 @@ def exportar_corridas_csv():
 
 
 
-# --- 8. COMANDOS DE ADMINISTRAÇÃO (sem alterações) ---
+
+
+#################################################### --- 8. COMANDOS DE ADMINISTRAÇÃO (sem alterações) ---
 @app.cli.command("create-admin")
 @click.argument("email")
 @click.argument("password")
@@ -604,7 +591,12 @@ def create_admin(email, password):
         db.session.commit()
         print(f"Administrador '{email}' criado com sucesso!")
 
-# --- 9. INICIALIZAÇÃO ---
+
+
+
+
+
+######################################################### --- 9. INICIALIZAÇÃO ---
 if __name__ == '__main__':
     with app.app_context():
         # Este comando irá criar as novas tabelas no seu banco de dados local
