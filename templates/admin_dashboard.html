@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel do Administrador - DOUG Moving</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+        <div class="container">
+            <a class="navbar-brand" href="#">PAINEL ADMIN</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="navbar-text me-3">
+                            Logado como: {{ current_user.email }}
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-light" href="{{ url_for('logout' ) }}">Sair</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Visão Geral do Sistema</h1>
+
+        <!-- ================================================== -->
+        <!-- SEÇÃO DE MOTORISTAS (RESTAURADA) -->
+        <!-- ================================================== -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Status dos Motoristas</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for motorista in motoristas %}
+                        <tr>
+                            <td>{{ motorista.id }}</td>
+                            <td>{{ motorista.nome }}</td>
+                            <td>{{ motorista.user.email if motorista.user else 'Usuário não associado' }}</td>
+                            <td>
+                                <span class="badge fs-6 bg-{{ 'success' if motorista.status == 'Disponível' else 'danger' }}">
+                                    {{ motorista.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center">Nenhum motorista cadastrado.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ================================================== -->
+        <!-- SEÇÃO DE CORRIDAS (COM FILTRO) -->
+        <!-- ================================================== -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3>Histórico Completo de Corridas</h3>
+                <form action="{{ url_for('admin_dashboard') }}" method="GET" class="d-flex align-items-center">
+                    <label for="status" class="form-label me-2 mb-0">Filtrar por:</label>
+                    <select name="status" id="status" class="form-select form-select-sm me-2" onchange="this.form.submit()">
+                        <option value="todos" {% if not status_atual or status_atual == 'todos' %}selected{% endif %}>Todos</option>
+                        <option value="Pendente" {% if status_atual == 'Pendente' %}selected{% endif %}>Pendentes</option>
+                        <option value="Em Andamento" {% if status_atual == 'Em Andamento' %}selected{% endif %}>Em Andamento</option>
+                        <option value="Finalizada" {% if status_atual == 'Finalizada' %}selected{% endif %}>Finalizadas</option>
+                    </select>
+                </form>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Solicitante</th>
+                                <th>Status</th>
+                                <th>Data Solicitação</th>
+                                <th>Data Finalização</th>
+                                <th>Motorista</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for corrida in corridas %}
+                            <tr>
+                                <td>{{ corrida.id }}</td>
+                                <td>{{ corrida.solicitante.email }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'secondary' if corrida.status == 'Finalizada' else ('info' if corrida.status == 'Em Andamento' else 'warning') }}">
+                                        {{ corrida.status }}
+                                    </span>
+                                </td>
+                                <td>{{ corrida.data_solicitacao.strftime('%d/%m/%Y %H:%M') if corrida.data_solicitacao else 'N/A' }}</td>
+                                <td>{{ corrida.data_finalizacao.strftime('%d/%m/%Y %H:%M') if corrida.data_finalizacao else 'N/A' }}</td>
+                                <td>{{ corrida.motorista.nome if corrida.motorista else 'N/A' }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">Nenhuma corrida encontrada para este filtro.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center text-muted py-4 mt-5">
+    <div class="container">
+        <p class="mb-0">Desenvolvido por <strong>Netyon Solutions</strong></p>
+    </div>
+</footer>
+
+</body>
+</html>
