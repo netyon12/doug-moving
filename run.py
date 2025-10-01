@@ -3,6 +3,7 @@ from app import create_app, db
 from app.models import User
 from werkzeug.security import generate_password_hash
 import click
+from sqlalchemy import text
 
 # Cria a aplicação usando a nossa factory
 app = create_app()
@@ -13,11 +14,12 @@ app = create_app()
 
 @app.cli.command('db-drop')
 def db_drop():
-    """Apaga todas as tabelas do banco de dados."""
-    db.drop_all()
-    print('Banco de dados apagado com sucesso.')
-
-
+    """Apaga todas as tabelas do banco de dados (modo PostgreSQL)."""
+    # Comando específico para PostgreSQL para forçar a exclusão em cascata
+    db.session.execute(text('DROP SCHEMA public CASCADE;'))
+    db.session.execute(text('CREATE SCHEMA public;'))
+    db.session.commit()
+    print('Banco de dados (schema) reiniciado com sucesso.')
 
 
 
