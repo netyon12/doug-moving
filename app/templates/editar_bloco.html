@@ -1,0 +1,49 @@
+<!-- app/templates/editar_bloco.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Editar Bloco</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">Altere os dados do bloco abaixo.</p>
+                    
+                    <!-- O action aponta para a rota de edição, passando o ID do bloco -->
+                    <form method="POST" action="{{ url_for('routes.editar_bloco', bloco_id=bloco.id) }}">
+                        
+                        <!-- Campo Código do Bloco -->
+                        <div class="mb-3">
+                            <label for="codigo_bloco" class="form-label">Código do Bloco</label>
+                            <!-- O atributo 'value' pré-preenche o campo com o dado atual -->
+                            <input type="text" class="form-control" id="codigo_bloco" name="codigo_bloco" value="{{ bloco.codigo_bloco }}" required>
+                        </div>
+
+                        <!-- Campo Valor -->
+                        <div class="mb-3">
+                            <label for="valor" class="form-label">Valor (R$)</label>
+                            <input type="number" step="0.01" class="form-control" id="valor" name="valor" value="{{ bloco.valor }}" required>
+                        </div>
+
+                        <!-- Campo Valor do Repasse -->
+                        <div class="mb-3">
+                            <label for="valor_repasse" class="form-label">Valor do Repasse (R$)</label>
+                            <input type="number" step="0.01" class="form-control" id="valor_repasse" name="valor_repasse" value="{{ bloco.valor_repasse }}" required>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('routes.admin_dashboard', aba='blocos') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

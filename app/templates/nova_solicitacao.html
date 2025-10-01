@@ -1,0 +1,55 @@
+<!-- app/templates/nova_solicitacao.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Nova Solicitação de Transporte</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('routes.nova_solicitacao') }}">
+                        
+                        <!-- Campo Colaborador -->
+                        <div class="mb-3">
+                            <label for="colaborador_id" class="form-label">Colaborador</label>
+                            <select class="form-select" id="colaborador_id" name="colaborador_id" required>
+                                <option value="" disabled selected>Selecione um colaborador...</option>
+                                {% for colaborador in colaboradores %}
+                                    <option value="{{ colaborador.id }}">{{ colaborador.nome }} (Bloco: {{ colaborador.bloco.codigo_bloco if colaborador.bloco else 'N/A' }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Campo Tipo de Corrida -->
+                        <div class="mb-3">
+                            <label for="tipo_corrida" class="form-label">Tipo de Corrida</label>
+                            <select class="form-select" id="tipo_corrida" name="tipo_corrida" required>
+                                <option value="" disabled selected>Selecione o tipo...</option>
+                                <option value="ENTRADA">Entrada</option>
+                                <option value="SAIDA">Saída</option>
+                                <option value="DESLIGAMENTO">Desligamento</option>
+                            </select>
+                        </div>
+
+                        <!-- Campo Horário de Chegada -->
+                        <div class="mb-3">
+                            <label for="horario_chegada" class="form-label">Data e Hora de Chegada no Destino</label>
+                            <input type="datetime-local" class="form-control" id="horario_chegada" name="horario_chegada" required>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('routes.dashboard_supervisor') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Criar Solicitação</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

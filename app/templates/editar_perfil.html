@@ -7,7 +7,7 @@
     <p>Olá, <strong>{{ current_user.email }}</strong>. Aqui você pode alterar seus dados de acesso.</p>
 
     <!-- Formulário para Alterar E-mail de Login -->
-    <form method="POST" action="{{ url_for('editar_perfil' ) }}" class="mb-5 border p-4 rounded">
+    <form method="POST" action="{{ url_for('routes.editar_perfil') }}" class="mb-5 border p-4 rounded">
         <h4>Alterar E-mail</h4>
         <div class="mb-3">
             <label for="email" class="form-label">Novo E-mail</label>
@@ -22,7 +22,7 @@
     </form>
 
     <!-- Formulário para Alterar Senha -->
-    <form method="POST" action="{{ url_for('editar_perfil') }}" class="mt-4 border p-4 rounded">
+    <form method="POST" action="{{ url_for('routes.editar_perfil') }}" class="mt-4 border p-4 rounded">
         <h4>Alterar Senha</h4>
         <div class="mb-3">
             <label for="senha_atual" class="form-label">Senha Atual</label>

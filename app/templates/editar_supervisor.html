@@ -1,0 +1,100 @@
+<!-- app/templates/editar_supervisor.html (VERSÃO COMPLETA) -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-dark">
+                    <h3 class="mb-0">Editar Supervisor</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('routes.editar_supervisor', supervisor_id=supervisor.id) }}">
+                        <div class="row">
+                            <!-- Coluna 1: Dados de Acesso e Pessoais -->
+                            <div class="col-md-6">
+                                <h5>Dados de Acesso</h5>
+                                <hr>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">E-mail (Login) <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ supervisor.user.email }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="senha" class="form-label">Nova Senha</label>
+                                    <input type="password" class="form-control" id="senha" name="senha" placeholder="Deixe em branco para não alterar">
+                                </div>
+
+                                <h5 class="mt-4">Dados Pessoais e de Trabalho</h5>
+                                <hr>
+                                <div class="mb-3">
+                                    <label for="nome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="nome" name="nome" value="{{ supervisor.nome }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="planta" class="form-label">Planta <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="planta" name="planta" value="{{ supervisor.planta }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telefone" class="form-label">Telefone</label>
+                                    <input type="text" class="form-control" id="telefone" name="telefone" value="{{ supervisor.telefone or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="turno" class="form-label">Turno</label>
+                                    <input type="text" class="form-control" id="turno" name="turno" value="{{ supervisor.turno or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="gerente_responsavel" class="form-label">Gerente Responsável</label>
+                                    <input type="text" class="form-control" id="gerente_responsavel" name="gerente_responsavel" value="{{ supervisor.gerente_responsavel or '' }}">
+                                </div>
+                            </div>
+
+                            <!-- Coluna 2: Endereço e Bloco -->
+                            <div class="col-md-6">
+                                <h5>Endereço</h5>
+                                <hr>
+                                <div class="mb-3">
+                                    <label for="endereco" class="form-label">Endereço</label>
+                                    <input type="text" class="form-control" id="endereco" name="endereco" value="{{ supervisor.endereco or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nro" class="form-label">Nº</label>
+                                    <input type="text" class="form-control" id="nro" name="nro" value="{{ supervisor.nro or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bairro" class="form-label">Bairro</label>
+                                    <input type="text" class="form-control" id="bairro" name="bairro" value="{{ supervisor.bairro or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cidade" class="form-label">Cidade</label>
+                                    <input type="text" class="form-control" id="cidade" name="cidade" value="{{ supervisor.cidade or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="uf" class="form-label">UF</label>
+                                    <input type="text" class="form-control" id="uf" name="uf" value="{{ supervisor.uf or '' }}" maxlength="2">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bloco_id" class="form-label">Bloco</label>
+                                    <select class="form-select" id="bloco_id" name="bloco_id">
+                                        <option value="">Nenhum (Opcional)</option>
+                                        {% for bloco in blocos %}
+                                            <option value="{{ bloco.id }}" {% if supervisor.bloco_id == bloco.id %}selected{% endif %}>
+                                                {{ bloco.codigo_bloco }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('routes.admin_dashboard', aba='supervisores') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

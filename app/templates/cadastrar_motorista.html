@@ -1,0 +1,112 @@
+<!-- app/templates/cadastrar_motorista.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Cadastrar Novo Motorista</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('routes.cadastrar_motorista') }}">
+                        
+                        <!-- DADOS DE ACESSO -->
+                        <h5 class="mb-3 border-bottom pb-2">Dados de Acesso</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">E-mail de Acesso*</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="senha" class="form-label">Senha*</label>
+                                <input type="password" class="form-control" id="senha" name="senha" required>
+                            </div>
+                        </div>
+                        
+                        <!-- DADOS PESSOAIS -->
+                        <h5 class="mt-4 mb-3 border-bottom pb-2">Dados Pessoais e de Trabalho</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nome" class="form-label">Nome Completo*</label>
+                                <input type="text" class="form-control" id="nome" name="nome" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="planta" class="form-label">Planta</label>
+                                <input type="text" class="form-control" id="planta" name="planta">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="telefone" class="form-label">Telefone</label>
+                                <input type="tel" class="form-control" id="telefone" name="telefone">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="pix" class="form-label">Chave Pix</label>
+                                <input type="text" class="form-control" id="pix" name="pix">
+                            </div>
+                            <div class="col-md-8 mb-3">
+                                <label for="endereco" class="form-label">Endereço</label>
+                                <input type="text" class="form-control" id="endereco" name="endereco">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="nro" class="form-label">Nº</label>
+                                <input type="text" class="form-control" id="nro" name="nro">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="bairro" class="form-label">Bairro</label>
+                                <input type="text" class="form-control" id="bairro" name="bairro">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="cidade" class="form-label">Cidade</label>
+                                <input type="text" class="form-control" id="cidade" name="cidade">
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label for="uf" class="form-label">UF</label>
+                                <input type="text" class="form-control" id="uf" name="uf" maxlength="2">
+                            </div>
+                        </div>
+
+                        <!-- DADOS DO VEÍCULO -->
+                        <h5 class="mt-4 mb-3 border-bottom pb-2">Dados do Veículo</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="veiculo" class="form-label">Veículo (Modelo)</label>
+                                <input type="text" class="form-control" id="veiculo" name="veiculo">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="placa_veiculo" class="form-label">Placa*</label>
+                                <input type="text" class="form-control" id="placa_veiculo" name="placa_veiculo" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cor_veiculo" class="form-label">Cor</label>
+                                <input type="text" class="form-control" id="cor_veiculo" name="cor_veiculo">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="ano_veiculo" class="form-label">Ano</label>
+                                <input type="number" class="form-control" id="ano_veiculo" name="ano_veiculo" placeholder="Ex: 2023">
+                            </div>
+                             <div class="col-md-6 mb-3">
+                                <label for="km_veiculo" class="form-label">KM do Veículo</label>
+                                <input type="number" step="0.1" class="form-control" id="km_veiculo" name="km_veiculo">
+                            </div>
+                        </div>
+
+                        <!-- OBSERVAÇÕES -->
+                        <div class="mb-3">
+                            <label for="observacoes_gerais" class="form-label">Observações Gerais</label>
+                            <textarea class="form-control" id="observacoes_gerais" name="observacoes_gerais" rows="3"></textarea>
+                        </div>
+
+                        <hr>
+                        <p class="text-muted"><small>* Campos obrigatórios</small></p>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('routes.admin_dashboard', aba='motoristas') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-success">Salvar Motorista</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

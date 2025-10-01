@@ -12,13 +12,19 @@ __pycache__/
 *.pyc
 
 # Arquivos de ambiente virtual
+.flaskenv
 venv/
 .venv/
 env/
 .env
 
+
 # Arquivos de configuração do editor
 .vscode/
 .idea/
+
+# Arquivos de Banco de Dados
+*.db
+*.sqlite3
 
 *.xlsx
