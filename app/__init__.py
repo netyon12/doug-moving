@@ -2,12 +2,12 @@
 import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+#from flask_migrate import Migrate  ##Depois tira o comentário
 from flask_login import LoginManager
 
 # Inicializa as extensões (ainda sem app associado)
 db = SQLAlchemy()
-migrate = Migrate()
+## migrate = Migrate()  ## Depois tira o comentario
 login_manager = LoginManager()
 login_manager.login_view = 'routes.login' # 'routes' é o nome do blueprint
 login_manager.login_message = "Por favor, faça o login para acessar esta página."
@@ -25,7 +25,7 @@ def create_app():
 
     # Associa as extensões à instância da aplicação
     db.init_app(app)
-    migrate.init_app(app, db)
+    #migrate.init_app(app, db) ## depois tira o comentario
     login_manager.init_app(app)
 
     # Importa os modelos para que o Flask-Migrate os reconheça
