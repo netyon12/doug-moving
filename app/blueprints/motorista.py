@@ -89,7 +89,7 @@ def dashboard_motorista():
         and_(
             Viagem.motorista_id == motorista.id,
             Viagem.status == 'Finalizada',
-            db.func.strftime('%Y-%m', Viagem.data_finalizacao) == datetime.now().strftime('%Y-%m')
+            db.func.to_char(Viagem.data_finalizacao, 'YYYY-MM') == datetime.now().strftime('%Y-%m')
         )
     ).count()
     
