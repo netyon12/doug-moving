@@ -10,7 +10,7 @@
                     <h3 class="mb-0">Cadastrar Novo Supervisor</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('routes.cadastrar_supervisor') }}">
+                    <form method="POST" action="{{ url_for('admin.cadastrar_supervisor') }}">
                         
                         <h5 class="mb-3">Dados de Acesso</h5>
                         <div class="row">
@@ -89,7 +89,7 @@
                         <hr>
                         <p class="text-muted"><small>* Campos obrigatórios</small></p>
                         <div class="d-flex justify-content-end">
-                            <a href="{{ url_for('routes.admin_dashboard', aba='supervisores') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <a href="{{ url_for('admin.admin_dashboard', aba='supervisores') }}" class="btn btn-secondary me-2">Cancelar</a>
                             <button type="submit" class="btn btn-info">Salvar Supervisor</button>
                         </div>
                     </form>

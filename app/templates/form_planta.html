@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if planta else 'Cadastrar' }} Planta{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h3>{{ 'Editar Planta' if planta else 'Cadastrar Nova Planta' }}</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.editar_planta', planta_id=planta.id) if planta else url_for('admin.cadastrar_planta') }}">
+                        
+                        <div class="mb-3">
+                            <label for="empresa_id" class="form-label">Empresa*</label>
+                            <select class="form-select" id="empresa_id" name="empresa_id" required>
+                                <option value="" disabled selected>A qual empresa esta planta pertence?</option>
+                                {% for empresa in empresas %}
+                                    <option value="{{ empresa.id }}" {% if planta and planta.empresa_id == empresa.id %}selected{% endif %}>
+                                        {{ empresa.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="id" class="form-label">ID da Planta*</label>
+                                <!-- LÓGICA CONDICIONAL: readonly se a planta já existe -->
+                                <input type="number" class="form-control" id="id" name="id" 
+                                       value="{{ planta.id if planta else '' }}" 
+                                       required 
+                                       {% if planta %}readonly style="background-color: #e9ecef;"{% endif %}>
+                                <div class="form-text">ID numérico único para a planta. Não pode ser alterado depois.</div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="nome" class="form-label">Nome da Planta*</label>
+                                <input type="text" class="form-control" id="nome" name="nome" value="{{ planta.nome if planta else '' }}" required>
+                                <div class="form-text">Ex: Structures, Assembly, Logistics.</div>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('admin.admin_dashboard', aba='plantas') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

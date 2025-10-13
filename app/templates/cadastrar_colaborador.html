@@ -10,7 +10,7 @@
                     <h3 class="mb-0">Cadastrar Novo Colaborador</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('routes.cadastrar_colaborador') }}">
+                    <form method="POST" action="{{ url_for('admin.cadastrar_colaborador') }}">
                         <div class="row">
                             <!-- Coluna da Esquerda -->
                             <div class="col-md-6">
@@ -70,14 +70,14 @@
                                 {% endfor %}
                             </select>
                             <small class="form-text text-muted">
-                                Se o bloco não estiver na lista, <a href="{{ url_for('routes.cadastrar_bloco') }}">cadastre-o primeiro</a>.
+                                Se o bloco não estiver na lista, <a href="{{ url_for('admin.cadastrar_bloco') }}">cadastre-o primeiro</a>.
                             </small>
                         </div>
 
                         <hr>
                         <p class="text-muted"><small>* Campos obrigatórios</small></p>
                         <div class="d-flex justify-content-end">
-                            <a href="{{ url_for('routes.admin_dashboard', aba='colaboradores') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <a href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}" class="btn btn-secondary me-2">Cancelar</a>
                             <button type="submit" class="btn btn-warning">Salvar Colaborador</button>
                         </div>
                     </form>

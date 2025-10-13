@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if centro_custo else 'Cadastrar' }} Centro de Custo{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h3>{{ 'Editar Centro de Custo' if centro_custo else 'Cadastrar Novo Centro de Custo' }}</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.editar_centro_custo', cc_id=centro_custo.id) if centro_custo else url_for('admin.cadastrar_centro_custo') }}">
+                        
+                        <!-- Campo Empresa -->
+                        <div class="mb-3">
+                            <label for="empresa_id" class="form-label">Empresa*</label>
+                            <select class="form-select" id="empresa_id" name="empresa_id" required>
+                                <option value="" disabled selected>Selecione uma empresa...</option>
+                                {% for empresa in empresas %}
+                                    <option value="{{ empresa.id }}" {% if centro_custo and centro_custo.empresa_id == empresa.id %}selected{% endif %}>
+                                        {{ empresa.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="row">
+                            <!-- Campo Código do Centro de Custo -->
+                            <div class="col-md-6 mb-3">
+                                <label for="codigo" class="form-label">Código do Centro de Custo*</label>
+                                <input type="text" class="form-control" id="codigo" name="codigo" value="{{ centro_custo.codigo if centro_custo else '' }}" required>
+                            </div>
+
+                            <!-- Campo Nome do Centro de Custo -->
+                            <div class="col-md-6 mb-3">
+                                <label for="nome" class="form-label">Nome do Centro de Custo*</label>
+                                <input type="text" class="form-control" id="nome" name="nome" value="{{ centro_custo.nome if centro_custo else '' }}" required>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('admin.admin_dashboard', aba='centros_custo') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

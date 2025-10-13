@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+
+{% block title %}Conferência de Motoristas - Go Mobi{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="card">
+        <div class="card-header bg-warning text-white">
+            <h4 class="mb-0"><i class="fas fa-user-tie"></i> Conferência de Motoristas</h4>
+        </div>
+        <div class="card-body">
+            <!-- Formulário de Filtros -->
+            <form id="formFiltros">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label>Data Início *</label>
+                        <input type="date" name="data_inicio" id="data_inicio" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Data Fim *</label>
+                        <input type="date" name="data_fim" id="data_fim" class="form-control" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Motorista *</label>
+                        <select name="motorista_id" id="motorista_id" class="form-control">
+                            <option value="">Selecione...</option>
+                            {% for motorista in motoristas %}
+                            <option value="{{ motorista.id }}">{{ motorista.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label>Status</label>
+                        <select name="status" id="status" class="form-control">
+                            <option value="">Todos</option>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Agendada">Agendada</option>
+                            <option value="Em Andamento">Em Andamento</option>
+                            <option value="Finalizada">Finalizada</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Gerar Relatório
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="limparFiltros()">
+                            <i class="fas fa-eraser"></i> Limpar Filtros
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Loading -->
+            <div id="loading" class="text-center mt-4" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Carregando...</span>
+                </div>
+                <p>Gerando relatório...</p>
+            </div>
+
+            <!-- Área de Resultados -->
+            <div id="areaResultados" class="mt-4" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Resultados: <span id="totalRegistros">0</span> viagens</h5>
+                    <div>
+                        <button type="button" class="btn btn-success" onclick="exportarExcel()">
+                            <i class="fas fa-file-excel"></i> Exportar Excel
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="exportarPDF()">
+                            <i class="fas fa-file-pdf"></i> Exportar PDF
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Data</th>
+                                <th>Motorista</th>
+                                <th>Empresa</th>
+                                <th>Planta</th>
+                                <th>Tipo Corrida</th>
+                                <th>Status</th>
+                                <th>Placa</th>
+                                <th>Passageiros</th>
+                                <th>Valor Repasse</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabela">
+                            <!-- Dados serão inseridos aqui via JavaScript -->
+                        </tbody>
+                        <tfoot>
+                            <tr class="font-weight-bold">
+                                <td colspan="9" class="text-right">TOTAL REPASSE:</td>
+                                <td id="totalRepasse">R$ 0,00</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Garantir que os badges tenham cores visíveis */
+.badge-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important;
+}
+.badge-primary {
+    background-color: #007bff !important;
+    color: #ffffff !important;
+}
+.badge-success {
+    background-color: #28a745 !important;
+    color: #ffffff !important;
+}
+.badge-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+.badge-info {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important;
+}
+.badge-secondary {
+    background-color: #6c757d !important;
+    color: #ffffff !important;
+}
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+let dadosRelatorio = [];
+
+// Definir datas padrão
+$(document).ready(function() {
+    const hoje = new Date();
+    const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    
+    $('#data_inicio').val(primeiroDia.toISOString().split('T')[0]);
+    $('#data_fim').val(hoje.toISOString().split('T')[0]);
+});
+
+// Submeter formulário
+$('#formFiltros').on('submit', function(e) {
+    e.preventDefault();
+    
+    // Validar motorista
+    if (!$('#motorista_id').val()) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atenção',
+            text: 'Por favor, selecione um motorista'
+        });
+        return;
+    }
+    
+    $('#loading').show();
+    $('#areaResultados').hide();
+    
+    $.ajax({
+        url: '{{ url_for("relatorios.dados_conferencia_motoristas") }}',
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+            $('#loading').hide();
+            
+            if (response.success) {
+                dadosRelatorio = response.dados;
+                exibirResultados(response.dados, response.total, response.valor_total_repasse);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: response.message || 'Erro ao gerar relatório'
+                });
+            }
+        },
+        error: function(xhr) {
+            $('#loading').hide();
+            let errorMsg = 'Erro ao gerar relatório. Tente novamente.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMsg = xhr.responseJSON.message;
+            }
+            console.error('Erro:', xhr);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: errorMsg
+            });
+        }
+    });
+});
+
+// Função para obter badge colorido baseado no status
+function getStatusBadge(status) {
+    let badgeClass = 'badge-secondary';
+    
+    switch(status) {
+        case 'Pendente':
+            badgeClass = 'badge-warning';
+            break;
+        case 'Agendada':
+            badgeClass = 'badge-info';
+            break;
+        case 'Em Andamento':
+            badgeClass = 'badge-primary';
+            break;
+        case 'Finalizada':
+            badgeClass = 'badge-success';
+            break;
+        case 'Cancelada':
+            badgeClass = 'badge-danger';
+            break;
+    }
+    
+    return `<span class="badge ${badgeClass}">${status}</span>`;
+}
+
+// Exibir resultados na tabela
+function exibirResultados(dados, total, totalRepasse) {
+    const tbody = $('#corpoTabela');
+    tbody.empty();
+    
+    if (dados.length === 0) {
+        tbody.append('<tr><td colspan="10" class="text-center">Nenhuma viagem encontrada</td></tr>');
+        $('#areaResultados').show();
+        return;
+    }
+    
+    dados.forEach(function(item) {
+        const tr = $('<tr>');
+        tr.append(`<td>${item.id}</td>`);
+        tr.append(`<td>${item.data_inicio}</td>`);
+        tr.append(`<td>${item.motorista}</td>`);
+        tr.append(`<td>${item.empresa}</td>`);
+        tr.append(`<td>${item.planta}</td>`);
+        tr.append(`<td>${item.tipo_corrida}</td>`);
+        tr.append(`<td>${getStatusBadge(item.status)}</td>`);
+        tr.append(`<td>${item.placa}</td>`);
+        tr.append(`<td>${item.qtd_passageiros}</td>`);
+        tr.append(`<td>R$ ${item.valor_repasse.toFixed(2)}</td>`);
+        tbody.append(tr);
+    });
+    
+    $('#totalRegistros').text(total);
+    $('#totalRepasse').text(`R$ ${totalRepasse.toFixed(2)}`);
+    $('#areaResultados').show();
+}
+
+// Limpar filtros
+function limparFiltros() {
+    $('#formFiltros')[0].reset();
+    $('#areaResultados').hide();
+    
+    // Redefinir datas padrão
+    const hoje = new Date();
+    const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    $('#data_inicio').val(primeiroDia.toISOString().split('T')[0]);
+    $('#data_fim').val(hoje.toISOString().split('T')[0]);
+}
+
+// Exportar para Excel
+function exportarExcel() {
+    if (dadosRelatorio.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atenção',
+            text: 'Não há dados para exportar'
+        });
+        return;
+    }
+    
+    const form = $('<form>', {
+        method: 'POST',
+        action: '{{ url_for("relatorios.exportar_excel", tipo="motoristas") }}'
+    });
+    
+    form.append($('<input>', {
+        type: 'hidden',
+        name: 'dados',
+        value: JSON.stringify(dadosRelatorio)
+    }));
+    
+    $('body').append(form);
+    form.submit();
+    form.remove();
+}
+
+// Exportar para PDF
+function exportarPDF() {
+    if (dadosRelatorio.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atenção',
+            text: 'Não há dados para exportar'
+        });
+        return;
+    }
+    
+    const form = $('<form>', {
+        method: 'POST',
+        action: '{{ url_for("relatorios.exportar_pdf", tipo="motoristas") }}'
+    });
+    
+    form.append($('<input>', {
+        type: 'hidden',
+        name: 'dados',
+        value: JSON.stringify(dadosRelatorio)
+    }));
+    
+    $('body').append(form);
+    form.submit();
+    form.remove();
+}
+</script>
+{% endblock %}

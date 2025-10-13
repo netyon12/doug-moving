@@ -1,0 +1,566 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciar Viagens{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-route"></i> Gerenciar Viagens</h2>
+            <p class="text-muted">Visualize e gerencie as viagens criadas no sistema</p>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4" style="background-color: #f8b84e;">
+        <div class="card-header" style="background-color: #f8b84e; border: none;">
+            <strong style="color: #333;">Filtros</strong>
+        </div>
+        <div class="card-body" style="background-color: #fff;">
+            <form method="GET" action="{{ url_for('admin.viagens') }}">
+                <div class="row g-3">
+                    <div class="col-md-2">
+                        <label for="viagem_id" class="form-label">ID Viagem</label>
+                        <input type="number" class="form-control" id="viagem_id" name="viagem_id" 
+                               value="{{ filtro_viagem_id }}" placeholder="Ex: 123">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">Todos</option>
+                            {% for s in status_opcoes %}
+                            <option value="{{ s }}" {% if filtro_status == s %}selected{% endif %}>{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="data_inicio" class="form-label">Data Início</label>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
+                               value="{{ filtro_data_inicio }}">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="data_fim" class="form-label">Data Fim</label>
+                        <input type="date" class="form-control" id="data_fim" name="data_fim" 
+                               value="{{ filtro_data_fim }}">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="motorista_id" class="form-label">Motorista</label>
+                        <select class="form-select" id="motorista_id" name="motorista_id">
+                            <option value="">Todos</option>
+                            {% for m in motoristas %}
+                            <option value="{{ m.id }}" {% if filtro_motorista_id == m.id|string %}selected{% endif %}>
+                                {{ m.nome }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="bloco_id" class="form-label">Bloco</label>
+                        <select class="form-select" id="bloco_id" name="bloco_id">
+                            <option value="">Todos</option>
+                            {% for b in blocos %}
+                            <option value="{{ b.id }}" {% if filtro_bloco_id == b.id|string %}selected{% endif %}>
+                                {{ b.codigo_bloco }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row g-3 mt-2">
+                    <div class="col-md-2">
+                        <label for="planta_id" class="form-label">Planta</label>
+                        <select class="form-select" id="planta_id" name="planta_id">
+                            <option value="">Todas</option>
+                            {% for p in plantas %}
+                            <option value="{{ p.id }}" {% if filtro_planta_id == p.id|string %}selected{% endif %}>
+                                {{ p.nome }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn me-2" style="background-color: #f8b84e; color: #333; border: none;">
+                            <i class="bi bi-search"></i> Filtrar
+                        </button>
+                        <a href="{{ url_for('admin.viagens') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Limpar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de Viagens -->
+    <div class="card">
+        <div class="card-header" style="background-color: #f8b84e; border: none;">
+            <strong style="color: #333;">Viagens Encontradas: {{ viagens|length }}</strong>
+        </div>
+        <div class="card-body p-0">
+            {% if viagens %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Status</th>
+                            <th>Data/Horário</th>
+                            <th>Tipo</th>
+                            <th>Passageiros</th>
+                            <th>Blocos</th>
+                            <th>Motorista</th>
+                            <th>Valor</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for viagem in viagens %}
+                        <tr>
+                            <td><strong>#{{ viagem.id }}</strong></td>
+                            <td>
+                                {% if viagem.status == 'Pendente' %}
+                                <span class="badge bg-warning text-dark">{{ viagem.status }}</span>
+                                {% elif viagem.status == 'Agendada' %}
+                                <span class="badge bg-info">{{ viagem.status }}</span>
+                                {% elif viagem.status == 'Em Andamento' %}
+                                <span class="badge bg-primary">{{ viagem.status }}</span>
+                                {% elif viagem.status == 'Finalizada' %}
+                                <span class="badge bg-success">{{ viagem.status }}</span>
+                                {% elif viagem.status == 'Cancelada' %}
+                                <span class="badge bg-danger">{{ viagem.status }}</span>
+                                {% else %}
+                                <span class="badge bg-secondary">{{ viagem.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if viagem.horario_entrada %}
+                                {{ viagem.horario_entrada.strftime('%d/%m/%Y %H:%M') }}
+                                {% elif viagem.horario_saida %}
+                                {{ viagem.horario_saida.strftime('%d/%m/%Y %H:%M') }}
+                                {% elif viagem.horario_desligamento %}
+                                {{ viagem.horario_desligamento.strftime('%d/%m/%Y %H:%M') }}
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if viagem.tipo_corrida == 'entrada' %}
+                                <span class="badge bg-success">ENTRADA</span>
+                                {% elif viagem.tipo_corrida == 'saida' %}
+                                <span class="badge bg-warning text-dark">SAÍDA</span>
+                                {% else %}
+                                <span class="badge bg-danger">DESLIGAMENTO</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <i class="bi bi-people-fill"></i> {{ viagem.quantidade_passageiros }}
+                            </td>
+                            <td>
+                                {% if viagem.bloco %}
+                                {{ viagem.bloco.codigo_bloco }}
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if viagem.nome_motorista %}
+                                <i class="bi bi-person-fill"></i> {{ viagem.nome_motorista }}
+                                {% else %}
+                                <span class="text-muted">Não atribuído</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if viagem.valor %}
+                                R$ {{ "%.2f"|format(viagem.valor) }}
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-sm btn-info" 
+                                            onclick="visualizarViagem({{ viagem.id }})"
+                                            title="Visualizar Detalhes">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                    
+                                    {% if current_user.role == 'admin' and viagem.status == 'Pendente' %}
+                                    <button type="button" class="btn btn-sm btn-success" 
+                                            onclick="associarMotorista({{ viagem.id }})"
+                                            title="Associar Motorista">
+                                        <i class="bi bi-person-plus"></i>
+                                    </button>
+                                    {% endif %}
+                                    
+                                    {% if viagem.status not in ['Finalizada', 'Cancelada'] %}
+                                    <button type="button" class="btn btn-sm btn-danger" 
+                                            onclick="cancelarViagem({{ viagem.id }})"
+                                            title="Cancelar Viagem">
+                                        <i class="bi bi-x-circle"></i>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info m-3">
+                <i class="bi bi-info-circle"></i> Nenhuma viagem encontrada com os filtros aplicados.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal Visualizar Viagem -->
+<div class="modal fade" id="modalVisualizarViagem" tabindex="-1" aria-labelledby="modalVisualizarViagemLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="modalVisualizarViagemLabel">
+                    <i class="bi bi-eye"></i> Detalhes da Viagem
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body" id="conteudoVisualizarViagem">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Associar Motorista -->
+<div class="modal fade" id="modalAssociarMotorista" tabindex="-1" aria-labelledby="modalAssociarMotoristaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="modalAssociarMotoristaLabel">
+                    <i class="bi bi-person-plus"></i> Associar Motorista
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form id="formAssociarMotorista" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" id="viagem_id_associar" name="viagem_id">
+                    
+                    <div class="mb-3">
+                        <label for="motorista_id_associar" class="form-label">Selecione o Motorista</label>
+                        <select class="form-select" id="motorista_id_associar" name="motorista_id" required>
+                            <option value="">Escolha um motorista...</option>
+                            {% for m in motoristas %}
+                            <option value="{{ m.id }}">{{ m.nome }} - {{ m.veiculo_placa }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Associar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Cancelar Viagem -->
+<div class="modal fade" id="modalCancelarViagem" tabindex="-1" aria-labelledby="modalCancelarViagemLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="modalCancelarViagemLabel">
+                    <i class="bi bi-x-circle"></i> Cancelar Viagem
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <form id="formCancelarViagem" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" id="viagem_id_cancelar" name="viagem_id">
+                    
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Tem certeza que deseja cancelar esta viagem?
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="motivo_cancelamento" class="form-label">Motivo do Cancelamento</label>
+                        <textarea class="form-control" id="motivo_cancelamento" name="motivo" rows="3" required 
+                                  placeholder="Descreva o motivo do cancelamento..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-circle"></i> Confirmar Cancelamento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Função para visualizar viagem
+    function visualizarViagem(viagemId) {
+        const modal = new bootstrap.Modal(document.getElementById('modalVisualizarViagem'));
+        modal.show();
+        
+        // Carrega os detalhes via AJAX
+        fetch(`/admin/viagens/${viagemId}/detalhes`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const v = data.viagem;
+                    
+                    // Determina cor do status
+                    let statusClass = 'secondary';
+                    if (v.status === 'Pendente') statusClass = 'warning text-dark';
+                    else if (v.status === 'Agendada') statusClass = 'info';
+                    else if (v.status === 'Em Andamento') statusClass = 'primary';
+                    else if (v.status === 'Finalizada') statusClass = 'success';
+                    else if (v.status === 'Cancelada') statusClass = 'danger';
+                    
+                    // Determina cor do tipo
+                    let tipoClass = 'secondary';
+                    let tipoTexto = v.tipo_corrida;
+                    if (v.tipo_corrida === 'entrada') {
+                        tipoClass = 'success';
+                        tipoTexto = 'ENTRADA';
+                    } else if (v.tipo_corrida === 'saida') {
+                        tipoClass = 'warning text-dark';
+                        tipoTexto = 'SAÍDA';
+                    } else if (v.tipo_corrida === 'desligamento') {
+                        tipoClass = 'danger';
+                        tipoTexto = 'DESLIGAMENTO';
+                    }
+                    
+                    let html = `
+                        <div class="row g-3">
+                            <!-- Informações Gerais -->
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-primary text-white">
+                                        <i class="bi bi-info-circle"></i> Informações Gerais
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>ID:</strong> #${v.id}</p>
+                                        <p><strong>Status:</strong> <span class="badge bg-${statusClass}">${v.status}</span></p>
+                                        <p><strong>Tipo:</strong> <span class="badge bg-${tipoClass}">${tipoTexto}</span></p>
+                                        <p><strong>Passageiros:</strong> <i class="bi bi-people-fill"></i> ${v.quantidade_passageiros}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Localização -->
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-success text-white">
+                                        <i class="bi bi-geo-alt"></i> Localização
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Empresa:</strong> ${v.empresa_nome}</p>
+                                        <p><strong>Planta:</strong> ${v.planta_nome}</p>
+                                        <p><strong>Bloco:</strong> <span class="badge bg-info">${v.bloco_codigo}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Horários -->
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header bg-info text-white">
+                                        <i class="bi bi-clock"></i> Horários
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <p><strong>Entrada:</strong><br>${v.horario_entrada || 'N/A'}</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <p><strong>Saída:</strong><br>${v.horario_saida || 'N/A'}</p>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <p><strong>Desligamento:</strong><br>${v.horario_desligamento || 'N/A'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Motorista -->
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-warning">
+                                        <i class="bi bi-person-fill"></i> Motorista
+                                    </div>
+                                    <div class="card-body">
+                                        ${v.motorista ? `
+                                            <p><strong>Nome:</strong> ${v.motorista.nome}</p>
+                                            <p><strong>Telefone:</strong> ${v.motorista.telefone}</p>
+                                            <p><strong>Veículo:</strong> ${v.motorista.veiculo_nome}</p>
+                                            <p><strong>Placa:</strong> ${v.motorista.veiculo_placa}</p>
+                                            <p><strong>Modelo:</strong> ${v.motorista.veiculo_modelo}</p>
+                                        ` : '<p class="text-muted">Motorista não atribuído</p>'}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Valores -->
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header" style="background-color: #28a745; color: white;">
+                                        <i class="bi bi-currency-dollar"></i> Valores
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Valor Total:</strong> R$ ${v.valor.toFixed(2)}</p>
+                                        <p><strong>Valor Repasse:</strong> R$ ${v.valor_repasse.toFixed(2)}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Colaboradores -->
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header" style="background-color: #6c757d; color: white;">
+                                        <i class="bi bi-people"></i> Colaboradores (${v.total_colaboradores})
+                                    </div>
+                                    <div class="card-body">
+                                        ${v.colaboradores && v.colaboradores.length > 0 ? `
+                                            <div class="table-responsive">
+                                                <table class="table table-sm table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Nome</th>
+                                                            <th>Matrícula</th>
+                                                            <th>Telefone</th>
+                                                            <th>Endereço</th>
+                                                            <th>Bairro</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${v.colaboradores.map(c => `
+                                                            <tr>
+                                                                <td>${c.colaborador_nome}</td>
+                                                                <td>${c.colaborador_matricula}</td>
+                                                                <td>${c.colaborador_telefone}</td>
+                                                                <td>${c.endereco}</td>
+                                                                <td>${c.bairro}</td>
+                                                            </tr>
+                                                        `).join('')}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        ` : '<p class="text-muted">Nenhum colaborador associado</p>'}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Timestamps -->
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <small class="text-muted">
+                                            <strong>Criado em:</strong> ${v.criado_em} | 
+                                            <strong>Atualizado em:</strong> ${v.atualizado_em}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('conteudoVisualizarViagem').innerHTML = html;
+                } else {
+                    document.getElementById('conteudoVisualizarViagem').innerHTML = 
+                        `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> ${data.message || 'Erro ao carregar detalhes.'}</div>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById('conteudoVisualizarViagem').innerHTML = 
+                    '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Erro ao carregar detalhes.</div>';
+                console.error('Erro:', error);
+            });
+    }
+    
+    // Função para associar motorista
+    function associarMotorista(viagemId) {
+        document.getElementById('viagem_id_associar').value = viagemId;
+        const modal = new bootstrap.Modal(document.getElementById('modalAssociarMotorista'));
+        modal.show();
+    }
+    
+    // Função para cancelar viagem
+    function cancelarViagem(viagemId) {
+        document.getElementById('viagem_id_cancelar').value = viagemId;
+        const modal = new bootstrap.Modal(document.getElementById('modalCancelarViagem'));
+        modal.show();
+    }
+    
+    // Submit do form de associar motorista
+    document.getElementById('formAssociarMotorista').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const viagemId = document.getElementById('viagem_id_associar').value;
+        const motoristaId = document.getElementById('motorista_id_associar').value;
+        
+        fetch(`/admin/viagens/${viagemId}/associar_motorista`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ motorista_id: motoristaId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erro: ' + data.message);
+            }
+        });
+    });
+    
+    // Submit do form de cancelar viagem
+    document.getElementById('formCancelarViagem').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const viagemId = document.getElementById('viagem_id_cancelar').value;
+        const motivo = document.getElementById('motivo_cancelamento').value;
+        
+        fetch(`/admin/viagens/${viagemId}/cancelar`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ motivo: motivo })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Erro: ' + data.message);
+            }
+        });
+    });
+</script>
+{% endblock %}
+

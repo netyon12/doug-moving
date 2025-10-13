@@ -10,7 +10,7 @@
                     <h3 class="mb-0">Editar Colaborador</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('routes.editar_colaborador', colaborador_id=colaborador.id) }}">
+                    <form method="POST" action="{{ url_for('admin.editar_colaborador', colaborador_id=colaborador.id) }}">
                         <div class="row">
                             <!-- Coluna da Esquerda -->
                             <div class="col-md-6">
@@ -72,7 +72,7 @@
                         </div>
                         <hr>
                         <div class="d-flex justify-content-end">
-                            <a href="{{ url_for('routes.admin_dashboard', aba='colaboradores') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <a href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}" class="btn btn-secondary me-2">Cancelar</a>
                             <button type="submit" class="btn btn-primary">Salvar Alterações</button>
                         </div>
                     </form>

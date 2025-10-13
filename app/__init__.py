@@ -1,43 +1,109 @@
 # app/__init__.py
 import os
-from flask import Flask
+from flask import Flask, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_login import LoginManager
+from flask_login import LoginManager, login_required, current_user, logout_user
 
-# Inicializa as extensões (ainda sem app associado)
+# Instâncias das extensões
 db = SQLAlchemy()
-migrate = Migrate()
 login_manager = LoginManager()
-login_manager.login_view = 'routes.login' # 'routes' é o nome do blueprint
-login_manager.login_message = "Por favor, faça o login para acessar esta página."
-login_manager.login_message_category = "info"
 
 def create_app():
-    """Cria e configura uma instância da aplicação Flask."""
+    """Cria e configura a instância da aplicação Flask."""
     app = Flask(__name__)
-    
-    # Configurações da aplicação
+
+    # --- CONFIGURAÇÕES DA APLICAÇÃO ---
+    # Carrega as configurações (SECRET_KEY, DATABASE_URL, etc.)
+    # Exemplo: app.config.from_object('config.Config')
     app.config['SECRET_KEY'] = 'uma-chave-secreta-muito-forte-e-diferente'
-    # A linha abaixo garante que o Render use o banco de dados de produção
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///../doug_moving.db').replace("postgres://", "postgresql://")
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///doug_moving.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['UPLOAD_FOLDER'] = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/profile_pics')
 
-    # Associa as extensões à instância da aplicação
+    # --- INICIALIZAÇÃO DAS EXTENSÕES ---
     db.init_app(app)
-    migrate.init_app(app, db)
     login_manager.init_app(app)
-
-    # Importa os modelos para que o Flask-Migrate os reconheça
-    from . import models
-
-    # Registra o Blueprint que contém as rotas
-    from .routes import bp as routes_bp
-    app.register_blueprint(routes_bp)
-
-    # Define a função para carregar o usuário
+    
+    # Configuração do Flask-Login
+    from .models import User
     @login_manager.user_loader
     def load_user(user_id):
-        return models.User.query.get(int(user_id))
+        return User.query.get(int(user_id))
+    
+    login_manager.login_view = 'auth.login' # Aponta para a rota 'login' dentro do blueprint 'auth'
+    login_manager.login_message = "Por favor, faça o login para acessar esta página."
+    login_manager.login_message_category = "info"
+
+
+    # --- REGISTRO DOS BLUEPRINTS ---
+    # Importa e registra cada blueprint da sua nova estrutura
+    from .blueprints.auth import auth_bp
+    app.register_blueprint(auth_bp)
+
+    # Importa o blueprint admin (já carrega todos os módulos automaticamente)
+    from .blueprints.admin import admin_bp
+    app.register_blueprint(admin_bp)
+
+    from .blueprints.gerente import gerente_bp
+    app.register_blueprint(gerente_bp)
+
+    from .blueprints.supervisor import supervisor_bp
+    app.register_blueprint(supervisor_bp)
+
+    from .blueprints.motorista import motorista_bp
+    app.register_blueprint(motorista_bp)
+
+    from .blueprints.admin_audit_routes import audit_bp
+    app.register_blueprint(audit_bp)
+
+    from .blueprints.relatorios import relatorios_bp
+    app.register_blueprint(relatorios_bp)
+
+    from .blueprints.financeiro import financeiro_bp
+    app.register_blueprint(financeiro_bp)
+
+
+    # --- FILTROS PERSONALIZADOS DO JINJA2 ---
+    @app.template_filter('number_format')
+    def number_format_filter(value):
+        """Formata números com separador de milhares."""
+        try:
+            return "{:,}".format(int(value)).replace(',', '.')
+        except (ValueError, TypeError):
+            return value
+
+
+    # --- ROTA PRINCIPAL (PORTA DE ENTRADA) ---
+    @app.route('/')
+    @login_required
+    def home():
+        """
+        Rota principal que redireciona o usuário logado para o dashboard correto.
+        """
+        if current_user.role == 'admin':
+            # Redireciona para a função 'dashboard' dentro do blueprint 'admin'
+            return redirect(url_for('admin.admin_dashboard'))
+        
+        elif current_user.role == 'gerente':
+            return redirect(url_for('gerente.dashboard_gerente'))
+        
+        elif current_user.role == 'supervisor':
+            # Redireciona para a função 'dashboard' dentro do blueprint 'supervisor'
+            return redirect(url_for('supervisor.dashboard_supervisor'))
+            
+        elif current_user.role == 'motorista':
+            # Redireciona para a função 'dashboard' dentro do blueprint 'motorista'
+            return redirect(url_for('motorista.dashboard_motorista'))
+            
+        else:
+            # Caso de segurança: se a role for desconhecida, desloga o usuário.
+            flash('Perfil de usuário inválido. Por favor, contate o suporte.', 'danger')
+            logout_user()
+            return redirect(url_for('auth.login'))
 
     return app
+
+
+
+

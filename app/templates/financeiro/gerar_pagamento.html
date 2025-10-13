@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Gerar Pagamento{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-file-earmark-plus"></i> Gerar Pagamento a Motorista</h2>
+            <p class="text-muted">Selecione o motorista e o período para gerar um novo pagamento</p>
+        </div>
+    </div>
+
+    <!-- Formulário de Filtro -->
+    <div class="card mb-4">
+        <div class="card-header" style="background-color: #f8b84e;">
+            <strong>1. Selecione o Motorista e Período</strong>
+        </div>
+        <div class="card-body">
+            <form id="formFiltro">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="motorista_id" class="form-label">Motorista *</label>
+                        <select class="form-select" id="motorista_id" name="motorista_id" required>
+                            <option value="">Selecione...</option>
+                            {% for motorista in motoristas %}
+                            <option value="{{ motorista.id }}">{{ motorista.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="data_inicio" class="form-label">Data Início *</label>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" required>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="data_fim" class="form-label">Data Fim *</label>
+                        <input type="date" class="form-control" id="data_fim" name="data_fim" required>
+                    </div>
+                    
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-primary w-100" onclick="buscarViagens()">
+                            <i class="bi bi-search"></i> Buscar Viagens
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Resultado da Busca -->
+    <div id="resultadoBusca" style="display: none;">
+        <div class="card mb-4">
+            <div class="card-header" style="background-color: #f8b84e;">
+                <strong>2. Selecione as Viagens</strong>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <strong>Total de Viagens:</strong> <span id="totalViagens">0</span> | 
+                    <strong>Valor Total (Repasse):</strong> R$ <span id="valorTotal">0.00</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selecionarTodas" onclick="selecionarTodas()"></th>
+                                <th>ID</th>
+                                <th>Data/Hora</th>
+                                <th>Tipo</th>
+                                <th>Passageiros</th>
+                                <th>Bloco</th>
+                                <th>Valor Repasse</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaViagens">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulário de Geração -->
+        <div class="card mb-4">
+            <div class="card-header" style="background-color: #f8b84e;">
+                <strong>3. Confirme e Gere o Pagamento</strong>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('financeiro.gerar_pagamento') }}" id="formGerar">
+                    <input type="hidden" name="motorista_id" id="hidden_motorista_id">
+                    <input type="hidden" name="data_inicio" id="hidden_data_inicio">
+                    <input type="hidden" name="data_fim" id="hidden_data_fim">
+                    <div id="viagensIdsContainer"></div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="data_vencimento" class="form-label">Data de Vencimento *</label>
+                            <input type="date" class="form-control" id="data_vencimento" name="data_vencimento" required>
+                        </div>
+                        
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle"></i> Gerar Título a Pagar
+                            </button>
+                            <a href="{{ url_for('financeiro.contas_pagar') }}" class="btn btn-secondary btn-lg">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function buscarViagens() {
+    const motoristaId = document.getElementById('motorista_id').value;
+    const dataInicio = document.getElementById('data_inicio').value;
+    const dataFim = document.getElementById('data_fim').value;
+    
+    if (!motoristaId || !dataInicio || !dataFim) {
+        alert('Preencha todos os campos!');
+        return;
+    }
+    
+    // Fazer requisição AJAX
+    fetch('/admin/financeiro/buscar-viagens-pagar', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            motorista_id: motoristaId,
+            data_inicio: dataInicio,
+            data_fim: dataFim
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            mostrarViagens(data.viagens, data.valor_total);
+            
+            // Preencher campos hidden
+            document.getElementById('hidden_motorista_id').value = motoristaId;
+            document.getElementById('hidden_data_inicio').value = dataInicio;
+            document.getElementById('hidden_data_fim').value = dataFim;
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Erro ao buscar viagens: ' + error);
+    });
+}
+
+function mostrarViagens(viagens, valorTotal) {
+    const tbody = document.getElementById('tabelaViagens');
+    tbody.innerHTML = '';
+    
+    document.getElementById('totalViagens').textContent = viagens.length;
+    document.getElementById('valorTotal').textContent = valorTotal.toFixed(2);
+    
+    viagens.forEach(v => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><input type="checkbox" class="viagem-checkbox" value="${v.id}" onchange="atualizarTotal()"></td>
+            <td>#${v.id}</td>
+            <td>${v.data}</td>
+            <td>${v.tipo}</td>
+            <td>${v.passageiros}</td>
+            <td>${v.bloco}</td>
+            <td>R$ ${v.valor_repasse.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+    
+    document.getElementById('resultadoBusca').style.display = 'block';
+}
+
+function selecionarTodas() {
+    const checkboxes = document.querySelectorAll('.viagem-checkbox');
+    const selecionarTodas = document.getElementById('selecionarTodas').checked;
+    checkboxes.forEach(cb => cb.checked = selecionarTodas);
+    atualizarTotal();
+}
+
+function atualizarTotal() {
+    const container = document.getElementById('viagensIdsContainer');
+    container.innerHTML = '';
+    
+    const checkboxes = document.querySelectorAll('.viagem-checkbox:checked');
+    checkboxes.forEach(cb => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'viagens_ids';
+        input.value = cb.value;
+        container.appendChild(input);
+    });
+}
+</script>
+{% endblock %}
+

@@ -10,7 +10,7 @@
                     <h3 class="mb-0">Cadastrar Novo Motorista</h3>
                 </div>
                 <div class="card-body">
-                    <form method="POST" action="{{ url_for('routes.cadastrar_motorista') }}">
+                    <form method="POST" action="{{ url_for('admin.cadastrar_motorista') }}">
                         
                         <!-- DADOS DE ACESSO -->
                         <h5 class="mb-3 border-bottom pb-2">Dados de Acesso</h5>
@@ -100,7 +100,7 @@
                         <hr>
                         <p class="text-muted"><small>* Campos obrigatórios</small></p>
                         <div class="d-flex justify-content-end">
-                            <a href="{{ url_for('routes.admin_dashboard', aba='motoristas') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <a href="{{ url_for('admin.admin_dashboard', aba='motoristas') }}" class="btn btn-secondary me-2">Cancelar</a>
                             <button type="submit" class="btn btn-success">Salvar Motorista</button>
                         </div>
                     </form>

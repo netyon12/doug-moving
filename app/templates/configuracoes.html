@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Configurações do Sistema{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-gear-fill me-2"></i>Configurações do Sistema
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" action="{{ url_for('admin.configuracoes') }}">
+                        <!-- Tempo da Janela de Cortesia -->
+                        <div class="mb-4">
+                            <label for="tempo_cortesia" class="form-label fw-bold">
+                                <i class="bi bi-clock me-1"></i>Tempo da Janela de Cortesia (minutos)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="tempo_cortesia" 
+                                   name="tempo_cortesia" 
+                                   value="{{ tempo_cortesia }}" 
+                                   min="1" 
+                                   max="60" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Tempo (em minutos) que um supervisor ou motorista tem para cancelar uma solicitação/viagem após o aceite, sem penalidades.
+                            </small>
+                        </div>
+
+                        <!-- Passageiros por Viagem -->
+                        <div class="mb-4">
+                            <label for="max_passageiros" class="form-label fw-bold">
+                                <i class="bi bi-people-fill me-1"></i>Passageiros por Viagem
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="max_passageiros" 
+                                   name="max_passageiros" 
+                                   value="{{ max_passageiros }}" 
+                                   min="1" 
+                                   max="10" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Quantidade máxima de passageiros por viagem no agrupamento automático (recomendado: 3 ou 4).
+                            </small>
+                        </div>
+
+                        <!-- Botões -->
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Voltar ao Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i>Salvar Configurações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Card de Informações -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle-fill me-2"></i>Informações
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="fw-bold">Tempo da Janela de Cortesia</h6>
+                    <p class="text-muted">
+                        Define o período em que é permitido cancelar uma solicitação ou viagem sem gerar penalidades. 
+                        Após esse tempo, o cancelamento pode resultar em advertências ou outras ações.
+                    </p>
+
+                    <h6 class="fw-bold mt-3">Passageiros por Viagem</h6>
+                    <p class="text-muted">
+                        Define a capacidade máxima de passageiros que o sistema deve considerar ao agrupar solicitações automaticamente. 
+                        Valores típicos são 3 ou 4 passageiros por veículo.
+                    </p>
+
+                    <div class="alert alert-warning mt-3" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Atenção:</strong> Alterações nessas configurações afetam o comportamento do sistema imediatamente.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

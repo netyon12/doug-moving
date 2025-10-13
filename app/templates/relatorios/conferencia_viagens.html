@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% block title %}Conferência de Viagens - Go Mobi{% endblock %}
+
+{% block content %}
+
+<style>
+/* Garantir que os badges tenham cores visíveis */
+.badge-warning {
+    background-color: #ffc107 !important;
+    color: #212529 !important; /* Texto escuro para amarelo */
+}
+
+.badge-primary {
+    background-color: #007bff !important;
+    color: #ffffff !important; /* Texto branco para azul */
+}
+
+.badge-success {
+    background-color: #28a745 !important;
+    color: #ffffff !important; /* Texto branco para verde */
+}
+
+.badge-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important; /* Texto branco para vermelho */
+}
+
+.badge-info {
+    background-color: #17a2b8 !important;
+    color: #ffffff !important; /* Texto branco para azul claro */
+}
+
+.badge-secondary {
+    background-color: #6c757d !important;
+    color: #ffffff !important; /* Texto branco para cinza */
+}
+</style>
+
+
+
+
+<div class="container-fluid mt-4">
+    <div class="card">
+        <div class="card-header bg-warning text-white">
+            <h4 class="mb-0"><i class="fas fa-car"></i> Conferência de Viagens</h4>
+        </div>
+        <div class="card-body">
+            <!-- Formulário de Filtros -->
+            <form id="formFiltros">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Data Início *</label>
+                        <input type="date" name="data_inicio" id="data_inicio" class="form-control" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Data Fim *</label>
+                        <input type="date" name="data_fim" id="data_fim" class="form-control" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Planta</label>
+                        <select name="planta_id" id="planta_id" class="form-control">
+                            <option value="">Todas</option>
+                            {% for planta in plantas %}
+                            <option value="{{ planta.id }}">{{ planta.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Status</label>
+                        <select name="status" id="status" class="form-control">
+                            <option value="">Todos</option>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Agendada">Agendada</option>
+                            <option value="Em Andamento">Em Andamento</option>
+                            <option value="Finalizada">Finalizada</option>
+                            <option value="Cancelada">Cancelada</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Tipo Corrida</label>
+                        <select name="tipo_corrida" id="tipo_corrida" class="form-control">
+                            <option value="">Todos</option>
+                            <option value="entrada">Entrada</option>
+                            <option value="saida">Saída</option>
+                            <option value="desligamento">Desligamento</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Tipo Linha</label>
+                        <select name="tipo_linha" id="tipo_linha" class="form-control">
+                            <option value="">Todos</option>
+                            <option value="Turno">Turno</option>
+                            <option value="Admin">Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Gerar Relatório
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="limparFiltros()">
+                            <i class="fas fa-eraser"></i> Limpar Filtros
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Loading -->
+            <div id="loading" class="text-center mt-4" style="display: none;">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Carregando...</span>
+                </div>
+                <p>Gerando relatório...</p>
+            </div>
+
+            <!-- Área de Resultados -->
+            <div id="areaResultados" class="mt-4" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Resultados: <span id="totalRegistros">0</span> viagens | Valor Total: <span id="valorTotal">R$ 0,00</span></h5>
+                    <div>
+                        <button type="button" class="btn btn-success" onclick="exportarExcel()">
+                            <i class="fas fa-file-excel"></i> Exportar Excel
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="exportarPDF()">
+                            <i class="fas fa-file-pdf"></i> Exportar PDF
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Data</th>
+                                <th>Empresa</th>
+                                <th>Planta</th>
+                                <th>Bloco</th>
+                                <th>Tipo Linha</th>
+                                <th>Tipo Corrida</th>
+                                <th>Status</th>
+                                <th>Motorista</th>
+                                <th>Placa</th>
+                                <th>Colaboradores</th>
+                                <th>Passageiros</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabela">
+                            <!-- Dados serão inseridos aqui via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+let dadosRelatorio = [];
+
+// Definir datas padrão
+$(document).ready(function() {
+    const hoje = new Date();
+    const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    
+    $('#data_inicio').val(primeiroDia.toISOString().split('T')[0]);
+    $('#data_fim').val(hoje.toISOString().split('T')[0]);
+});
+
+// Submeter formulário
+$('#formFiltros').on('submit', function(e) {
+    e.preventDefault();
+    
+    $('#loading').show();
+    $('#areaResultados').hide();
+    
+    $.ajax({
+        url: '{{ url_for("relatorios.dados_conferencia_viagens") }}',
+        type: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+            $('#loading').hide();
+            
+            if (response.success) {
+                dadosRelatorio = response.dados;
+                exibirResultados(response.dados, response.total, response.valor_total);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: response.message || 'Erro ao gerar relatório'
+                });
+            }
+        },
+        error: function(xhr) {
+            $('#loading').hide();
+            let errorMsg = 'Erro ao gerar relatório. Tente novamente.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMsg = xhr.responseJSON.message;
+            }
+            console.error('Erro:', xhr);
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: errorMsg
+            });
+        }
+    });
+});
+
+// Função para obter badge colorido baseado no status
+function getStatusBadge(status) {
+    if (!status || status === 'N/A') {
+        return '<span class="badge badge-secondary">N/A</span>';
+    }
+    
+    let badgeClass = 'badge-secondary';
+    
+    // Mapear status para cores
+    if (status === 'Pendente') {
+        badgeClass = 'badge-warning'; // Amarelo com texto escuro
+    } else if (status === 'Em andamento') {
+        badgeClass = 'badge-primary'; // Azul escuro com texto branco
+    } else if (status === 'Finalizada') {
+        badgeClass = 'badge-success'; // Verde com texto branco
+    } else if (status === 'Cancelada') {
+        badgeClass = 'badge-danger'; // Vermelho com texto branco
+    }
+    
+    return `<span class="badge ${badgeClass}">${status}</span>`;
+}
+
+// Exibir resultados na tabela
+function exibirResultados(dados, total, valorTotal) {
+    const tbody = $('#corpoTabela');
+    tbody.empty();
+    
+    if (dados.length === 0) {
+        tbody.append('<tr><td colspan="13" class="text-center">Nenhuma viagem encontrada</td></tr>');
+        $('#areaResultados').show();
+        return;
+    }
+    
+    dados.forEach(function(item) {
+        // Formatar colaboradores com quebra de linha
+        let colaboradoresFormatados = item.colaboradores;
+        if (colaboradoresFormatados && colaboradoresFormatados.includes(',')) {
+            colaboradoresFormatados = colaboradoresFormatados.split(',').map(c => c.trim()).join('<br>');
+        }
+        
+        const tr = $('<tr>');
+        tr.append(`<td>${item.id}</td>`);
+        tr.append(`<td>${item.data_inicio}</td>`);
+        tr.append(`<td>${item.empresa}</td>`);
+        tr.append(`<td>${item.planta}</td>`);
+        tr.append(`<td>${item.bloco}</td>`);
+        tr.append(`<td>${item.tipo_linha}</td>`);
+        tr.append(`<td>${item.tipo_corrida}</td>`);
+        tr.append(`<td>${getStatusBadge(item.status)}</td>`);
+        tr.append(`<td>${item.motorista}</td>`);
+        tr.append(`<td>${item.placa}</td>`);
+        tr.append(`<td>${colaboradoresFormatados}</td>`);
+        tr.append(`<td>${item.qtd_passageiros}</td>`);
+        tr.append(`<td>R$ ${item.valor.toFixed(2)}</td>`);
+        tbody.append(tr);
+    });
+    
+    $('#totalRegistros').text(total);
+    $('#valorTotal').text(`R$ ${valorTotal.toFixed(2)}`);
+    $('#areaResultados').show();
+}
+
+// Limpar filtros
+function limparFiltros() {
+    $('#formFiltros')[0].reset();
+    $('#areaResultados').hide();
+    
+    // Redefinir datas padrão
+    const hoje = new Date();
+    const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    $('#data_inicio').val(primeiroDia.toISOString().split('T')[0]);
+    $('#data_fim').val(hoje.toISOString().split('T')[0]);
+}
+
+// Exportar para Excel
+function exportarExcel() {
+    if (dadosRelatorio.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atenção',
+            text: 'Não há dados para exportar'
+        });
+        return;
+    }
+    
+    const form = $('<form>', {
+        method: 'POST',
+        action: '{{ url_for("relatorios.exportar_excel", tipo="viagens") }}'
+    });
+    
+    form.append($('<input>', {
+        type: 'hidden',
+        name: 'dados',
+        value: JSON.stringify(dadosRelatorio)
+    }));
+    
+    $('body').append(form);
+    form.submit();
+    form.remove();
+}
+
+// Exportar para PDF
+function exportarPDF() {
+    if (dadosRelatorio.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Atenção',
+            text: 'Não há dados para exportar'
+        });
+        return;
+    }
+    
+    const form = $('<form>', {
+        method: 'POST',
+        action: '{{ url_for("relatorios.exportar_pdf", tipo="viagens") }}'
+    });
+    
+    form.append($('<input>', {
+        type: 'hidden',
+        name: 'dados',
+        value: JSON.stringify(dadosRelatorio)
+    }));
+    
+    $('body').append(form);
+    form.submit();
+    form.remove();
+}
+</script>
+{% endblock %}

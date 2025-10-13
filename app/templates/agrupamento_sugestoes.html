@@ -1,0 +1,380 @@
+{% extends "base.html" %}
+
+{% block title %}Sugestões de Agrupamento{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">
+            <i class="bi bi-lightbulb"></i> Sugestões de Agrupamento
+        </h1>
+        <a href="{{ url_for('admin.agrupamento') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="row mb-4" id="estatisticas-container">
+        <div class="col-md-3">
+            <div class="card text-center border-primary">
+                <div class="card-body">
+                    <h3 class="text-primary mb-0" id="stat-total-solicitacoes">{{ estatisticas.total_solicitacoes }}</h3>
+                    <p class="text-muted mb-0">Solicitações</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-success">
+                <div class="card-body">
+                    <h3 class="text-success mb-0" id="stat-total-grupos">{{ estatisticas.total_grupos }}</h3>
+                    <p class="text-muted mb-0">Veículos Sugeridos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-info">
+                <div class="card-body">
+                    <h3 class="text-info mb-0" id="stat-media-passageiros">{{ "%.1f"|format(estatisticas.media_passageiros) }}</h3>
+                    <p class="text-muted mb-0">Média de Passageiros</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-warning">
+                <div class="card-body">
+                    <h3 class="text-warning mb-0" id="stat-taxa-ocupacao">{{ "%.0f"|format(estatisticas.taxa_ocupacao) }}%</h3>
+                    <p class="text-muted mb-0">Taxa de Ocupação</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerta informativo -->
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        <strong>Edição de Grupos:</strong> Você pode mover colaboradores entre veículos usando os botões abaixo. 
+        As estatísticas serão atualizadas automaticamente.
+    </div>
+
+    <!-- Veículos Sugeridos -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Veículos Sugeridos para {{ data_filtro }}</h5>
+        </div>
+        <div class="card-body">
+            {% if grupos %}
+                <div class="row" id="grupos-container">
+                    {% for grupo in grupos %}
+                    <div class="col-md-6 mb-4 veiculo-card" data-veiculo-id="{{ loop.index0 }}">
+                        <div class="card border-primary">
+                            <div class="card-header bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0">
+                                        <i class="bi bi-people-fill"></i> Veículo {{ loop.index }}
+                                        <span class="badge bg-primary veiculo-count">{{ grupo|length }} passageiros</span>
+                                    </h6>
+                                    <div>
+                                        <input type="checkbox" class="form-check-input veiculo-checkbox" 
+                                               data-veiculo-index="{{ loop.index0 }}" checked>
+                                        <label class="form-check-label ms-1">Incluir</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm table-hover mb-0 veiculo-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Colaborador</th>
+                                            <th>Bloco</th>
+                                            <th>Tipo</th>
+                                            <th>Horário</th>
+                                            <th>Ações</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for solicitacao in grupo %}
+                                        <tr data-solicitacao-id="{{ solicitacao.id }}">
+                                            <td><strong>#{{ solicitacao.id }}</strong></td>
+                                            <td>{{ solicitacao.colaborador.nome }}</td>
+                                            <td>
+                                                <span class="badge bg-info">
+                                                    {{ solicitacao.colaborador.bloco.codigo_bloco if solicitacao.colaborador.bloco else 'N/A' }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-warning text-dark">{{ solicitacao.tipo_corrida }}</span>
+                                            </td>
+                                            <td>
+                                                {% set tipo_lower = solicitacao.tipo_corrida|lower %}
+                                                {% if tipo_lower == 'entrada' %}
+                                                    {{ solicitacao.horario_entrada.strftime('%H:%M') if solicitacao.horario_entrada else 'N/A' }}
+                                                {% else %}
+                                                    {{ solicitacao.horario_saida.strftime('%H:%M') if solicitacao.horario_saida else 'N/A' }}
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-primary btn-mover" 
+                                                        data-solicitacao-id="{{ solicitacao.id }}"
+                                                        data-veiculo-atual="{{ loop.index0 }}"
+                                                        title="Mover para outro grupo">
+                                                    <i class="bi bi-arrow-left-right"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Nenhum veículo foi gerado. Tente ajustar os parâmetros de agrupamento.
+                </div>
+            {% endif %}
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <span id="grupos-selecionados-count">{{ grupos|length }}</span> veículos selecionados
+                </div>
+                <div>
+                    <a href="{{ url_for('admin.agrupamento') }}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </a>
+                    <button type="button" class="btn btn-success" id="btn-confirmar-agrupamento">
+                        <i class="bi bi-check-circle"></i> Confirmar Agrupamento
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Mover Colaborador -->
+<div class="modal fade" id="modalMover" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mover Colaborador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Selecione o veículo de destino:</p>
+                <select class="form-select" id="select-veiculo-destino">
+                    <!-- Opções preenchidas dinamicamente -->
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn-confirmar-mover">Mover</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+// Dados dos veículos em JSON (agora com dados completos)
+let gruposData = {{ grupos_json|safe }};
+let modalMover;
+let solicitacaoParaMover = null;
+let grupoAtual = null;
+
+// Inicializar modal
+document.addEventListener('DOMContentLoaded', function() {
+    modalMover = new bootstrap.Modal(document.getElementById('modalMover'));
+    
+    // Event listeners para botões de mover
+    document.querySelectorAll('.btn-mover').forEach(btn => {
+        btn.addEventListener('click', function() {
+            solicitacaoParaMover = parseInt(this.dataset.solicitacaoId);
+            grupoAtual = parseInt(this.dataset.veiculoAtual);
+            mostrarModalMover();
+        });
+    });
+    
+    // Event listener para confirmar movimentação
+    document.getElementById('btn-confirmar-mover').addEventListener('click', function() {
+        const grupoDestino = parseInt(document.getElementById('select-veiculo-destino').value);
+        moverColaborador(solicitacaoParaMover, grupoAtual, grupoDestino);
+        modalMover.hide();
+    });
+});
+
+// Mostrar modal com opções de grupos
+function mostrarModalMover() {
+    const select = document.getElementById('select-veiculo-destino');
+    select.innerHTML = '';
+    
+    gruposData.forEach((grupo, index) => {
+        if (index !== grupoAtual && grupo.length < 3) {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `Veículo ${index + 1} (${grupo.length} passageiros)`;
+            select.appendChild(option);
+        }
+    });
+    
+    if (select.options.length === 0) {
+        alert('Não há veículos disponíveis para mover (todos estão cheios ou é o único grupo)');
+        return;
+    }
+    
+    modalMover.show();
+}
+
+// Mover colaborador entre grupos
+function moverColaborador(solicitacaoId, grupoOrigemIndex, grupoDestinoIndex) {
+    // Garantir que solicitacaoId é número
+    solicitacaoId = parseInt(solicitacaoId);
+    
+    // Encontrar a solicitação no veículo de origem
+    const solicitacaoIndex = gruposData[grupoOrigemIndex].findIndex(s => parseInt(s.id) === solicitacaoId);
+    
+    if (solicitacaoIndex === -1) {
+        alert('Erro: Solicitação não encontrada');
+        return;
+    }
+    
+    // Remover do veículo de origem
+    const [solicitacao] = gruposData[grupoOrigemIndex].splice(solicitacaoIndex, 1);
+    
+    // Adicionar ao veículo de destino
+    gruposData[grupoDestinoIndex].push(solicitacao);
+    
+    // Atualizar interface
+    atualizarInterface();
+}
+
+// Atualizar interface após mudanças
+function atualizarInterface() {
+    // Atualizar contadores de passageiros e linhas da tabela
+    document.querySelectorAll('.veiculo-card').forEach((card, index) => {
+        const count = gruposData[index].length;
+        card.querySelector('.veiculo-count').textContent = `${count} passageiros`;
+        
+        // Atualizar linhas da tabela
+        const tbody = card.querySelector('tbody');
+        tbody.innerHTML = '';
+        
+        gruposData[index].forEach(solicitacao => {
+            // Criar nova linha com os dados completos
+            const tr = document.createElement('tr');
+            tr.dataset.solicitacaoId = solicitacao.id;
+            
+            tr.innerHTML = `
+                <td><strong>#${solicitacao.id}</strong></td>
+                <td>${solicitacao.colaborador_nome}</td>
+                <td><span class="badge bg-info">${solicitacao.bloco_codigo}</span></td>
+                <td><span class="badge bg-warning text-dark">${solicitacao.tipo_corrida}</span></td>
+                <td>${solicitacao.horario}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary btn-mover" 
+                            data-solicitacao-id="${solicitacao.id}"
+                            data-veiculo-atual="${index}"
+                            title="Mover para outro grupo">
+                        <i class="bi bi-arrow-left-right"></i>
+                    </button>
+                </td>
+            `;
+            
+            // Adicionar event listener ao botão de mover
+            const btnMover = tr.querySelector('.btn-mover');
+            btnMover.addEventListener('click', function() {
+                solicitacaoParaMover = parseInt(this.dataset.solicitacaoId);
+                grupoAtual = parseInt(this.dataset.veiculoAtual);
+                mostrarModalMover();
+            });
+            
+            tbody.appendChild(tr);
+        });
+    });
+    
+    // Atualizar estatísticas
+    atualizarEstatisticas();
+}
+
+// Atualizar estatísticas
+function atualizarEstatisticas() {
+    const totalVeículos = gruposData.filter(g => g.length > 0).length;
+    const totalSolicitacoes = gruposData.reduce((sum, g) => sum + g.length, 0);
+    const mediaPassageiros = totalVeículos > 0 ? (totalSolicitacoes / totalVeículos).toFixed(1) : 0;
+    const taxaOcupacao = totalVeículos > 0 ? ((totalSolicitacoes / (totalVeículos * 3)) * 100).toFixed(0) : 0;
+    
+    document.getElementById('stat-total-grupos').textContent = totalVeículos;
+    document.getElementById('stat-media-passageiros').textContent = mediaPassageiros;
+    document.getElementById('stat-taxa-ocupacao').textContent = taxaOcupacao + '%';
+}
+
+// Atualizar contador de veículos selecionados
+function atualizarContador() {
+    const checkboxes = document.querySelectorAll('.veiculo-checkbox:checked');
+    document.getElementById('grupos-selecionados-count').textContent = checkboxes.length;
+}
+
+// Event listeners para checkboxes
+document.querySelectorAll('.veiculo-checkbox').forEach(checkbox => {
+    checkbox.addEventListener('change', atualizarContador);
+});
+
+// Confirmar agrupamento
+document.getElementById('btn-confirmar-agrupamento').addEventListener('click', function() {
+    const checkboxes = document.querySelectorAll('.veiculo-checkbox:checked');
+    
+    if (checkboxes.length === 0) {
+        alert('Selecione pelo menos um veículo para confirmar');
+        return;
+    }
+    
+    // Coleta os veículos selecionados (apenas os IDs das solicitações)
+    const gruposSelecionados = [];
+    checkboxes.forEach(checkbox => {
+        const index = parseInt(checkbox.dataset.veiculoIndex);
+        if (gruposData[index] && gruposData[index].length > 0) {
+            // Envia apenas os IDs para o backend
+            gruposSelecionados.push(gruposData[index].map(s => s.id));
+        }
+    });
+    
+    if (gruposSelecionados.length === 0) {
+        alert('Nenhum veículo válido para confirmar');
+        return;
+    }
+    
+    if (!confirm(`Confirma a criação de ${gruposSelecionados.length} viagem(ns)?`)) {
+        return;
+    }
+    
+    // Envia para o backend
+    fetch('{{ url_for("admin.finalizar_agrupamento") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ grupos: gruposSelecionados })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            window.location.href = '{{ url_for("admin.agrupamento") }}';
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao finalizar agrupamento');
+    });
+});
+</script>
+{% endblock %}
+

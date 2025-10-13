@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Associar Bairros ao Bloco{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h3>Associar Bairros ao Bloco: <span class="text-primary">{{ bloco.codigo_bloco }}</span></h3>
+            <p class="mb-0 text-muted">Marque os bairros que deseja mover e clique na ação correspondente abaixo.</p>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admin.associar_bairros_bloco', bloco_id=bloco.id) }}">
+                <div class="row">
+                    <!-- Painel da Esquerda: Bairros Disponíveis -->
+                    <div class="col-md-6">
+                        <h5>Bairros Disponíveis (sem bloco)</h5>
+                        <div class="card p-3" style="height: 400px; overflow-y: auto;">
+                            {% for bairro in bairros_disponiveis %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="bairros_a_adicionar" value="{{ bairro.id }}" id="add_{{ bairro.id }}">
+                                <label class="form-check-label" for="add_{{ bairro.id }}">{{ bairro.nome }} - {{ bairro.cidade }}</label>
+                            </div>
+                            {% else %}
+                            <p class="text-muted">Nenhum bairro disponível para associação.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <!-- Painel da Direita: Bairros Já Associados -->
+                    <div class="col-md-6">
+                        <h5>Bairros neste Bloco</h5>
+                        <div class="card p-3" style="height: 400px; overflow-y: auto;">
+                            {% for bairro in bairros_no_bloco %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="bairros_a_remover" value="{{ bairro.id }}" id="rem_{{ bairro.id }}">
+                                <label class="form-check-label" for="rem_{{ bairro.id }}">{{ bairro.nome }} - {{ bairro.cidade }}</label>
+                            </div>
+                            {% else %}
+                            <p class="text-muted">Nenhum bairro associado a este bloco.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <!-- Botões de Ação Melhorados -->
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-arrow-right-square"></i> Adicionar ao Bloco
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-arrow-left-square"></i> Remover do Bloco
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-3 d-flex justify-content-end">
+                     <a href="{{ url_for('admin.admin_dashboard', aba='blocos') }}" class="btn btn-secondary">Concluir e Voltar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

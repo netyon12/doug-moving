@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}Visualizar Solicitação{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h3><i class="bi bi-eye"></i> Visualizar Solicitação #{{ solicitacao.id }}</h3>
+        </div>
+        <div class="card-body">
+            
+            <!-- DADOS GERAIS -->
+            <div class="row p-3 mb-4 bg-light rounded border">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Colaborador</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.colaborador.nome }}" readonly>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Matrícula</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.colaborador.matricula }}" readonly>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Bloco</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.colaborador.bloco.codigo_bloco }}" readonly>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Empresa</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.empresa.nome }}" readonly>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Planta</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.planta.nome }}" readonly>
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Tipo de Linha</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.tipo_linha }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Tipo de Corrida</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.tipo_corrida|replace('_', ' ')|title }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Status</label>
+                    <div class="mt-2">
+                        {% if solicitacao.status == 'Pendente' %}
+                            <span class="badge bg-warning fs-6">{{ solicitacao.status }}</span>
+                        {% elif solicitacao.status == 'Agendada' %}
+                            <span class="badge bg-info fs-6">{{ solicitacao.status }}</span>
+                        {% elif solicitacao.status == 'Finalizada' %}
+                            <span class="badge bg-success fs-6">{{ solicitacao.status }}</span>
+                        {% elif solicitacao.status == 'Cancelada' %}
+                            <span class="badge bg-danger fs-6">{{ solicitacao.status }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary fs-6">{{ solicitacao.status }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- HORÁRIOS -->
+            <div class="row p-3 mb-4 bg-primary bg-opacity-10 rounded border border-primary">
+                <h5 class="mb-3"><i class="bi bi-clock"></i> Horários</h5>
+                
+                {% if solicitacao.tipo_corrida in ['entrada', 'entrada_saida'] %}
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Horário de Entrada</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.horario_entrada.strftime('%d/%m/%Y %H:%M') if solicitacao.horario_entrada else '-' }}" readonly>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Turno Entrada</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.turno_entrada.nome if solicitacao.turno_entrada else 'Não definido' }}" readonly>
+                </div>
+                {% endif %}
+
+                {% if solicitacao.tipo_corrida in ['saida', 'entrada_saida'] %}
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Horário de Saída</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.horario_saida.strftime('%d/%m/%Y %H:%M') if solicitacao.horario_saida else '-' }}" readonly>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Turno Saída</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.turno_saida.nome if solicitacao.turno_saida else 'Não definido' }}" readonly>
+                </div>
+                {% endif %}
+
+                {% if solicitacao.tipo_corrida == 'desligamento' %}
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Horário de Desligamento</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.horario_desligamento.strftime('%d/%m/%Y %H:%M') if solicitacao.horario_desligamento else '-' }}" readonly>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">Turno Desligamento</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.turno_desligamento.nome if solicitacao.turno_desligamento else 'Não definido' }}" readonly>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- VALORES -->
+            <div class="row p-3 mb-4 bg-success bg-opacity-10 rounded border border-success">
+                <h5 class="mb-3"><i class="bi bi-cash"></i> Valores</h5>
+                <div class="col-md-12">
+                    <label class="form-label fw-bold">Valor da Corrida</label>
+                    <input type="text" class="form-control" value="{{ 'R$ %.2f'|format(solicitacao.valor) if solicitacao.valor else '-' }}" readonly>
+                </div>
+            </div>
+
+            <!-- VIAGEM (se agrupada) -->
+            {% if solicitacao.viagem_id %}
+            <div class="row p-3 mb-4 bg-warning bg-opacity-10 rounded border border-warning">
+                <h5 class="mb-3"><i class="bi bi-car-front"></i> Viagem</h5>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">ID da Viagem</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.viagem_id }}" readonly>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Motorista</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.viagem.motorista.nome if solicitacao.viagem and solicitacao.viagem.motorista else '-' }}" readonly>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Veículo</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.viagem.veiculo if solicitacao.viagem else '-' }}" readonly>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Placa</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.viagem.placa if solicitacao.viagem else '-' }}" readonly>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- INFORMAÇÕES ADICIONAIS -->
+            <div class="row p-3 mb-4 bg-light rounded border">
+                <h5 class="mb-3"><i class="bi bi-info-circle"></i> Informações Adicionais</h5>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Supervisor</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.supervisor.nome }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Data de Criação</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.data_criacao.strftime('%d/%m/%Y %H:%M') if solicitacao.data_criacao else '-' }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Última Atualização</label>
+                    <input type="text" class="form-control" value="{{ solicitacao.data_atualizacao.strftime('%d/%m/%Y %H:%M') if solicitacao.data_atualizacao else '-' }}" readonly>
+                </div>
+            </div>
+
+            <hr>
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('admin.solicitacoes') }}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+                
+                {% if solicitacao.status == 'Pendente' and current_user.role in ['supervisor', 'admin'] %}
+                <a href="{{ url_for('admin.editar_solicitacao', id=solicitacao.id) }}" class="btn btn-warning">
+                    <i class="bi bi-pencil"></i> Editar
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

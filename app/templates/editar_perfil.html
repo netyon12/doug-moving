@@ -1,42 +1,86 @@
-<!-- templates/editar_perfil.html -->
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-    <h3>Editar Perfil</h3>
-    <p>Olá, <strong>{{ current_user.email }}</strong>. Aqui você pode alterar seus dados de acesso.</p>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h3 class="mb-0">Editar Perfil</h3>
+                </div>
+                <div class="card-body">
+                    
+                    <!-- ATENÇÃO: enctype é obrigatório para upload de arquivos -->
+                    <form method="POST" action="{{ url_for('auth.editar_perfil') }}" enctype="multipart/form-data">
+                        
+                        <!-- ================================== -->
+                        <!-- SEÇÃO DA FOTO DE PERFIL -->
+                        <!-- ================================== -->
+                        <div class="text-center mb-4">
+                            <img src="{{ url_for('static', filename='profile_pics/' + current_user.foto_perfil) }}" 
+                                 alt="Foto de Perfil" 
+                                 class="img-thumbnail rounded-circle" 
+                                 style="width: 150px; height: 150px; object-fit: cover;">
+                        </div>
+                        <div class="mb-4">
+                            <label for="foto_perfil" class="form-label">Alterar Foto de Perfil</label>
+                            <input class="form-control" type="file" id="foto_perfil" name="foto_perfil" accept="image/png, image/jpeg, image/gif">
+                        </div>
 
-    <!-- Formulário para Alterar E-mail de Login -->
-    <form method="POST" action="{{ url_for('routes.editar_perfil') }}" class="mb-5 border p-4 rounded">
-        <h4>Alterar E-mail</h4>
-        <div class="mb-3">
-            <label for="email" class="form-label">Novo E-mail</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="password_check_email" class="form-label">Confirme sua Senha Atual</label>
-            <input type="password" class="form-control" id="password_check_email" name="password_check" required>
-            <small class="form-text text-muted">Para sua segurança, precisamos que confirme sua identidade.</small>
-        </div>
-        <button type="submit" name="action" value="update_profile" class="btn btn-primary">Salvar Novo E-mail</button>
-    </form>
+                        <hr>
 
-    <!-- Formulário para Alterar Senha -->
-    <form method="POST" action="{{ url_for('routes.editar_perfil') }}" class="mt-4 border p-4 rounded">
-        <h4>Alterar Senha</h4>
-        <div class="mb-3">
-            <label for="senha_atual" class="form-label">Senha Atual</label>
-            <input type="password" class="form-control" id="senha_atual" name="senha_atual" placeholder="Deixe em branco se não quiser alterar">
+                        <!-- ================================== -->
+                        <!-- SEÇÃO DE DADOS PESSOAIS -->
+                        <!-- ================================== -->
+                        <h5>Dados Pessoais</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nome" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="nome" name="nome" value="{{ current_user.nome }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="telefone" class="form-label">Telefone</label>
+                                <input type="text" class="form-control" id="telefone" name="telefone" value="{{ current_user.telefone }}">
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label for="email" class="form-label">E-mail (Login)</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
+                        </div>
+
+                        <hr>
+
+                        <!-- ================================== -->
+                        <!-- SEÇÃO PARA ALTERAR SENHA -->
+                        <!-- ================================== -->
+                        <h5>Alterar Senha</h5>
+                        <p class="text-muted small">Deixe os campos abaixo em branco se não quiser alterar sua senha.</p>
+                        <div class="mb-3">
+                            <label for="senha_atual" class="form-label">Senha Atual</label>
+                            <input type="password" class="form-control" id="senha_atual" name="senha_atual" placeholder="Necessária para alterar a senha">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nova_senha" class="form-label">Nova Senha</label>
+                                <input type="password" class="form-control" id="nova_senha" name="nova_senha">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="confirmar_senha" class="form-label">Confirmar Nova Senha</label>
+                                <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha">
+                            </div>
+                        </div>
+
+                        <!-- ================================== -->
+                        <!-- BOTÕES DE AÇÃO -->
+                        <!-- ================================== -->
+                        <div class="d-flex justify-content-end mt-4">
+                            <a href="{{ url_for('home') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="nova_senha" class="form-label">Nova Senha</label>
-            <input type="password" class="form-control" id="nova_senha" name="nova_senha">
-        </div>
-        <div class="mb-3">
-            <label for="confirmar_senha" class="form-label">Confirmar Nova Senha</label>
-            <input type="password" class="form-control" id="confirmar_senha" name="confirmar_senha">
-        </div>
-        <button type="submit" name="action" value="update_password" class="btn btn-secondary">Alterar Senha</button>
-    </form>
+    </div>
 </div>
 {% endblock %}

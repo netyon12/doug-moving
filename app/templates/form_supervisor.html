@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if supervisor else 'Cadastrar' }} Supervisor{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h3>{{ 'Editar Supervisor' if supervisor else 'Cadastrar Novo Supervisor' }}</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.editar_supervisor', supervisor_id=supervisor.id) if supervisor else url_for('admin.cadastrar_supervisor') }}">
+                        
+                        <h5 class="mb-3 border-bottom pb-2">Dados de Acesso</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">E-mail (Login)*</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ supervisor.user.email if supervisor else '' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="senha" class="form-label">Senha</label>
+                                <input type="password" class="form-control" id="senha" name="senha" {% if not supervisor %}required{% endif %} placeholder="{{ '••••••••' if supervisor else '' }}">
+                                <small class="form-text text-muted">{% if supervisor %}Preencha apenas para alterar.{% else %}Senha de acesso inicial.{% endif %}</small>
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 mb-3 border-bottom pb-2">Informações Pessoais e de Trabalho</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nome" class="form-label">Nome Completo*</label>
+                                <input type="text" class="form-control" id="nome" name="nome" value="{{ supervisor.nome if supervisor else '' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="matricula" class="form-label">Matrícula*</label>
+                                <input type="text" class="form-control" id="matricula" name="matricula" value="{{ supervisor.matricula if supervisor else '' }}" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="empresa_id" class="form-label">Empresa*</label>
+                                <select class="form-select" id="empresa_id" name="empresa_id" required 
+                                        {% if current_user.role == 'gerente' %}disabled{% endif %}>
+                                    
+                                    {% if current_user.role == 'admin' %}
+                                        <option value="" disabled selected>Selecione...</option>
+                                    {% endif %}
+
+                                    {% for empresa in empresas %}
+                                        <option value="{{ empresa.id }}" selected>{{ empresa.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                                
+                                <!-- Campo oculto para enviar o ID da empresa quando o select está desabilitado -->
+                                {% if current_user.role == 'gerente' %}
+                                    <input type="hidden" name="empresa_id" value="{{ current_user.gerente.empresa_id }}">
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="planta_id" class="form-label">Planta*</label>
+                                <!-- (A lógica para a planta será similar, vamos focar na empresa primeiro) -->
+                                <select class="form-select" id="planta_id" name="planta_id" required>
+                                    <option value="" disabled selected>Selecione...</option>
+                                    {% for planta in plantas %}
+                                        <option value="{{ planta.id }}">{{ planta.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                                <label for="gerente_id" class="form-label">Gerente Responsável*</label>
+                                <select class="form-select" id="gerente_id" name="gerente_id" required
+                                        {% if current_user.role == 'gerente' %}disabled{% endif %}>
+                                    
+                                    {% if current_user.role == 'admin' %}
+                                        <option value="" disabled selected>Selecione...</option>
+                                    {% endif %}
+
+                                    {% for gerente in gerentes %}
+                                        <option value="{{ gerente.id }}" 
+                                                {% if (supervisor and supervisor.gerente_id == gerente.id) or (current_user.role == 'gerente') %}selected{% endif %}>
+                                            {{ gerente.nome }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                
+                                <!-- Campo oculto para enviar o ID do gerente quando o select está desabilitado -->
+                                {% if current_user.role == 'gerente' %}
+                                    <input type="hidden" name="gerente_id" value="{{ current_user.gerente.id }}">
+                                {% endif %}
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Turnos*</label>
+                                <div class="card p-3" style="max-height: 150px; overflow-y: auto;">
+                                    {% for turno in turnos %}<div class="form-check"><input class="form-check-input" type="checkbox" name="turnos" value="{{ turno.id }}" id="turno_{{ turno.id }}" {% if supervisor and turno in supervisor.turnos %}checked{% endif %}><label class="form-check-label" for="turno_{{ turno.id }}">{{ turno.nome }}</label></div>{% endfor %}
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Centros de Custo*</label>
+                                <div class="card p-3" style="max-height: 150px; overflow-y: auto;">
+                                    {% for cc in centros_custo %}<div class="form-check"><input class="form-check-input" type="checkbox" name="centros_custo" value="{{ cc.id }}" id="cc_{{ cc.id }}" {% if supervisor and cc in supervisor.centros_custo %}checked{% endif %}><label class="form-check-label" for="cc_{{ cc.id }}">{{ cc.nome }}</label></div>{% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h5 class="mt-4 mb-3 border-bottom pb-2">Endereço e Contato</h5>
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="endereco" class="form-label">Endereço</label>
+                                <input type="text" class="form-control" id="endereco" name="endereco" value="{{ supervisor.endereco if supervisor else '' }}">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="nro" class="form-label">Nº</label>
+                                <input type="text" class="form-control" id="nro" name="nro" value="{{ supervisor.nro if supervisor else '' }}">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 mb-3">
+                                <label for="bairro" class="form-label">Bairro</label>
+                                <input type="text" class="form-control" id="bairro" name="bairro" value="{{ supervisor.bairro if supervisor else '' }}">
+                            </div>
+                            <div class="col-md-5 mb-3">
+                                <label for="cidade" class="form-label">Cidade</label>
+                                <input type="text" class="form-control" id="cidade" name="cidade" value="{{ supervisor.cidade if supervisor else '' }}">
+                            </div>
+                            <div class="col-md-2 mb-3">
+                                <label for="uf" class="form-label">UF</label>
+                                <input type="text" class="form-control" id="uf" name="uf" value="{{ supervisor.uf if supervisor else '' }}" maxlength="2">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="telefone" class="form-label">Telefone</label>
+                                <input type="tel" class="form-control" id="telefone" name="telefone" value="{{ supervisor.telefone if supervisor else '' }}">
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('admin.admin_dashboard', aba='supervisores') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Importar Colaboradores{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-upload"></i> Importar Colaboradores</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Instruções -->
+                    <div class="alert alert-info">
+                        <h5><i class="bi bi-info-circle"></i> Instruções</h5>
+                        <p>Prepare um arquivo CSV com as seguintes colunas (separadas por ponto e vírgula):</p>
+                        <p><strong>Formato:</strong> <code>matricula;nome;empresa;planta;email;telefone;status</code></p>
+                        
+                        <p><strong>Exemplo:</strong></p>
+                        <pre class="bg-light p-2 rounded">matricula;nome;empresa;planta;email;telefone;status
+105;João Silva;LIER;VW JIT;joao.silva@email.com;11999999999;Ativo
+106;Maria Santos;LIER;VW JIT;maria.santos@email.com;11988888888;Ativo</pre>
+                        
+                        <p><strong>Observações:</strong></p>
+                        <ul>
+                            <li>A primeira linha deve ser o cabeçalho (será ignorada)</li>
+                            <li>Matrícula e nome são obrigatórios</li>
+                            <li>Empresa e planta devem existir no sistema</li>
+                            <li>Status válidos: Ativo, Inativo, Desligado, Ausente (padrão: Ativo)</li>
+                            <li>Email e telefone são opcionais</li>
+                            <li>Codificação: UTF-8</li>
+                        </ul>
+                    </div>
+
+                    <!-- Formulário de Upload -->
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="csv_file" class="form-label">Selecione o arquivo CSV:</label>
+                            <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin.pagina_importacoes') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Voltar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-upload"></i> Importar Colaboradores
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Empresas e Plantas Cadastradas -->
+                    <div class="mt-4">
+                        <h5>Empresas e Plantas Cadastradas:</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Empresa</th>
+                                        <th>Plantas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for empresa in empresas %}
+                                    <tr>
+                                        <td>{{ empresa.nome }}</td>
+                                        <td>
+                                            {% set plantas_empresa = plantas | selectattr('empresa_id', 'equalto', empresa.id) | list %}
+                                            {% if plantas_empresa %}
+                                                {{ plantas_empresa | map(attribute='nome') | join(', ') }}
+                                            {% else %}
+                                                <em class="text-muted">Nenhuma planta cadastrada</em>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

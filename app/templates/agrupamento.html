@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+{% block title %}Agrupamento de Viagens{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Agrupamento de Viagens</h1>
+    <div>
+        <button type="button" class="btn btn-success shadow-sm" id="btn_agrupar_automatico" 
+                onclick="window.location.href='{{ url_for('admin.gerar_sugestoes_agrupamento') }}?data_filtro={{ filtros.get('data_filtro', data_hoje) }}'">
+            <i class="bi bi-magic"></i> Agrupar Automaticamente
+        </button>
+    </div>
+</div>
+
+<!-- Formulário de Filtro -->
+<form method="GET" action="{{ url_for('admin.agrupamento') }}" class="mb-4 p-3 bg-light rounded border">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+            <label for="data_filtro" class="form-label fw-bold">Data</label>
+            <input type="date" class="form-control" id="data_filtro" name="data_filtro" 
+                   value="{{ filtros.get('data_filtro', data_hoje) }}" required>
+        </div>
+        <div class="col-md-2">
+            <label for="tipo_corrida" class="form-label">Tipo de Corrida</label>
+            <select class="form-select" id="tipo_corrida" name="tipo_corrida">
+                <option value="">Todos</option>
+                <option value="Entrada" {% if filtros.get('tipo_corrida') == 'Entrada' %}selected{% endif %}>Entrada</option>
+                <option value="Saída" {% if filtros.get('tipo_corrida') == 'Saída' %}selected{% endif %}>Saída</option>
+                <option value="Desligamento" {% if filtros.get('tipo_corrida') == 'Desligamento' %}selected{% endif %}>Desligamento</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="bloco_id" class="form-label">Bloco</label>
+            <select class="form-select" id="bloco_id" name="bloco_id">
+                <option value="">Todos</option>
+                {% for bloco in todos_blocos %}
+                <option value="{{ bloco.id }}" {% if filtros.get('bloco_id')|string == bloco.id|string %}selected{% endif %}>
+                    {{ bloco.codigo_bloco }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="status" class="form-label">Status</label>
+            <select class="form-select" id="status" name="status">
+                <option value="Pendente" {% if filtros.get('status', 'Pendente') == 'Pendente' %}selected{% endif %}>Pendente</option>
+                <option value="Agendada" {% if filtros.get('status') == 'Agendada' %}selected{% endif %}>Agendada</option>
+                <option value="Todos" {% if filtros.get('status') == 'Todos' %}selected{% endif %}>Todos</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <a href="{{ url_for('admin.agrupamento') }}" class="btn btn-secondary">Limpar</a>
+        </div>
+    </div>
+</form>
+
+<!-- Informações de Resumo -->
+<div class="row mb-3">
+    <div class="col-md-3">
+        <div class="card text-center border-primary">
+            <div class="card-body">
+                <h5 class="card-title text-primary">{{ total_solicitacoes }}</h5>
+                <p class="card-text">Solicitações</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center border-info">
+            <div class="card-body">
+                <h5 class="card-title text-info">{{ total_blocos_distintos }}</h5>
+                <p class="card-text">Blocos Distintos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center border-warning">
+            <div class="card-body">
+                <h5 class="card-title text-warning">{{ viagens_estimadas }}</h5>
+                <p class="card-text">Viagens Estimadas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center border-success">
+            <div class="card-body">
+                <h5 class="card-title text-success">{{ passageiros_por_viagem }}</h5>
+                <p class="card-text">Passageiros/Viagem</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tabela de Solicitações Pendentes -->
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Solicitações para Agrupamento</h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped align-middle mb-0" id="tabela_solicitacoes">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID Solic.</th>
+                        <th>Supervisor</th>
+                        <th>Colaborador</th>
+                        <th>Bloco</th>
+                        <th>Tipo Corrida</th>
+                        <th>Data/Hora</th>
+                        <th>Status</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for solicitacao in solicitacoes %}
+                    <tr data-solicitacao-id="{{ solicitacao.id }}" 
+                        data-bloco-id="{{ solicitacao.colaborador.bloco_id or '' }}"
+                        data-tipo="{{ solicitacao.tipo_corrida }}">
+                        <td><strong>#{{ solicitacao.id }}</strong></td>
+                        <td>{{ solicitacao.supervisor.nome }}</td>
+                        <td>{{ solicitacao.colaborador.nome }}</td>
+                        <td>
+                            <span class="badge bg-info">
+                                {{ solicitacao.colaborador.bloco.codigo_bloco if solicitacao.colaborador.bloco else 'N/A' }}
+                            </span>
+                        </td>
+                        <td>
+                            {% set tipo_lower = solicitacao.tipo_corrida.lower() if solicitacao.tipo_corrida else '' %}
+                            {% if tipo_lower == 'entrada' %}
+                                <span class="badge" style="background-color: #28a745; color: #fff;">Entrada</span>
+                            {% elif tipo_lower == 'saida' %}
+                                <span class="badge" style="background-color: #ffc107; color: #000;">Saída</span>
+                            {% elif tipo_lower == 'entrada_saida' %}
+                                <span class="badge" style="background-color: #17a2b8; color: #fff;">Entrada e Saída</span>
+                            {% elif tipo_lower == 'desligamento' %}
+                                <span class="badge" style="background-color: #dc3545; color: #fff;">Desligamento</span>
+                            {% else %}
+                                <span class="badge" style="background-color: #6c757d; color: #fff;">{{ solicitacao.tipo_corrida }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if solicitacao.horario_entrada %}
+                                {{ solicitacao.horario_entrada.strftime('%d/%m/%Y %H:%M') }}
+                            {% elif solicitacao.horario_saida %}
+                                {{ solicitacao.horario_saida.strftime('%d/%m/%Y %H:%M') }}
+                            {% elif solicitacao.horario_desligamento %}
+                                {{ solicitacao.horario_desligamento.strftime('%d/%m/%Y %H:%M') }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if solicitacao.status == 'Pendente' %}
+                                <span class="badge" style="background-color: #dc3545; color: #fff;">Pendente</span>
+                            {% elif solicitacao.status == 'Agendada' %}
+                                <span class="badge" style="background-color: #17a2b8; color: #fff;">Agendada</span>
+                            {% else %}
+                                <span class="badge bg-dark">{{ solicitacao.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-primary" 
+                                    onclick="visualizarDetalhes({{ solicitacao.id }})"
+                                    title="Ver detalhes">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-4">
+                            Nenhuma solicitação encontrada para os filtros selecionados.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Detalhes da Solicitação -->
+<div class="modal fade" id="modalDetalhes" tabindex="-1" aria-labelledby="modalDetalhesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDetalhesLabel">
+                    <i class="bi bi-info-circle"></i> Detalhes da Solicitação
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalDetalhesBody">
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+// Função para visualizar detalhes da solicitação
+function visualizarDetalhes(solicitacaoId) {
+    // Abre o modal
+    const modal = new bootstrap.Modal(document.getElementById('modalDetalhes'));
+    modal.show();
+    
+    // Carrega os detalhes via AJAX
+    fetch(`/admin/solicitacao/${solicitacaoId}/detalhes`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const sol = data.solicitacao;
+                
+                // Determina a cor do tipo de corrida
+                let tipoCor = '#6c757d';
+                let tipoTexto = sol.tipo_corrida;
+                const tipoLower = sol.tipo_corrida.toLowerCase();
+                
+                if (tipoLower === 'entrada') {
+                    tipoCor = '#28a745';
+                    tipoTexto = 'Entrada';
+                } else if (tipoLower === 'saida') {
+                    tipoCor = '#ffc107';
+                    tipoTexto = 'Saída';
+                } else if (tipoLower === 'entrada_saida') {
+                    tipoCor = '#17a2b8';
+                    tipoTexto = 'Entrada e Saída';
+                } else if (tipoLower === 'desligamento') {
+                    tipoCor = '#dc3545';
+                    tipoTexto = 'Desligamento';
+                }
+                
+                // Determina a cor do status
+                let statusCor = '#6c757d';
+                if (sol.status === 'Pendente') statusCor = '#6c757d';
+                else if (sol.status === 'Agrupada') statusCor = '#a8dadc';
+                else if (sol.status === 'Agendada') statusCor = '#457b9d';
+                else if (sol.status === 'Em Andamento') statusCor = '#f4a261';
+                else if (sol.status === 'Finalizada') statusCor = '#2a9d8f';
+                else if (sol.status === 'Cancelada') statusCor = '#e76f51';
+                
+                // Monta o HTML dos detalhes
+                const html = `
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <i class="bi bi-person"></i> Informações do Colaborador
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Nome:</strong> ${sol.colaborador_nome}</p>
+                                    <p><strong>Bloco:</strong> <span class="badge bg-info">${sol.bloco_codigo}</span></p>
+                                    <p><strong>Planta:</strong> ${sol.planta || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    <i class="bi bi-calendar-check"></i> Informações da Solicitação
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>ID:</strong> #${sol.id}</p>
+                                    <p><strong>Status:</strong> <span class="badge" style="background-color: ${statusCor}; color: #fff;">${sol.status}</span></p>
+                                    <p><strong>Tipo:</strong> <span class="badge" style="background-color: ${tipoCor}; color: ${tipoLower === 'saida' ? '#000' : '#fff'};">${tipoTexto}</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <i class="bi bi-clock"></i> Horários
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <p><strong>Entrada:</strong><br>${sol.horario_entrada || 'N/A'}</p>
+                                            ${sol.turno_entrada ? `<p><small class="text-muted">Turno: ${sol.turno_entrada}</small></p>` : ''}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p><strong>Saída:</strong><br>${sol.horario_saida || 'N/A'}</p>
+                                            ${sol.turno_saida ? `<p><small class="text-muted">Turno: ${sol.turno_saida}</small></p>` : ''}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <p><strong>Desligamento:</strong><br>${sol.horario_desligamento || 'N/A'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-warning">
+                                    <i class="bi bi-info-circle"></i> Informações Adicionais
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Supervisor:</strong> ${sol.supervisor_nome}</p>
+                                    <p><strong>Valor:</strong> R$ ${sol.valor}</p>
+                                    <p><strong>Valor Repasse:</strong> R$ ${sol.valor_repasse}</p>
+                                    ${sol.viagem_id ? `<p><strong>ID Viagem:</strong> #${sol.viagem_id}</p>` : ''}
+                                    ${sol.observacoes ? `<p><strong>Observações:</strong><br>${sol.observacoes}</p>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('modalDetalhesBody').innerHTML = html;
+            } else {
+                document.getElementById('modalDetalhesBody').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i> ${data.message || 'Erro ao carregar detalhes'}
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            document.getElementById('modalDetalhesBody').innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> Erro ao carregar detalhes da solicitação
+                </div>
+            `;
+        });
+}
+</script>
+{% endblock %}

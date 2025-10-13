@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Central de Importações{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0"><i class="bi bi-cloud-upload"></i> Central de Importações</h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Selecione o tipo de dado que você deseja importar via arquivo CSV.</p>
+                    
+                    <div class="row g-3">
+                        <!-- Card Colaboradores -->
+                        <div class="col-md-4">
+                            <div class="card h-100 border-primary">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-people-fill text-primary" style="font-size: 3rem;"></i>
+                                    <h5 class="card-title mt-3">Colaboradores</h5>
+                                    <p class="card-text">Importe múltiplos colaboradores de uma só vez.</p>
+                                    <a href="{{ url_for('admin.importar_colaboradores') }}" class="btn btn-primary">
+                                        <i class="bi bi-upload"></i> Importar
+                                    </a>
+                                </div>
+                                <div class="card-footer text-muted">
+                                    <small>Formato: matricula;nome;empresa;planta;email;telefone;status</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Supervisores -->
+                        <div class="col-md-4">
+                            <div class="card h-100 border-warning">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-person-badge-fill text-warning" style="font-size: 3rem;"></i>
+                                    <h5 class="card-title mt-3">Supervisores</h5>
+                                    <p class="card-text">Importe múltiplos supervisores e seus logins.</p>
+                                    <a href="{{ url_for('admin.importar_supervisores') }}" class="btn btn-warning">
+                                        <i class="bi bi-upload"></i> Importar
+                                    </a>
+                                </div>
+                                <div class="card-footer text-muted">
+                                    <small>Formato: matricula;nome;empresa;planta;email;senha;status</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Motoristas -->
+                        <div class="col-md-4">
+                            <div class="card h-100 border-success">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-truck text-success" style="font-size: 3rem;"></i>
+                                    <h5 class="card-title mt-3">Motoristas</h5>
+                                    <p class="card-text">Importe múltiplos motoristas e seus logins.</p>
+                                    <a href="{{ url_for('admin.importar_motoristas') }}" class="btn btn-success">
+                                        <i class="bi bi-upload"></i> Importar
+                                    </a>
+                                </div>
+                                <div class="card-footer text-muted">
+                                    <small>Formato: nome;cpf_cnpj;email;senha;telefone;chave_pix;veiculo_nome;veiculo_placa</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Informações Gerais -->
+                    <div class="alert alert-info mt-4">
+                        <h5><i class="bi bi-info-circle"></i> Informações Importantes</h5>
+                        <ul class="mb-0">
+                            <li>Todos os arquivos devem estar no formato CSV (separador: ponto e vírgula)</li>
+                            <li>A primeira linha deve conter o cabeçalho (será ignorada)</li>
+                            <li>Codificação recomendada: UTF-8</li>
+                            <li>Registros duplicados serão ignorados</li>
+                            <li>Erros serão reportados ao final da importação</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

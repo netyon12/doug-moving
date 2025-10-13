@@ -1,55 +1,520 @@
-<!-- app/templates/nova_solicitacao.html -->
 {% extends "base.html" %}
 
+{% block title %}Nova Solicitação de Viagem{% endblock %}
+
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="mb-0">Nova Solicitação de Transporte</h3>
-                </div>
-                <div class="card-body">
-                    <form method="POST" action="{{ url_for('routes.nova_solicitacao') }}">
-                        
-                        <!-- Campo Colaborador -->
-                        <div class="mb-3">
-                            <label for="colaborador_id" class="form-label">Colaborador</label>
-                            <select class="form-select" id="colaborador_id" name="colaborador_id" required>
-                                <option value="" disabled selected>Selecione um colaborador...</option>
-                                {% for colaborador in colaboradores %}
-                                    <option value="{{ colaborador.id }}">{{ colaborador.nome }} (Bloco: {{ colaborador.bloco.codigo_bloco if colaborador.bloco else 'N/A' }})</option>
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3>Nova Solicitação de Viagem (Linha Extra)</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admin.nova_solicitacao') }}">
+                
+                <!-- SEÇÃO 1: DADOS GERAIS (NÃO EDITÁVEIS) -->
+                <div class="row p-3 mb-4 bg-light rounded border">
+                    {% if current_user.role == 'supervisor' %}
+                        <!-- Visão do Supervisor: Campos Bloqueados -->
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Empresa</label>
+                            <input type="text" class="form-control" value="{{ current_user.empresa.nome }}" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Planta</label>
+                            <input type="text" class="form-control" value="{{ current_user.planta.nome }}" readonly>
+                        </div>
+                    {% else %}
+                        <!-- Visão do Admin: Campos de Seleção -->
+                        <div class="col-md-4">
+                            <label for="empresa_id" class="form-label fw-bold">Empresa*</label>
+                            <select class="form-select" id="empresa_id" name="empresa_id" required>
+                                <option value="" disabled selected>Selecione...</option>
+                                {% for empresa in empresas %}
+                                    <option value="{{ empresa.id }}">{{ empresa.nome }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-
-                        <!-- Campo Tipo de Corrida -->
-                        <div class="mb-3">
-                            <label for="tipo_corrida" class="form-label">Tipo de Corrida</label>
-                            <select class="form-select" id="tipo_corrida" name="tipo_corrida" required>
-                                <option value="" disabled selected>Selecione o tipo...</option>
-                                <option value="ENTRADA">Entrada</option>
-                                <option value="SAIDA">Saída</option>
-                                <option value="DESLIGAMENTO">Desligamento</option>
+                        <div class="col-md-4">
+                            <label for="planta_id" class="form-label fw-bold">Planta*</label>
+                            <select class="form-select" id="planta_id" name="planta_id" required>
+                                <option value="" disabled selected>Selecione a empresa primeiro...</option>
+                                <!-- Plantas serão carregadas via JS -->
                             </select>
                         </div>
+                    {% endif %}
 
-                        <!-- Campo Horário de Chegada -->
-                        <div class="mb-3">
-                            <label for="horario_chegada" class="form-label">Data e Hora de Chegada no Destino</label>
-                            <input type="datetime-local" class="form-control" id="horario_chegada" name="horario_chegada" required>
-                        </div>
-
-                        <hr>
-
-                        <div class="d-flex justify-content-end">
-                            <a href="{{ url_for('routes.dashboard_supervisor') }}" class="btn btn-secondary me-2">Cancelar</a>
-                            <button type="submit" class="btn btn-primary">Criar Solicitação</button>
-                        </div>
-                    </form>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Tipo de Linha</label>
+                        <input type="text" class="form-control" value="EXTRA" readonly>
+                    </div>
                 </div>
-            </div>
+
+                <!-- SEÇÃO 2: TIPO DE CORRIDA -->
+                <div class="row mb-4">
+                    <h5 class="border-bottom pb-2 mb-3">Tipo de Corrida</h5>
+                    <div class="col-md-12">
+                        <label for="tipo_corrida" class="form-label fw-bold">Selecione o Tipo de Corrida*</label>
+                        <select class="form-select" id="tipo_corrida" name="tipo_corrida" required>
+                            <option value="" disabled selected>Selecione...</option>
+                            <option value="entrada">Apenas Entrada</option>
+                            <option value="saida">Apenas Saída</option>
+                            <option value="entrada_saida">Entrada e Saída</option>
+                            <option value="desligamento">Desligamento</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 3: HORÁRIOS PADRÃO (OPCIONAL) -->
+                <div class="row mb-4">
+                    <h5 class="border-bottom pb-2 mb-3">Horários Padrão (Opcional)</h5>
+                    <p class="text-muted small">Preencha para aplicar o mesmo horário a todos os colaboradores adicionados.</p>
+                    
+                    <div class="col-md-4" id="campo_entrada">
+                        <label for="default_entrada" class="form-label">Horário de Entrada</label>
+                        <input type="datetime-local" class="form-control" id="default_entrada">
+                    </div>
+                    <div class="col-md-4" id="campo_saida">
+                        <label for="default_saida" class="form-label">Horário de Saída</label>
+                        <input type="datetime-local" class="form-control" id="default_saida">
+                    </div>
+                    <div class="col-md-4" id="campo_desligamento" style="display: none;">
+                        <label for="default_desligamento" class="form-label">Horário de Desligamento</label>
+                        <input type="datetime-local" class="form-control" id="default_desligamento">
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 4: SELEÇÃO DE COLABORADORES -->
+                <div class="row mb-4">
+                    <h5 class="border-bottom pb-2 mb-3">Adicionar Colaboradores</h5>
+                    <div class="col-md-10">
+                        <label for="colaborador_search" class="form-label">Buscar Colaborador</label>
+                        <input type="text" class="form-control" id="colaborador_search" placeholder="Digite o nome ou matrícula para buscar...">
+                        <div id="search_results" class="list-group mt-1 position-absolute" style="z-index: 1000;"></div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="button" id="add_colaborador_btn" class="btn btn-success w-100">Adicionar</button>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 5: TABELA DE SOLICITAÇÕES -->
+                <h5 class="border-bottom pb-2 mb-3">Colaboradores na Solicitação</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Colaborador</th>
+                                <th>Bloco</th>
+                                <th class="campo-entrada">Horário Entrada</th>
+                                <th class="campo-saida">Horário Saída</th>
+                                <th class="campo-desligamento" style="display: none;">Horário Desligamento</th>
+                                <th class="campo-entrada">Turno Entrada</th>
+                                <th class="campo-saida">Turno Saída</th>
+                                <th class="campo-desligamento" style="display: none;">Turno Desligamento</th>
+                                <th class="text-center">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="solicitacoes_table_body">
+                            <!-- Linhas serão adicionadas dinamicamente aqui -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+                <div class="d-flex justify-content-end">
+                    <a href="{{ url_for('admin.solicitacoes') }}" class="btn btn-secondary me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Confirmar Solicitação</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+<!-- Template para a linha da tabela (escondido) -->
+<template id="solicitacao_row_template">
+    <tr>
+        <td>
+            <input type="hidden" name="colaborador_id[]" value="">
+            <span class="colaborador_nome"></span>
+        </td>
+        <td><span class="bloco_codigo"></span></td>
+        <td class="campo-entrada"><input type="datetime-local" class="form-control horario-entrada-input" name="horario_entrada[]"></td>
+        <td class="campo-saida"><input type="datetime-local" class="form-control horario-saida-input" name="horario_saida[]"></td>
+        <td class="campo-desligamento" style="display: none;"><input type="datetime-local" class="form-control horario-desligamento-input" name="horario_desligamento[]"></td>
+        <td class="campo-entrada"><input type="text" class="form-control turno-entrada-field" name="turno_entrada[]" readonly></td>
+        <td class="campo-saida"><input type="text" class="form-control turno-saida-field" name="turno_saida[]" readonly></td>
+        <td class="campo-desligamento" style="display: none;"><input type="text" class="form-control turno-desligamento-field" name="turno_desligamento[]" readonly></td>
+        <td class="text-center">
+            <button type="button" class="btn btn-sm btn-danger remove-row-btn">Remover</button>
+        </td>
+    </tr>
+</template>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // =========================================================================
+    // VARIÁVEIS GLOBAIS
+    // =========================================================================
+    const searchInput = document.getElementById('colaborador_search');
+    const searchResults = document.getElementById('search_results');
+    const addBtn = document.getElementById('add_colaborador_btn');
+    const tableBody = document.getElementById('solicitacoes_table_body');
+    const rowTemplate = document.getElementById('solicitacao_row_template');
+    const defaultEntrada = document.getElementById('default_entrada');
+    const defaultSaida = document.getElementById('default_saida');
+    const defaultDesligamento = document.getElementById('default_desligamento');
+    const tipoCorrida = document.getElementById('tipo_corrida');
+
+    let selectedColaborador = null;
+    let turnosPlanta = [];
+    let plantaIdAtual = null;
+    
+    // Detecta o papel do usuário e planta ID via data attributes do body
+    const userRole = document.body.getAttribute('data-user-role');
+    const userPlantaId = document.body.getAttribute('data-user-planta-id');
+
+    // =========================================================================
+    // LÓGICA DO TIPO DE CORRIDA
+    // =========================================================================
+    tipoCorrida.addEventListener('change', function() {
+        const tipo = this.value;
+        
+        // Campos de horários padrão
+        const campoEntrada = document.getElementById('campo_entrada');
+        const campoSaida = document.getElementById('campo_saida');
+        const campoDesligamento = document.getElementById('campo_desligamento');
+        
+        // Colunas da tabela
+        const colunasEntrada = document.querySelectorAll('.campo-entrada');
+        const colunasSaida = document.querySelectorAll('.campo-saida');
+        const colunasDesligamento = document.querySelectorAll('.campo-desligamento');
+        
+        // Reseta todos os campos
+        campoEntrada.style.display = 'none';
+        campoSaida.style.display = 'none';
+        campoDesligamento.style.display = 'none';
+        defaultEntrada.value = '';
+        defaultSaida.value = '';
+        defaultDesligamento.value = '';
+        
+        colunasEntrada.forEach(col => col.style.display = 'none');
+        colunasSaida.forEach(col => col.style.display = 'none');
+        colunasDesligamento.forEach(col => col.style.display = 'none');
+        
+        // Mostra campos baseado no tipo selecionado
+        if (tipo === 'entrada') {
+            campoEntrada.style.display = 'block';
+            colunasEntrada.forEach(col => col.style.display = 'table-cell');
+        } else if (tipo === 'saida') {
+            campoSaida.style.display = 'block';
+            colunasSaida.forEach(col => col.style.display = 'table-cell');
+        } else if (tipo === 'entrada_saida') {
+            campoEntrada.style.display = 'block';
+            campoSaida.style.display = 'block';
+            colunasEntrada.forEach(col => col.style.display = 'table-cell');
+            colunasSaida.forEach(col => col.style.display = 'table-cell');
+        } else if (tipo === 'desligamento') {
+            campoDesligamento.style.display = 'block';
+            colunasDesligamento.forEach(col => col.style.display = 'table-cell');
+        }
+        
+        // Limpa a tabela ao mudar o tipo
+        tableBody.innerHTML = '';
+    });
+    
+    // Se for supervisor, carrega turnos imediatamente
+    if (userRole === 'supervisor' && userPlantaId) {
+        plantaIdAtual = parseInt(userPlantaId);
+        carregarTurnos(plantaIdAtual);
+    }
+
+    // =========================================================================
+    // LÓGICA PARA ADMIN: CARREGAR PLANTAS E TURNOS
+    // =========================================================================
+    const empresaSelect = document.getElementById('empresa_id');
+    const plantaSelect = document.getElementById('planta_id');
+
+    if (empresaSelect && plantaSelect) {
+        empresaSelect.addEventListener('change', function() {
+            const empresaId = this.value;
+            plantaSelect.innerHTML = '<option>Carregando...</option>';
+            turnosPlanta = [];
+            plantaIdAtual = null;
+
+            // Busca plantas via API
+            fetch('/admin/api/empresas/' + empresaId + '/plantas')
+                .then(response => response.json())
+                .then(plantas => {
+                    plantaSelect.innerHTML = '<option value="" disabled selected>Selecione a planta...</option>';
+                    plantas.forEach(planta => {
+                        const option = new Option(planta.nome, planta.id);
+                        plantaSelect.add(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar plantas:', error);
+                    plantaSelect.innerHTML = '<option value="">Erro ao carregar plantas</option>';
+                });
+        });
+
+        plantaSelect.addEventListener('change', function() {
+            plantaIdAtual = this.value;
+            if (plantaIdAtual) {
+                carregarTurnos(plantaIdAtual);
+            }
+        });
+    }
+
+    // =========================================================================
+    // FUNÇÃO: CARREGAR TURNOS DA PLANTA
+    // =========================================================================
+    function carregarTurnos(plantaId) {
+        if (!plantaId) {
+            turnosPlanta = [];
+            return;
+        }
+        
+        fetch('/admin/api/plantas/' + plantaId + '/turnos')
+            .then(response => response.json())
+            .then(turnos => {
+                turnosPlanta = turnos;
+                console.log('Turnos carregados:', turnosPlanta);
+            })
+            .catch(error => {
+                console.error('Erro ao buscar turnos:', error);
+                turnosPlanta = [];
+            });
+    }
+
+    // =========================================================================
+    // FUNÇÃO: CALCULAR TURNO BASEADO NO HORÁRIO DE ENTRADA
+    // =========================================================================
+    function calcularTurno(horarioEntrada) {
+        if (!horarioEntrada || turnosPlanta.length === 0) {
+            return 'Não definido';
+        }
+        
+        // Extrai apenas a hora (HH:MM) do datetime-local
+        // Formato: "2025-10-07T14:27" -> "14:27"
+        const horaEntrada = horarioEntrada.substring(11, 16);
+        
+        for (const turno of turnosPlanta) {
+            const inicio = turno.horario_inicio;
+            const fim = turno.horario_fim;
+            
+            // Caso normal: início < fim (ex: 05:50 - 15:38)
+            if (inicio < fim) {
+                if (horaEntrada >= inicio && horaEntrada <= fim) {
+                    return turno.nome;
+                }
+            }
+            // Caso especial: turno atravessa meia-noite (ex: 21:12 - 06:00)
+            else {
+                if (horaEntrada >= inicio || horaEntrada <= fim) {
+                    return turno.nome;
+                }
+            }
+        }
+        
+        return 'Não definido';
+    }
+
+    // =========================================================================
+    // LÓGICA DE BUSCA DE COLABORADORES
+    // =========================================================================
+    searchInput.addEventListener('keyup', function() {
+        const query = searchInput.value;
+        if (query.length < 2) {
+            searchResults.innerHTML = '';
+            return;
+        }
+
+        // Monta URL da API
+        let url = '/admin/api/colaboradores/buscar?q=' + encodeURIComponent(query);
+        
+        // Se for admin, adiciona o filtro de planta
+        if (userRole === 'admin' && plantaIdAtual) {
+            url += '&planta_id=' + plantaIdAtual;
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(colaboradores => {
+                searchResults.innerHTML = '';
+                
+                if (colaboradores.length === 0) {
+                    const item = document.createElement('div');
+                    item.className = 'list-group-item text-muted';
+                    item.textContent = 'Nenhum colaborador encontrado';
+                    searchResults.appendChild(item);
+                    return;
+                }
+                
+                colaboradores.forEach(function(colab) {
+                    const item = document.createElement('a');
+                    item.href = '#';
+                    item.className = 'list-group-item list-group-item-action';
+                    item.textContent = colab.nome + ' (Mat: ' + colab.matricula + ') - Bloco: ' + colab.bloco;
+                    item.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        searchInput.value = colab.nome + ' (' + colab.matricula + ')';
+                        selectedColaborador = colab;
+                        searchResults.innerHTML = '';
+                    });
+                    searchResults.appendChild(item);
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao buscar colaboradores:', error);
+                searchResults.innerHTML = '<div class="list-group-item text-danger">Erro ao buscar</div>';
+            });
+    });
+
+    // =========================================================================
+    // LÓGICA DE ADICIONAR COLABORADOR À TABELA
+    // =========================================================================
+    addBtn.addEventListener('click', function() {
+        if (!selectedColaborador) {
+            alert('Por favor, busque e selecione um colaborador.');
+            return;
+        }
+
+        const tipo = tipoCorrida.value;
+        if (!tipo) {
+            alert('Por favor, selecione o tipo de corrida primeiro.');
+            return;
+        }
+
+        // Clona o template
+        const newRow = rowTemplate.content.cloneNode(true);
+        
+        // Preenche os dados da linha
+        newRow.querySelector('input[name="colaborador_id[]"]').value = selectedColaborador.id;
+        newRow.querySelector('.colaborador_nome').textContent = selectedColaborador.nome;
+        newRow.querySelector('.bloco_codigo').textContent = selectedColaborador.bloco;
+        
+        // Oculta colunas baseado no tipo de corrida
+        const celulasEntrada = newRow.querySelectorAll('.campo-entrada');
+        const celulasSaida = newRow.querySelectorAll('.campo-saida');
+        const celulasDesligamento = newRow.querySelectorAll('.campo-desligamento');
+        
+        // Oculta todas primeiro
+        celulasEntrada.forEach(cel => cel.style.display = 'none');
+        celulasSaida.forEach(cel => cel.style.display = 'none');
+        celulasDesligamento.forEach(cel => cel.style.display = 'none');
+        
+        // Mostra apenas as relevantes
+        if (tipo === 'entrada') {
+            celulasEntrada.forEach(cel => cel.style.display = '');
+        } else if (tipo === 'saida') {
+            celulasSaida.forEach(cel => cel.style.display = '');
+        } else if (tipo === 'entrada_saida') {
+            celulasEntrada.forEach(cel => cel.style.display = '');
+            celulasSaida.forEach(cel => cel.style.display = '');
+        } else if (tipo === 'desligamento') {
+            celulasDesligamento.forEach(cel => cel.style.display = '');
+        }
+        
+        // Referências aos inputs
+        const inputEntrada = newRow.querySelector('.horario-entrada-input');
+        const inputSaida = newRow.querySelector('.horario-saida-input');
+        const inputDesligamento = newRow.querySelector('.horario-desligamento-input');
+        const inputTurnoEntrada = newRow.querySelector('.turno-entrada-field');
+        const inputTurnoSaida = newRow.querySelector('.turno-saida-field');
+        const inputTurnoDesligamento = newRow.querySelector('.turno-desligamento-field');
+        
+        // Aplica horários padrão e calcula turnos baseado no tipo
+        if (tipo === 'entrada' || tipo === 'entrada_saida') {
+            if (defaultEntrada.value) {
+                inputEntrada.value = defaultEntrada.value;
+                inputTurnoEntrada.value = calcularTurno(defaultEntrada.value);
+            }
+            
+            // Evento para recalcular turno da entrada
+            inputEntrada.addEventListener('change', function() {
+                inputTurnoEntrada.value = calcularTurno(this.value);
+            });
+        }
+        
+        if (tipo === 'saida' || tipo === 'entrada_saida') {
+            if (defaultSaida.value) {
+                inputSaida.value = defaultSaida.value;
+                inputTurnoSaida.value = calcularTurno(defaultSaida.value);
+            }
+            
+            // Evento para recalcular turno da saída
+            inputSaida.addEventListener('change', function() {
+                inputTurnoSaida.value = calcularTurno(this.value);
+            });
+        }
+        
+        if (tipo === 'desligamento') {
+            if (defaultDesligamento.value) {
+                inputDesligamento.value = defaultDesligamento.value;
+                inputTurnoDesligamento.value = calcularTurno(defaultDesligamento.value);
+            }
+            
+            // Evento para recalcular turno do desligamento
+            inputDesligamento.addEventListener('change', function() {
+                inputTurnoDesligamento.value = calcularTurno(this.value);
+            });
+        }
+
+        // Adiciona evento de remoção
+        newRow.querySelector('.remove-row-btn').addEventListener('click', function() {
+            this.closest('tr').remove();
+        });
+
+        // Adiciona a linha à tabela
+        tableBody.appendChild(newRow);
+
+        // Limpa a seleção para a próxima busca
+        searchInput.value = '';
+        selectedColaborador = null;
+    });
+
+    // =========================================================================
+    // VALIDAÇÃO DO FORMULÁRIO ANTES DO SUBMIT
+    // =========================================================================
+    const form = document.querySelector('form');
+    
+    form.addEventListener('submit', function(e) {
+        // Verifica se há pelo menos um colaborador na tabela
+        const tableBody = document.getElementById('solicitacoes_table_body');
+        const rows = tableBody.querySelectorAll('tr');
+        
+        if (rows.length === 0) {
+            e.preventDefault(); // Impede o envio do formulário
+            
+            // Exibe alerta para o usuário
+            alert('⚠️ Atenção!\n\nÉ necessário adicionar pelo menos um colaborador à solicitação.\n\n' +
+                  'Por favor:\n' +
+                  '1. Busque o colaborador no campo "Buscar Colaborador"\n' +
+                  '2. Clique no botão verde "Adicionar"\n' +
+                  '3. Verifique se o colaborador aparece na tabela "Colaboradores na Solicitação"\n' +
+                  '4. Depois clique em "Confirmar Solicitação"');
+            
+            // Destaca o campo de busca para chamar atenção
+            const searchInput = document.getElementById('colaborador_search');
+            searchInput.focus();
+            searchInput.style.borderColor = '#dc3545';
+            searchInput.style.borderWidth = '2px';
+            
+            // Remove o destaque após 3 segundos
+            setTimeout(function() {
+                searchInput.style.borderColor = '';
+                searchInput.style.borderWidth = '';
+            }, 3000);
+            
+            return false;
+        }
+        
+        // Se chegou aqui, há colaboradores na tabela
+        // Permite o envio do formulário
+        return true;
+    });
+});
+</script>
 {% endblock %}

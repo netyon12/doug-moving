@@ -1,70 +1,523 @@
-<!-- app/templates/base.html (VERSÃO CORRIGIDA) -->
 <!doctype html>
 <html lang="pt-br">
 <head>
     <meta charset="utf-8">
-    
-    <!-- ================================================== -->
-    <!-- META TAG RESPONSIVA ADICIONADA AQUI -->
-    <!-- ================================================== -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Go Mobi{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon.png') }}">
     
-    <title>Doug Moving</title>
-    <!-- Link para o CSS do Bootstrap -->
+    <!-- Bootstrap CSS e Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <!-- CORRIGIDO -->
-            <a class="navbar-brand" href="{{ url_for('routes.home'  ) }}">Doug Moving</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    {% if current_user.is_authenticated %}
-                        <!-- Links para usuários logados -->
-                        <li class="nav-item">
-                            <!-- CORRIGIDO -->
-                            <a class="nav-link" href="{{ url_for('routes.home') }}">Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <!-- CORRIGIDO -->
-                            <a class="nav-link" href="{{ url_for('routes.editar_perfil') }}">Editar Perfil</a>
-                        </li>
-                        <li class="nav-item">
-                            <!-- CORRIGIDO -->
-                            <a class="nav-link" href="{{ url_for('routes.logout') }}">Sair</a>
-                        </li>
-                    {% else %}
-                        <!-- Links para usuários não logados -->
-                        <li class="nav-item">
-                            <!-- CORRIGIDO -->
-                            <a class="nav-link" href="{{ url_for('routes.login') }}">Login</a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
+    <!-- Seu CSS customizado -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css' ) }}">
+    
+    <style>
+        /* ========================================== */
+        /* PALETA DE CORES GO MOBI */
+        /* ========================================== */
+        :root {
+            --gomobi-yellow: #F5B95F;      /* Amarelo principal da logo */
+            --gomobi-yellow-dark: #E5A84F; /* Amarelo escuro para hover */
+            --gomobi-black: #000000;       /* Preto da logo */
+            --gomobi-gray-dark: #1a1a1a;   /* Cinza escuro para contraste */
+            --gomobi-gray: #333333;        /* Cinza médio */
+            --gomobi-gray-light: #666666;  /* Cinza claro */
+        }
+
+        /* ========================================== */
+        /* NAVBAR SUPERIOR - ESTILO GO MOBI */
+        /* ========================================== */
+        .navbar-gomobi {
+            background: linear-gradient(135deg, var(--gomobi-black) 0%, var(--gomobi-gray-dark) 100%) !important;
+            border-bottom: 3px solid var(--gomobi-yellow);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--gomobi-yellow) !important;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            color: var(--gomobi-yellow-dark) !important;
+            transform: scale(1.05);
+        }
+
+        .navbar-text {
+            color: #ffffff !important;
+        }
+
+        .navbar-text i {
+            color: var(--gomobi-yellow);
+        }
+
+        .navbar .nav-link {
+            color: var(--gomobi-yellow) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .nav-link:hover {
+            color: var(--gomobi-yellow-dark) !important;
+            transform: translateY(-2px);
+        }
+
+        /* ========================================== */
+        /* SIDEBAR - ESTILO GO MOBI */
+        /* ========================================== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            background: linear-gradient(180deg, var(--gomobi-gray-dark) 0%, var(--gomobi-black) 100%) !important;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.3);
+            border-right: 2px solid var(--gomobi-yellow);
+        }
+
+        .sidebar-sticky {
+            position: relative;
+            top: 0;
+            height: calc(100vh - 48px);
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* Scrollbar personalizada para sidebar */
+        .sidebar-sticky::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar-sticky::-webkit-scrollbar-track {
+            background: var(--gomobi-black);
+        }
+
+        .sidebar-sticky::-webkit-scrollbar-thumb {
+            background: var(--gomobi-yellow);
+            border-radius: 4px;
+        }
+
+        .sidebar-sticky::-webkit-scrollbar-thumb:hover {
+            background: var(--gomobi-yellow-dark);
+        }
+
+        /* ========================================== */
+        /* MENU ITEMS - ESTILO GO MOBI */
+        /* ========================================== */
+        .sidebar .nav-link {
+            font-weight: 500;
+            color: #c7c7c7 !important;
+            padding: 12px 16px;
+            margin: 4px 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .nav-link .bi {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            color: var(--gomobi-yellow);
+        }
+
+        .sidebar .nav-link:hover {
+            color: #ffffff !important;
+            background-color: rgba(245, 185, 95, 0.1);
+            transform: translateX(5px);
+            border-left: 3px solid var(--gomobi-yellow);
+        }
+
+        .sidebar .nav-link.active {
+            color: var(--gomobi-black) !important;
+            background: linear-gradient(90deg, var(--gomobi-yellow) 0%, var(--gomobi-yellow-dark) 100%);
+            font-weight: 700;
+            box-shadow: 0 4px 8px rgba(245, 185, 95, 0.3);
+        }
+
+        .sidebar .nav-link.active .bi {
+            color: var(--gomobi-black);
+        }
+
+        /* ========================================== */
+        /* SUBMENU - ESTILO GO MOBI */
+        /* ========================================== */
+        .submenu {
+            background-color: rgba(0, 0, 0, 0.3);
+            border-left: 2px solid var(--gomobi-yellow);
+            margin-left: 12px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .submenu .nav-link {
+            font-size: 0.9em;
+            padding-left: 2.5em;
+            color: #999 !important;
+            margin: 2px 4px;
+        }
+
+        .submenu .nav-link:hover {
+            color: var(--gomobi-yellow) !important;
+            background-color: rgba(245, 185, 95, 0.05);
+        }
+
+        .submenu .nav-link.active {
+            color: #ffffff !important; /* Branco para contraste com fundo amarelo */
+            background-color: rgba(245, 185, 95, 0.15);
+            font-weight: 700;
+            border-left: 3px solid var(--gomobi-yellow);
+        }
+
+        /* ========================================== */
+        /* CONTENT AREA - MELHORIAS */
+        /* ========================================== */
+        main {
+            background-color: #f8f9fa;
+            min-height: calc(100vh - 48px);
+            padding-top: 90px !important; /* Espaço para a navbar não sobrepor o conteúdo */
+        }
+
+        .border-bottom {
+            border-bottom-color: var(--gomobi-yellow) !important;
+            border-bottom-width: 2px !important;
+        }
+
+        /* ========================================== */
+        /* BOTÕES E BADGES - ESTILO GO MOBI */
+        /* ========================================== */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gomobi-yellow) 0%, var(--gomobi-yellow-dark) 100%);
+            border: none;
+            color: var(--gomobi-black);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--gomobi-yellow-dark) 0%, var(--gomobi-yellow) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 185, 95, 0.4);
+        }
+
+        .badge.bg-warning {
+            background-color: var(--gomobi-yellow) !important;
+            color: var(--gomobi-black) !important;
+        }
+
+        /* ========================================== */
+        /* TABELAS - MELHORIAS */
+        /* ========================================== */
+        .table-dark {
+            background-color: var(--gomobi-gray-dark) !important;
+            border-bottom: 2px solid var(--gomobi-yellow);
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(245, 185, 95, 0.05);
+        }
+
+        /* ========================================== */
+        /* CARDS - ESTILO GO MOBI */
+        /* ========================================== */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--gomobi-yellow) 0%, var(--gomobi-yellow-dark) 100%);
+            color: var(--gomobi-black);
+            font-weight: 700;
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+        /* ========================================== */
+        /* RESPONSIVIDADE */
+        /* ========================================== */
+        @media (max-width: 768px) {
+            .sidebar {
+                border-right: none;
+                border-bottom: 2px solid var(--gomobi-yellow);
+            }
+        }
+    </style>
+</head>
+<body data-user-role="{{ current_user.role }}" data-user-planta-id="{% if current_user.role == 'supervisor' %}{{ current_user.supervisor.planta_id }}{% endif %}">
+    <!-- Navbar Superior - Go Mobi Style -->
+    <nav class="navbar navbar-dark navbar-gomobi fixed-top p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="{{ url_for('admin.admin_dashboard') }}">
+            <i class="bi bi-geo-alt-fill"></i> Go Mobi
+        </a>
+
+        <!-- Informações do Usuário -->
+        <div class="d-flex align-items-center text-white ms-auto">
+            <!-- Mostra a Empresa -->
+            {% if current_user.empresa %}
+                <span class="navbar-text me-3">
+                    <i class="bi bi-building"></i> {{ current_user.empresa.nome }}
+                </span>
+            {% endif %}
+
+            <!-- Mostra o Nome e o Perfil -->
+            <span class="navbar-text me-3">
+                <i class="bi bi-person-circle"></i> 
+                <strong>{{ current_user.nome }}</strong> ({{ current_user.role|capitalize }})
+            </span>
         </div>
+
+        <!-- Botão Sair -->
+        <ul class="navbar-nav px-3">
+            <li class="nav-item text-nowrap">
+                <a class="nav-link" href="{{ url_for('auth.logout') }}">
+                    <i class="bi bi-box-arrow-right"></i> Sair
+                </a>
+            </li>
+        </ul>
     </nav>
 
-    <div class="container mt-4">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                        {{ message }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Menu Lateral (Sidebar) -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="sidebar-sticky pt-3">
+                    <ul class="nav flex-column">
+                        
+                        <!-- Dashboard -->
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint.endswith('dashboard') or request.endpoint.endswith('dashboard_gerente') %}active{% endif %}" href="{{ url_for('home') }}">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
 
-        {% block content %}{% endblock %}
+                        <!-- MENU DO ADMINISTRADOR -->
+                        {% if current_user.role == 'admin' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="#cadastroSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-pencil-square"></i> Cadastros <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="cadastroSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'empresas' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='empresas') }}">Empresas</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'plantas' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='plantas') }}">Plantas</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'centros_custo' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='centros_custo') }}">Centros de Custo</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'turnos' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='turnos') }}">Turnos</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'bairros' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='bairros') }}">Bairros</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'blocos' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='blocos') }}">Blocos</a></li>
+                                        <hr class="bg-secondary">
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'gerentes' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='gerentes') }}">Gerentes</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'supervisores' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='supervisores') }}">Supervisores</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'colaboradores' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}">Colaboradores</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'motoristas' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='motoristas') }}">Motoristas</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <!-- Processos (Admin) -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="#processosSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-gear-fill"></i> Processos <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="processosSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.solicitacoes') }}">Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.agrupamento') }}">Agrupamento</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.viagens') }}">Viagens</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <!-- Relatórios (Admin) -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="#relatoriosSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-file-earmark-bar-graph-fill"></i> Relatórios <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="relatoriosSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.listagem_solicitacoes') }}">Listagem de Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_viagens') }}">Conferência de Viagens</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_motoristas') }}">Conferência de Motoristas</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <!-- Financeiro (Admin) -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="#financeiroSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-cash-stack"></i> Financeiro <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="financeiroSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('financeiro.contas_receber') }}">Contas a Receber</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('financeiro.contas_pagar') }}">Contas a Pagar</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        {% endif %}
+
+                        <!-- MENU DO GERENTE -->
+                        {% if current_user.role == 'gerente' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="#gerenteCadastrosSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-pencil-square"></i> Cadastros <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="gerenteCadastrosSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_dashboard', aba='supervisores') }}">Supervisores</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}">Colaboradores</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="#gerenteProcessosSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-gear-fill"></i> Processos <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="gerenteProcessosSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('gerente.solicitacoes') }}">Solicitações</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="#gerenteRelatoriosSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-file-earmark-bar-graph-fill"></i> Relatórios <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="gerenteRelatoriosSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.listagem_solicitacoes') }}">Listagem de Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_viagens') }}">Conferência de Viagens</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        {% endif %}
+
+                        <!-- MENU DO SUPERVISOR -->
+                        {% if current_user.role == 'supervisor' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="#supervisorCadastrosSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-pencil-square"></i> Cadastros <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="supervisorCadastrosSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}">Colaboradores</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="#supervisorProcessosSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-gear-fill"></i> Processos <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="supervisorProcessosSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.solicitacoes') }}">Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.agrupamento') }}">Agrupamento</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.viagens') }}">Viagens</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="#supervisorRelatoriosSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-file-earmark-bar-graph-fill"></i> Relatórios <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="supervisorRelatoriosSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.listagem_solicitacoes') }}">Listagem de Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_viagens') }}">Conferência de Viagens</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        {% endif %}
+
+                        <!-- MENU DO MOTORISTA -->
+                        {% if current_user.role == 'motorista' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="#motoristaProcessosSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-gear-fill"></i> Processos <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="motoristaProcessosSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('motorista.minhas_viagens') }}">Viagens</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="#motoristaRelatoriosSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-file-earmark-bar-graph-fill"></i> Relatórios <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="motoristaRelatoriosSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_motoristas') }}">Conferência de Motoristas</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+
+                    <!-- Configurações e Sair -->
+                    <ul class="nav flex-column mt-auto mb-2">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#configuracoesSubmenu" data-bs-toggle="collapse" role="button">
+                                <i class="bi bi-sliders"></i> Configurações <i class="bi bi-chevron-down float-end"></i>
+                            </a>
+                            <div class="collapse submenu" id="configuracoesSubmenu">
+                                <ul class="nav flex-column">
+                                    {% if current_user.role == 'admin' %}
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.configuracoes') }}">Parâmetros Gerais</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.pagina_importacoes') }}">Importações</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('audit.logs_gerais') }}"><i class="bi bi-clipboard-data"></i> Logs de Auditoria</a></li>
+                                    {% endif %}
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.editar_perfil') }}">Editar Meu Perfil</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Área de Conteúdo Principal -->
+            <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- Mensagens Flash -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <!-- Conteúdo da Página -->
+                {% block content %}{% endblock %}
+            </main>
+        </div>
     </div>
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Scripts Customizados -->
+    {% block scripts %}{% endblock %}
 </body>
 </html>
+

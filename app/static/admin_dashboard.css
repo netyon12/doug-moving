@@ -1,0 +1,223 @@
+/* ========================================== */
+/* DASHBOARD ADMINISTRATIVO - GO MOBI */
+/* ========================================== */
+
+/* Cores da marca Go Mobi */
+:root {
+    --gomobi-primary: #2563eb;
+    --gomobi-secondary: #1e40af;
+    --gomobi-success: #10b981;
+    --gomobi-warning: #f59e0b;
+    --gomobi-danger: #ef4444;
+    --gomobi-info: #06b6d4;
+    --gomobi-dark: #1f2937;
+    --gomobi-light: #f3f4f6;
+}
+
+.dashboard-header {
+    background: linear-gradient(135deg, var(--gomobi-primary) 0%, var(--gomobi-secondary) 100%) !important;
+    color: white !important;
+    padding: 2rem 0 !important;
+    margin-bottom: 2rem !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.kpi-card {
+    border: none !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.3s ease !important;
+    height: 100% !important;
+    overflow: hidden !important;
+}
+
+.kpi-card:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12) !important;
+}
+
+.kpi-card .card-body {
+    padding: 1.5rem !important;
+}
+
+.kpi-value {
+    font-size: 2.5rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+    line-height: 1 !important;
+}
+
+.kpi-label {
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    opacity: 0.9 !important;
+}
+
+.kpi-icon {
+    font-size: 2.5rem !important;
+    opacity: 0.2 !important;
+    position: absolute !important;
+    right: 1rem !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+}
+
+.section-title {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    color: var(--gomobi-dark) !important;
+    margin-bottom: 1.5rem !important;
+    padding-bottom: 0.75rem !important;
+    border-bottom: 3px solid var(--gomobi-primary) !important;
+    display: inline-block !important;
+}
+
+.company-filter {
+    background: white !important;
+    padding: 1.5rem !important;
+    border-radius: 0.75rem !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    margin-bottom: 2rem !important;
+}
+
+.company-filter select {
+    border: 2px solid var(--gomobi-light) !important;
+    border-radius: 0.5rem !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.company-filter select:focus {
+    border-color: var(--gomobi-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25) !important;
+}
+
+/* Cores específicas para cada tipo de KPI - com !important para sobrescrever CSS externo */
+.kpi-solicitacoes-pendentes {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    color: white !important;
+}
+
+.kpi-solicitacoes-agrupadas {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
+    color: white !important;
+}
+
+.kpi-solicitacoes-finalizadas {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+}
+
+.kpi-solicitacoes-canceladas {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    color: white !important;
+}
+
+.kpi-viagens-pendentes {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    color: white !important;
+}
+
+.kpi-viagens-agendadas {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+    color: white !important;
+}
+
+.kpi-viagens-andamento {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
+    color: white !important;
+}
+
+.kpi-viagens-finalizadas {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+}
+
+.kpi-viagens-canceladas {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    color: white !important;
+}
+
+.kpi-motoristas-disponiveis {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+}
+
+.kpi-motoristas-agendados {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+    color: white !important;
+}
+
+.kpi-motoristas-ocupados {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    color: white !important;
+}
+
+.kpi-motoristas-offline {
+    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
+    color: white !important;
+}
+
+.kpi-receita {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+}
+
+.kpi-ocupacao {
+    background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%) !important;
+    color: white !important;
+}
+
+.kpi-tempo {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%) !important;
+    color: white !important;
+}
+
+/* Garantir que os textos dentro dos cards coloridos sejam brancos */
+.kpi-card[class*="kpi-"] .kpi-value,
+.kpi-card[class*="kpi-"] .kpi-label,
+.kpi-card[class*="kpi-"] .kpi-icon {
+    color: white !important;
+}
+
+.stats-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+    gap: 1rem !important;
+    margin-bottom: 2rem !important;
+}
+
+.stat-item {
+    background: white !important;
+    padding: 1rem !important;
+    border-radius: 0.5rem !important;
+    border-left: 4px solid var(--gomobi-primary) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+.stat-item .stat-value {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+    color: var(--gomobi-primary) !important;
+}
+
+.stat-item .stat-label {
+    font-size: 0.875rem !important;
+    color: #6b7280 !important;
+    margin-top: 0.25rem !important;
+}
+
+@media (max-width: 768px) {
+    .kpi-value {
+        font-size: 2rem !important;
+    }
+    
+    .dashboard-header {
+        padding: 1.5rem 0 !important;
+    }
+}
+

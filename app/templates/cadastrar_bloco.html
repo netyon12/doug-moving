@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <p class="card-text text-muted">Preencha os dados abaixo para registrar um novo bloco de valor para as corridas.</p>
                     
-                    <form method="POST" action="{{ url_for('routes.cadastrar_bloco') }}">
+                    <form method="POST" action="{{ url_for('admin.cadastrar_bloco') }}">
                         
                         <!-- Campo Código do Bloco -->
                         <div class="mb-3">
@@ -37,7 +37,7 @@
                         <hr>
 
                         <div class="d-flex justify-content-end">
-                            <a href="{{ url_for('routes.admin_dashboard', aba='blocos') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <a href="{{ url_for('admin.admin_dashboard', aba='blocos') }}" class="btn btn-secondary me-2">Cancelar</a>
                             <button type="submit" class="btn btn-primary">Salvar Bloco</button>
                         </div>
                     </form>
