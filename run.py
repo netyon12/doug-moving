@@ -8,6 +8,7 @@ from flask_migrate import Migrate
 
 # Cria a aplicação usando a nossa factory
 app = create_app()
+migrate = Migrate(app, db)  # ← ADICIONE ESTA LINHA
 
 # =============================================================================
 # COMANDOS DE LINHA DE COMANDO (CLI)

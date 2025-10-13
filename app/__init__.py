@@ -24,6 +24,7 @@ def create_app():
     # --- INICIALIZAÇÃO DAS EXTENSÕES ---
     db.init_app(app)
     login_manager.init_app(app)
+    migrate = Migrate(app, db)  # ← ADICIONE AQUI
     
     # Configuração do Flask-Login
     from .models import User
