@@ -4,6 +4,7 @@ from app.models import User
 from werkzeug.security import generate_password_hash
 import click
 from sqlalchemy import text
+from flask_migrate import Migrate
 
 # Cria a aplicação usando a nossa factory
 app = create_app()
