@@ -558,7 +558,7 @@ def detalhes_solicitacao(solicitacao_id):
                 'colaborador_matricula': solicitacao.colaborador.matricula if solicitacao.colaborador else 'N/A',
                 'colaborador_telefone': solicitacao.colaborador.telefone if solicitacao.colaborador else 'N/A',
                 'colaborador_endereco': solicitacao.colaborador.endereco if solicitacao.colaborador else 'N/A',
-                'colaborador_bairro': solicitacao.colaborador.bairro if solicitacao.colaborador and solicitacao.colaborador.bairro else 'N/A',
+                'colaborador_bairro': solicitacao.colaborador.bairro.nome if solicitacao.colaborador and solicitacao.colaborador.bairro else 'N/A',
                 
                 # Empresa e Planta
                 'empresa_nome': solicitacao.empresa.nome if solicitacao.empresa else 'N/A',
@@ -568,7 +568,7 @@ def detalhes_solicitacao(solicitacao_id):
                 'bloco_codigo': solicitacao.bloco.codigo_bloco if solicitacao.bloco else 'N/A',
                 
                 # Centro de Custo
-                'centro_custo': ', '.join([cc.nome for cc in solicitacao.colaborador.centros_custo]) if solicitacao.colaborador and solicitacao.colaborador.centros_custo else 'N/A',
+                'centro_custo': solicitacao.colaborador.centro_custo.nome if solicitacao.colaborador and solicitacao.colaborador.centro_custo else 'N/A',
                 
                 # Horários
                 'horario_entrada': solicitacao.horario_entrada.strftime('%d/%m/%Y %H:%M') if solicitacao.horario_entrada else None,

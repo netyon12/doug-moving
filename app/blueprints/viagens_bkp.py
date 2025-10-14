@@ -133,7 +133,8 @@ def viagem_detalhes(viagem_id):
                 'nome': viagem.motorista.nome or 'N/A',
                 'telefone': viagem.motorista.telefone or 'N/A',
                 'veiculo_nome': viagem.motorista.veiculo_nome or 'N/A',
-                'veiculo_placa': viagem.motorista.veiculo_placa or 'N/A'
+                'veiculo_placa': viagem.motorista.veiculo_placa or 'N/A',
+                'veiculo_modelo': viagem.motorista.veiculo_modelo or 'N/A'
             }
         
         # Monta lista de colaboradores com detalhes
@@ -146,7 +147,7 @@ def viagem_detalhes(viagem_id):
                     'colaborador_matricula': s.colaborador.matricula if hasattr(s.colaborador, 'matricula') else 'N/A',
                     'colaborador_telefone': s.colaborador.telefone if hasattr(s.colaborador, 'telefone') else 'N/A',
                     'endereco': s.colaborador.endereco or 'N/A',
-                    'bairro': s.colaborador.bairro or 'N/A',
+                    'bairro': s.colaborador.bairro.nome if s.colaborador.bairro else 'N/A',
                     'status': s.status or 'N/A'
                 })
         

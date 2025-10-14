@@ -22,19 +22,36 @@
                     </div>
                     <div class="col-md-2">
                         <label>Empresa</label>
-                        <select name="empresa_id" id="empresa_id" class="form-control">
-                            <option value="">Todas</option>
-                            {% for empresa in empresas %}
-                            <option value="{{ empresa.id }}">{{ empresa.nome }}</option>
-                            {% endfor %}
+                        <!-- CORRIGIDO: Filtro fixo para não-administradores -->
+                        <select name="empresa_id" id="empresa_id" class="form-control" 
+                                {% if user_role != 'admin' %}disabled{% endif %}>
+                            {% if empresa_id_usuario %}
+                                <!-- Se usuário tem empresa fixa, mostrar apenas ela -->
+                                {% for empresa in empresas %}
+                                <option value="{{ empresa.id }}" selected>{{ empresa.nome }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <!-- Admin pode ver todas -->
+                                <option value="">Todas</option>
+                                {% for empresa in empresas %}
+                                <option value="{{ empresa.id }}">{{ empresa.nome }}</option>
+                                {% endfor %}
+                            {% endif %}
                         </select>
+                        <!-- Campo hidden para enviar o valor quando disabled -->
+                        {% if user_role != 'admin' and empresa_id_usuario %}
+                        <input type="hidden" name="empresa_id" value="{{ empresa_id_usuario }}">
+                        {% endif %}
                     </div>
                     <div class="col-md-2">
                         <label>Planta</label>
                         <select name="planta_id" id="planta_id" class="form-control">
                             <option value="">Todas</option>
                             {% for planta in plantas %}
-                            <option value="{{ planta.id }}">{{ planta.nome }}</option>
+                            <option value="{{ planta.id }}" 
+                                    {% if planta_id_usuario and planta.id == planta_id_usuario %}selected{% endif %}>
+                                {{ planta.nome }}
+                            </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -43,7 +60,8 @@
                         <select name="bloco_id" id="bloco_id" class="form-control">
                             <option value="">Todos</option>
                             {% for bloco in blocos %}
-                            <option value="{{ bloco.id }}">{{ bloco.nome_bloco }}</option>
+                            <!-- CORRIGIDO: Mostrar codigo_bloco ao invés de nome_bloco -->
+                            <option value="{{ bloco.id }}">{{ bloco.codigo_bloco }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -70,12 +88,25 @@
                     </div>
                     <div class="col-md-2">
                         <label>Tipo Linha</label>
+                        <!-- CORRIGIDO: Opções FIXA e EXTRA -->
                         <select name="tipo_linha" id="tipo_linha" class="form-control">
                             <option value="">Todos</option>
-                            <option value="Turno">Turno</option>
-                            <option value="Admin">Admin</option>
+                            <option value="FIXA">Fixa</option>
+                            <option value="EXTRA">Extra</option>
                         </select>
                     </div>
+                    <!-- NOVO: Filtro de Supervisor (apenas para admin) -->
+                    {% if user_role == 'admin' %}
+                    <div class="col-md-3">
+                        <label>Supervisor</label>
+                        <select name="supervisor_id" id="supervisor_id" class="form-control">
+                            <option value="">Todos</option>
+                            {% for supervisor in supervisores %}
+                            <option value="{{ supervisor.id }}">{{ supervisor.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
                 </div>
                 <div class="row mt-3">
                     <div class="col-12">
@@ -124,6 +155,7 @@
                                 <th>Tipo Linha</th>
                                 <th>Tipo Corrida</th>
                                 <th>Status</th>
+                                <th>Solicitante</th> <!-- NOVA COLUNA -->
                                 <th>Entrada</th>
                                 <th>Saída</th>
                                 <th>Valor</th>
@@ -164,6 +196,25 @@ $(document).ready(function() {
     $('#data_fim').val(hoje.toISOString().split('T')[0]);
 });
 
+// NOVO: Filtro dinâmico de Planta baseado em Empresa
+$('#empresa_id').change(function() {
+    var empresa_id = $(this).val();
+    if (empresa_id) {
+        $.get('/relatorios/plantas-por-empresa/' + empresa_id, function(data) {
+            if (data.success) {
+                var $planta = $('#planta_id');
+                $planta.empty();
+                $planta.append('<option value="">Todas</option>');
+                $.each(data.plantas, function(i, planta) {
+                    $planta.append($('<option></option>')
+                        .attr('value', planta.id)
+                        .text(planta.nome));
+                });
+            }
+        });
+    }
+});
+
 // Submeter formulário
 $('#formFiltros').on('submit', function(e) {
     e.preventDefault();
@@ -196,7 +247,6 @@ $('#formFiltros').on('submit', function(e) {
                 errorMsg = xhr.responseJSON.message;
             }
 
-
             console.error('Erro:', xhr);
             Swal.fire({
                 icon: 'error',
@@ -207,25 +257,24 @@ $('#formFiltros').on('submit', function(e) {
     });
 });
 
-// Exibir resultados na tabela
-
 // Função para obter badge colorido baseado no status
 function getStatusBadge(status) {
     if (!status || status === "N/A") return '<span class="badge badge-secondary">N/A</span>';
     let badgeClass = "badge-secondary";
     if (status === "Pendente") badgeClass = "badge-warning";
-    else if (status === "Em andamento") badgeClass = "badge-primary";
+    else if (status === "Agrupada") badgeClass = "badge-info";
     else if (status === "Finalizada") badgeClass = "badge-success";
     else if (status === "Cancelada") badgeClass = "badge-danger";
     return `<span class="badge ${badgeClass}">${status}</span>`;
 }
 
+// Exibir resultados na tabela
 function exibirResultados(dados, total) {
     const tbody = $('#corpoTabela');
     tbody.empty();
     
     if (dados.length === 0) {
-        tbody.append('<tr><td colspan="12" class="text-center">Nenhuma solicitação encontrada</td></tr>');
+        tbody.append('<tr><td colspan="13" class="text-center">Nenhuma solicitação encontrada</td></tr>');
         $('#areaResultados').show();
         return;
     }
@@ -241,6 +290,7 @@ function exibirResultados(dados, total) {
         tr.append(`<td>${item.tipo_linha}</td>`);
         tr.append(`<td>${item.tipo_corrida}</td>`);
         tr.append(`<td>${getStatusBadge(item.status)}</td>`);
+        tr.append(`<td>${item.solicitante}</td>`); // NOVA COLUNA
         tr.append(`<td>${item.horario_entrada}</td>`);
         tr.append(`<td>${item.horario_saida}</td>`);
         tr.append(`<td>R$ ${item.valor.toFixed(2)}</td>`);

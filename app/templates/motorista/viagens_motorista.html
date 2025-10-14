@@ -101,10 +101,10 @@
     <!-- Lista de Viagens -->
     <div class="card">
         <div class="card-header">
-            <i class="bi bi-list-ul"></i> Viagens Encontradas: <strong>{{ viagens|length }}</strong>
+            <i class="bi bi-list-ul"></i> Viagens Encontradas: <strong>{{ viagens.total }}</strong>
         </div>
         <div class="card-body p-0">
-            {% if viagens %}
+            {% if viagens.items %}
             <div class="table-responsive">
                 <table class="table table-hover table-striped align-middle mb-0">
                     <thead class="table-dark">
@@ -122,7 +122,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for viagem in viagens %}
+                        {% for viagem in viagens.items %}
                         <tr>
                             <td><strong>#{{ viagem.id }}</strong></td>
                             <td>{{ viagem.empresa.nome if viagem.empresa else 'N/A' }}</td>
@@ -195,11 +195,11 @@
         </div>
         
         <!-- Rodapé com Total de Repasse -->
-        {% if viagens %}
+        {% if viagens.items %}
         <div class="card-footer bg-light">
             <div class="row">
                 <div class="col-md-6">
-                    <strong>Total de Viagens:</strong> {{ viagens|length }}
+                    <strong>Total de Viagens:</strong> {{ viagens.total }}
                 </div>
                 <div class="col-md-6 text-end">
                     <strong>Total de Repasse:</strong> 

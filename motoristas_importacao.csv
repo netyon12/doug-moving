@@ -1,0 +1,23 @@
+nome;cpf_cnpj;email;senha;telefone;endereco;nro;bairro;cidade;uf;chave_pix;veiculo_nome;veiculo_placa;veiculo_cor;veiculo_ano;veiculo_km;veiculo_obs;status
+Debora Ferreira Borges;07236938321;debora.borges@email.com;senha123;12996814111;AV Vera Cruz;;Vera Cruz;Caçapava;SP;07236938321;Fiat Mobi;FLM4K90;Preto;2019;155262;ok;Ativo
+Evaldo Marcelo Foleto;20499574000163;evaldo.foleto@email.com;senha123;1298991111;R. Tomás Augusto de Oliveira;185;Vl Santa Isabel;Caçapava;SP;20499574000163;Ford Ka;GCR3D19;Preto;2019;175843;ok;Ativo
+Andrea Foleto;20499574000164;andrea.foleto@email.com;senha123;1298810010;R. Tomás Augusto de Oliveira;185;Vl Santa Isabel;Caçapava;SP;20499574000163;Renault Logan;EAN8177;Prata;2008;;ok;Ativo
+Célio Santos Moreira;27260482143;celio.moreira@email.com;senha123;1297047582;Av. Mal. Castelo Branco;201;Centro;Caçapava;SP;;Fiat Argo;DQV3121;;2022;122171;ok;Ativo
+Aparecido Aurelio Urbano;29420254844;aparecido.urbano@email.com;senha123;1298804997;Rua Joaquim Pereira;526;Jd Rafael;Caçapava;SP;1298804997;Fiat Mobi;RNO7E08;Prata;2022;72138;ok;Ativo
+Matheus Ricardo de Paula;44580038546;matheus.paula@email.com;senha123;1297401242;Rua José Bonifácio;288;Jd Rafael;Caçapava;SP;44580038546;Ford Ka;ENI8B85;Prata;2018;134458;ok;Ativo
+Anderson Beline dos Santos Oliveira;35155644895;anderson.oliveira@email.com;senha123;1297412414;Manoel Francisco dos santos;51;Jd São José;Caçapava;SP;35155644895;VW Virtus;QOT7S05;Branco;2019;150000;ok;Ativo
+Luiz Fernando de Abreu;36010048417;luiz.abreu@email.com;senha123;1299757451;Carlos Augusto Francisco Alvarenga;3901;Tatetuba;Caçapava;SP;1299757451;Fiat Chronos;Quy-6J19;Vermelho;2019;48358;ok;Ativo
+Helton Pereira da Silva;30935638104;helton.silva@email.com;senha123;1295610116;Av Joaquim Thomas de Freitas;100;Panorama;Caçapava;SP;30935638104;Nissan Sentra;QNM2184;Preto;2017;300000;ok;Ativo
+Vanderson de Jesus Dias;28295578406;vanderson.dias@email.com;senha123;1299134317;R. alferes Francisco teixeira de Cunha;320;Vila Menino Jesus;Caçapava;SP;28295578406;Renault Logan;PVW5E21;Prata;2017;200411;ok;Ativo
+Fernando Moreno Mendes;29368573840;fernando.mendes@email.com;senha123;1299183101;Rua Miguel de Araújo Simões;101;Esperança;Caçapava;SP;29368573840;Honda Civic;LQE3871;Prata;2014;178000;ok;Ativo
+Alexandre Aparecido de Souza;1298075353;alexandre.souza@email.com;senha123;1298807533;Rua Procópio José de Siqueira;128;Vl Santa Isabel;Caçapava;SP;1298075353;Ford Ka;QNN6G80;Branco;2018;68700;ok;Ativo
+Willian Joab Silva Martins;21694484845;willian.martins@email.com;senha123;1299626908;Av Lucio de Lara Ramalho;109;Borda do Campo;Caçapava;SP;;GM Onix;RCE3189;Branco;2022;110935;ok;Ativo
+Joaquim Batista da Silva;69436374549;joaquim.silva@email.com;senha123;1299705117;Rua Humberto Rossi;235;Nova Caçapava;Caçapava;SP;69436374549;Gm Onix;QUU0I09;Prata;2019;155555;ok;Ativo
+Gilseide de Oliveira Vasconcelos;37615678564;gilseide.vasconcelos@email.com;senha123;1299127566;Rua Maria do Carmo Nani Guimarães;125;Nova Caçapava;Caçapava;SP;37615678564;GM Onix;GGC6F88;Preto;2019;11670;ok;Ativo
+Washington da Silva Magalhães;25205543809;washington.magalhaes@email.com;senha123;1299747026;R Elgidio Manoel dos Santos;351;Vitória Vale;Caçapava;SP;1299747026;Ford Ka;FFX8323;Prata;2017;110000;ok;Ativo
+Juilton Fauatino de Lima;26481736622;juilton.lima@email.com;senha123;1299135044;Rua Madeira;41;Pq Nhembu;Caçapava;SP;26481736622;Hyundai HB20;RQT1H87;Prata;2022;84000;ok;Ativo
+Gabriel Felipe Carvalho da Silva;61964036000180;gabriel.silva@email.com;senha123;1299630578;Rua professor argemiro telles gopfert;74;Vila São João;Caçapava;SP;23575630879;VW Gol;SEA1J55;Preto;2023;44000;ok;Ativo
+Maria Angelica Rosa de Faria;03239384845;maria.faria@email.com;senha123;1299721658;Rua jari Venâncio de Paiva;105;Jd Itapuaín;Caçapava;SP;;Fiat Chronos;RFD1066;Preto;2022;154398;ok;Ativo
+Eduardo de Souza Junior;22738876803;eduardo.junior@email.com;senha123;1297859123;rua dos lavradores;93;Novo horizonte;SLcampos;SP;1297859123;GM Onix;FVQ8C59;Branco;2018;;ok;Ativo
+Juliana Ap. de Camargo Geraldo;30285754858;juliana.geraldo@email.com;senha123;1298836742;Rua Jânio da Silva Quadros;;Santa Luzia;Caçapava;SP;1298836742;GM Onix;GHT8I26;Branco;2021;52331;ok;Ativo
+

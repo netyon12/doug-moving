@@ -19,7 +19,7 @@ Autor: Sistema DOUG Moving
 Data: 2025
 """
 
-from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
+from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
 from datetime import datetime
 from sqlalchemy import and_, or_
@@ -27,6 +27,8 @@ from sqlalchemy import and_, or_
 from .. import db
 from app.models import Viagem, Motorista, Solicitacao, Colaborador, User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro
 from ..decorators import role_required
+
+from app.services.whatsapp_service import whatsapp_service
 
 # Importação condicional de notificações
 try:
@@ -48,11 +50,27 @@ from ..utils.admin_audit import (
 )
 
 # Importação do serviço de WhatsApp
-from .whatsapp import enviar_notificacao_viagem_aceita
+from app.services.whatsapp_service import whatsapp_service
 
 
 # CORREÇÃO: Nome do blueprint deve ser 'motorista_bp' para coincidir com __init__.py
 motorista_bp = Blueprint('motorista', __name__, url_prefix='/motorista')
+
+
+# =============================================================================
+# FUNÇÕES AUXILIARES
+# =============================================================================
+
+def get_database_type():
+    """
+    Detecta qual banco de dados está sendo usado.
+    Retorna 'sqlite' ou 'postgresql'.
+    """
+    database_url = current_app.config.get('SQLALCHEMY_DATABASE_URI', '')
+    if 'postgresql' in database_url or 'postgres' in database_url:
+        return 'postgresql'
+    else:
+        return 'sqlite'
 
 
 # =============================================================================
@@ -85,13 +103,30 @@ def dashboard_motorista():
         status='Em Andamento'
     ).count()
     
-    viagens_finalizadas_mes = Viagem.query.filter(
-        and_(
-            Viagem.motorista_id == motorista.id,
-            Viagem.status == 'Finalizada',
-            db.func.to_char(Viagem.data_finalizacao, 'YYYY-MM') == datetime.now().strftime('%Y-%m')
-        )
-    ).count()
+    # Consulta compatível com SQLite e PostgreSQL
+    mes_atual = datetime.now().strftime('%Y-%m')
+    
+    # Detecta o banco de dados e usa a função apropriada
+    db_type = get_database_type()
+    
+    if db_type == 'postgresql':
+        # PostgreSQL usa to_char
+        viagens_finalizadas_mes = Viagem.query.filter(
+            and_(
+                Viagem.motorista_id == motorista.id,
+                Viagem.status == 'Finalizada',
+                db.func.to_char(Viagem.data_finalizacao, 'YYYY-MM') == mes_atual
+            )
+        ).count()
+    else:
+        # SQLite usa strftime
+        viagens_finalizadas_mes = Viagem.query.filter(
+            and_(
+                Viagem.motorista_id == motorista.id,
+                Viagem.status == 'Finalizada',
+                db.func.strftime('%Y-%m', Viagem.data_finalizacao) == mes_atual
+            )
+        ).count()
     
     # Viagens disponíveis (Pendente, sem motorista)
     viagens_disponiveis = Viagem.query.filter_by(
@@ -237,13 +272,13 @@ def aceitar_viagem(viagem_id):
         # ========== INTEGRAÇÃO WHATSAPP - INÍCIO ==========
         # Envia notificação WhatsApp para colaboradores
         try:
-            resultados_whatsapp = enviar_notificacao_viagem_aceita(viagem)
-            from flask import current_app
-            current_app.logger.info(f"WhatsApp enviado para {len(resultados_whatsapp)} colaboradores")
+            enviadas = whatsapp_service.send_notification_viagem_aceita(viagem )
+            if enviadas > 0:
+                flash(f'Viagem aceita! {enviadas} notificações enviadas.', 'success')
         except Exception as e:
-            # Não interrompe o fluxo se o WhatsApp falhar
-            from flask import current_app
-            current_app.logger.error(f"Erro ao enviar WhatsApp: {str(e)}")
+            current_app.logger.error(f'Erro WhatsApp: {e}')
+            flash('Viagem aceita com sucesso!', 'success')
+
         # ========== INTEGRAÇÃO WHATSAPP - FIM ==========
         
         # Registra no log de auditoria
@@ -496,15 +531,14 @@ def finalizar_viagem(viagem_id):
         
         # Envia notificação (se módulo disponível)
         if NOTIFICACOES_DISPONIVEIS:
-            # TODO: Buscar email do supervisor
+            # TODO: Buscar email do supervisor responsável
             # notificar_viagem_finalizada(viagem, 'supervisor@empresa.com')
             pass
         
         return jsonify({
             'sucesso': True,
             'mensagem': f'Viagem #{viagem.id} finalizada com sucesso!',
-            'viagem_id': viagem.id,
-            'valor_repasse': float(viagem.valor_repasse) if viagem.valor_repasse else 0
+            'viagem_id': viagem.id
         })
         
     except Exception as e:
@@ -527,217 +561,154 @@ def finalizar_viagem(viagem_id):
 
 
 # =============================================================================
-# ROTAS DE API (JSON)
+# ROTAS DE API (PARA ATUALIZAÇÕES VIA AJAX)
 # =============================================================================
 
-@motorista_bp.route('/api/viagens/disponiveis')
+@motorista_bp.route('/atualizar_status_disponibilidade', methods=['POST'])
 @login_required
 @role_required('motorista')
-def api_viagens_disponiveis():
-    """API: Retorna viagens disponíveis em formato JSON."""
-    
-    viagens = Viagem.query.filter_by(
-        status='Pendente',
-        motorista_id=None
-    ).order_by(Viagem.data_criacao.desc()).all()
-    
-    return jsonify({
-        'sucesso': True,
-        'viagens': [
-            {
-                'id': v.id,
-                'tipo_corrida': v.tipo_corrida,
-                'quantidade_passageiros': v.quantidade_passageiros,
-                'horario_entrada': v.horario_entrada,
-                'horario_saida': v.horario_saida,
-                'blocos_ids': v.blocos_ids,
-                'valor': float(v.valor) if v.valor else 0,
-                'valor_repasse': float(v.valor_repasse) if v.valor_repasse else 0
-            }
-            for v in viagens
-        ]
-    })
-
-
-@motorista_bp.route('/api/viagens/minhas')
-@login_required
-@role_required('motorista')
-def api_minhas_viagens():
-    """API: Retorna viagens do motorista em formato JSON."""
+def atualizar_status_disponibilidade():
+    """Atualiza o status de disponibilidade do motorista."""
     
     motorista = current_user.motorista
-    status_filtro = request.args.get('status')
+    novo_status = request.json.get('status')
     
-    query = Viagem.query.filter_by(motorista_id=motorista.id)
+    if not novo_status or novo_status not in [Motorista.STATUS_DISPONIVEL, Motorista.STATUS_INDISPONIVEL, Motorista.STATUS_AUSENTE]:
+        return jsonify({'sucesso': False, 'mensagem': 'Status inválido.'}), 400
     
-    if status_filtro:
-        query = query.filter_by(status=status_filtro)
-    
-    viagens = query.order_by(Viagem.data_criacao.desc()).all()
-    
-    return jsonify({
-        'sucesso': True,
-        'viagens': [
-            {
-                'id': v.id,
-                'status': v.status,
-                'tipo_corrida': v.tipo_corrida,
-                'quantidade_passageiros': v.quantidade_passageiros,
-                'horario_entrada': v.horario_entrada,
-                'horario_saida': v.horario_saida,
-                'blocos_ids': v.blocos_ids,
-                'valor_repasse': float(v.valor_repasse) if v.valor_repasse else 0,
-                'data_criacao': v.data_criacao.isoformat() if v.data_criacao else None
-            }
-            for v in viagens
-        ]
-    })
-
-# ============================================================================
-# ROTA: MINHAS VIAGENS (Histórico do Motorista)
-# ============================================================================
-# 
-# Adicionar esta rota no arquivo: app/blueprints/motorista.py
-# Adicionar após a rota de dashboard_motorista
-# 
-
-@motorista_bp.route('/viagens')
-@login_required
-@role_required('motorista')
-def minhas_viagens():
-    """Lista todas as viagens do motorista com filtros."""
-    
-    motorista = current_user.motorista
-    
-    # Verifica se o perfil de motorista existe
-    if not motorista:
-        flash('Perfil de motorista não encontrado. Entre em contato com o administrador.', 'danger')
-        return redirect(url_for('auth.logout'))
-    
-    motorista_id = motorista.id
-    
-    try:
-        # Busca base de viagens (apenas do motorista logado)
-        query = Viagem.query.filter(Viagem.motorista_id == motorista_id)
-        
-        # Aplica filtros
-        filtro_viagem_id = request.args.get('viagem_id', '')
-        if filtro_viagem_id:
-            query = query.filter(Viagem.id == int(filtro_viagem_id))
-        
-        filtro_status = request.args.get('status', '')
-        if filtro_status:
-            query = query.filter(Viagem.status == filtro_status)
-        
-        filtro_data_inicio = request.args.get('data_inicio', '')
-        if filtro_data_inicio:
-            data_inicio = datetime.strptime(filtro_data_inicio, '%Y-%m-%d')
-            query = query.filter(
-                or_(
-                    Viagem.horario_entrada >= data_inicio,
-                    Viagem.horario_saida >= data_inicio,
-                    Viagem.horario_desligamento >= data_inicio
-                )
-            )
-        
-        filtro_data_fim = request.args.get('data_fim', '')
-        if filtro_data_fim:
-            data_fim = datetime.strptime(filtro_data_fim, '%Y-%m-%d')
-            data_fim = data_fim.replace(hour=23, minute=59, second=59)
-            query = query.filter(
-                or_(
-                    Viagem.horario_entrada <= data_fim,
-                    Viagem.horario_saida <= data_fim,
-                    Viagem.horario_desligamento <= data_fim
-                )
-            )
-        
-        filtro_bloco_id = request.args.get('bloco_id', '')
-        if filtro_bloco_id:
-            query = query.filter(Viagem.bloco_id == int(filtro_bloco_id))
-        
-        filtro_planta_id = request.args.get('planta_id', '')
-        if filtro_planta_id:
-            query = query.filter(Viagem.planta_id == int(filtro_planta_id))
-        
-        filtro_empresa_id = request.args.get('empresa_id', '')
-        if filtro_empresa_id:
-            query = query.filter(Viagem.empresa_id == int(filtro_empresa_id))
-        
-        # Ordena por data/horário mais recente
-        viagens = query.order_by(Viagem.id.desc()).all()
-        
-        # Calcula o total de repasse APENAS das viagens finalizadas
-        total_repasse = sum(v.valor_repasse or 0 for v in viagens if v.status == 'Finalizada')
-        
-        # Busca dados para os filtros
-        blocos = Bloco.query.order_by(Bloco.codigo_bloco).all()
-        plantas = Planta.query.order_by(Planta.nome).all()
-        empresas = Empresa.query.order_by(Empresa.nome).all()
-        
-        # Opções de status
-        status_opcoes = ['Pendente', 'Agendada', 'Em Andamento', 'Finalizada', 'Cancelada']
-        
-        return render_template(
-            'motorista/viagens_motorista.html',
-            viagens=viagens,
-            blocos=blocos,
-            plantas=plantas,
-            empresas=empresas,
-            status_opcoes=status_opcoes,
-            total_repasse=total_repasse,
-            filtro_viagem_id=filtro_viagem_id,
-            filtro_status=filtro_status,
-            filtro_data_inicio=filtro_data_inicio,
-            filtro_data_fim=filtro_data_fim,
-            filtro_bloco_id=filtro_bloco_id,
-            filtro_planta_id=filtro_planta_id,
-            filtro_empresa_id=filtro_empresa_id
-        )
-        
-    except Exception as e:
-        flash(f'Erro ao carregar viagens: {str(e)}', 'danger')
-        return redirect(url_for('motorista.dashboard_motorista'))
-
-
-
-
-
-@motorista_bp.route('/toggle-disponibilidade', methods=['POST'])
-@login_required
-@role_required('motorista')
-def toggle_disponibilidade():
-    """Alterna o status de disponibilidade do motorista (online/offline)."""
-    
-    motorista = current_user.motorista
-    
-    if not motorista:
+    # Não permite alterar para "Disponível" se estiver em viagem
+    if novo_status == Motorista.STATUS_DISPONIVEL and motorista.status == Motorista.STATUS_EM_VIAGEM:
         return jsonify({
-            'sucesso': False,
-            'mensagem': 'Perfil de motorista não encontrado.'
-        }), 404
-    
+            'sucesso': False, 
+            'mensagem': 'Você não pode ficar disponível enquanto estiver em uma viagem.'
+        }), 400
+
+    # Não permite alterar se estiver em viagem
+    if motorista.status == Motorista.STATUS_EM_VIAGEM:
+        return jsonify({
+            'sucesso': False, 
+            'mensagem': f'Seu status está "Em Viagem" e será atualizado automaticamente ao finalizar a viagem.'
+        }), 400
+
     try:
-        # Alterna o status
-        if motorista.status_disponibilidade == 'online':
-            motorista.status_disponibilidade = 'offline'
-            mensagem = 'Você está agora OFFLINE. Não receberá novas viagens.'
-        else:
-            motorista.status_disponibilidade = 'online'
-            mensagem = 'Você está agora ONLINE. Pode aceitar novas viagens.'
-        
+        status_anterior = motorista.status
+        motorista.status = novo_status
         db.session.commit()
         
+        # Registra no log de auditoria
+        log_audit(
+            action=AuditAction.MOTORISTA_STATUS_UPDATE,
+            resource_type='Motorista',
+            resource_id=motorista.id,
+            user_id=current_user.id,
+            username=current_user.username,
+            changes={'status': {'before': status_anterior, 'after': novo_status}}
+        )
+        
         return jsonify({
-            'sucesso': True,
-            'mensagem': mensagem,
-            'status_atual': motorista.status_disponibilidade
+            'sucesso': True, 
+            'mensagem': f'Status atualizado para "{novo_status}" com sucesso!',
+            'novo_status': novo_status
         })
         
     except Exception as e:
         db.session.rollback()
-        return jsonify({
-            'sucesso': False,
-            'mensagem': f'Erro ao alterar disponibilidade: {str(e)}'
-        }), 500
+        return jsonify({'sucesso': False, 'mensagem': f'Erro ao atualizar status: {str(e)}'}), 500
+
+
+@motorista_bp.route("/minhas-viagens")
+@login_required
+@role_required('motorista')
+def minhas_viagens():
+    """Página para o motorista visualizar seu histórico de viagens."""
+    motorista = current_user.motorista
+    
+    # Filtros
+    page = request.args.get('page', 1, type=int)
+    filtro_viagem_id = request.args.get('viagem_id', '')
+    filtro_status = request.args.get('status', '')
+    filtro_data_inicio = request.args.get('data_inicio', '')
+    filtro_data_fim = request.args.get('data_fim', '')
+    filtro_empresa_id = request.args.get('empresa_id', '')
+    filtro_planta_id = request.args.get('planta_id', '')
+    filtro_bloco_id = request.args.get('bloco_id', '')
+
+    # Query base
+    query = Viagem.query.filter_by(motorista_id=motorista.id)
+
+    # Aplicar filtros
+    if filtro_viagem_id:
+        try:
+            query = query.filter(Viagem.id == int(filtro_viagem_id))
+        except ValueError:
+            flash('ID de viagem inválido.', 'warning')
+
+    if filtro_status:
+        query = query.filter(Viagem.status == filtro_status)
+        
+    if filtro_data_inicio:
+        try:
+            data_inicio_obj = datetime.strptime(filtro_data_inicio, '%Y-%m-%d')
+            query = query.filter(Viagem.data_criacao >= data_inicio_obj)
+        except ValueError:
+            flash('Formato de data de início inválido. Use AAAA-MM-DD.', 'warning')
+
+    if filtro_data_fim:
+        try:
+            data_fim_obj = datetime.strptime(filtro_data_fim, '%Y-%m-%d')
+            from datetime import timedelta
+            query = query.filter(Viagem.data_criacao < data_fim_obj + timedelta(days=1))
+        except ValueError:
+            flash('Formato de data de fim inválido. Use AAAA-MM-DD.', 'warning')
+
+    if filtro_empresa_id:
+        try:
+            query = query.filter(Viagem.empresa_id == int(filtro_empresa_id))
+        except ValueError:
+            flash('ID de empresa inválido.', 'warning')
+
+    if filtro_planta_id:
+        try:
+            query = query.filter(Viagem.planta_id == int(filtro_planta_id))
+        except ValueError:
+            flash('ID de planta inválido.', 'warning')
+
+    if filtro_bloco_id:
+        try:
+            query = query.filter(Viagem.bloco_id == int(filtro_bloco_id))
+        except ValueError:
+            flash('ID de bloco inválido.', 'warning')
+
+    # Paginação
+    viagens_paginadas = query.order_by(Viagem.data_criacao.desc()).paginate(page=page, per_page=15, error_out=False)
+    
+    # Calcular totais (baseado na query filtrada)
+    total_viagens = query.count()
+    total_repasse = db.session.query(db.func.sum(Viagem.valor_repasse)).filter(
+        Viagem.motorista_id == motorista.id
+    ).scalar() or 0.0
+
+    # Buscar dados para os filtros
+    status_opcoes = ['Pendente', 'Agendada', 'Em Andamento', 'Finalizada', 'Cancelada']
+    empresas = Empresa.query.order_by(Empresa.nome).all()
+    plantas = Planta.query.order_by(Planta.nome).all()
+    blocos = Bloco.query.order_by(Bloco.codigo_bloco).all()
+
+    return render_template(
+        "motorista/viagens_motorista.html",
+        viagens=viagens_paginadas,
+        total_viagens=total_viagens,
+        total_repasse=total_repasse,
+        filtro_viagem_id=filtro_viagem_id,
+        filtro_status=filtro_status,
+        filtro_data_inicio=filtro_data_inicio,
+        filtro_data_fim=filtro_data_fim,
+        filtro_empresa_id=filtro_empresa_id,
+        filtro_planta_id=filtro_planta_id,
+        filtro_bloco_id=filtro_bloco_id,
+        status_opcoes=status_opcoes,
+        empresas=empresas,
+        plantas=plantas,
+        blocos=blocos
+    )
 

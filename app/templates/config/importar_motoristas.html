@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Importar Motoristas - Versão Expandida{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-upload"></i> Importar Motoristas - Todos os Campos</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Instruções -->
+                    <div class="alert alert-info">
+                        <h5><i class="bi bi-info-circle"></i> Instruções - Versão Expandida</h5>
+                        <p>Prepare um arquivo CSV com <strong>TODOS os campos</strong> disponíveis (separadas por ponto e vírgula):</p>
+                        
+                        <p><strong>Formato Completo:</strong></p>
+                        <pre class="bg-light p-2 rounded" style="font-size: 0.75em;">nome;cpf_cnpj;email;senha;telefone;endereco;nro;bairro;cidade;uf;chave_pix;veiculo_nome;veiculo_placa;veiculo_cor;veiculo_ano;veiculo_km;veiculo_obs;status</pre>
+                        
+                        <p><strong>Exemplo:</strong></p>
+                        <pre class="bg-light p-2 rounded" style="font-size: 0.75em;">nome;cpf_cnpj;email;senha;telefone;endereco;nro;bairro;cidade;uf;chave_pix;veiculo_nome;veiculo_placa;veiculo_cor;veiculo_ano;veiculo_km;veiculo_obs;status
+Carlos Silva;12345678901;carlos@email.com;senha123;11999999999;Rua A;100;Centro;São Paulo;SP;carlos@pix.com;Fiat Uno;ABC1234;Branco;2020;50000;Ar condicionado;Ativo
+Ana Santos;98765432100;ana@email.com;senha456;11988888888;Av. B;200;;São Paulo;SP;ana@pix.com;Gol;XYZ5678;Prata;2019;75000;;Ativo
+Pedro Costa;11122233344;pedro@email.com;senha789;;;;;SP;;Honda Civic;DEF9012;Preto;2021;30000;;Ativo</pre>
+                        
+                        <div class="mt-3">
+                            <h6><i class="bi bi-check-circle text-success"></i> Campos Obrigatórios:</h6>
+                            <ul class="mb-2">
+                                <li><strong>nome</strong> - Nome completo do motorista</li>
+                                <li><strong>cpf_cnpj</strong> - CPF (11 dígitos) ou CNPJ (14 dígitos) único</li>
+                                <li><strong>email</strong> - E-mail único (será usado para login)</li>
+                                <li><strong>senha</strong> - Senha de acesso (mínimo 6 caracteres)</li>
+                            </ul>
+                            
+                            <h6><i class="bi bi-dash-circle text-warning"></i> Campos Opcionais - Dados Pessoais:</h6>
+                            <ul class="mb-2">
+                                <li><strong>telefone</strong> - Telefone de contato</li>
+                                <li><strong>endereco</strong> - Endereço (rua/avenida)</li>
+                                <li><strong>nro</strong> - Número do endereço</li>
+                                <li><strong>bairro</strong> - Bairro</li>
+                                <li><strong>cidade</strong> - Cidade</li>
+                                <li><strong>uf</strong> - Estado (sigla com 2 letras: SP, RJ, MG, etc.)</li>
+                                <li><strong>chave_pix</strong> - Chave PIX para pagamentos</li>
+                                <li><strong>status</strong> - Ativo ou Inativo (padrão: Ativo)</li>
+                            </ul>
+                            
+                            <h6><i class="bi bi-dash-circle text-info"></i> Campos Opcionais - Dados do Veículo:</h6>
+                            <ul class="mb-2">
+                                <li><strong>veiculo_nome</strong> - Modelo do veículo (ex: Fiat Uno, Gol, Civic)</li>
+                                <li><strong>veiculo_placa</strong> - Placa do veículo (formato: ABC1234 ou ABC1D23)</li>
+                                <li><strong>veiculo_cor</strong> - Cor do veículo</li>
+                                <li><strong>veiculo_ano</strong> - Ano de fabricação (número de 4 dígitos)</li>
+                                <li><strong>veiculo_km</strong> - Quilometragem atual (número, pode usar vírgula)</li>
+                                <li><strong>veiculo_obs</strong> - Observações sobre o veículo (acessórios, etc.)</li>
+                            </ul>
+                        </div>
+                        
+                        <p class="mt-3"><strong>Observações Importantes:</strong></p>
+                        <ul>
+                            <li>A primeira linha deve ser o cabeçalho (será ignorada)</li>
+                            <li>Use ponto e vírgula (;) como separador</li>
+                            <li>Campos opcionais podem ser deixados em branco</li>
+                            <li>CPF/CNPJ, email e placa devem ser únicos no sistema</li>
+                            <li>Senha será criptografada automaticamente</li>
+                            <li>Senha deve ter no mínimo 6 caracteres</li>
+                            <li>CPF deve ter 11 dígitos, CNPJ deve ter 14 dígitos</li>
+                            <li>Placa aceita formato antigo (ABC1234) ou Mercosul (ABC1D23)</li>
+                            <li>UF deve ser uma sigla válida (2 letras)</li>
+                            <li>Ano do veículo deve estar entre 1900 e o ano atual + 1</li>
+                            <li>KM do veículo deve ser um número positivo</li>
+                            <li>Codificação: UTF-8</li>
+                        </ul>
+                    </div>
+
+                    <!-- Formulário de Upload -->
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="csv_file" class="form-label">Selecione o arquivo CSV:</label>
+                            <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin.pagina_importacoes') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Voltar
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-upload"></i> Importar Motoristas
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Informações Adicionais -->
+                    <div class="mt-4">
+                        <div class="alert alert-warning">
+                            <h6><i class="bi bi-exclamation-triangle"></i> Dicas para Preenchimento</h6>
+                            <ul class="mb-0">
+                                <li>Se não tiver todos os dados do veículo, deixe os campos em branco</li>
+                                <li>A placa do veículo é opcional, mas se fornecida deve ser única</li>
+                                <li>O ano do veículo deve ser um número de 4 dígitos (ex: 2020)</li>
+                                <li>A quilometragem pode usar vírgula ou ponto (ex: 50000 ou 50.000 ou 50,000)</li>
+                                <li>Observações do veículo podem conter texto livre (ex: "Ar condicionado, direção hidráulica")</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

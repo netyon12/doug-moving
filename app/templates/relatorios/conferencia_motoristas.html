@@ -21,13 +21,28 @@
                         <input type="date" name="data_fim" id="data_fim" class="form-control" required>
                     </div>
                     <div class="col-md-3">
-                        <label>Motorista *</label>
-                        <select name="motorista_id" id="motorista_id" class="form-control">
-                            <option value="">Selecione...</option>
-                            {% for motorista in motoristas %}
-                            <option value="{{ motorista.id }}">{{ motorista.nome }}</option>
-                            {% endfor %}
+                        <label>Motorista {% if user_role != 'motorista' %}*{% endif %}</label>
+                        <!-- CORRIGIDO: Filtro fixo para motoristas logados -->
+                        <select name="motorista_id" id="motorista_id" class="form-control"
+                                {% if user_role == 'motorista' %}disabled{% endif %}
+                                {% if user_role != 'motorista' %}required{% endif %}>
+                            {% if motorista_id_usuario %}
+                                <!-- Motorista vê apenas ele mesmo -->
+                                {% for motorista in motoristas %}
+                                <option value="{{ motorista.id }}" selected>{{ motorista.nome }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <!-- Admin pode selecionar qualquer motorista -->
+                                <option value="">Selecione...</option>
+                                {% for motorista in motoristas %}
+                                <option value="{{ motorista.id }}">{{ motorista.nome }}</option>
+                                {% endfor %}
+                            {% endif %}
                         </select>
+                        <!-- Campo hidden para enviar o valor quando disabled -->
+                        {% if user_role == 'motorista' and motorista_id_usuario %}
+                        <input type="hidden" name="motorista_id" value="{{ motorista_id_usuario }}">
+                        {% endif %}
                     </div>
                     <div class="col-md-3">
                         <label>Status</label>
@@ -81,6 +96,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Data</th>
+                                <th>Horário</th>
                                 <th>Motorista</th>
                                 <th>Empresa</th>
                                 <th>Planta</th>
@@ -88,6 +104,7 @@
                                 <th>Status</th>
                                 <th>Placa</th>
                                 <th>Passageiros</th>
+                                <th>Colaboradores</th> <!-- NOVA COLUNA -->
                                 <th>Valor Repasse</th>
                             </tr>
                         </thead>
@@ -96,7 +113,7 @@
                         </tbody>
                         <tfoot>
                             <tr class="font-weight-bold">
-                                <td colspan="9" class="text-right">TOTAL REPASSE:</td>
+                                <td colspan="11" class="text-right">TOTAL REPASSE:</td>
                                 <td id="totalRepasse">R$ 0,00</td>
                             </tr>
                         </tfoot>
@@ -107,36 +124,18 @@
     </div>
 </div>
 
-<style>
-/* Garantir que os badges tenham cores visíveis */
-.badge-warning {
-    background-color: #ffc107 !important;
-    color: #212529 !important;
-}
-.badge-primary {
-    background-color: #007bff !important;
-    color: #ffffff !important;
-}
-.badge-success {
-    background-color: #28a745 !important;
-    color: #ffffff !important;
-}
-.badge-danger {
-    background-color: #dc3545 !important;
-    color: #ffffff !important;
-}
-.badge-info {
-    background-color: #17a2b8 !important;
-    color: #ffffff !important;
-}
-.badge-secondary {
-    background-color: #6c757d !important;
-    color: #ffffff !important;
-}
-</style>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<style>
+/* Garantir que os badges tenham cores visíveis */
+.badge-warning { background-color: #ffc107 !important; color: #212529 !important; }
+.badge-primary { background-color: #007bff !important; color: #ffffff !important; }
+.badge-success { background-color: #28a745 !important; color: #ffffff !important; }
+.badge-danger { background-color: #dc3545 !important; color: #ffffff !important; }
+.badge-info { background-color: #17a2b8 !important; color: #ffffff !important; }
+.badge-secondary { background-color: #6c757d !important; color: #ffffff !important; }
+</style>
 
 <script>
 let dadosRelatorio = [];
@@ -153,16 +152,6 @@ $(document).ready(function() {
 // Submeter formulário
 $('#formFiltros').on('submit', function(e) {
     e.preventDefault();
-    
-    // Validar motorista
-    if (!$('#motorista_id').val()) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Atenção',
-            text: 'Por favor, selecione um motorista'
-        });
-        return;
-    }
     
     $('#loading').show();
     $('#areaResultados').hide();
@@ -191,6 +180,7 @@ $('#formFiltros').on('submit', function(e) {
             if (xhr.responseJSON && xhr.responseJSON.message) {
                 errorMsg = xhr.responseJSON.message;
             }
+
             console.error('Erro:', xhr);
             Swal.fire({
                 icon: 'error',
@@ -203,36 +193,23 @@ $('#formFiltros').on('submit', function(e) {
 
 // Função para obter badge colorido baseado no status
 function getStatusBadge(status) {
-    let badgeClass = 'badge-secondary';
-    
-    switch(status) {
-        case 'Pendente':
-            badgeClass = 'badge-warning';
-            break;
-        case 'Agendada':
-            badgeClass = 'badge-info';
-            break;
-        case 'Em Andamento':
-            badgeClass = 'badge-primary';
-            break;
-        case 'Finalizada':
-            badgeClass = 'badge-success';
-            break;
-        case 'Cancelada':
-            badgeClass = 'badge-danger';
-            break;
-    }
-    
+    if (!status || status === "N/A") return '<span class="badge badge-secondary">N/A</span>';
+    let badgeClass = "badge-secondary";
+    if (status === "Pendente") badgeClass = "badge-warning";
+    else if (status === "Agendada") badgeClass = "badge-info";
+    else if (status === "Em Andamento") badgeClass = "badge-primary";
+    else if (status === "Finalizada") badgeClass = "badge-success";
+    else if (status === "Cancelada") badgeClass = "badge-danger";
     return `<span class="badge ${badgeClass}">${status}</span>`;
 }
 
 // Exibir resultados na tabela
-function exibirResultados(dados, total, totalRepasse) {
+function exibirResultados(dados, total, valorTotalRepasse) {
     const tbody = $('#corpoTabela');
     tbody.empty();
     
     if (dados.length === 0) {
-        tbody.append('<tr><td colspan="10" class="text-center">Nenhuma viagem encontrada</td></tr>');
+        tbody.append('<tr><td colspan="12" class="text-center">Nenhuma viagem encontrada</td></tr>');
         $('#areaResultados').show();
         return;
     }
@@ -240,7 +217,8 @@ function exibirResultados(dados, total, totalRepasse) {
     dados.forEach(function(item) {
         const tr = $('<tr>');
         tr.append(`<td>${item.id}</td>`);
-        tr.append(`<td>${item.data_inicio}</td>`);
+        tr.append(`<td>${item.data_viagem}</td>`); // CORRIGIDO: usar data_viagem
+        tr.append(`<td>${item.horario}</td>`);
         tr.append(`<td>${item.motorista}</td>`);
         tr.append(`<td>${item.empresa}</td>`);
         tr.append(`<td>${item.planta}</td>`);
@@ -248,12 +226,13 @@ function exibirResultados(dados, total, totalRepasse) {
         tr.append(`<td>${getStatusBadge(item.status)}</td>`);
         tr.append(`<td>${item.placa}</td>`);
         tr.append(`<td>${item.qtd_passageiros}</td>`);
+        tr.append(`<td>${item.colaboradores}</td>`); // NOVA COLUNA
         tr.append(`<td>R$ ${item.valor_repasse.toFixed(2)}</td>`);
         tbody.append(tr);
     });
     
     $('#totalRegistros').text(total);
-    $('#totalRepasse').text(`R$ ${totalRepasse.toFixed(2)}`);
+    $('#totalRepasse').text('R$ ' + valorTotalRepasse.toFixed(2));
     $('#areaResultados').show();
 }
 
@@ -324,3 +303,4 @@ function exportarPDF() {
 }
 </script>
 {% endblock %}
+

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Importar Colaboradores - Versão Expandida{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-upload"></i> Importar Colaboradores - Todos os Campos</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Instruções -->
+                    <div class="alert alert-info">
+                        <h5><i class="bi bi-info-circle"></i> Instruções - Versão Expandida</h5>
+                        <p>Prepare um arquivo CSV com <strong>TODOS os campos</strong> disponíveis (separadas por ponto e vírgula):</p>
+                        
+                        <p><strong>Formato Completo:</strong></p>
+                        <pre class="bg-light p-2 rounded" style="font-size: 0.85em;">matricula;nome;empresa;planta;email;telefone;endereco;nro;bairro;cidade;uf;bloco;status</pre>
+                        
+                        <p><strong>Exemplo:</strong></p>
+                        <pre class="bg-light p-2 rounded" style="font-size: 0.85em;">matricula;nome;empresa;planta;email;telefone;endereco;nro;bairro;cidade;uf;bloco;status
+105;João Silva;LIER;VW JIT;joao@email.com;11999999999;Rua das Flores;123;Centro;São Paulo;SP;A1;Ativo
+106;Maria Santos;LIER;VW JIT;maria@email.com;11988888888;Av. Paulista;456;Bela Vista;São Paulo;SP;B2;Ativo
+107;Pedro Costa;LIER;VW JIT;;;Rua ABC;789;Jardim;;SP;;Ativo</pre>
+                        
+                        <div class="mt-3">
+                            <h6><i class="bi bi-check-circle text-success"></i> Campos Obrigatórios:</h6>
+                            <ul class="mb-2">
+                                <li><strong>matricula</strong> - Matrícula única do colaborador</li>
+                                <li><strong>nome</strong> - Nome completo</li>
+                                <li><strong>empresa</strong> - Nome da empresa (deve existir no sistema)</li>
+                                <li><strong>planta</strong> - Nome da planta (deve existir no sistema)</li>
+                            </ul>
+                            
+                            <h6><i class="bi bi-dash-circle text-warning"></i> Campos Opcionais (deixe em branco se não quiser preencher):</h6>
+                            <ul class="mb-2">
+                                <li><strong>email</strong> - E-mail do colaborador (será validado se preenchido)</li>
+                                <li><strong>telefone</strong> - Telefone de contato</li>
+                                <li><strong>endereco</strong> - Endereço (rua/avenida)</li>
+                                <li><strong>nro</strong> - Número do endereço</li>
+                                <li><strong>bairro</strong> - Bairro</li>
+                                <li><strong>cidade</strong> - Cidade</li>
+                                <li><strong>uf</strong> - Estado (sigla com 2 letras: SP, RJ, MG, etc.)</li>
+                                <li><strong>bloco</strong> - Código do bloco (deve existir na planta)</li>
+                                <li><strong>status</strong> - Ativo, Inativo, Desligado ou Ausente (padrão: Ativo)</li>
+                            </ul>
+                        </div>
+                        
+                        <p class="mt-3"><strong>Observações Importantes:</strong></p>
+                        <ul>
+                            <li>A primeira linha deve ser o cabeçalho (será ignorada)</li>
+                            <li>Use ponto e vírgula (;) como separador</li>
+                            <li>Campos opcionais podem ser deixados em branco (ex: <code>;;;</code>)</li>
+                            <li>Matrícula deve ser única no sistema</li>
+                            <li>Email será validado se fornecido</li>
+                            <li>UF deve ser uma sigla válida (2 letras)</li>
+                            <li>Bloco deve existir na planta especificada</li>
+                            <li>Codificação: UTF-8</li>
+                        </ul>
+                    </div>
+
+                    <!-- Formulário de Upload -->
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="csv_file" class="form-label">Selecione o arquivo CSV:</label>
+                            <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin.pagina_importacoes') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Voltar
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-upload"></i> Importar Colaboradores
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Dados Cadastrados para Referência -->
+                    <div class="mt-4">
+                        <h5>Dados Cadastrados no Sistema:</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Empresas e Plantas:</h6>
+                                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Empresa</th>
+                                                <th>Plantas</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for empresa in empresas %}
+                                            <tr>
+                                                <td>{{ empresa.nome }}</td>
+                                                <td>
+                                                    {% set plantas_empresa = plantas | selectattr('empresa_id', 'equalto', empresa.id) | list %}
+                                                    {% if plantas_empresa %}
+                                                        {{ plantas_empresa | map(attribute='nome') | join(', ') }}
+                                                    {% else %}
+                                                        <em class="text-muted">Nenhuma</em>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6>Blocos Cadastrados:</h6>
+                                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Código</th>
+                                                <th>Planta</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for bloco in blocos %}
+                                            <tr>
+                                                <td>{{ bloco.codigo_bloco }}</td>
+                                                <td>{{ bloco.planta.nome if bloco.planta else 'N/A' }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Importar Supervisores - Versão Expandida{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0"><i class="bi bi-upload"></i> Importar Supervisores - Todos os Campos</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Instruções -->
+                    <div class="alert alert-info">
+                        <h5><i class="bi bi-info-circle"></i> Instruções - Versão Expandida</h5>
+                        <p>Prepare um arquivo CSV com <strong>TODOS os campos</strong> disponíveis (separadas por ponto e vírgula):</p>
+                        
+                        <p><strong>Formato Completo:</strong></p>
+                        <pre class="bg-light p-2 rounded" style="font-size: 0.85em;">matricula;nome;empresa;planta;gerente;email;senha;telefone;endereco;nro;bairro;cidade;uf;status</pre>
+                        
+                        <p><strong>Exemplo:</strong></p>
+                        <pre class="bg-light p-2 rounded" style="font-size: 0.85em;">matricula;nome;empresa;planta;gerente;email;senha;telefone;endereco;nro;bairro;cidade;uf;status
+SUP001;Pedro Oliveira;LIER;VW JIT;GER001;pedro@email.com;senha123;11999999999;Rua A;100;Centro;São Paulo;SP;Ativo
+SUP002;Julia Costa;LIER;VW JIT;GER001;julia@email.com;senha456;11988888888;Av. B;200;;São Paulo;SP;Ativo
+SUP003;Carlos Lima;LIER;VW JIT;GER001;carlos@email.com;senha789;;;;;SP;;Ativo</pre>
+                        
+                        <div class="mt-3">
+                            <h6><i class="bi bi-check-circle text-success"></i> Campos Obrigatórios:</h6>
+                            <ul class="mb-2">
+                                <li><strong>matricula</strong> - Matrícula única do supervisor</li>
+                                <li><strong>nome</strong> - Nome completo</li>
+                                <li><strong>empresa</strong> - Nome da empresa (deve existir no sistema)</li>
+                                <li><strong>planta</strong> - Nome da planta (deve existir no sistema)</li>
+                                <li><strong>gerente</strong> - Matrícula do gerente responsável (deve existir)</li>
+                                <li><strong>email</strong> - E-mail único (será usado para login)</li>
+                                <li><strong>senha</strong> - Senha de acesso (mínimo 6 caracteres)</li>
+                            </ul>
+                            
+                            <h6><i class="bi bi-dash-circle text-warning"></i> Campos Opcionais (deixe em branco se não quiser preencher):</h6>
+                            <ul class="mb-2">
+                                <li><strong>telefone</strong> - Telefone de contato</li>
+                                <li><strong>endereco</strong> - Endereço (rua/avenida)</li>
+                                <li><strong>nro</strong> - Número do endereço</li>
+                                <li><strong>bairro</strong> - Bairro</li>
+                                <li><strong>cidade</strong> - Cidade</li>
+                                <li><strong>uf</strong> - Estado (sigla com 2 letras: SP, RJ, MG, etc.)</li>
+                                <li><strong>status</strong> - Ativo, Inativo, Desligado ou Ausente (padrão: Ativo)</li>
+                            </ul>
+                        </div>
+                        
+                        <p class="mt-3"><strong>Observações Importantes:</strong></p>
+                        <ul>
+                            <li>A primeira linha deve ser o cabeçalho (será ignorada)</li>
+                            <li>Use ponto e vírgula (;) como separador</li>
+                            <li>Campos opcionais podem ser deixados em branco</li>
+                            <li>Matrícula e email devem ser únicos no sistema</li>
+                            <li>Senha será criptografada automaticamente</li>
+                            <li>Senha deve ter no mínimo 6 caracteres</li>
+                            <li>Gerente deve estar cadastrado no sistema</li>
+                            <li>UF deve ser uma sigla válida (2 letras)</li>
+                            <li>Codificação: UTF-8</li>
+                        </ul>
+                    </div>
+
+                    <!-- Formulário de Upload -->
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="csv_file" class="form-label">Selecione o arquivo CSV:</label>
+                            <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('admin.pagina_importacoes') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Voltar
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-upload"></i> Importar Supervisores
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Dados Cadastrados para Referência -->
+                    <div class="mt-4">
+                        <h5>Dados Cadastrados no Sistema:</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>Empresas e Plantas:</h6>
+                                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Empresa</th>
+                                                <th>Plantas</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for empresa in empresas %}
+                                            <tr>
+                                                <td>{{ empresa.nome }}</td>
+                                                <td>
+                                                    {% set plantas_empresa = plantas | selectattr('empresa_id', 'equalto', empresa.id) | list %}
+                                                    {% if plantas_empresa %}
+                                                        {{ plantas_empresa | map(attribute='nome') | join(', ') }}
+                                                    {% else %}
+                                                        <em class="text-muted">Nenhuma</em>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6>Gerentes Cadastrados:</h6>
+                                <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                                    <table class="table table-sm table-bordered">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Matrícula</th>
+                                                <th>Nome</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for gerente in gerentes %}
+                                            <tr>
+                                                <td>{{ gerente.matricula }}</td>
+                                                <td>{{ gerente.nome }}</td>
+                                            </tr>
+                                            {% else %}
+                                            <tr>
+                                                <td colspan="2" class="text-center text-muted">Nenhum gerente cadastrado</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

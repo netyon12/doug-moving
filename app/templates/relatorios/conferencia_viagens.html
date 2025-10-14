@@ -6,39 +6,13 @@
 
 <style>
 /* Garantir que os badges tenham cores visíveis */
-.badge-warning {
-    background-color: #ffc107 !important;
-    color: #212529 !important; /* Texto escuro para amarelo */
-}
-
-.badge-primary {
-    background-color: #007bff !important;
-    color: #ffffff !important; /* Texto branco para azul */
-}
-
-.badge-success {
-    background-color: #28a745 !important;
-    color: #ffffff !important; /* Texto branco para verde */
-}
-
-.badge-danger {
-    background-color: #dc3545 !important;
-    color: #ffffff !important; /* Texto branco para vermelho */
-}
-
-.badge-info {
-    background-color: #17a2b8 !important;
-    color: #ffffff !important; /* Texto branco para azul claro */
-}
-
-.badge-secondary {
-    background-color: #6c757d !important;
-    color: #ffffff !important; /* Texto branco para cinza */
-}
+.badge-warning { background-color: #ffc107 !important; color: #212529 !important; }
+.badge-primary { background-color: #007bff !important; color: #ffffff !important; }
+.badge-success { background-color: #28a745 !important; color: #ffffff !important; }
+.badge-danger { background-color: #dc3545 !important; color: #ffffff !important; }
+.badge-info { background-color: #17a2b8 !important; color: #ffffff !important; }
+.badge-secondary { background-color: #6c757d !important; color: #ffffff !important; }
 </style>
-
-
-
 
 <div class="container-fluid mt-4">
     <div class="card">
@@ -58,11 +32,37 @@
                         <input type="date" name="data_fim" id="data_fim" class="form-control" required>
                     </div>
                     <div class="col-md-2">
+                        <label>Empresa</label>
+                        <!-- CORRIGIDO: Filtro fixo para não-administradores -->
+                        <select name="empresa_id" id="empresa_id" class="form-control" 
+                                {% if user_role != 'admin' %}disabled{% endif %}>
+                            {% if empresa_id_usuario %}
+                                <!-- Se usuário tem empresa fixa, mostrar apenas ela -->
+                                {% for empresa in empresas %}
+                                <option value="{{ empresa.id }}" selected>{{ empresa.nome }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <!-- Admin pode ver todas -->
+                                <option value="">Todas</option>
+                                {% for empresa in empresas %}
+                                <option value="{{ empresa.id }}">{{ empresa.nome }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                        <!-- Campo hidden para enviar o valor quando disabled -->
+                        {% if user_role != 'admin' and empresa_id_usuario %}
+                        <input type="hidden" name="empresa_id" value="{{ empresa_id_usuario }}">
+                        {% endif %}
+                    </div>
+                    <div class="col-md-2">
                         <label>Planta</label>
                         <select name="planta_id" id="planta_id" class="form-control">
                             <option value="">Todas</option>
                             {% for planta in plantas %}
-                            <option value="{{ planta.id }}">{{ planta.nome }}</option>
+                            <option value="{{ planta.id }}" 
+                                    {% if planta_id_usuario and planta.id == planta_id_usuario %}selected{% endif %}>
+                                {{ planta.nome }}
+                            </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -86,12 +86,35 @@
                             <option value="desligamento">Desligamento</option>
                         </select>
                     </div>
+                </div>
+                <div class="row mt-2">
                     <div class="col-md-2">
                         <label>Tipo Linha</label>
+                        <!-- CORRIGIDO: Opções FIXA e EXTRA -->
                         <select name="tipo_linha" id="tipo_linha" class="form-control">
                             <option value="">Todos</option>
-                            <option value="Turno">Turno</option>
-                            <option value="Admin">Admin</option>
+                            <option value="FIXA">Fixa</option>
+                            <option value="EXTRA">Extra</option>
+                        </select>
+                    </div>
+                    <!-- NOVO: Filtro de Motorista -->
+                    <div class="col-md-3">
+                        <label>Motorista</label>
+                        <select name="motorista_id" id="motorista_id" class="form-control">
+                            <option value="">Todos</option>
+                            {% for motorista in motoristas %}
+                            <option value="{{ motorista.id }}">{{ motorista.nome }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <!-- NOVO: Filtro de Colaborador -->
+                    <div class="col-md-3">
+                        <label>Colaborador</label>
+                        <select name="colaborador_id" id="colaborador_id" class="form-control">
+                            <option value="">Todos</option>
+                            {% for colaborador in colaboradores %}
+                            <option value="{{ colaborador.id }}">{{ colaborador.nome }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -130,6 +153,7 @@
                 </div>
 
                 <div class="table-responsive">
+                    <!-- CORRIGIDO: 13 colunas (SEM Valor Repasse) -->
                     <table class="table table-striped table-bordered">
                         <thead class="thead-dark">
                             <tr>
@@ -146,6 +170,7 @@
                                 <th>Colaboradores</th>
                                 <th>Passageiros</th>
                                 <th>Valor</th>
+                                <!-- REMOVIDO: Valor Repasse -->
                             </tr>
                         </thead>
                         <tbody id="corpoTabela">
@@ -171,6 +196,25 @@ $(document).ready(function() {
     
     $('#data_inicio').val(primeiroDia.toISOString().split('T')[0]);
     $('#data_fim').val(hoje.toISOString().split('T')[0]);
+});
+
+// NOVO: Filtro dinâmico de Planta baseado em Empresa
+$('#empresa_id').change(function() {
+    var empresa_id = $(this).val();
+    if (empresa_id) {
+        $.get('/relatorios/plantas-por-empresa/' + empresa_id, function(data) {
+            if (data.success) {
+                var $planta = $('#planta_id');
+                $planta.empty();
+                $planta.append('<option value="">Todas</option>');
+                $.each(data.plantas, function(i, planta) {
+                    $planta.append($('<option></option>')
+                        .attr('value', planta.id)
+                        .text(planta.nome));
+                });
+            }
+        });
+    }
 });
 
 // Submeter formulário
@@ -204,6 +248,7 @@ $('#formFiltros').on('submit', function(e) {
             if (xhr.responseJSON && xhr.responseJSON.message) {
                 errorMsg = xhr.responseJSON.message;
             }
+
             console.error('Erro:', xhr);
             Swal.fire({
                 icon: 'error',
@@ -216,23 +261,13 @@ $('#formFiltros').on('submit', function(e) {
 
 // Função para obter badge colorido baseado no status
 function getStatusBadge(status) {
-    if (!status || status === 'N/A') {
-        return '<span class="badge badge-secondary">N/A</span>';
-    }
-    
-    let badgeClass = 'badge-secondary';
-    
-    // Mapear status para cores
-    if (status === 'Pendente') {
-        badgeClass = 'badge-warning'; // Amarelo com texto escuro
-    } else if (status === 'Em andamento') {
-        badgeClass = 'badge-primary'; // Azul escuro com texto branco
-    } else if (status === 'Finalizada') {
-        badgeClass = 'badge-success'; // Verde com texto branco
-    } else if (status === 'Cancelada') {
-        badgeClass = 'badge-danger'; // Vermelho com texto branco
-    }
-    
+    if (!status || status === "N/A") return '<span class="badge badge-secondary">N/A</span>';
+    let badgeClass = "badge-secondary";
+    if (status === "Pendente") badgeClass = "badge-warning";
+    else if (status === "Agendada") badgeClass = "badge-info";
+    else if (status === "Em Andamento") badgeClass = "badge-primary";
+    else if (status === "Finalizada") badgeClass = "badge-success";
+    else if (status === "Cancelada") badgeClass = "badge-danger";
     return `<span class="badge ${badgeClass}">${status}</span>`;
 }
 
@@ -248,15 +283,9 @@ function exibirResultados(dados, total, valorTotal) {
     }
     
     dados.forEach(function(item) {
-        // Formatar colaboradores com quebra de linha
-        let colaboradoresFormatados = item.colaboradores;
-        if (colaboradoresFormatados && colaboradoresFormatados.includes(',')) {
-            colaboradoresFormatados = colaboradoresFormatados.split(',').map(c => c.trim()).join('<br>');
-        }
-        
         const tr = $('<tr>');
         tr.append(`<td>${item.id}</td>`);
-        tr.append(`<td>${item.data_inicio}</td>`);
+        tr.append(`<td>${item.data_viagem}</td>`); // CORRIGIDO: usar data_viagem
         tr.append(`<td>${item.empresa}</td>`);
         tr.append(`<td>${item.planta}</td>`);
         tr.append(`<td>${item.bloco}</td>`);
@@ -265,14 +294,15 @@ function exibirResultados(dados, total, valorTotal) {
         tr.append(`<td>${getStatusBadge(item.status)}</td>`);
         tr.append(`<td>${item.motorista}</td>`);
         tr.append(`<td>${item.placa}</td>`);
-        tr.append(`<td>${colaboradoresFormatados}</td>`);
+        tr.append(`<td>${item.colaboradores}</td>`);
         tr.append(`<td>${item.qtd_passageiros}</td>`);
         tr.append(`<td>R$ ${item.valor.toFixed(2)}</td>`);
+        // REMOVIDO: valor_repasse
         tbody.append(tr);
     });
     
     $('#totalRegistros').text(total);
-    $('#valorTotal').text(`R$ ${valorTotal.toFixed(2)}`);
+    $('#valorTotal').text('R$ ' + valorTotal.toFixed(2));
     $('#areaResultados').show();
 }
 
@@ -343,3 +373,4 @@ function exportarPDF() {
 }
 </script>
 {% endblock %}
+
