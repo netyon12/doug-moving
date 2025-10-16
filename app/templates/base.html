@@ -260,7 +260,7 @@
     <!-- Navbar Superior - Go Mobi Style -->
     <nav class="navbar navbar-dark navbar-gomobi fixed-top p-0 shadow">
         <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="{{ url_for('admin.admin_dashboard') }}">
-            <i class="bi bi-geo-alt-fill"></i> Go Mobi HOMOLOGAÇÃO
+            <i class="bi bi-geo-alt-fill"></i> Go Mobi
         </a>
 
         <!-- Informações do Usuário -->
@@ -311,17 +311,17 @@
                                 </a>
                                 <div class="collapse submenu" id="cadastroSubmenu">
                                     <ul class="nav flex-column">
-                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'empresas' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='empresas') }}">Empresas</a></li>
-                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'plantas' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='plantas') }}">Plantas</a></li>
-                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'centros_custo' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='centros_custo') }}">Centros de Custo</a></li>
-                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'turnos' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='turnos') }}">Turnos</a></li>
-                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'bairros' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='bairros') }}">Bairros</a></li>
-                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'blocos' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='blocos') }}">Blocos</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'empresas' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='empresas') }}"><i class="bi bi-building"></i> Empresas</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'plantas' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='plantas') }}"><i class="bi bi-shop"></i> Plantas</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'centros_custo' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='centros_custo') }}"><i class="bi bi-cash-coin"></i> Centros de Custo</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'turnos' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='turnos') }}"><i class="bi bi-clock-history"></i> Turnos</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'bairros' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='bairros') }}"><i class="bi bi-house-door"></i> Bairros</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'blocos' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='blocos') }}"><i class="bi bi-geo-alt"></i> Blocos</a></li>
                                         <hr class="bg-secondary">
-                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'gerentes' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='gerentes') }}">Gerentes</a></li>
-                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'supervisores' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='supervisores') }}">Supervisores</a></li>
-                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'colaboradores' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}">Colaboradores</a></li>
-                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'motoristas' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='motoristas') }}">Motoristas</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'gerentes' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='gerentes') }}"><i class="bi bi-person-badge"></i> Gerentes</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'supervisores' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='supervisores') }}"><i class="bi bi-person-check"></i> Supervisores</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'colaboradores' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}"><i class="bi bi-people"></i> Colaboradores</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'motoristas' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='motoristas') }}"><i class="bi bi-person-vcard"></i> Motoristas</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -333,9 +333,10 @@
                                 </a>
                                 <div class="collapse submenu" id="processosSubmenu">
                                     <ul class="nav flex-column">
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.solicitacoes') }}">Solicitações</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.agrupamento') }}">Agrupamento</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.viagens') }}">Viagens</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.solicitacoes') }}"><i class="bi bi-clipboard-check"></i> Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.agrupamento') }}"><i class="bi bi-collection"></i> Agrupamento</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.viagens') }}"><i class="bi bi-car-front"></i> Viagens</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.fretados') }}"><i class="bi bi-bus-front"></i> Fretados</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -376,8 +377,8 @@
                                 </a>
                                 <div class="collapse submenu" id="gerenteCadastrosSubmenu">
                                     <ul class="nav flex-column">
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_dashboard', aba='supervisores') }}">Supervisores</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}">Colaboradores</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_dashboard', aba='supervisores') }}"><i class="bi bi-person-check"></i> Supervisores</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}"><i class="bi bi-people"></i> Colaboradores</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -388,7 +389,8 @@
                                 </a>
                                 <div class="collapse submenu" id="gerenteProcessosSubmenu">
                                     <ul class="nav flex-column">
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('gerente.solicitacoes') }}">Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('gerente.solicitacoes') }}"><i class="bi bi-clipboard-check"></i> Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.fretados') }}"><i class="bi bi-bus-front"></i> Fretados</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -414,7 +416,7 @@
                                 </a>
                                 <div class="collapse submenu" id="supervisorCadastrosSubmenu">
                                     <ul class="nav flex-column">
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}">Colaboradores</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}"><i class="bi bi-people"></i> Colaboradores</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -425,9 +427,10 @@
                                 </a>
                                 <div class="collapse submenu" id="supervisorProcessosSubmenu">
                                     <ul class="nav flex-column">
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.solicitacoes') }}">Solicitações</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.agrupamento') }}">Agrupamento</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.viagens') }}">Viagens</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.solicitacoes') }}"><i class="bi bi-clipboard-check"></i> Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.agrupamento') }}"><i class="bi bi-collection"></i> Agrupamento</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.viagens') }}"><i class="bi bi-car-front"></i> Viagens</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.fretados') }}"><i class="bi bi-bus-front"></i> Fretados</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -453,7 +456,7 @@
                                 </a>
                                 <div class="collapse submenu" id="motoristaProcessosSubmenu">
                                     <ul class="nav flex-column">
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('motorista.minhas_viagens') }}">Viagens</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('motorista.minhas_viagens') }}"><i class="bi bi-car-front"></i> Viagens</a></li>
                                     </ul>
                                 </div>
                             </li>

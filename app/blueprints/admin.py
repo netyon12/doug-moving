@@ -43,7 +43,7 @@ from . import solicitacoes
 from . import agrupamento
 from . import viagens
 from . import configuracoes
-
+from . import fretados
 # =============================================================================
 # INFORMAÇÕES DO MÓDULO
 # =============================================================================
@@ -60,6 +60,7 @@ MODULOS_CARREGADOS = [
     'solicitacoes',
     'agrupamento',
     'viagens',
+    'fretados',
     'configuracoes',
 ]
 

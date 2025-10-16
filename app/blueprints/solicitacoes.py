@@ -55,11 +55,53 @@ def solicitacoes():
     if filtros.get('colaborador_matricula'):
         query = query.join(Colaborador).filter(Colaborador.matricula.ilike(f"%{filtros.get('colaborador_matricula')}%"))
     
-    # Filtros existentes
+    # Filtro por tipo de corrida
+    if filtros.get('tipo_corrida'):
+        query = query.filter(Solicitacao.tipo_corrida == filtros.get('tipo_corrida'))
+    
+    # Filtros de data (considera o tipo de corrida)
+    tipo_corrida = filtros.get('tipo_corrida', '').lower()
+    
     if filtros.get('data_inicio'):
-        query = query.filter(Solicitacao.horario_entrada >= datetime.fromisoformat(filtros.get('data_inicio')))
+        data_inicio = datetime.strptime(filtros.get('data_inicio'), '%Y-%m-%d')
+        
+        if tipo_corrida == 'entrada' or tipo_corrida == 'entrada_saida':
+            query = query.filter(Solicitacao.horario_entrada >= data_inicio)
+        elif tipo_corrida == 'saida' or tipo_corrida == 'saída':
+            query = query.filter(Solicitacao.horario_saida >= data_inicio)
+        elif tipo_corrida == 'desligamento':
+            query = query.filter(Solicitacao.horario_desligamento >= data_inicio)
+        else:
+            # Sem tipo especificado: busca em todos os campos
+            query = query.filter(
+                or_(
+                    Solicitacao.horario_entrada >= data_inicio,
+                    Solicitacao.horario_saida >= data_inicio,
+                    Solicitacao.horario_desligamento >= data_inicio
+                )
+            )
+    
     if filtros.get('data_fim'):
-        query = query.filter(Solicitacao.horario_entrada <= datetime.fromisoformat(filtros.get('data_fim') + 'T23:59:59'))
+        data_fim = datetime.strptime(filtros.get('data_fim'), '%Y-%m-%d')
+        data_fim = data_fim.replace(hour=23, minute=59, second=59)
+        
+        if tipo_corrida == 'entrada' or tipo_corrida == 'entrada_saida':
+            query = query.filter(Solicitacao.horario_entrada <= data_fim)
+        elif tipo_corrida == 'saida' or tipo_corrida == 'saída':
+            query = query.filter(Solicitacao.horario_saida <= data_fim)
+        elif tipo_corrida == 'desligamento':
+            query = query.filter(Solicitacao.horario_desligamento <= data_fim)
+        else:
+            # Sem tipo especificado: busca em todos os campos
+            query = query.filter(
+                or_(
+                    Solicitacao.horario_entrada <= data_fim,
+                    Solicitacao.horario_saida <= data_fim,
+                    Solicitacao.horario_desligamento <= data_fim
+                )
+            )
+    
+    # Outros filtros
     if filtros.get('viagem_id'):
         query = query.filter(Solicitacao.viagem_id == filtros.get('viagem_id'))
     if filtros.get('status'):
@@ -138,8 +180,16 @@ def nova_solicitacao():
             # Determina empresa, planta e supervisor
             if current_user.role == 'supervisor':
                 supervisor_id = current_user.supervisor.id
-                empresa_id = current_user.empresa.id
-                planta_id = current_user.planta.id
+                empresa_id = current_user.supervisor.empresa_id
+                # Se supervisor tem múltiplas plantas, pega do formulário
+                planta_id = request.form.get('planta_id')
+                if not planta_id and current_user.supervisor.plantas:
+                    planta_id = current_user.supervisor.plantas[0].id
+                # Valida se planta pertence ao supervisor
+                planta_ids_supervisor = [p.id for p in current_user.supervisor.plantas]
+                if planta_id and int(planta_id) not in planta_ids_supervisor:
+                    flash('Planta inválida para este supervisor.', 'danger')
+                    return redirect(url_for('admin.nova_solicitacao'))
             elif current_user.role == 'admin':
                 # Admin precisa especificar empresa e planta
                 empresa_id = request.form.get('empresa_id')
@@ -149,8 +199,8 @@ def nova_solicitacao():
                     flash('Empresa e Planta devem ser especificadas.', 'danger')
                     return redirect(url_for('admin.nova_solicitacao'))
                 
-                # Busca supervisor da planta
-                supervisor = Supervisor.query.filter_by(planta_id=planta_id).first()
+                # Busca supervisor da planta (pega o primeiro que tem essa planta)
+                supervisor = Supervisor.query.join(Supervisor.plantas).filter(Planta.id == planta_id).first()
                 if not supervisor:
                     flash('Nenhum supervisor encontrado para esta planta.', 'danger')
                     return redirect(url_for('admin.nova_solicitacao'))
@@ -601,4 +651,3 @@ def detalhes_solicitacao(solicitacao_id):
 # =================================================================================================
 # ROTA DA PARAMETRIZAÇÃO PARAMETRIZAÇÃO
 # ================================================================================================
-

@@ -1,17 +1,25 @@
-# app/agrupamento_algoritmo.py
 """
-Algoritmo inteligente para agrupamento de solicitações de viagem
-VERSÃO FINAL - Compatível com o models.py ATUAL do sistema
+Algoritmo inteligente para agrupamento de solicitações de viagem - VERSÃO 2.0
+Inclui suporte para Fretados (grupos com 10+ passageiros do mesmo grupo de bloco)
 """
 from datetime import datetime, timedelta
 from collections import defaultdict
 from typing import List, Dict, Tuple
-from .models import Solicitacao, Viagem
+from .models import Solicitacao, Viagem, Fretado
+from .utils.grupo_blocos import (
+    separar_fretados_e_veiculos,
+    gerar_sugestoes_fretados,
+    gerar_resumo_agrupamento
+)
 from . import db
+import json
 
 
-class AgrupadorViagens:
-    """Classe responsável por agrupar solicitações de viagem de forma otimizada"""
+class AgrupadorViagensV2:
+    """
+    Classe responsável por agrupar solicitações de viagem de forma otimizada.
+    Versão 2.0 com suporte a Fretados.
+    """
     
     def __init__(self, max_passageiros=3, janela_tempo_minutos=30):
         """
@@ -34,9 +42,6 @@ class AgrupadorViagens:
         Returns:
             Horário relevante (entrada ou saída)
         """
-        # Para corridas de Entrada, usa horario_entrada
-        # Para corridas de Saída e Desligamento, usa horario_saida ou horario_desligamento
-        # Normaliza para lowercase e remove acentos
         tipo_normalizado = solicitacao.tipo_corrida.lower().strip()
         tipo_normalizado = tipo_normalizado.replace('ã', 'a').replace('á', 'a').replace('í', 'i')
         
@@ -45,15 +50,72 @@ class AgrupadorViagens:
         elif tipo_normalizado == 'saida':
             return solicitacao.horario_saida
         elif tipo_normalizado == 'desligamento':
-            # Desligamento pode usar horario_desligamento OU horario_saida
             return solicitacao.horario_desligamento if solicitacao.horario_desligamento else solicitacao.horario_saida
         else:
-            # Fallback: retorna qualquer horário disponível
             return solicitacao.horario_entrada or solicitacao.horario_saida or solicitacao.horario_desligamento
     
-    def agrupar_solicitacoes(self, solicitacoes: List[Solicitacao]) -> List[List[Solicitacao]]:
+    def processar_agrupamento_completo(self, solicitacoes: List[Solicitacao]) -> Dict:
         """
-        Agrupa solicitações de forma otimizada
+        Processa o agrupamento completo, separando fretados e veículos.
+        
+        Args:
+            solicitacoes: Lista de solicitações a serem agrupadas
+            
+        Returns:
+            Dict com fretados e veículos separados:
+            {
+                'fretados': {
+                    'CPV1': {
+                        'sugestoes': [lista de sugestões de fretados],
+                        'solicitacoes': [lista de solicitações]
+                    }
+                },
+                'veiculos': {
+                    'SJC1': [lista de grupos de veículos]
+                },
+                'resumo': {estatísticas}
+            }
+        """
+        if not solicitacoes:
+            return {
+                'fretados': {},
+                'veiculos': {},
+                'resumo': {}
+            }
+        
+        # Separar fretados e veículos
+        separacao = separar_fretados_e_veiculos(solicitacoes)
+        
+        fretados_dict = separacao['fretados']
+        veiculos_dict = separacao['veiculos']
+        
+        # Processar fretados
+        fretados_processados = {}
+        for grupo_bloco, solicitacoes_fretado in fretados_dict.items():
+            sugestoes = gerar_sugestoes_fretados(solicitacoes_fretado, grupo_bloco)
+            fretados_processados[grupo_bloco] = {
+                'sugestoes': sugestoes,
+                'solicitacoes': solicitacoes_fretado
+            }
+        
+        # Processar veículos (usa lógica antiga de agrupamento)
+        veiculos_processados = {}
+        for grupo_bloco, solicitacoes_veiculo in veiculos_dict.items():
+            grupos_veiculo = self.agrupar_solicitacoes_veiculo(solicitacoes_veiculo)
+            veiculos_processados[grupo_bloco] = grupos_veiculo
+        
+        # Gerar resumo
+        resumo = gerar_resumo_agrupamento(solicitacoes)
+        
+        return {
+            'fretados': fretados_processados,
+            'veiculos': veiculos_processados,
+            'resumo': resumo
+        }
+    
+    def agrupar_solicitacoes_veiculo(self, solicitacoes: List[Solicitacao]) -> List[List[Solicitacao]]:
+        """
+        Agrupa solicitações de veículo (lógica antiga, para grupos pequenos)
         
         Regras de agrupamento:
         1. Mesmo bloco (localização geográfica)
@@ -85,7 +147,7 @@ class AgrupadorViagens:
         grupos = defaultdict(list)
         
         for solicitacao in solicitacoes:
-            bloco_id = solicitacao.colaborador.bloco_id or 0
+            bloco_id = solicitacao.bloco_id or 0
             tipo = solicitacao.tipo_corrida
             chave = f"{bloco_id}_{tipo}"
             grupos[chave].append(solicitacao)
@@ -93,14 +155,7 @@ class AgrupadorViagens:
         return grupos
     
     def _agrupar_por_horario(self, solicitacoes: List[Solicitacao]) -> List[List[Solicitacao]]:
-        """
-        Agrupa solicitações por bloco e proximidade de horário
-        
-        Estratégia:
-        1. Agrupa primeiro por bloco (solicitações do mesmo bloco ficam juntas)
-        2. Dentro de cada bloco, agrupa por proximidade de horário
-        3. Respeita janela de tempo e limite de passageiros
-        """
+        """Agrupa solicitações por proximidade de horário"""
         if not solicitacoes:
             return []
         
@@ -146,50 +201,44 @@ class AgrupadorViagens:
         
         return grupos
     
-    def criar_viagens_dos_grupos(self, grupos: List[List[Solicitacao]], created_by_user_id=None) -> Tuple[int, int]:
+    def criar_fretados(self, sugestoes_fretados: List[Dict], created_by_user_id=None) -> Tuple[int, int]:
         """
-        Cria viagens no banco de dados para cada grupo.
-        
-        USA APENAS OS CAMPOS QUE EXISTEM NO MODELS.PY ATUAL!
-        
-        REGRA IMPORTANTE: O valor da viagem é o MAIOR valor entre as solicitações, não a soma.
+        Cria registros de fretados no banco de dados.
         
         Args:
-            grupos: Lista de grupos de solicitações
-            created_by_user_id: ID do usuário que está criando as viagens
+            sugestoes_fretados: Lista de sugestões de fretados
+            created_by_user_id: ID do usuário que está criando os fretados
             
         Returns:
-            Tupla (viagens_criadas, solicitacoes_agrupadas)
+            Tupla (fretados_criados, solicitacoes_agrupadas)
         """
-        import json
-        
-        viagens_criadas = 0
+        fretados_criados = 0
         solicitacoes_agrupadas = 0
         
-        for grupo in grupos:
-            if not grupo:
+        for sugestao in sugestoes_fretados:
+            solicitacoes = sugestao['solicitacoes']
+            if not solicitacoes:
                 continue
             
-            # Pega dados da primeira solicitação (todas do grupo têm os mesmos dados base)
-            primeira = grupo[0]
+            primeira = solicitacoes[0]
             
-            # Coleta IDs dos colaboradores em formato JSON
-            colaboradores_ids = [sol.colaborador_id for sol in grupo]
+            # Coleta IDs dos colaboradores
+            colaboradores_ids = [sol.colaborador_id for sol in solicitacoes]
             colaboradores_json = json.dumps(colaboradores_ids)
             
-            # Coleta blocos únicos do grupo
-            blocos_unicos = list(set([sol.bloco_id for sol in grupo if sol.bloco_id]))
+            # Coleta blocos únicos
+            blocos_unicos = list(set([sol.bloco_id for sol in solicitacoes if sol.bloco_id]))
             bloco_principal = blocos_unicos[0] if blocos_unicos else None
             blocos_ids_str = ','.join(map(str, blocos_unicos)) if blocos_unicos else None
             
-            # REGRA: Pega o MAIOR valor entre as solicitações (não soma)
-            valores = [sol.valor for sol in grupo if sol.valor is not None]
-            repasses = [sol.valor_repasse for sol in grupo if sol.valor_repasse is not None]
+            # Valores (maior valor, não soma)
+            valores = [sol.valor for sol in solicitacoes if sol.valor is not None]
+            repasses = [sol.valor_repasse for sol in solicitacoes if sol.valor_repasse is not None]
             
-            valor_viagem = max(valores) if valores else None
-            repasse_viagem = max(repasses) if repasses else None
+            valor_fretado = max(valores) if valores else None
+            repasse_fretado = max(repasses) if repasses else None
             
-            # Determina horários baseado no tipo de corrida (com normalização)
+            # Determina horários
             tipo_normalizado = primeira.tipo_corrida.lower().strip()
             tipo_normalizado = tipo_normalizado.replace('ã', 'a').replace('á', 'a').replace('í', 'i')
             
@@ -204,66 +253,125 @@ class AgrupadorViagens:
             elif tipo_normalizado == 'desligamento':
                 horario_entrada = None
                 horario_saida = None
-                # Desligamento pode usar horario_desligamento OU horario_saida
                 horario_desligamento = primeira.horario_desligamento if primeira.horario_desligamento else primeira.horario_saida
             else:
-                # Fallback: usa qualquer horário disponível
                 horario_entrada = primeira.horario_entrada
                 horario_saida = primeira.horario_saida
                 horario_desligamento = primeira.horario_desligamento
             
-            # Cria a viagem usando APENAS os campos que existem no models.py ATUAL
-            nova_viagem = Viagem(
-                # Status
-                status='Pendente',
-                
-                # Localização
+            # Cria o fretado
+            novo_fretado = Fretado(
+                status='Fretado',
                 empresa_id=primeira.empresa_id,
                 planta_id=primeira.planta_id,
                 bloco_id=bloco_principal,
                 blocos_ids=blocos_ids_str,
-                
-                # Tipo de viagem
+                grupo_bloco=sugestao.get('blocos', [''])[0] if sugestao.get('blocos') else None,
                 tipo_linha=primeira.tipo_linha if hasattr(primeira, 'tipo_linha') else 'FIXA',
-                tipo_corrida=tipo_normalizado,  # CORRIGIDO: usa o tipo normalizado
-                
-                # Horários
+                tipo_corrida=tipo_normalizado,
                 horario_entrada=horario_entrada,
                 horario_saida=horario_saida,
                 horario_desligamento=horario_desligamento,
-                
-                # Passageiros
+                quantidade_passageiros=len(solicitacoes),
+                colaboradores_ids=colaboradores_json,
+                valor=valor_fretado,
+                valor_repasse=repasse_fretado,
+                created_by_user_id=created_by_user_id,
+                data_criacao=datetime.utcnow(),
+                data_atualizacao=datetime.utcnow()
+            )
+            
+            db.session.add(novo_fretado)
+            db.session.flush()
+            
+            # Associa as solicitações ao fretado
+            for solicitacao in solicitacoes:
+                solicitacao.fretado_id = novo_fretado.id
+                solicitacao.status = 'Fretado'
+                solicitacoes_agrupadas += 1
+            
+            fretados_criados += 1
+        
+        return fretados_criados, solicitacoes_agrupadas
+    
+    def criar_viagens(self, grupos_veiculos: List[List[Solicitacao]], created_by_user_id=None) -> Tuple[int, int]:
+        """
+        Cria viagens no banco de dados para grupos de veículos.
+        (Lógica antiga, mantida para compatibilidade)
+        """
+        viagens_criadas = 0
+        solicitacoes_agrupadas = 0
+        
+        for grupo in grupos_veiculos:
+            if not grupo:
+                continue
+            
+            primeira = grupo[0]
+            
+            colaboradores_ids = [sol.colaborador_id for sol in grupo]
+            colaboradores_json = json.dumps(colaboradores_ids)
+            
+            blocos_unicos = list(set([sol.bloco_id for sol in grupo if sol.bloco_id]))
+            bloco_principal = blocos_unicos[0] if blocos_unicos else None
+            blocos_ids_str = ','.join(map(str, blocos_unicos)) if blocos_unicos else None
+            
+            valores = [sol.valor for sol in grupo if sol.valor is not None]
+            repasses = [sol.valor_repasse for sol in grupo if sol.valor_repasse is not None]
+            
+            valor_viagem = max(valores) if valores else None
+            repasse_viagem = max(repasses) if repasses else None
+            
+            tipo_normalizado = primeira.tipo_corrida.lower().strip()
+            tipo_normalizado = tipo_normalizado.replace('ã', 'a').replace('á', 'a').replace('í', 'i')
+            
+            if tipo_normalizado == 'entrada':
+                horario_entrada = primeira.horario_entrada
+                horario_saida = None
+                horario_desligamento = None
+            elif tipo_normalizado == 'saida':
+                horario_entrada = None
+                horario_saida = primeira.horario_saida
+                horario_desligamento = None
+            elif tipo_normalizado == 'desligamento':
+                horario_entrada = None
+                horario_saida = None
+                horario_desligamento = primeira.horario_desligamento if primeira.horario_desligamento else primeira.horario_saida
+            else:
+                horario_entrada = primeira.horario_entrada
+                horario_saida = primeira.horario_saida
+                horario_desligamento = primeira.horario_desligamento
+            
+            nova_viagem = Viagem(
+                status='Pendente',
+                empresa_id=primeira.empresa_id,
+                planta_id=primeira.planta_id,
+                bloco_id=bloco_principal,
+                blocos_ids=blocos_ids_str,
+                tipo_linha=primeira.tipo_linha if hasattr(primeira, 'tipo_linha') else 'FIXA',
+                tipo_corrida=tipo_normalizado,
+                horario_entrada=horario_entrada,
+                horario_saida=horario_saida,
+                horario_desligamento=horario_desligamento,
                 quantidade_passageiros=len(grupo),
                 colaboradores_ids=colaboradores_json,
-                
-                # Motorista (ainda não atribuído)
                 motorista_id=None,
                 nome_motorista=None,
                 placa_veiculo=None,
-                
-                # Valores (MAIOR valor, não soma)
                 valor=valor_viagem,
                 valor_repasse=repasse_viagem,
-                
-                # Datas
                 data_criacao=datetime.utcnow(),
                 data_atualizacao=datetime.utcnow(),
                 data_inicio=None,
                 data_finalizacao=None,
                 data_cancelamento=None,
-                
-                # Cancelamento
                 motivo_cancelamento=None,
                 cancelado_por_user_id=None,
-                
-                # Auditoria
                 created_by_user_id=created_by_user_id
             )
             
             db.session.add(nova_viagem)
-            db.session.flush()  # Para obter o ID
+            db.session.flush()
             
-            # Associa as solicitações à viagem
             for solicitacao in grupo:
                 solicitacao.viagem_id = nova_viagem.id
                 solicitacao.status = 'Agrupada'
@@ -272,72 +380,67 @@ class AgrupadorViagens:
             viagens_criadas += 1
         
         return viagens_criadas, solicitacoes_agrupadas
-    
-    def calcular_estatisticas(self, grupos: List[List[Solicitacao]]) -> Dict:
-        """
-        Calcula estatísticas sobre os grupos formados
-        
-        Returns:
-            Dicionário com estatísticas
-        """
-        if not grupos:
-            return {
-                'total_grupos': 0,
-                'total_solicitacoes': 0,
-                'media_passageiros': 0,
-                'taxa_ocupacao': 0,
-                'grupos_completos': 0
-            }
-        
-        total_grupos = len(grupos)
-        total_solicitacoes = sum(len(g) for g in grupos)
-        media_passageiros = total_solicitacoes / total_grupos if total_grupos > 0 else 0
-        grupos_completos = sum(1 for g in grupos if len(g) == self.max_passageiros)
-        taxa_ocupacao = (media_passageiros / self.max_passageiros * 100) if self.max_passageiros > 0 else 0
-        
-        return {
-            'total_grupos': total_grupos,
-            'total_solicitacoes': total_solicitacoes,
-            'media_passageiros': round(media_passageiros, 2),
-            'taxa_ocupacao': round(taxa_ocupacao, 2),
-            'grupos_completos': grupos_completos
-        }
 
 
-def agrupar_automaticamente(solicitacoes: List[Solicitacao], 
-                           max_passageiros: int = 3, 
-                           janela_tempo_minutos: int = 30,
-                           created_by_user_id=None) -> Dict:
+def gerar_sugestoes_agrupamento(solicitacoes: List[Solicitacao], 
+                                max_passageiros: int = 3, 
+                                janela_tempo_minutos: int = 30) -> Dict:
     """
-    Função auxiliar para agrupar solicitações automaticamente
+    Gera sugestões de agrupamento (fretados + veículos) SEM salvar no banco.
     
     Args:
-        solicitacoes: Lista de solicitações a serem agrupadas
-        max_passageiros: Número máximo de passageiros por viagem
+        solicitacoes: Lista de solicitações
+        max_passageiros: Máximo de passageiros por veículo
         janela_tempo_minutos: Janela de tempo em minutos
-        created_by_user_id: ID do usuário que está criando as viagens
         
     Returns:
-        Dicionário com resultados do agrupamento
+        Dict com sugestões de fretados e veículos
     """
-    agrupador = AgrupadorViagens(max_passageiros, janela_tempo_minutos)
+    agrupador = AgrupadorViagensV2(max_passageiros, janela_tempo_minutos)
+    return agrupador.processar_agrupamento_completo(solicitacoes)
+
+
+def confirmar_agrupamento(sugestoes: Dict, created_by_user_id=None) -> Dict:
+    """
+    Confirma o agrupamento e salva fretados e viagens no banco.
     
-    # Agrupa as solicitações
-    grupos = agrupador.agrupar_solicitacoes(solicitacoes)
+    Args:
+        sugestoes: Dict retornado por gerar_sugestoes_agrupamento()
+        created_by_user_id: ID do usuário
+        
+    Returns:
+        Dict com resultados
+    """
+    agrupador = AgrupadorViagensV2()
     
-    # Calcula estatísticas
-    estatisticas = agrupador.calcular_estatisticas(grupos)
+    fretados_criados = 0
+    viagens_criadas = 0
+    solicitacoes_agrupadas = 0
     
-    # Cria as viagens
-    viagens_criadas, solicitacoes_agrupadas = agrupador.criar_viagens_dos_grupos(
-        grupos, 
-        created_by_user_id=created_by_user_id
-    )
+    # Criar fretados
+    for grupo_bloco, dados in sugestoes['fretados'].items():
+        f_criados, s_agrupadas = agrupador.criar_fretados(
+            dados['sugestoes'], 
+            created_by_user_id
+        )
+        fretados_criados += f_criados
+        solicitacoes_agrupadas += s_agrupadas
+    
+    # Criar viagens
+    for grupo_bloco, grupos in sugestoes['veiculos'].items():
+        v_criadas, s_agrupadas = agrupador.criar_viagens(
+            grupos, 
+            created_by_user_id
+        )
+        viagens_criadas += v_criadas
+        solicitacoes_agrupadas += s_agrupadas
+    
+    db.session.commit()
     
     return {
         'sucesso': True,
+        'fretados_criados': fretados_criados,
         'viagens_criadas': viagens_criadas,
         'solicitacoes_agrupadas': solicitacoes_agrupadas,
-        'estatisticas': estatisticas
+        'resumo': sugestoes['resumo']
     }
-

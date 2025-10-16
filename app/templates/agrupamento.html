@@ -5,8 +5,7 @@
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Agrupamento de Viagens</h1>
     <div>
-        <button type="button" class="btn btn-success shadow-sm" id="btn_agrupar_automatico" 
-                onclick="window.location.href='{{ url_for('admin.gerar_sugestoes_agrupamento') }}?data_filtro={{ filtros.get('data_filtro', data_hoje) }}'">
+        <button type="button" class="btn btn-success shadow-sm" id="btn_agrupar_automatico">
             <i class="bi bi-magic"></i> Agrupar Automaticamente
         </button>
     </div>
@@ -336,5 +335,30 @@ function visualizarDetalhes(solicitacaoId) {
             `;
         });
 }
+
+// Botão Agrupar Automaticamente - passa todos os filtros
+document.getElementById('btn_agrupar_automatico').addEventListener('click', function() {
+    const dataFiltro = document.getElementById('data_filtro').value;
+    const tipoCorrida = document.getElementById('tipo_corrida').value;
+    const blocoId = document.getElementById('bloco_id').value;
+    const status = document.getElementById('status').value;
+    
+    let url = '{{ url_for("admin.gerar_sugestoes_agrupamento") }}?';
+    url += 'data_filtro=' + encodeURIComponent(dataFiltro);
+    
+    if (tipoCorrida) {
+        url += '&tipo_corrida=' + encodeURIComponent(tipoCorrida);
+    }
+    
+    if (blocoId) {
+        url += '&bloco_id=' + encodeURIComponent(blocoId);
+    }
+    
+    if (status) {
+        url += '&status=' + encodeURIComponent(status);
+    }
+    
+    window.location.href = url;
+});
 </script>
 {% endblock %}

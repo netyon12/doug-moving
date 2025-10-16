@@ -745,7 +745,7 @@ def cadastrar_supervisor():
             matricula=request.form.get('matricula'),
             email=email,
             empresa_id=empresa_id,
-            planta_id=request.form.get('planta_id'),
+            # planta_id removido (agora usa relacionamento plantas)
             gerente_id=gerente_id,
             endereco=request.form.get('endereco'),
             nro=request.form.get('nro'),
@@ -755,11 +755,15 @@ def cadastrar_supervisor():
             telefone=request.form.get('telefone')
         )
 
-        # 3. Associar Turnos e Centros de Custo
+        # 3. Associar Plantas (Múltiplas)
+        plantas_ids = request.form.getlist('plantas_ids')
+        novo_supervisor.plantas = Planta.query.filter(Planta.id.in_(plantas_ids)).all()
+
+        # 4. Associar Turnos e Centros de Custo
         novo_supervisor.turnos.extend(Turno.query.filter(
-            Turno.id.in_(request.form.getlist('turnos'))).all())
+            Turno.id.in_(request.form.getlist('turnos_ids'))).all())
         novo_supervisor.centros_custo.extend(CentroCusto.query.filter(
-            CentroCusto.id.in_(request.form.getlist('centros_custo'))).all())
+            CentroCusto.id.in_(request.form.getlist('centros_ids'))).all())
 
         db.session.add(novo_supervisor)
         db.session.commit()
@@ -799,7 +803,7 @@ def editar_supervisor(supervisor_id):
         supervisor.nome = request.form.get('nome')
         supervisor.matricula = request.form.get('matricula')
         supervisor.empresa_id = request.form.get('empresa_id')
-        supervisor.planta_id = request.form.get('planta_id')
+        # planta_id mantido para compatibilidade (será depreciado)
         supervisor.gerente_id = request.form.get('gerente_id')
         supervisor.endereco = request.form.get('endereco')
         supervisor.nro = request.form.get('nro')
@@ -814,13 +818,17 @@ def editar_supervisor(supervisor_id):
             supervisor.user.password = generate_password_hash(
                 request.form.get('senha'), method='pbkdf2:sha256')
 
-        # 3. Atualizar Turnos e Centros de Custo
+        # 3. Atualizar Plantas (Múltiplas)
+        plantas_ids = request.form.getlist('plantas_ids')
+        supervisor.plantas = Planta.query.filter(Planta.id.in_(plantas_ids)).all()
+
+        # 4. Atualizar Turnos e Centros de Custo
         supervisor.turnos.clear()
         supervisor.centros_custo.clear()
         supervisor.turnos.extend(Turno.query.filter(
-            Turno.id.in_(request.form.getlist('turnos'))).all())
+            Turno.id.in_(request.form.getlist('turnos_ids'))).all())
         supervisor.centros_custo.extend(CentroCusto.query.filter(
-            CentroCusto.id.in_(request.form.getlist('centros_custo'))).all())
+            CentroCusto.id.in_(request.form.getlist('centros_ids'))).all())
 
         db.session.commit()
         flash(

@@ -11,17 +11,29 @@
         <div class="card-body">
             <form method="POST" action="{{ url_for('admin.nova_solicitacao') }}">
                 
-                <!-- SEÇÃO 1: DADOS GERAIS (NÃO EDITÁVEIS) -->
+                <!-- SEÇÃO 1: DADOS GERAIS -->
                 <div class="row p-3 mb-4 bg-light rounded border">
                     {% if current_user.role == 'supervisor' %}
-                        <!-- Visão do Supervisor: Campos Bloqueados -->
+                        <!-- Visão do Supervisor: Empresa bloqueada, Planta selecionável -->
                         <div class="col-md-4">
                             <label class="form-label fw-bold">Empresa</label>
-                            <input type="text" class="form-control" value="{{ current_user.empresa.nome }}" readonly>
+                            <input type="text" class="form-control" value="{{ current_user.supervisor.empresa.nome }}" readonly>
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-bold">Planta</label>
-                            <input type="text" class="form-control" value="{{ current_user.planta.nome }}" readonly>
+                            <label for="planta_id" class="form-label fw-bold">Planta*</label>
+                            {% if current_user.supervisor.plantas|length == 1 %}
+                                <!-- Se supervisor tem apenas 1 planta, mostra readonly -->
+                                <input type="text" class="form-control" value="{{ current_user.supervisor.plantas[0].nome }}" readonly>
+                                <input type="hidden" name="planta_id" value="{{ current_user.supervisor.plantas[0].id }}">
+                            {% else %}
+                                <!-- Se supervisor tem múltiplas plantas, mostra select -->
+                                <select class="form-select" id="planta_id" name="planta_id" required>
+                                    <option value="" disabled selected>Selecione...</option>
+                                    {% for planta in current_user.supervisor.plantas %}
+                                        <option value="{{ planta.id }}">{{ planta.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% endif %}
                         </div>
                     {% else %}
                         <!-- Visão do Admin: Campos de Seleção -->
@@ -384,6 +396,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const tipo = tipoCorrida.value;
         if (!tipo) {
             alert('Por favor, selecione o tipo de corrida primeiro.');
+            return;
+        }
+
+        // VERIFICA SE O COLABORADOR JÁ FOI ADICIONADO
+        const colaboradoresJaAdicionados = Array.from(document.querySelectorAll('input[name="colaborador_id[]"]'));
+        const jaExiste = colaboradoresJaAdicionados.some(input => input.value === String(selectedColaborador.id));
+        
+        if (jaExiste) {
+            alert('Este colaborador já foi adicionado à solicitação!');
+            searchInput.value = '';
+            selectedColaborador = null;
             return;
         }
 

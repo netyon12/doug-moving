@@ -18,12 +18,28 @@ import csv
 from .. import db
 from ..models import (
     User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
-    Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao
+    Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Fretado, Configuracao
 )
 from ..decorators import permission_required
 from app import query_filters
 
 from .admin import admin_bp
+from app.services.notification_service import notification_service
+
+
+def serializar_solicitacao(sol):
+    """Converte objeto Solicitacao em dicionário"""
+    return {
+        'id': sol.id,
+        'colaborador_id': sol.colaborador_id,
+        'colaborador_nome': sol.colaborador.nome if sol.colaborador else '',
+        'bloco_id': sol.colaborador.bloco_id if sol.colaborador else None,
+        'bloco_codigo': sol.colaborador.bloco.codigo_bloco if sol.colaborador and sol.colaborador.bloco else '',
+        'tipo_corrida': sol.tipo_corrida,
+        'horario_entrada': sol.horario_entrada.strftime('%H:%M') if sol.horario_entrada else '',
+        'horario_saida': sol.horario_saida.strftime('%H:%M') if sol.horario_saida else '',
+        'horario_desligamento': sol.horario_desligamento.strftime('%H:%M') if sol.horario_desligamento else ''
+    }
 
 
 @admin_bp.route('/agrupamento')
@@ -167,11 +183,11 @@ def criar_grupo_manual():
 
 @admin_bp.route('/agrupar_automatico')
 @login_required
-@permission_required(['admin'])
+@permission_required(['admin', 'supervisor'])
 def agrupar_automatico():
     """Agrupa automaticamente as solicitações pendentes usando algoritmo inteligente"""
     try:
-        from app.agrupamento_algoritmo import agrupar_automaticamente
+        from app.agrupamento_algoritmo import gerar_sugestoes_agrupamento
         
         data_filtro = request.args.get('data_filtro')
         
@@ -216,6 +232,11 @@ def agrupar_automatico():
             )
         )
         
+        if current_user.role == 'supervisor':
+            supervisor = Supervisor.query.filter_by(user_id=current_user.id).first()
+            if supervisor:
+                query = query.filter(Solicitacao.supervisor_id == supervisor.id)
+
         # Ordena usando uma expressão CASE para pegar o horário correto
         horario_ordenacao = case(
             (Solicitacao.tipo_corrida == 'entrada', Solicitacao.horario_entrada),
@@ -237,25 +258,28 @@ def agrupar_automatico():
         max_passageiros = int(config_max_pass.valor) if config_max_pass else 3
         janela_tempo = int(config_janela.valor) if config_janela else 30
         
-        # Executa o agrupamento usando o algoritmo inteligente
-        resultado = agrupar_automaticamente(
+        # Executa o agrupamento usando o algoritmo inteligente V2
+        from app.agrupamento_algoritmo import confirmar_agrupamento
+        
+        # Gera sugestões
+        sugestoes = gerar_sugestoes_agrupamento(
             solicitacoes_pendentes, 
             max_passageiros=max_passageiros,
             janela_tempo_minutos=janela_tempo
         )
         
+        # Confirma e salva no banco
+        resultado = confirmar_agrupamento(sugestoes, current_user.id)
+        
         db.session.commit()
         
         # Monta mensagem detalhada
-        estatisticas = resultado['estatisticas']
         mensagem = (
             f"✅ Agrupamento concluído com sucesso!\n\n"
             f"📊 Estatísticas:\n"
+            f"• {resultado['fretados_criados']} fretado(s) criado(s)\n"
             f"• {resultado['viagens_criadas']} viagem(ns) criada(s)\n"
-            f"• {resultado['solicitacoes_agrupadas']} solicitação(ões) agrupada(s)\n"
-            f"• Média de {estatisticas['media_passageiros']} passageiros por viagem\n"
-            f"• Taxa de ocupação: {estatisticas['taxa_ocupacao']}%\n"
-            f"• Grupos completos: {estatisticas['grupos_completos']}"
+            f"• {resultado['solicitacoes_agrupadas']} solicitação(ões) agrupada(s)"
         )
         
         flash(mensagem, 'success')
@@ -272,12 +296,13 @@ def agrupar_automatico():
 # =============================================================================
 
 @admin_bp.route('/gerar_sugestoes_agrupamento')
+@admin_bp.route('/gerar_sugestoes_agrupamento')
 @login_required
 @permission_required(['admin', 'supervisor'])
 def gerar_sugestoes_agrupamento():
     """Gera sugestões de agrupamento sem salvar no banco"""
     try:
-        from app.agrupamento_algoritmo import AgrupadorViagens
+        from app.agrupamento_algoritmo import gerar_sugestoes_agrupamento
         from datetime import date
         import json
         
@@ -285,103 +310,96 @@ def gerar_sugestoes_agrupamento():
         if not data_filtro:
             data_filtro = date.today().strftime('%Y-%m-%d')
         
-        # Busca solicitações pendentes da data
-        data_inicio = datetime.strptime(data_filtro, '%Y-%m-%d')
-        data_fim = data_inicio.replace(hour=23, minute=59, second=59)
+        tipo_corrida = request.args.get('tipo_corrida', '')
+        bloco_id = request.args.get('bloco_id', '')
+        status = request.args.get('status', 'Pendente')
         
-        # Query CORRIGIDA que considera entrada, saida e desligamento
-        from sqlalchemy import case
+        # Busca solicitações pendentes
+        # Busca solicitações pendentes
+        from sqlalchemy import func, or_
+        from datetime import datetime as dt_module
+        
+        # Converte string de data para objeto date
+        data_obj = dt_module.strptime(data_filtro, '%Y-%m-%d').date()
+        
         query = Solicitacao.query.filter(
-            Solicitacao.status == 'Pendente',
+            Solicitacao.status == status,
             or_(
-                # Solicitações de ENTRADA (usa horario_entrada)
-                (Solicitacao.tipo_corrida == 'entrada') & 
-                (Solicitacao.horario_entrada >= data_inicio) & 
-                (Solicitacao.horario_entrada <= data_fim),
-                
-                # Solicitações de SAÍDA (usa horario_saida) - SEM acento
-                (Solicitacao.tipo_corrida == 'saida') & 
-                (Solicitacao.horario_saida >= data_inicio) & 
-                (Solicitacao.horario_saida <= data_fim),
-                
-                # Solicitações de DESLIGAMENTO (usa horario_desligamento OU horario_saida)
-                (Solicitacao.tipo_corrida == 'desligamento') & 
-                (
-                    (
-                        (Solicitacao.horario_desligamento.isnot(None)) &
-                        (Solicitacao.horario_desligamento >= data_inicio) & 
-                        (Solicitacao.horario_desligamento <= data_fim)
-                    ) |
-                    (
-                        (Solicitacao.horario_desligamento.is_(None)) &
-                        (Solicitacao.horario_saida >= data_inicio) & 
-                        (Solicitacao.horario_saida <= data_fim)
-                    )
-                )
+                func.date(Solicitacao.horario_entrada) == data_obj,
+                func.date(Solicitacao.horario_saida) == data_obj,
+                func.date(Solicitacao.horario_desligamento) == data_obj
             )
         )
+        if tipo_corrida and tipo_corrida != 'Todos':
+            query = query.filter(Solicitacao.tipo_corrida == tipo_corrida)
         
-        # Filtro por permissão do usuário
-        if current_user.role == 'supervisor':
-            query = query.filter(Solicitacao.supervisor_id == current_user.supervisor.id)
+        if bloco_id and bloco_id != 'Todos':
+            query = query.filter(Solicitacao.bloco_id == bloco_id)
         
-        # Ordena usando uma expressão CASE para pegar o horário correto
-        horario_ordenacao = case(
-            (Solicitacao.tipo_corrida == 'entrada', Solicitacao.horario_entrada),
-            (Solicitacao.tipo_corrida == 'saida', Solicitacao.horario_saida),
-            (Solicitacao.tipo_corrida == 'desligamento', 
-             db.func.coalesce(Solicitacao.horario_desligamento, Solicitacao.horario_saida)),
-            else_=db.func.coalesce(Solicitacao.horario_entrada, Solicitacao.horario_saida, Solicitacao.horario_desligamento)
-        )
-        solicitacoes_pendentes = query.order_by(horario_ordenacao).all()
+        # Filtro adicional por perfil do usuário
+        if current_user.role == 'gerente':
+            query = query.join(Colaborador).filter(
+                Colaborador.empresa_id == current_user.empresa_id,
+                Colaborador.planta_id == current_user.planta_id
+            )
+        
+        elif current_user.role == 'supervisor':
+            supervisor = Supervisor.query.filter_by(user_id=current_user.id).first()
+            if supervisor:
+                query = query.filter(Solicitacao.supervisor_id == supervisor.id)
+        
+        solicitacoes_pendentes = query.all()
         
         if not solicitacoes_pendentes:
-            flash('Nenhuma solicitação pendente encontrada para esta data', 'info')
+            flash('Nenhuma solicitação encontrada para os filtros selecionados.', 'warning')
             return redirect(url_for('admin.agrupamento'))
         
         # Busca configurações
-        config_max_pass = Configuracao.query.filter_by(chave='MAX_PASSAGEIROS_POR_VIAGEM').first()
-        config_janela = Configuracao.query.filter_by(chave='JANELA_TEMPO_AGRUPAMENTO_MIN').first()
+        config_max_pass = Configuracao.query.filter_by(chave='max_passageiros_viagem').first()
+        config_janela = Configuracao.query.filter_by(chave='janela_tempo_agrupamento').first()
         
         max_passageiros = int(config_max_pass.valor) if config_max_pass else 3
         janela_tempo = int(config_janela.valor) if config_janela else 30
         
-        # Cria o agrupador e gera os grupos
-        agrupador = AgrupadorViagens(max_passageiros, janela_tempo)
-        grupos = agrupador.agrupar_solicitacoes(solicitacoes_pendentes)
-        estatisticas = agrupador.calcular_estatisticas(grupos)
+        # Gera sugestões usando o algoritmo V2
+        sugestoes = gerar_sugestoes_agrupamento(solicitacoes_pendentes, max_passageiros, janela_tempo)
         
-        # Converte grupos para JSON (com dados completos)
-        grupos_json = []
-        for grupo in grupos:
-            grupo_data = []
-            for s in grupo:
-                # Determina o horário correto baseado no tipo de corrida
-                tipo_lower = s.tipo_corrida.lower() if s.tipo_corrida else ''
-                if tipo_lower == 'entrada':
-                    horario = s.horario_entrada.strftime('%H:%M') if s.horario_entrada else 'N/A'
-                else:
-                    horario = s.horario_saida.strftime('%H:%M') if s.horario_saida else 'N/A'
-                
-                grupo_data.append({
-                    'id': s.id,
-                    'colaborador_nome': s.colaborador.nome if s.colaborador else 'N/A',
-                    'bloco_codigo': s.colaborador.bloco.codigo_bloco if s.colaborador and s.colaborador.bloco else 'N/A',
-                    'tipo_corrida': s.tipo_corrida,
-                    'horario': horario
-                })
-            grupos_json.append(grupo_data)
+        # Extrai e serializa os dados do retorno
+        fretados_raw = sugestoes.get('fretados', {})
+        veiculos_raw = sugestoes.get('veiculos', {})
+        resumo = sugestoes.get('resumo', {})
         
-        # Armazena na sessão para uso posterior
-        from flask import session
-        session['grupos_sugeridos'] = grupos_json
-        session['data_agrupamento'] = data_filtro
+        # Serializa fretados
+        fretados = {}
+        for grupo_bloco, dados in fretados_raw.items():
+            fretados[grupo_bloco] = {
+                'sugestoes': [
+                    {
+                        'nome': sug.get('nome', ''),
+                        'tipo_linha': sug.get('tipo_linha', ''),
+                        'tipo_corrida': sug.get('tipo_corrida', ''),
+                        'blocos': sug.get('blocos', []),
+                        'quantidade': sug.get('quantidade', 0),
+                        'solicitacoes': [serializar_solicitacao(s) for s in sug.get('solicitacoes', [])]
+                    }
+                    for sug in dados.get('sugestoes', [])
+                ],
+                'solicitacoes': [serializar_solicitacao(s) for s in dados.get('solicitacoes', [])]
+            }
+        
+        # Serializa veículos
+        veiculos = {}
+        for grupo_bloco, grupos in veiculos_raw.items():
+            veiculos[grupo_bloco] = [
+                [serializar_solicitacao(s) for s in grupo]
+                for grupo in grupos
+            ]
         
         return render_template(
             'agrupamento_sugestoes.html',
-            grupos=grupos,
-            grupos_json=json.dumps(grupos_json),
-            estatisticas=estatisticas,
+            fretados=fretados,
+            veiculos=veiculos,
+            resumo=resumo,
             data_filtro=data_filtro
         )
         
@@ -394,7 +412,7 @@ def gerar_sugestoes_agrupamento():
 @login_required
 @permission_required(['admin', 'supervisor'])
 def finalizar_agrupamento():
-    """Finaliza o agrupamento criando viagens no banco de dados"""
+    """Finaliza o agrupamento criando viagens e fretados no banco de dados"""
     try:
         data = request.get_json()
         grupos = data.get('grupos', [])
@@ -403,9 +421,16 @@ def finalizar_agrupamento():
             return jsonify({'success': False, 'message': 'Nenhum grupo para finalizar'}), 400
         
         viagens_criadas = 0
+        fretados_criados = 0
         solicitacoes_agrupadas = 0
         
-        for grupo_ids in grupos:
+        for grupo in grupos:
+            if not grupo or not isinstance(grupo, dict):
+                continue
+            
+            tipo_grupo = grupo.get('tipo', 'veiculo')
+            grupo_ids = grupo.get('solicitacoes', [])
+            
             if not grupo_ids:
                 continue
             
@@ -432,8 +457,8 @@ def finalizar_agrupamento():
             valores = [sol.valor for sol in solicitacoes if sol.valor is not None]
             repasses = [sol.valor_repasse for sol in solicitacoes if sol.valor_repasse is not None]
             
-            valor_viagem = max(valores) if valores else None
-            repasse_viagem = max(repasses) if repasses else None
+            valor_grupo = max(valores) if valores else None
+            repasse_grupo = max(repasses) if repasses else None
             
             # Determina horários e tipo baseado no tipo de corrida (com normalização)
             tipo_normalizado = primeira.tipo_corrida.lower().strip()
@@ -457,63 +482,156 @@ def finalizar_agrupamento():
                 horario_saida = primeira.horario_saida
                 horario_desligamento = primeira.horario_desligamento
             
-            # Cria a viagem COM TODOS OS DADOS (corrigido)
-            nova_viagem = Viagem(
-                # Status
-                status='Pendente',
+            # REGRA: Se 10+ passageiros do mesmo bloco, cria FRETADO; senão, cria VIAGEM
+            if len(solicitacoes) >= 10 and len(blocos_unicos) == 1:
+                # Cria 1 registro de FRETADO para CADA colaborador
+                for solicitacao in solicitacoes:
+                    colaborador = solicitacao.colaborador
+                    
+                    # Pega dados do colaborador
+                    nome_colaborador = colaborador.nome if colaborador else 'Sem nome'
+                    matricula = colaborador.matricula if colaborador else None
+                    telefone = colaborador.telefone if colaborador else None
+                    endereco = colaborador.endereco if colaborador else None
+                    bairro = colaborador.bairro if colaborador else None
+                    cidade = colaborador.cidade if colaborador else None
+                    
+                    # Determina horários baseado no tipo de corrida
+                    tipo_normalizado = solicitacao.tipo_corrida.lower().strip()
+                    tipo_normalizado = tipo_normalizado.replace('ã', 'a').replace('á', 'a').replace('í', 'i')
+                    
+                    if 'entrada' in tipo_normalizado and 'saida' not in tipo_normalizado:
+                        horario_entrada = solicitacao.horario_entrada
+                        horario_saida = None
+                        horario_desligamento = None
+                    elif 'saida' in tipo_normalizado and 'entrada' not in tipo_normalizado:
+                        horario_entrada = None
+                        horario_saida = solicitacao.horario_saida
+                        horario_desligamento = None
+                    elif 'desligamento' in tipo_normalizado:
+                        horario_entrada = None
+                        horario_saida = None
+                        horario_desligamento = solicitacao.horario_desligamento
+                    else:
+                        horario_entrada = solicitacao.horario_entrada
+                        horario_saida = solicitacao.horario_saida
+                        horario_desligamento = None
+                    
+                    # Cria o registro de fretado para este colaborador
+                    novo_fretado = Fretado(
+                        # Referências
+                        solicitacao_id=solicitacao.id,
+                        colaborador_id=solicitacao.colaborador_id,
+                        
+                        # Dados do colaborador
+                        nome_colaborador=nome_colaborador,
+                        matricula=matricula,
+                        telefone=telefone,
+                        
+                        # Endereço do colaborador
+                        endereco=endereco,
+                        bairro=bairro,
+                        cidade=cidade,
+                        
+                        # Localização e contexto
+                        empresa_id=solicitacao.empresa_id,
+                        planta_id=solicitacao.planta_id,
+                        bloco_id=solicitacao.colaborador.bloco_id if colaborador else None,
+                        grupo_bloco=blocos_unicos[0] if blocos_unicos else None,
+                        
+                        # Tipo de viagem
+                        tipo_linha='FIXA',
+                        tipo_corrida=solicitacao.tipo_corrida,
+                        
+                        # Horários
+                        horario_entrada=horario_entrada,
+                        horario_saida=horario_saida,
+                        horario_desligamento=horario_desligamento,
+                        
+                        # Status e controle
+                        status='Fretado',
+                        observacoes=f'Fretado criado automaticamente via agrupamento',
+                        
+                        # Auditoria
+                        created_by_user_id=current_user.id,
+                        data_criacao=datetime.utcnow(),
+                        data_atualizacao=datetime.utcnow()
+                    )
+                    
+                    db.session.add(novo_fretado)
+                    
+                    # Atualiza status da solicitação
+                    solicitacao.status = 'Fretado'
+                    solicitacoes_agrupadas += 1
                 
-                # Localização
-                empresa_id=primeira.empresa_id,
-                planta_id=primeira.planta_id,
-                bloco_id=bloco_principal,
-                blocos_ids=blocos_ids_str,
+                fretados_criados += 1  # Conta como 1 grupo de fretado criado
+            else:
+                # Cria VIAGEM
+                nova_viagem = Viagem(
+                    # Status
+                    status='Pendente',
+                    
+                    # Localização
+                    empresa_id=primeira.empresa_id,
+                    planta_id=primeira.planta_id,
+                    bloco_id=bloco_principal,
+                    blocos_ids=blocos_ids_str,
+                    
+                    # Tipo de viagem
+                    tipo_linha=primeira.tipo_linha if hasattr(primeira, 'tipo_linha') else 'FIXA',
+                    tipo_corrida=tipo_normalizado,
+                    
+                    # Horários
+                    horario_entrada=horario_entrada,
+                    horario_saida=horario_saida,
+                    horario_desligamento=horario_desligamento,
+                    
+                    # Passageiros
+                    quantidade_passageiros=len(solicitacoes),
+                    colaboradores_ids=colaboradores_json,
+                    
+                    # Motorista (ainda não atribuído)
+                    motorista_id=None,
+                    nome_motorista=None,
+                    placa_veiculo=None,
+                    
+                    # Valores (MAIOR valor, não soma)
+                    valor=valor_grupo,
+                    valor_repasse=repasse_grupo,
+                    
+                    # Datas
+                    data_criacao=datetime.utcnow(),
+                    data_atualizacao=datetime.utcnow(),
+                    data_inicio=None,
+                    data_finalizacao=None,
+                    data_cancelamento=None,
+                    
+                    # Cancelamento
+                    motivo_cancelamento=None,
+                    cancelado_por_user_id=None,
+                    
+                    # Auditoria
+                    created_by_user_id=current_user.id
+                )
+                db.session.add(nova_viagem)
+                db.session.flush()
                 
-                # Tipo de viagem
-                tipo_linha=primeira.tipo_linha if hasattr(primeira, 'tipo_linha') else 'FIXA',
-                tipo_corrida=tipo_normalizado,  # Usa o tipo normalizado
+                # Associa as solicitações à viagem
+                for solicitacao in solicitacoes:
+                    solicitacao.viagem_id = nova_viagem.id
+                    solicitacao.status = 'Agrupada'
+                    solicitacoes_agrupadas += 1
                 
-                # Horários
-                horario_entrada=horario_entrada,
-                horario_saida=horario_saida,
-                horario_desligamento=horario_desligamento,
+                viagens_criadas += 1
                 
-                # Passageiros
-                quantidade_passageiros=len(solicitacoes),
-                colaboradores_ids=colaboradores_json,
-                
-                # Motorista (ainda não atribuído)
-                motorista_id=None,
-                nome_motorista=None,
-                placa_veiculo=None,
-                
-                # Valores (MAIOR valor, não soma)
-                valor=valor_viagem,
-                valor_repasse=repasse_viagem,
-                
-                # Datas
-                data_criacao=datetime.utcnow(),
-                data_atualizacao=datetime.utcnow(),
-                data_inicio=None,
-                data_finalizacao=None,
-                data_cancelamento=None,
-                
-                # Cancelamento
-                motivo_cancelamento=None,
-                cancelado_por_user_id=None,
-                
-                # Auditoria
-                created_by_user_id=current_user.id
-            )
-            db.session.add(nova_viagem)
-            db.session.flush()  # Para obter o ID da viagem
-            
-            # Associa as solicitações à viagem
-            for solicitacao in solicitacoes:
-                solicitacao.viagem_id = nova_viagem.id
-                solicitacao.status = 'Agrupada'  # Corrigido: era 'Agendada', agora é 'Agrupada'
-                solicitacoes_agrupadas += 1
-            
-            viagens_criadas += 1
+                # Notifica motoristas sobre nova viagem disponível - Envia Whatsapp
+                try:
+                    enviadas = notification_service.notificar_viagem_disponivel(nova_viagem)
+                    if enviadas > 0:
+                        print(f"Viagem #{nova_viagem.id}: {enviadas} motoristas notificados")
+                except Exception as e:
+                    print(f"Erro ao notificar motoristas sobre viagem #{nova_viagem.id}: {e}")
+                    # Não interrompe o processo se notificação falhar
         
         db.session.commit()
         
@@ -522,10 +640,18 @@ def finalizar_agrupamento():
         session.pop('grupos_sugeridos', None)
         session.pop('data_agrupamento', None)
         
+        mensagem = f'✅ Agrupamento finalizado com sucesso!'
+        if fretados_criados > 0:
+            mensagem += f' {fretados_criados} fretado(s) criado(s).'
+        if viagens_criadas > 0:
+            mensagem += f' {viagens_criadas} viagem(ns) criada(s).'
+        mensagem += f' Total: {solicitacoes_agrupadas} solicitação(ões) agrupada(s).'
+        
         return jsonify({
             'success': True,
-            'message': f'✅ Agrupamento finalizado com sucesso! {viagens_criadas} viagem(ns) criada(s) com {solicitacoes_agrupadas} solicitação(ões) agrupada(s).',
+            'message': mensagem,
             'viagens_criadas': viagens_criadas,
+            'fretados_criados': fretados_criados,
             'solicitacoes_agrupadas': solicitacoes_agrupadas
         })
         
@@ -700,3 +826,7 @@ def mesclar_grupos():
 # ROTAS DE GERENCIAMENTO DE VIAGENS
 # =============================================================================
 
+
+
+
+# Importa as novas rotas de fretados

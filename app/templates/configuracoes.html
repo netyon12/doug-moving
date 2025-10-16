@@ -60,6 +60,24 @@
                             </small>
                         </div>
 
+                        <!-- Limite de Passageiros para Fretado -->
+                        <div class="mb-4">
+                            <label for="limite_fretado" class="form-label fw-bold">
+                                <i class="bi bi-bus-front me-1"></i>Limite de Passageiros para Fretado
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="limite_fretado" 
+                                   name="limite_fretado" 
+                                   value="{{ limite_fretado }}" 
+                                   min="1" 
+                                   max="50" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Grupos com MAIS de X passageiros serão considerados Fretados. Grupos com X ou menos passageiros serão Veículos (recomendado: 9).
+                            </small>
+                        </div>
+
                         <!-- Botões -->
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">
@@ -91,6 +109,17 @@
                     <p class="text-muted">
                         Define a capacidade máxima de passageiros que o sistema deve considerar ao agrupar solicitações automaticamente. 
                         Valores típicos são 3 ou 4 passageiros por veículo.
+                    </p>
+
+                    <h6 class="fw-bold mt-3">Limite de Passageiros para Fretado</h6>
+                    <p class="text-muted">
+                        Define o limite que separa Fretados de Veículos. Grupos com <strong>MAIS</strong> passageiros que este valor 
+                        serão tratados como <strong>Fretados</strong>. Grupos com este valor ou menos serão tratados como <strong>Veículos</strong>.
+                        <br><strong>Exemplo:</strong> Se o limite for 9:
+                        <ul class="mb-0 mt-2">
+                            <li>Grupo com 9 passageiros = <span class="badge bg-primary">Veículo</span></li>
+                            <li>Grupo com 10 passageiros = <span class="badge bg-success">Fretado</span></li>
+                        </ul>
                     </p>
 
                     <div class="alert alert-warning mt-3" role="alert">

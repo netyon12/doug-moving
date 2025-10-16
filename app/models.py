@@ -353,17 +353,18 @@ class Supervisor(db.Model):
     empresa_id = db.Column(db.Integer, db.ForeignKey(
         'empresa.id'), nullable=False)
     planta_id = db.Column(db.Integer, db.ForeignKey(
-        'planta.id'), nullable=False)
+        'planta.id'), nullable=True)  # Mantido para compatibilidade, será depreciado
     gerente_id = db.Column(db.Integer, db.ForeignKey(
         'gerente.id'), nullable=False)  # Gerente responsável
 
     # Relacionamentos
     user = db.relationship('User', back_populates='supervisor', uselist=False)
     empresa = db.relationship('Empresa')
-    planta = db.relationship('Planta')
+    planta = db.relationship('Planta', foreign_keys=[planta_id])  # Relacionamento antigo (compatibilidade)
     gerente = db.relationship('Gerente')
 
     # Relacionamentos Muitos-para-Muitos
+    plantas = db.relationship('Planta', secondary='supervisor_planta_association')  # NOVO: Múltiplas plantas
     turnos = db.relationship('Turno', secondary='supervisor_turno_association')
     centros_custo = db.relationship(
         'CentroCusto', secondary='supervisor_centro_custo_association')
@@ -522,6 +523,13 @@ supervisor_centro_custo_association = db.Table('supervisor_centro_custo_associat
                                                db.Column('centro_custo_id', db.Integer, db.ForeignKey(
                                                    'centro_custo.id'), primary_key=True)
                                                )
+
+supervisor_planta_association = db.Table('supervisor_planta_association',
+                                         db.Column('supervisor_id', db.Integer, db.ForeignKey(
+                                             'supervisor.id'), primary_key=True),
+                                         db.Column('planta_id', db.Integer, db.ForeignKey(
+                                             'planta.id'), primary_key=True)
+                                         )
 
 colaborador_turno_association = db.Table('colaborador_turno_association',
                                          db.Column('colaborador_id', db.Integer, db.ForeignKey(
@@ -906,9 +914,10 @@ class Solicitacao(db.Model):
     turno_saida_id = db.Column(db.Integer, db.ForeignKey('turno.id'), nullable=True)
     turno_desligamento_id = db.Column(db.Integer, db.ForeignKey('turno.id'), nullable=True)
     
-    # Status e viagem
-    status = db.Column(db.String(20), nullable=False, default='Pendente')  # Pendente, Agrupada, Finalizada, Cancelada
+    # Status e viagem/fretado
+    status = db.Column(db.String(20), nullable=False, default='Pendente')  # Pendente, Agrupada, Fretado, Finalizada, Cancelada
     viagem_id = db.Column(db.Integer, db.ForeignKey('viagem.id'), nullable=True)  # NULL até agrupar
+    fretado_id = db.Column(db.Integer, db.ForeignKey('fretado.id'), nullable=True)  # NULL até agrupar como fretado
     
     # Valores financeiros
     valor = db.Column(db.Numeric(10, 2), nullable=True)  # Valor baseado em ValorBlocoTurno
@@ -931,6 +940,7 @@ class Solicitacao(db.Model):
     turno_saida = db.relationship('Turno', foreign_keys=[turno_saida_id])
     turno_desligamento = db.relationship('Turno', foreign_keys=[turno_desligamento_id])
     viagem = db.relationship('Viagem', back_populates='solicitacoes')
+    fretado = db.relationship('Fretado', backref='solicitacoes', foreign_keys='Solicitacao.fretado_id')
     created_by = db.relationship('User', foreign_keys=[created_by_user_id], backref='solicitacoes_criadas')
 
     def __repr__(self):
@@ -1223,5 +1233,165 @@ class FinPagarViagens(db.Model):
 
 # ===========================================================================================
 # FIM DO MÓDULO FINANCEIRO
+# ===========================================================================================
+
+
+
+
+# ===========================================================================================
+# MODELO DE FRETADO
+# ===========================================================================================
+
+class Fretado(db.Model):
+    """
+    Modelo de Fretado para gerenciar registros individuais de colaboradores em fretados.
+    
+    Cada colaborador que vai de fretado gera 1 registro nesta tabela.
+    Similar à estrutura da tabela Solicitacao, mas para fretados.
+    """
+    __tablename__ = 'fretado'
+    
+    # === IDENTIFICAÇÃO ===
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # === REFERÊNCIAS ===
+    solicitacao_id = db.Column(db.Integer, db.ForeignKey('solicitacao.id'), nullable=False)  # ID da solicitação original
+    colaborador_id = db.Column(db.Integer, db.ForeignKey('colaborador.id'), nullable=False)  # ID do colaborador
+    
+    # === DADOS DO COLABORADOR ===
+    nome_colaborador = db.Column(db.String(150), nullable=False)  # Nome do colaborador
+    matricula = db.Column(db.String(50), nullable=True)  # Matrícula do colaborador
+    telefone = db.Column(db.String(20), nullable=True)  # Telefone do colaborador
+    
+    # === ENDEREÇO DO COLABORADOR ===
+    endereco = db.Column(db.String(255), nullable=True)  # Endereço completo
+    bairro = db.Column(db.String(100), nullable=True)  # Bairro
+    cidade = db.Column(db.String(100), nullable=True)  # Cidade
+    
+    # === LOCALIZAÇÃO E CONTEXTO ===
+    empresa_id = db.Column(db.Integer, db.ForeignKey('empresa.id'), nullable=False)
+    planta_id = db.Column(db.Integer, db.ForeignKey('planta.id'), nullable=False)
+    bloco_id = db.Column(db.Integer, db.ForeignKey('bloco.id'), nullable=True)  # Bloco do colaborador
+    grupo_bloco = db.Column(db.String(50), nullable=True)  # Ex: "CPV1", "SJC1" - raiz do código do bloco
+    
+    # === TIPO DE VIAGEM ===
+    tipo_linha = db.Column(db.String(10), nullable=False)  # 'FIXA' ou 'EXTRA'
+    tipo_corrida = db.Column(db.String(20), nullable=False)  # 'entrada', 'saida', 'entrada_saida', 'desligamento'
+    
+    # === HORÁRIOS ===
+    horario_entrada = db.Column(db.DateTime, nullable=True)
+    horario_saida = db.Column(db.DateTime, nullable=True)
+    horario_desligamento = db.Column(db.DateTime, nullable=True)
+    
+    # === STATUS E CONTROLE ===
+    status = db.Column(db.String(20), nullable=False, default='Fretado')  # Status: 'Fretado'
+    observacoes = db.Column(db.Text, nullable=True)  # Observações gerais
+    
+    # === AUDITORIA E TIMESTAMPS ===
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Quem criou
+    data_criacao = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    data_atualizacao = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # === RELACIONAMENTOS ===
+    solicitacao = db.relationship('Solicitacao', foreign_keys=[solicitacao_id])
+    colaborador = db.relationship('Colaborador', foreign_keys=[colaborador_id])
+    empresa = db.relationship('Empresa', foreign_keys=[empresa_id])
+    planta = db.relationship('Planta', foreign_keys=[planta_id])
+    bloco = db.relationship('Bloco', foreign_keys=[bloco_id])
+    created_by = db.relationship('User', foreign_keys=[created_by_user_id], backref='fretados_criados')
+
+    def __repr__(self):
+        return f'<Fretado {self.id} - {self.nome_colaborador} - {self.grupo_bloco}>'
+    
+    # === MÉTODOS AUXILIARES ===
+    
+    def get_colaboradores_lista(self):
+        """
+        Retorna lista de IDs dos colaboradores a partir do campo JSON.
+        
+        Returns:
+            list: Lista de IDs de colaboradores
+        """
+        if not self.colaboradores_ids:
+            return []
+        
+        try:
+            import json
+            return json.loads(self.colaboradores_ids)
+        except:
+            # Se não for JSON válido, tenta split por vírgula
+            return [int(x.strip()) for x in self.colaboradores_ids.split(',') if x.strip().isdigit()]
+    
+    def get_blocos_lista(self):
+        """
+        Retorna lista de IDs dos blocos a partir do campo string.
+        
+        Returns:
+            list: Lista de IDs de blocos
+        """
+        if not self.blocos_ids:
+            return [self.bloco_id] if self.bloco_id else []
+        
+        try:
+            return [int(x.strip()) for x in self.blocos_ids.split(',') if x.strip().isdigit()]
+        except:
+            return [self.bloco_id] if self.bloco_id else []
+    
+    @staticmethod
+    def extrair_grupo_bloco(codigo_bloco):
+        """
+        Extrai o grupo de bloco a partir do código do bloco.
+        
+        Exemplos:
+            CPV1.1 → CPV1
+            CPV1.2 → CPV1
+            SJC1.3 → SJC1
+            ABC → ABC (sem ponto, retorna o próprio código)
+        
+        Args:
+            codigo_bloco: String com o código do bloco
+            
+        Returns:
+            str: Grupo do bloco (raiz antes do último ponto)
+        """
+        if not codigo_bloco:
+            return None
+        
+        # Se tem ponto, pega tudo antes do último ponto
+        if '.' in codigo_bloco:
+            return codigo_bloco.rsplit('.', 1)[0]
+        
+        # Se não tem ponto, retorna o próprio código
+        return codigo_bloco
+    
+    def to_dict(self):
+        """Converte o fretado para dicionário."""
+        return {
+            'id': self.id,
+            'empresa_id': self.empresa_id,
+            'empresa_nome': self.empresa.nome if self.empresa else None,
+            'planta_id': self.planta_id,
+            'planta_nome': self.planta.nome if self.planta else None,
+            'bloco_id': self.bloco_id,
+            'bloco_codigo': self.bloco.codigo_bloco if self.bloco else None,
+            'blocos_ids': self.blocos_ids,
+            'grupo_bloco': self.grupo_bloco,
+            'tipo_linha': self.tipo_linha,
+            'tipo_corrida': self.tipo_corrida,
+            'horario_entrada': self.horario_entrada.isoformat() if self.horario_entrada else None,
+            'horario_saida': self.horario_saida.isoformat() if self.horario_saida else None,
+            'horario_desligamento': self.horario_desligamento.isoformat() if self.horario_desligamento else None,
+            'colaboradores_ids': self.colaboradores_ids,
+            'quantidade_passageiros': self.quantidade_passageiros,
+            'valor': float(self.valor) if self.valor else 0.00,
+            'valor_repasse': float(self.valor_repasse) if self.valor_repasse else 0.00,
+            'status': self.status,
+            'observacoes': self.observacoes,
+            'data_criacao': self.data_criacao.isoformat() if self.data_criacao else None,
+            'data_atualizacao': self.data_atualizacao.isoformat() if self.data_atualizacao else None,
+        }
+
+# ===========================================================================================
+# FIM DO MODELO DE FRETADO
 # ===========================================================================================
 

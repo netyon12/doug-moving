@@ -60,12 +60,12 @@
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <label for="planta_id" class="form-label">Planta*</label>
-                                <!-- (A lógica para a planta será similar, vamos focar na empresa primeiro) -->
-                                <select class="form-select" id="planta_id" name="planta_id" required>
-                                    <option value="" disabled selected>Selecione...</option>
+                                <label for="plantas_ids" class="form-label">Plantas* <small class="text-muted">(Ctrl+Click para múltiplas)</small></label>
+                                <select class="form-select" id="plantas_ids" name="plantas_ids" multiple required size="5">
                                     {% for planta in plantas %}
-                                        <option value="{{ planta.id }}">{{ planta.nome }}</option>
+                                        <option value="{{ planta.id }}" {% if supervisor and planta in supervisor.plantas %}selected{% endif %}>
+                                            {{ planta.nome }}
+                                        </option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -96,16 +96,35 @@
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Turnos*</label>
-                                <div class="card p-3" style="max-height: 150px; overflow-y: auto;">
-                                    {% for turno in turnos %}<div class="form-check"><input class="form-check-input" type="checkbox" name="turnos" value="{{ turno.id }}" id="turno_{{ turno.id }}" {% if supervisor and turno in supervisor.turnos %}checked{% endif %}><label class="form-check-label" for="turno_{{ turno.id }}">{{ turno.nome }}</label></div>{% endfor %}
-                                </div>
+                                <label for="turnos_ids" class="form-label">Turnos* <small class="text-muted">(Ctrl+Click para múltiplos)</small></label>
+                                <select class="form-select" id="turnos_ids" name="turnos_ids" multiple required size="10">
+                                    {% for planta in plantas %}
+                                        {% set planta_turnos = turnos|selectattr('planta_id', 'equalto', planta.id)|list %}
+                                        {% if planta_turnos %}
+                                            <optgroup label="─── {{ planta.nome }} ───">
+                                                {% for turno in planta_turnos %}
+                                                    <option value="{{ turno.id }}" {% if supervisor and turno in supervisor.turnos %}selected{% endif %}>
+                                                        {{ turno.nome }} ({{ turno.horario_inicio.strftime('%H:%M') }} - {{ turno.horario_fim.strftime('%H:%M') }})
+                                                    </option>
+                                                {% endfor %}
+                                            </optgroup>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label class="form-label">Centros de Custo*</label>
-                                <div class="card p-3" style="max-height: 150px; overflow-y: auto;">
-                                    {% for cc in centros_custo %}<div class="form-check"><input class="form-check-input" type="checkbox" name="centros_custo" value="{{ cc.id }}" id="cc_{{ cc.id }}" {% if supervisor and cc in supervisor.centros_custo %}checked{% endif %}><label class="form-check-label" for="cc_{{ cc.id }}">{{ cc.nome }}</label></div>{% endfor %}
-                                </div>
+                                <label for="centros_ids" class="form-label">Centros de Custo* <small class="text-muted">(Ctrl+Click para múltiplos)</small></label>
+                                <select class="form-select" id="centros_ids" name="centros_ids" multiple required size="10">
+                                    {% for planta in plantas %}
+                                        <optgroup label="─── {{ planta.nome }} ───">
+                                            {% for cc in centros_custo if cc.empresa_id == planta.empresa_id %}
+                                                <option value="{{ cc.id }}" {% if supervisor and cc in supervisor.centros_custo %}selected{% endif %}>
+                                                    {{ cc.nome }}
+                                                </option>
+                                            {% endfor %}
+                                        </optgroup>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         

@@ -39,12 +39,24 @@
                 <option value="Agendada" {% if filtros.get('status') == 'Agendada' %}selected{% endif %}>Agendada</option>
                 <option value="Finalizada" {% if filtros.get('status') == 'Finalizada' %}selected{% endif %}>Finalizada</option>
                 <option value="Cancelada" {% if filtros.get('status') == 'Cancelada' %}selected{% endif %}>Cancelada</option>
+                <option value="Fretado" {% if filtros.get('status') == 'Fretado' %}selected{% endif %}>Fretado</option>
             </select>
         </div>
     </div>
 
     <!-- SEGUNDA LINHA DE FILTROS -->
     <div class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label for="tipo_corrida" class="form-label">Tipo de Corrida</label>
+            <select class="form-select" id="tipo_corrida" name="tipo_corrida">
+                <option value="">Todos</option>
+                <option value="entrada" {% if filtros.get('tipo_corrida') == 'entrada' %}selected{% endif %}>Entrada</option>
+                <option value="saida" {% if filtros.get('tipo_corrida') == 'saida' %}selected{% endif %}>Saída</option>
+                <option value="entrada_saida" {% if filtros.get('tipo_corrida') == 'entrada_saida' %}selected{% endif %}>Entrada/Saída</option>
+                <option value="desligamento" {% if filtros.get('tipo_corrida') == 'desligamento' %}selected{% endif %}>Desligamento</option>
+            </select>
+        </div>
+        
         <div class="col-md-2">
             <label for="data_inicio" class="form-label">Data Início</label>
             <input type="date" class="form-control" id="data_inicio" name="data_inicio" value="{{ filtros.get('data_inicio', '') }}">
@@ -79,17 +91,19 @@
             </select>
         </div>
         
-        <div class="col-md-2">
+        <div class="col-md-1">
             <label for="planta" class="form-label">Planta</label>
             <input type="text" class="form-control" id="planta" name="planta" placeholder="Ex: Planta 1" value="{{ filtros.get('planta', '') }}">
         </div>
         
-        <div class="col-md-2">
+        <div class="col-md-1">
             <button type="submit" class="btn btn-primary w-100">Filtrar</button>
         </div>
-        
-        <div class="col-md-2">
-            <a href="{{ url_for('admin.solicitacoes') }}" class="btn btn-secondary w-100">Limpar</a>
+    </div>
+    
+    <div class="row g-3 align-items-end mt-2">
+        <div class="col-md-12">
+            <a href="{{ url_for('admin.solicitacoes') }}" class="btn btn-secondary">Limpar</a>
         </div>
     </div>
 </form>
@@ -136,10 +150,18 @@
                     {% endif %}
                 </td>
                 <td>
-                    {% if solicitacao.tipo_corrida and solicitacao.tipo_corrida|lower == 'entrada' %}
-                        {{ solicitacao.horario_entrada.strftime('%d/%m/%Y %H:%M') if solicitacao.horario_entrada else '-' }}
+                    {% if solicitacao.tipo_corrida %}
+                        {% if solicitacao.tipo_corrida|lower == 'entrada' or solicitacao.tipo_corrida|lower == 'entrada_saida' %}
+                            {{ solicitacao.horario_entrada.strftime('%d/%m/%Y %H:%M') if solicitacao.horario_entrada else '-' }}
+                        {% elif solicitacao.tipo_corrida|lower == 'saida' or solicitacao.tipo_corrida|lower == 'saída' %}
+                            {{ solicitacao.horario_saida.strftime('%d/%m/%Y %H:%M') if solicitacao.horario_saida else '-' }}
+                        {% elif solicitacao.tipo_corrida|lower == 'desligamento' %}
+                            {{ solicitacao.horario_desligamento.strftime('%d/%m/%Y %H:%M') if solicitacao.horario_desligamento else '-' }}
+                        {% else %}
+                            -
+                        {% endif %}
                     {% else %}
-                        {{ solicitacao.horario_saida.strftime('%d/%m/%Y %H:%M') if solicitacao.horario_saida else '-' }}
+                        -
                     {% endif %}
                 </td>
                 <td>{{ solicitacao.colaborador.bloco.codigo_bloco if solicitacao.colaborador and solicitacao.colaborador.bloco else 'N/A' }}</td>
@@ -196,21 +218,9 @@ function confirmarExclusao(solicitacaoId) {
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '/admin/solicitacoes/' + solicitacaoId + '/excluir';
-        
-        // Adiciona token CSRF se necessário
-        const csrfToken = document.querySelector('meta[name="csrf-token"]');
-        if (csrfToken) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'csrf_token';
-            input.value = csrfToken.content;
-            form.appendChild(input);
-        }
-        
         document.body.appendChild(form);
         form.submit();
     }
 }
 </script>
 {% endblock %}
-

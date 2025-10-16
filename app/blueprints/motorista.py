@@ -52,6 +52,9 @@ from ..utils.admin_audit import (
 # Importação do serviço de WhatsApp
 from app.services.whatsapp_service import whatsapp_service
 
+# Importação do serviço de notificações
+from app.services.notification_service import notification_service
+
 
 # CORREÇÃO: Nome do blueprint deve ser 'motorista_bp' para coincidir com __init__.py
 motorista_bp = Blueprint('motorista', __name__, url_prefix='/motorista')
@@ -369,6 +372,15 @@ def cancelar_viagem(viagem_id):
             }), 400
         
         db.session.commit()
+        
+        # Notifica colaboradores sobre cancelamento
+        try:
+            enviadas = notification_service.notificar_viagem_cancelada_por_motorista(viagem, motivo)
+            if enviadas > 0:
+                current_app.logger.info(f"Viagem #{viagem.id} cancelada: {enviadas} colaboradores notificados")
+        except Exception as e:
+            current_app.logger.error(f"Erro ao notificar colaboradores sobre cancelamento da viagem #{viagem.id}: {e}")
+            # Não interrompe o processo se notificação falhar
         
         # Registra no log de auditoria com o motivo
         log_viagem_audit(
