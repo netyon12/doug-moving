@@ -360,11 +360,11 @@ class Supervisor(db.Model):
     # Relacionamentos
     user = db.relationship('User', back_populates='supervisor', uselist=False)
     empresa = db.relationship('Empresa')
-    planta = db.relationship('Planta', foreign_keys=[planta_id])  # Relacionamento antigo (compatibilidade)
+    planta = db.relationship('Planta', foreign_keys=[planta_id], overlaps="plantas")  # Relacionamento antigo (compatibilidade)
     gerente = db.relationship('Gerente')
 
     # Relacionamentos Muitos-para-Muitos
-    plantas = db.relationship('Planta', secondary='supervisor_planta_association')  # NOVO: Múltiplas plantas
+    plantas = db.relationship('Planta', secondary='supervisor_planta_association', overlaps="planta")  # NOVO: Múltiplas plantas
     turnos = db.relationship('Turno', secondary='supervisor_turno_association')
     centros_custo = db.relationship(
         'CentroCusto', secondary='supervisor_centro_custo_association')
