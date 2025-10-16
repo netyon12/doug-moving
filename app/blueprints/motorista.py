@@ -550,7 +550,8 @@ def finalizar_viagem(viagem_id):
         return jsonify({
             'sucesso': True,
             'mensagem': f'Viagem #{viagem.id} finalizada com sucesso!',
-            'viagem_id': viagem.id
+            'viagem_id': viagem.id,
+            'valor_repasse': float(viagem.valor_repasse) if viagem.valor_repasse else 0.0
         })
         
     except Exception as e:
@@ -613,7 +614,7 @@ def atualizar_status_disponibilidade():
             resource_type='Motorista',
             resource_id=motorista.id,
             user_id=current_user.id,
-            username=current_user.username,
+            username=current_user.email,
             changes={'status': {'before': status_anterior, 'after': novo_status}}
         )
         

@@ -120,7 +120,7 @@ def log_audit(
         # Obtém informações do usuário atual se não fornecidas
         if user_id is None and current_user and current_user.is_authenticated:
             user_id = current_user.id
-            user_name = user_name or current_user.username
+            user_name = user_name or current_user.email
             user_role = user_role or current_user.role
         
         # Obtém informações da requisição
@@ -224,7 +224,7 @@ def log_viagem_audit(
         # Obtém informações do usuário atual se não fornecidas
         if user_id is None and current_user and current_user.is_authenticated:
             user_id = current_user.id
-            user_name = user_name or current_user.username
+            user_name = user_name or current_user.email
             user_role = user_role or current_user.role
         
         # Obtém IP da requisição
