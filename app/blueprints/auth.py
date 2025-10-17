@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 
 from .. import db
 from ..models import User, Supervisor, Colaborador, Motorista, Bloco, Viagem, Solicitacao
+from ..utils.admin_audit import log_audit, AuditAction
 from io import StringIO
 import csv
 import os
@@ -18,16 +19,43 @@ auth_bp = Blueprint('auth', __name__, url_prefix='/') # ou sem prefixo
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        # Correção: A rota 'home' não tem blueprint.
         return redirect(url_for('home')) 
     
     if request.method == 'POST':
-        user = User.query.filter_by(email=request.form['email']).first()
-        if user and check_password_hash(user.password, request.form['password']):
+        email = request.form.get('email')
+        password = request.form.get('password')
+        user = User.query.filter_by(email=email).first()
+        
+        if user and check_password_hash(user.password, password):
             login_user(user)
-            # Correção: A rota 'home' não tem blueprint.
+            
+            # AUDITORIA: Login bem-sucedido
+            log_audit(
+                action=AuditAction.LOGIN_SUCCESS,
+                resource_type='User',
+                resource_id=user.id,
+                status='SUCCESS',
+                severity='INFO',
+                user_id=user.id,
+                user_name=user.email,
+                user_role=user.role
+            )
+            
             return redirect(url_for('home')) 
         else:
+            # AUDITORIA: Login falhou
+            log_audit(
+                action=AuditAction.LOGIN_FAILED,
+                resource_type='User',
+                resource_id=None,
+                status='FAILED',
+                severity='WARNING',
+                user_id=None,
+                user_name=email,
+                user_role=None,
+                reason=f'Tentativa de login com email: {email}'
+            )
+            
             flash('Email ou senha inválidos. Tente novamente.', 'danger')
             
     return render_template('login.html')
@@ -39,11 +67,28 @@ def login():
 def logout():
     from flask import session
     
+    # Captura informações do usuário ANTES do logout
+    user_id = current_user.id
+    user_email = current_user.email
+    user_role = current_user.role
+    
     # Limpa todas as mensagens flash antigas da sessão
     session.pop('_flashes', None)
     
     # Faz o logout
     logout_user()
+    
+    # AUDITORIA: Logout
+    log_audit(
+        action=AuditAction.LOGOUT,
+        resource_type='User',
+        resource_id=user_id,
+        status='SUCCESS',
+        severity='INFO',
+        user_id=user_id,
+        user_name=user_email,
+        user_role=user_role
+    )
     
     # Adiciona apenas a mensagem de logout
     flash('Você saiu da sua conta.', 'success')
@@ -57,32 +102,62 @@ def logout():
 @login_required
 def editar_perfil():
     if request.method == 'POST':
-        # ... (toda a lógica de atualização de nome, e-mail e senha permanece a mesma) ...
+        mudancas = {}
+        senha_alterada = False
+        
+        # Verifica se a senha foi alterada
+        nova_senha = request.form.get('nova_senha')
+        if nova_senha:
+            current_user.password = generate_password_hash(nova_senha, method='pbkdf2:sha256')
+            senha_alterada = True
+            mudancas['senha'] = {'before': '***', 'after': '*** (alterada)'}
+        
+        # Verifica se o email foi alterado
+        novo_email = request.form.get('email')
+        if novo_email and novo_email != current_user.email:
+            mudancas['email'] = {'before': current_user.email, 'after': novo_email}
+            current_user.email = novo_email
 
-        # --- NOVA LÓGICA PARA UPLOAD DA FOTO ---
+        # --- LÓGICA PARA UPLOAD DA FOTO ---
         foto = request.files.get('foto_perfil')
         
         # Se o usuário enviou um novo arquivo
         if foto and foto.filename != '':
-            # 1. Garante que o nome do arquivo é seguro
             filename = secure_filename(foto.filename)
-            
-            # 2. Cria um nome de arquivo único para evitar conflitos (ex: user_5.jpg)
-            # Isso garante que cada usuário só pode ter uma foto, que é sobrescrita.
             extensao = filename.rsplit('.', 1)[1].lower()
             nome_arquivo_unico = f"user_{current_user.id}.{extensao}"
-            
-            # 3. Salva o arquivo na pasta de uploads
             caminho_salvar = os.path.join(current_app.config['UPLOAD_FOLDER'], nome_arquivo_unico)
             foto.save(caminho_salvar)
             
-            # 4. Atualiza o nome do arquivo no banco de dados para o usuário
+            mudancas['foto_perfil'] = {'before': current_user.foto_perfil, 'after': nome_arquivo_unico}
             current_user.foto_perfil = nome_arquivo_unico
             flash('Sua foto de perfil foi atualizada!', 'info')
 
-        # ... (o db.session.commit() que já existe salvará a foto junto com o resto) ...
-        
         db.session.commit()
+        
+        # AUDITORIA: Atualização de perfil
+        if mudancas:
+            if senha_alterada:
+                # Log específico para mudança de senha
+                log_audit(
+                    action=AuditAction.PASSWORD_CHANGE,
+                    resource_type='User',
+                    resource_id=current_user.id,
+                    status='SUCCESS',
+                    severity='WARNING',  # Mudança de senha é WARNING por segurança
+                    changes=mudancas
+                )
+            else:
+                # Log geral de atualização
+                log_audit(
+                    action=AuditAction.UPDATE,
+                    resource_type='User',
+                    resource_id=current_user.id,
+                    status='SUCCESS',
+                    severity='INFO',
+                    changes=mudancas
+                )
+        
         flash('Seu perfil foi atualizado com sucesso!', 'success')
         return redirect(url_for('auth.editar_perfil'))
 

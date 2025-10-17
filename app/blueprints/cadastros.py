@@ -25,6 +25,9 @@ from app import query_filters
 
 from .admin import admin_bp
 
+# IMPORTAR SISTEMA DE AUDITORIA
+from ..utils.admin_audit import log_audit, AuditAction
+
 
 @admin_bp.route('/empresas/cadastrar', methods=['GET', 'POST'])
 @login_required
@@ -56,6 +59,16 @@ def cadastrar_empresa():
         )
         db.session.add(nova_empresa)
         db.session.commit()
+        
+        # AUDITORIA: Registra criação de empresa
+        log_audit(
+            action=AuditAction.CREATE,
+            resource_type='Empresa',
+            resource_id=nova_empresa.id,
+            status='SUCCESS',
+            severity='INFO',
+            changes={'nome': nova_empresa.nome, 'cnpj': nova_empresa.cnpj}
+        )
         flash(f'Empresa "{nome}" cadastrada com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='empresas'))
 
@@ -72,6 +85,9 @@ def editar_empresa(empresa_id):
     empresa = Empresa.query.get_or_404(empresa_id)
 
     if request.method == 'POST':
+        # Captura valores antigos
+        valores_antigos = {'nome': empresa.nome, 'cnpj': empresa.cnpj}
+        
         empresa.nome = request.form.get('nome')
         empresa.cnpj = request.form.get('cnpj')
         empresa.endereco = request.form.get('endereco')
@@ -104,8 +120,21 @@ def excluir_empresa(empresa_id):
         return redirect(url_for('admin.admin_dashboard', aba='empresas'))
 
     nome_empresa = empresa.nome
+    empresa_cnpj = empresa.cnpj
+
     db.session.delete(empresa)
     db.session.commit()
+        
+    # AUDITORIA: Registra exclusão
+    log_audit(
+        action=AuditAction.DELETE,
+        resource_type='Empresa',
+        resource_id=empresa_id,
+        status='SUCCESS',
+        severity='WARNING',
+        changes={'dados_excluidos': {'nome': nome_empresa, 'cnpj': empresa_cnpj}}
+    )
+        
     flash(f'Empresa "{nome_empresa}" excluída com sucesso.', 'success')
     return redirect(url_for('admin.admin_dashboard', aba='empresas'))
 
@@ -139,6 +168,16 @@ def cadastrar_planta():
         )
         db.session.add(nova_planta)
         db.session.commit()
+        
+        # AUDITORIA
+        log_audit(
+            action=AuditAction.CREATE,
+            resource_type='Planta',
+            resource_id=nova_planta.id,
+            status='SUCCESS',
+            severity='INFO',
+            changes={'nome': nova_planta.nome, 'empresa_id': nova_planta.empresa_id}
+        )
         flash(f'Planta "{nova_planta.nome}" cadastrada com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='plantas'))
 
@@ -156,6 +195,8 @@ def editar_planta(planta_id):
     planta = Planta.query.get_or_404(planta_id)
 
     if request.method == 'POST':
+        valores_antigos = {'nome': planta.nome}
+        
         planta.nome = request.form.get('nome')
         planta.empresa_id = request.form.get('empresa_id')
 
@@ -184,6 +225,17 @@ def excluir_planta(planta_id):
     nome_planta = planta.nome
     db.session.delete(planta)
     db.session.commit()
+        
+    # AUDITORIA
+    log_audit(
+        action=AuditAction.DELETE,
+        resource_type='Planta',
+        resource_id=planta_id,
+        status='SUCCESS',
+        severity='WARNING',
+        changes={'dados_excluidos': {'nome': nome_planta}}
+    )
+        
     flash(f'Planta "{nome_planta}" excluída com sucesso.', 'success')
     return redirect(url_for('admin.admin_dashboard', aba='plantas'))
 
@@ -397,6 +449,16 @@ def cadastrar_bloco():
         )
         db.session.add(novo_bloco)
         db.session.commit()
+        
+        # AUDITORIA
+        log_audit(
+            action=AuditAction.CREATE,
+            resource_type='Bloco',
+            resource_id=novo_bloco.id,
+            status='SUCCESS',
+            severity='INFO',
+            changes={'codigo_bloco': novo_bloco.codigo_bloco, 'empresa_id': novo_bloco.empresa_id}
+        )
 
         flash(f'Bloco "{novo_bloco.codigo_bloco}" cadastrado. Agora associe os bairros.', 'success')
         return redirect(url_for('admin.associar_bairros_bloco', bloco_id=novo_bloco.id))
@@ -415,6 +477,8 @@ def editar_bloco(bloco_id):
     bloco = Bloco.query.get_or_404(bloco_id)
 
     if request.method == 'POST':
+        valores_antigos = {'codigo_bloco': bloco.codigo_bloco}
+        
         # Processa os valores dos 4 turnos fixos
         def processar_valor(campo_nome):
             valor_str = request.form.get(campo_nome, '0').replace(',', '.')
@@ -436,6 +500,17 @@ def editar_bloco(bloco_id):
         bloco.repasse_admin = processar_valor('repasse_admin')
 
         db.session.commit()
+        
+        # AUDITORIA
+        if valores_antigos['codigo_bloco'] != bloco.codigo_bloco:
+            log_audit(
+                action=AuditAction.UPDATE,
+                resource_type='Bloco',
+                resource_id=bloco.id,
+                status='SUCCESS',
+                severity='INFO',
+                changes={'codigo_bloco': {'before': valores_antigos['codigo_bloco'], 'after': bloco.codigo_bloco}}
+            )
         flash(f'Bloco "{bloco.codigo_bloco}" atualizado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='blocos'))
 
@@ -636,6 +711,16 @@ def cadastrar_gerente():
 
         db.session.add(novo_gerente)
         db.session.commit()
+        
+        # AUDITORIA
+        log_audit(
+            action=AuditAction.CREATE,
+            resource_type='Gerente',
+            resource_id=novo_gerente.id,
+            status='SUCCESS',
+            severity='INFO',
+            changes={'nome': novo_gerente.nome, 'email': email}
+        )
         flash(
             f'Gerente "{novo_gerente.nome}" cadastrado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='gerentes'))
@@ -656,6 +741,8 @@ def editar_gerente(gerente_id):
     gerente = Gerente.query.get_or_404(gerente_id)
 
     if request.method == 'POST':
+        valores_antigos = {'nome': gerente.nome, 'email': gerente.user.email}
+        
         # 1. Atualizar dados do Gerente
         gerente.nome = request.form.get('nome')
         gerente.empresa_id = request.form.get('empresa_id')
@@ -677,6 +764,19 @@ def editar_gerente(gerente_id):
         gerente.centros_custo.extend(centros_custo)
 
         db.session.commit()
+        
+        # AUDITORIA
+        valores_novos = {'nome': gerente.nome, 'email': gerente.user.email}
+        mudancas = {k: {'before': valores_antigos[k], 'after': v} for k, v in valores_novos.items() if valores_antigos[k] != v}
+        if mudancas:
+            log_audit(
+                action=AuditAction.UPDATE,
+                resource_type='Gerente',
+                resource_id=gerente.id,
+                status='SUCCESS',
+                severity='INFO',
+                changes=mudancas
+            )
         flash(f'Gerente "{gerente.nome}" atualizado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='gerentes'))
 
@@ -767,6 +867,16 @@ def cadastrar_supervisor():
 
         db.session.add(novo_supervisor)
         db.session.commit()
+        
+        # AUDITORIA
+        log_audit(
+            action=AuditAction.CREATE,
+            resource_type='Supervisor',
+            resource_id=novo_supervisor.id,
+            status='SUCCESS',
+            severity='INFO',
+            changes={'nome': novo_supervisor.nome, 'email': email}
+        )
         flash(
             f'Supervisor "{novo_supervisor.nome}" cadastrado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='supervisores'))
@@ -799,6 +909,8 @@ def editar_supervisor(supervisor_id):
     supervisor = Supervisor.query.get_or_404(supervisor_id)
 
     if request.method == 'POST':
+        valores_antigos = {'nome': supervisor.nome, 'email': supervisor.user.email}
+        
         # 1. Atualizar dados do Supervisor
         supervisor.nome = request.form.get('nome')
         supervisor.matricula = request.form.get('matricula')
@@ -831,6 +943,19 @@ def editar_supervisor(supervisor_id):
             CentroCusto.id.in_(request.form.getlist('centros_ids'))).all())
 
         db.session.commit()
+        
+        # AUDITORIA
+        valores_novos = {'nome': supervisor.nome, 'email': supervisor.user.email}
+        mudancas = {k: {'before': valores_antigos[k], 'after': v} for k, v in valores_novos.items() if valores_antigos[k] != v}
+        if mudancas:
+            log_audit(
+                action=AuditAction.UPDATE,
+                resource_type='Supervisor',
+                resource_id=supervisor.id,
+                status='SUCCESS',
+                severity='INFO',
+                changes=mudancas
+            )
         flash(
             f'Supervisor "{supervisor.nome}" atualizado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='supervisores'))
@@ -874,4 +999,3 @@ def excluir_supervisor(supervisor_id):
 # =============================================================================
 # CRUD - COLABORADORES (VERSÃO FINAL E INTELIGENTE)
 # =============================================================================
-

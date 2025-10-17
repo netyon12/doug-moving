@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Administrativo - Go Mobi{% endblock %}
+
+{% block content %}
+<!-- CSS específico do Dashboard Administrativo -->
+<link rel="stylesheet" href="{{ url_for('static', filename='admin_dashboard.css') }}">
+
+<!-- Cabeçalho do Dashboard -->
+<div class="dashboard-header">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="h2 mb-2">
+                    <i class="bi bi-speedometer2"></i> Dashboard Administrativo
+                </h1>
+                <p class="mb-0 opacity-75">Visão geral completa do sistema Go Mobi</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <small class="d-block opacity-75">Última atualização</small>
+                <strong id="data-hora-atual"></strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtro de Empresa -->
+<div class="company-filter">
+    <div class="row align-items-center">
+        <div class="col-md-3">
+            <label for="empresa_select" class="form-label fw-bold">
+                <i class="bi bi-building"></i> Filtrar por Empresa
+            </label>
+        </div>
+        <div class="col-md-6">
+            <select id="empresa_select" class="form-select form-select-lg" onchange="filtrarEmpresa(this.value)">
+                {% for empresa in empresas %}
+                <option value="{{ empresa.id }}" {% if empresa_selecionada and empresa.id == empresa_selecionada.id %}selected{% endif %}>
+                    {{ empresa.nome }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3 text-md-end">
+            {% if empresa_selecionada %}
+            <small class="text-muted">Empresa Selecionada:</small><br>
+            <strong class="text-primary">{{ empresa_selecionada.nome }}</strong>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Estatísticas Gerais -->
+<div class="stats-grid mb-4">
+    <div class="stat-item">
+        <div class="stat-value">{{ kpis_gerais.total_empresas }}</div>
+        <div class="stat-label">Total de Empresas</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value">{{ kpis_gerais.total_plantas }}</div>
+        <div class="stat-label">Plantas Cadastradas</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value">{{ kpis_gerais.total_motoristas }}</div>
+        <div class="stat-label">Motoristas Ativos</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value">{{ kpis_gerais.total_colaboradores }}</div>
+        <div class="stat-label">Colaboradores</div>
+    </div>
+</div>
+
+<!-- KPIs de Solicitações -->
+<div class="mb-4">
+    <h3 class="section-title">
+        <i class="bi bi-clipboard-check"></i> KPIs de Solicitações
+    </h3>
+    <div class="row g-3">
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-solicitacoes-pendentes">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_solicitacoes.pendentes }}</div>
+                    <div class="kpi-label">Pendentes</div>
+                    <i class="bi bi-hourglass-split kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-solicitacoes-agrupadas">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_solicitacoes.agrupadas }}</div>
+                    <div class="kpi-label">Agrupadas</div>
+                    <i class="bi bi-collection kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-solicitacoes-finalizadas">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_solicitacoes.finalizadas }}</div>
+                    <div class="kpi-label">Finalizadas</div>
+                    <i class="bi bi-check-circle kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-solicitacoes-canceladas">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_solicitacoes.canceladas }}</div>
+                    <div class="kpi-label">Canceladas</div>
+                    <i class="bi bi-x-circle kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KPIs de Viagens -->
+<div class="mb-4">
+    <h3 class="section-title">
+        <i class="bi bi-truck"></i> KPIs de Viagens
+    </h3>
+    <div class="row g-3">
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card kpi-card kpi-viagens-pendentes">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_viagens.pendentes }}</div>
+                    <div class="kpi-label">Pendentes</div>
+                    <i class="bi bi-clock-history kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card kpi-card kpi-viagens-agendadas">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_viagens.agendadas }}</div>
+                    <div class="kpi-label">Agendadas</div>
+                    <i class="bi bi-calendar-check kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <div class="card kpi-card kpi-viagens-andamento">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_viagens.em_andamento }}</div>
+                    <div class="kpi-label">Em Andamento</div>
+                    <i class="bi bi-arrow-repeat kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card kpi-card kpi-viagens-finalizadas">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_viagens.finalizadas }}</div>
+                    <div class="kpi-label">Finalizadas</div>
+                    <i class="bi bi-check-circle-fill kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6">
+            <div class="card kpi-card kpi-viagens-canceladas">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_viagens.canceladas }}</div>
+                    <div class="kpi-label">Canceladas</div>
+                    <i class="bi bi-x-circle-fill kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KPIs de Motoristas -->
+<div class="mb-4">
+    <h3 class="section-title">
+        <i class="bi bi-person-badge"></i> KPIs de Motoristas
+    </h3>
+    <div class="row g-3">
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-motoristas-disponiveis">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_motoristas.disponiveis }}</div>
+                    <div class="kpi-label">Disponíveis</div>
+                    <i class="bi bi-check-circle kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-motoristas-agendados">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_motoristas.agendados }}</div>
+                    <div class="kpi-label">Agendados</div>
+                    <i class="bi bi-calendar-event kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-motoristas-ocupados">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_motoristas.ocupados }}</div>
+                    <div class="kpi-label">Ocupados</div>
+                    <i class="bi bi-arrow-repeat kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-motoristas-offline">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_motoristas.offline }}</div>
+                    <div class="kpi-label">Offline</div>
+                    <i class="bi bi-power kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KPIs Adicionais -->
+<div class="mb-4">
+    <h3 class="section-title">
+        <i class="bi bi-graph-up"></i> Métricas de Performance
+    </h3>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="card kpi-card kpi-receita">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">R$ {{ "%.2f"|format(kpis_adicionais.receita_total) }}</div>
+                    <div class="kpi-label">Receita Total</div>
+                    <i class="bi bi-currency-dollar kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card kpi-card kpi-ocupacao">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_adicionais.taxa_ocupacao }}%</div>
+                    <div class="kpi-label">Taxa de Ocupação</div>
+                    <i class="bi bi-percent kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card kpi-card kpi-tempo">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_adicionais.tempo_medio_viagem }} min</div>
+                    <div class="kpi-label">Tempo Médio de Viagem</div>
+                    <i class="bi bi-stopwatch kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Links Rápidos -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="section-title">
+            <i class="bi bi-lightning"></i> Acesso Rápido
+        </h3>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <a href="{{ url_for('admin.viagens') }}" class="btn btn-outline-primary w-100 py-3">
+            <i class="bi bi-truck fs-4 d-block mb-2"></i>
+            Gerenciar Viagens
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <a href="{{ url_for('admin.admin_dashboard', aba='motoristas') }}" class="btn btn-outline-primary w-100 py-3">
+            <i class="bi bi-person-badge fs-4 d-block mb-2"></i>
+            Gerenciar Motoristas
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <a href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}" class="btn btn-outline-primary w-100 py-3">
+            <i class="bi bi-people fs-4 d-block mb-2"></i>
+            Gerenciar Colaboradores
+        </a>
+    </div>
+    <div class="col-md-3 col-sm-6 mb-3">
+        <a href="{{ url_for('audit.logs_gerais') }}" class="btn btn-outline-primary w-100 py-3">
+            <i class="bi bi-file-text fs-4 d-block mb-2"></i>
+            Logs de Auditoria
+        </a>
+    </div>
+</div>
+
+<script>
+// Exibir data e hora atual
+function atualizarDataHora() {
+    const agora = new Date();
+    const dia = String(agora.getDate()).padStart(2, '0');
+    const mes = String(agora.getMonth() + 1).padStart(2, '0');
+    const ano = agora.getFullYear();
+    const horas = String(agora.getHours()).padStart(2, '0');
+    const minutos = String(agora.getMinutes()).padStart(2, '0');
+    
+    const dataHoraFormatada = `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+    document.getElementById('data-hora-atual').textContent = dataHoraFormatada;
+}
+
+// Atualiza ao carregar a página
+atualizarDataHora();
+
+// Função para filtrar por empresa
+function filtrarEmpresa(empresaId) {
+    window.location.href = "{{ url_for('admin.admin_dashboard') }}?empresa_id=" + empresaId;
+}
+
+// Auto-refresh a cada 5 minutos
+setTimeout(function() {
+    location.reload();
+}, 300000);
+</script>
+{% endblock %}
+

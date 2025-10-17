@@ -130,7 +130,7 @@
                                 <br><small class="text-muted">({{ log.user_role }})</small>
                                 {% endif %}
                             </td>
-                            <td><span class="badge badge-info">{{ log.action }}</span></td>
+                            <td><span class="badge" style="background-color: #17a2b8; color: white;">{{ log.action }}</span></td>
                             <td>
                                 {{ log.resource_type }}
                                 {% if log.resource_id %}
@@ -139,28 +139,28 @@
                             </td>
                             <td>
                                 {% if log.status == 'SUCCESS' %}
-                                <span class="badge badge-success">{{ log.status }}</span>
+                                <span class="badge" style="background-color: #28a745; color: white;">{{ log.status }}</span>
                                 {% elif log.status in ['FAILED', 'ERROR'] %}
-                                <span class="badge badge-danger">{{ log.status }}</span>
+                                <span class="badge" style="background-color: #dc3545; color: white;">{{ log.status }}</span>
                                 {% else %}
-                                <span class="badge badge-secondary">{{ log.status }}</span>
+                                <span class="badge" style="background-color: #6c757d; color: white;">{{ log.status }}</span>
                                 {% endif %}
                             </td>
                             <td>
                                 {% if log.severity == 'INFO' %}
-                                <span class="badge badge-info">{{ log.severity }}</span>
+                                <span class="badge" style="background-color: #17a2b8; color: white;">{{ log.severity }}</span>
                                 {% elif log.severity == 'WARNING' %}
-                                <span class="badge badge-warning">{{ log.severity }}</span>
+                                <span class="badge" style="background-color: #ffc107; color: #212529;">{{ log.severity }}</span>
                                 {% elif log.severity in ['ERROR', 'CRITICAL'] %}
-                                <span class="badge badge-danger">{{ log.severity }}</span>
+                                <span class="badge" style="background-color: #dc3545; color: white;">{{ log.severity }}</span>
                                 {% else %}
-                                <span class="badge badge-secondary">{{ log.severity }}</span>
+                                <span class="badge" style="background-color: #6c757d; color: white;">{{ log.severity }}</span>
                                 {% endif %}
                             </td>
                             <td><small>{{ log.ip_address or '-' }}</small></td>
                             <td>
-                                <button class="btn btn-sm btn-info" onclick="verDetalhes({{ log.id }})">
-                                    <i class="fas fa-eye"></i>
+                                <button class="btn btn-info" onclick="verDetalhes({{ log.id }})" style="padding: 6px 12px;">
+                                    <i class="fas fa-eye"></i> Ver
                                 </button>
                             </td>
                         </tr>

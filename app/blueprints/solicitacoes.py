@@ -25,6 +25,9 @@ from app import query_filters
 
 from .admin import admin_bp
 
+# IMPORTAR SISTEMA DE AUDITORIA
+from ..utils.admin_audit import log_audit, AuditAction
+
 
 @admin_bp.route('/solicitacoes')
 @login_required
@@ -234,6 +237,7 @@ def nova_solicitacao():
             
             # Cria as solicitações
             solicitacoes_criadas = 0
+            solicitacoes_ids_criadas = []  # Para auditoria
             solicitacoes_duplicadas = []
             
             for i, colab_id in enumerate(colaborador_ids):
@@ -303,6 +307,8 @@ def nova_solicitacao():
                         if not entrada_existente:
                             solicitacao_entrada = Solicitacao(**dados_entrada)
                             db.session.add(solicitacao_entrada)
+                            db.session.flush()  # Para obter o ID
+                            solicitacoes_ids_criadas.append(solicitacao_entrada.id)
                             solicitacoes_criadas += 1
                         else:
                             solicitacoes_duplicadas.append(f"{colaborador.nome} (entrada)")
@@ -336,6 +342,8 @@ def nova_solicitacao():
                         if not saida_existente:
                             solicitacao_saida = Solicitacao(**dados_saida)
                             db.session.add(solicitacao_saida)
+                            db.session.flush()  # Para obter o ID
+                            solicitacoes_ids_criadas.append(solicitacao_saida.id)
                             solicitacoes_criadas += 1
                         else:
                             solicitacoes_duplicadas.append(f"{colaborador.nome} (saída)")
@@ -408,9 +416,27 @@ def nova_solicitacao():
                 # Cria a solicitação
                 solicitacao = Solicitacao(**dados_solicitacao)
                 db.session.add(solicitacao)
+                db.session.flush()  # Para obter o ID
+                solicitacoes_ids_criadas.append(solicitacao.id)
                 solicitacoes_criadas += 1
             
             db.session.commit()
+            
+            # AUDITORIA: Registra criação de solicitações
+            for sol_id in solicitacoes_ids_criadas:
+                log_audit(
+                    action=AuditAction.CREATE,
+                    resource_type='Solicitacao',
+                    resource_id=sol_id,
+                    status='SUCCESS',
+                    severity='INFO',
+                    changes={
+                        'tipo_corrida': tipo_corrida,
+                        'empresa_id': empresa_id,
+                        'planta_id': planta_id,
+                        'quantidade': solicitacoes_criadas
+                    }
+                )
             
             # Mensagens de feedback
             if solicitacoes_criadas > 0:
@@ -491,6 +517,16 @@ def editar_solicitacao(id):
         return redirect(url_for('admin.solicitacoes'))
     
     if request.method == 'POST':
+        # Captura valores antigos para auditoria
+        valores_antigos = {
+            'horario_entrada': solicitacao.horario_entrada.strftime('%Y-%m-%d %H:%M') if solicitacao.horario_entrada else None,
+            'horario_saida': solicitacao.horario_saida.strftime('%Y-%m-%d %H:%M') if solicitacao.horario_saida else None,
+            'horario_desligamento': solicitacao.horario_desligamento.strftime('%Y-%m-%d %H:%M') if solicitacao.horario_desligamento else None,
+            'turno_entrada_id': solicitacao.turno_entrada_id,
+            'turno_saida_id': solicitacao.turno_saida_id,
+            'turno_desligamento_id': solicitacao.turno_desligamento_id
+        }
+        
         try:
             # Atualiza horários baseado no tipo de corrida
             if solicitacao.tipo_corrida in ['entrada', 'entrada_saida']:
@@ -539,6 +575,34 @@ def editar_solicitacao(id):
             solicitacao.data_atualizacao = datetime.now()
             db.session.commit()
             
+            # AUDITORIA: Registra edição de solicitação
+            valores_novos = {
+                'horario_entrada': solicitacao.horario_entrada.strftime('%Y-%m-%d %H:%M') if solicitacao.horario_entrada else None,
+                'horario_saida': solicitacao.horario_saida.strftime('%Y-%m-%d %H:%M') if solicitacao.horario_saida else None,
+                'horario_desligamento': solicitacao.horario_desligamento.strftime('%Y-%m-%d %H:%M') if solicitacao.horario_desligamento else None,
+                'turno_entrada_id': solicitacao.turno_entrada_id,
+                'turno_saida_id': solicitacao.turno_saida_id,
+                'turno_desligamento_id': solicitacao.turno_desligamento_id
+            }
+            
+            mudancas = {}
+            for campo, valor_novo in valores_novos.items():
+                if valores_antigos[campo] != valor_novo:
+                    mudancas[campo] = {
+                        'before': valores_antigos[campo],
+                        'after': valor_novo
+                    }
+            
+            if mudancas:
+                log_audit(
+                    action=AuditAction.UPDATE,
+                    resource_type='Solicitacao',
+                    resource_id=solicitacao.id,
+                    status='SUCCESS',
+                    severity='INFO',
+                    changes=mudancas
+                )
+            
             flash('Solicitação atualizada com sucesso!', 'success')
             return redirect(url_for('admin.solicitacoes'))
             
@@ -570,9 +634,30 @@ def excluir_solicitacao(id):
         return redirect(url_for('admin.solicitacoes'))
     
     try:
+        # Captura dados para auditoria ANTES de excluir
         colaborador_nome = solicitacao.colaborador.nome
+        solicitacao_id = solicitacao.id
+        dados_solicitacao = {
+            'colaborador': colaborador_nome,
+            'tipo_corrida': solicitacao.tipo_corrida,
+            'horario_entrada': solicitacao.horario_entrada.strftime('%Y-%m-%d %H:%M') if solicitacao.horario_entrada else None,
+            'horario_saida': solicitacao.horario_saida.strftime('%Y-%m-%d %H:%M') if solicitacao.horario_saida else None,
+            'status': solicitacao.status
+        }
+        
         db.session.delete(solicitacao)
         db.session.commit()
+        
+        # AUDITORIA: Registra exclusão
+        log_audit(
+            action=AuditAction.DELETE,
+            resource_type='Solicitacao',
+            resource_id=solicitacao_id,
+            status='SUCCESS',
+            severity='WARNING',  # Exclusão é WARNING
+            changes={'dados_excluidos': dados_solicitacao}
+        )
+        
         flash(f'Solicitação de {colaborador_nome} excluída com sucesso!', 'success')
     except Exception as e:
         db.session.rollback()

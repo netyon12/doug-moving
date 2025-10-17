@@ -26,6 +26,9 @@ from app import query_filters
 from .admin import admin_bp
 from app.services.notification_service import notification_service
 
+# IMPORTAR SISTEMA DE AUDITORIA
+from ..utils.admin_audit import log_audit, log_viagem_audit, AuditAction
+
 
 def serializar_solicitacao(sol):
     """Converte objeto Solicitacao em dicionário"""
@@ -169,6 +172,19 @@ def criar_grupo_manual():
             solicitacao.status = 'Agendada'
         
         db.session.commit()
+        
+        # AUDITORIA: Registra criação de viagem manual
+        log_viagem_audit(
+            viagem_id=nova_viagem.id,
+            action=AuditAction.VIAGEM_CRIADA,
+            status_anterior=None,
+            status_novo='Pendente',
+            changes={
+                'tipo': 'manual',
+                'quantidade_solicitacoes': len(solicitacoes),
+                'solicitacoes_ids': solicitacoes_ids
+            }
+        )
         
         return jsonify({
             'success': True,
@@ -559,6 +575,21 @@ def finalizar_agrupamento():
                     )
                     
                     db.session.add(novo_fretado)
+                    db.session.flush()  # Para obter o ID
+                    
+                    # AUDITORIA: Registra criação de fretado
+                    log_audit(
+                        action=AuditAction.CREATE,
+                        resource_type='Fretado',
+                        resource_id=novo_fretado.id,
+                        status='SUCCESS',
+                        severity='INFO',
+                        changes={
+                            'colaborador': nome_colaborador,
+                            'tipo_corrida': solicitacao.tipo_corrida,
+                            'bloco': grupo_bloco
+                        }
+                    )
                     
                     # Atualiza status da solicitação
                     solicitacao.status = 'Fretado'
@@ -825,8 +856,3 @@ def mesclar_grupos():
 # =============================================================================
 # ROTAS DE GERENCIAMENTO DE VIAGENS
 # =============================================================================
-
-
-
-
-# Importa as novas rotas de fretados

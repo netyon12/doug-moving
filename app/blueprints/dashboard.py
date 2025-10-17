@@ -9,11 +9,12 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
-from datetime import datetime
+from datetime import datetime, timedelta
 from sqlalchemy import func, or_
 from io import StringIO
 import io
 import csv
+import calendar
 
 from .. import db
 from ..models import (
@@ -118,17 +119,42 @@ def admin_dashboard():
         
         # Dashboard principal do Admin
         else:
+            # ===== FILTROS =====
             # Obter filtro de empresa (padrão: primeira empresa ou ID 1)
             empresa_id = request.args.get('empresa_id', type=int)
             if not empresa_id:
                 primeira_empresa = Empresa.query.order_by(Empresa.id).first()
                 empresa_id = primeira_empresa.id if primeira_empresa else 1
             
+            # Obter filtro de período (padrão: mês atual)
+            hoje = datetime.now()
+            primeiro_dia_mes = datetime(hoje.year, hoje.month, 1)
+            ultimo_dia_mes = datetime(hoje.year, hoje.month, calendar.monthrange(hoje.year, hoje.month)[1], 23, 59, 59)
+            
+            data_inicio_str = request.args.get('data_inicio')
+            data_fim_str = request.args.get('data_fim')
+            
+            if data_inicio_str:
+                data_inicio = datetime.strptime(data_inicio_str, '%Y-%m-%d')
+            else:
+                data_inicio = primeiro_dia_mes
+                data_inicio_str = data_inicio.strftime('%Y-%m-%d')
+            
+            if data_fim_str:
+                data_fim = datetime.strptime(data_fim_str, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
+            else:
+                data_fim = ultimo_dia_mes
+                data_fim_str = data_fim.strftime('%Y-%m-%d')
+            
             # Buscar todas as empresas para o dropdown
             empresas = Empresa.query.order_by(Empresa.nome).all()
             empresa_selecionada = Empresa.query.get(empresa_id)
             
-            # ===== KPIs DE SOLICITAÇÕES =====
+            # ===== BUSCAR CAPACIDADE DO VEÍCULO =====
+            config_capacidade = Configuracao.query.filter_by(chave='MAX_PASSAGEIROS_POR_VIAGEM').first()
+            capacidade_veiculo = int(config_capacidade.valor) if config_capacidade else 4  # Padrão: 4
+            
+            # ===== KPIs DE SOLICITAÇÕES (SEM FILTRO DE DATA) =====
             kpis_solicitacoes = {
                 'pendentes': Solicitacao.query.filter_by(empresa_id=empresa_id, status='Pendente').count(),
                 'agrupadas': Solicitacao.query.filter_by(empresa_id=empresa_id, status='Agrupada').count(),
@@ -136,7 +162,7 @@ def admin_dashboard():
                 'canceladas': Solicitacao.query.filter_by(empresa_id=empresa_id, status='Cancelada').count()
             }
             
-            # ===== KPIs DE VIAGENS =====
+            # ===== KPIs DE VIAGENS (SEM FILTRO DE DATA) =====
             kpis_viagens = {
                 'pendentes': Viagem.query.filter_by(empresa_id=empresa_id, status='Pendente').count(),
                 'agendadas': Viagem.query.filter_by(empresa_id=empresa_id, status='Agendada').count(),
@@ -145,7 +171,7 @@ def admin_dashboard():
                 'canceladas': Viagem.query.filter_by(empresa_id=empresa_id, status='Cancelada').count()
             }
             
-            # ===== KPIs DE MOTORISTAS =====
+            # ===== KPIs DE MOTORISTAS (SEM FILTRO DE DATA) =====
             # Obter todos os motoristas (não há empresa_id direto no modelo Motorista)
             # Vamos buscar motoristas que têm viagens relacionadas à empresa
             motoristas_ids_com_viagens = db.session.query(Viagem.motorista_id).filter(
@@ -179,25 +205,43 @@ def admin_dashboard():
                 else:
                     kpis_motoristas['offline'] += 1
             
-            # ===== KPIs ADICIONAIS =====
-            # Receita total (soma de valores de viagens finalizadas)
-            receita_total = db.session.query(func.sum(Viagem.valor)).filter_by(
-                empresa_id=empresa_id,
-                status='Finalizada'
-            ).scalar() or 0
+            # ===== MÉTRICAS DE PERFORMANCE (COM FILTRO DE PERÍODO) =====
             
-            # Taxa de ocupação (viagens finalizadas / total de viagens)
-            total_viagens = Viagem.query.filter_by(empresa_id=empresa_id).count()
-            viagens_finalizadas = kpis_viagens['finalizadas']
-            taxa_ocupacao = (viagens_finalizadas / total_viagens * 100) if total_viagens > 0 else 0
-            
-            # Tempo médio de viagem (em minutos)
-            viagens_com_tempo = Viagem.query.filter(
+            # Buscar viagens finalizadas no período
+            viagens_finalizadas_periodo = Viagem.query.filter(
                 Viagem.empresa_id == empresa_id,
                 Viagem.status == 'Finalizada',
-                Viagem.data_inicio.isnot(None),
-                Viagem.data_finalizacao.isnot(None)
+                Viagem.data_finalizacao >= data_inicio,
+                Viagem.data_finalizacao <= data_fim
             ).all()
+            
+            # Receita total
+            receita_total = sum([v.valor for v in viagens_finalizadas_periodo if v.valor]) or 0
+            
+            # Custo de repasse
+            custo_repasse = sum([v.valor_repasse for v in viagens_finalizadas_periodo if v.valor_repasse]) or 0
+            
+            # Margem líquida
+            margem_liquida = receita_total - custo_repasse
+            
+            # Total de passageiros (conta solicitações associadas às viagens)
+            total_passageiros = 0
+            for viagem in viagens_finalizadas_periodo:
+                passageiros_viagem = Solicitacao.query.filter_by(viagem_id=viagem.id).count()
+                total_passageiros += passageiros_viagem
+            
+            # Taxa de ocupação CORRIGIDA
+            num_viagens_finalizadas = len(viagens_finalizadas_periodo)
+            if num_viagens_finalizadas > 0:
+                taxa_ocupacao = (total_passageiros / (num_viagens_finalizadas * capacidade_veiculo)) * 100
+            else:
+                taxa_ocupacao = 0
+            
+            # Ticket médio
+            ticket_medio = (receita_total / num_viagens_finalizadas) if num_viagens_finalizadas > 0 else 0
+            
+            # Tempo médio de viagem (em minutos)
+            viagens_com_tempo = [v for v in viagens_finalizadas_periodo if v.data_inicio and v.data_finalizacao]
             
             if viagens_com_tempo:
                 tempos = []
@@ -208,10 +252,39 @@ def admin_dashboard():
             else:
                 tempo_medio = 0
             
-            kpis_adicionais = {
+            # Viagens por motorista
+            motoristas_ativos = db.session.query(Viagem.motorista_id).filter(
+                Viagem.empresa_id == empresa_id,
+                Viagem.status == 'Finalizada',
+                Viagem.data_finalizacao >= data_inicio,
+                Viagem.data_finalizacao <= data_fim,
+                Viagem.motorista_id.isnot(None)
+            ).distinct().count()
+            
+            viagens_por_motorista = (num_viagens_finalizadas / motoristas_ativos) if motoristas_ativos > 0 else 0
+            
+            # Taxa de cancelamento
+            viagens_canceladas_periodo = Viagem.query.filter(
+                Viagem.empresa_id == empresa_id,
+                Viagem.status == 'Cancelada',
+                Viagem.data_criacao >= data_inicio,
+                Viagem.data_criacao <= data_fim
+            ).count()
+            
+            total_viagens_periodo = num_viagens_finalizadas + viagens_canceladas_periodo
+            taxa_cancelamento = (viagens_canceladas_periodo / total_viagens_periodo * 100) if total_viagens_periodo > 0 else 0
+            
+            kpis_performance = {
                 'receita_total': float(receita_total),
+                'custo_repasse': float(custo_repasse),
+                'margem_liquida': float(margem_liquida),
                 'taxa_ocupacao': round(taxa_ocupacao, 1),
-                'tempo_medio_viagem': round(tempo_medio, 1)
+                'ticket_medio': round(ticket_medio, 2),
+                'tempo_medio_viagem': round(tempo_medio, 1),
+                'viagens_por_motorista': round(viagens_por_motorista, 1),
+                'taxa_cancelamento': round(taxa_cancelamento, 1),
+                'total_passageiros': total_passageiros,
+                'capacidade_veiculo': capacidade_veiculo
             }
             
             # ===== DADOS GERAIS =====
@@ -230,17 +303,11 @@ def admin_dashboard():
                 kpis_solicitacoes=kpis_solicitacoes,
                 kpis_viagens=kpis_viagens,
                 kpis_motoristas=kpis_motoristas,
-                kpis_adicionais=kpis_adicionais,
-                kpis_gerais=kpis_gerais
+                kpis_performance=kpis_performance,
+                kpis_gerais=kpis_gerais,
+                data_inicio=data_inicio_str,
+                data_fim=data_fim_str
             )
     
     # Se um usuário não-admin tentar acessar uma aba não autorizada, redireciona para o dashboard principal dele
     return redirect(url_for('home'))
-
-
-
-
-# =============================================================================
-# CRUD - EMPRESAS
-# =============================================================================
-
