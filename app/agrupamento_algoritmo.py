@@ -143,13 +143,20 @@ class AgrupadorViagensV2:
         return grupos_finais
     
     def _separar_por_bloco_e_tipo(self, solicitacoes: List[Solicitacao]) -> Dict[str, List[Solicitacao]]:
-        """Separa solicitações por bloco e tipo de corrida"""
+        """Separa solicitações por GRUPO DE BLOCO e tipo de corrida"""
+        from .utils.grupo_blocos import extrair_grupo_bloco
+        
         grupos = defaultdict(list)
         
         for solicitacao in solicitacoes:
-            bloco_id = solicitacao.bloco_id or 0
+            # Extrai o grupo de bloco (CPV1.1 → CPV1, CPV1.2 → CPV1)
+            if solicitacao.bloco and solicitacao.bloco.codigo_bloco:
+                grupo_bloco = extrair_grupo_bloco(solicitacao.bloco.codigo_bloco)
+            else:
+                grupo_bloco = 'SEM_BLOCO'
+            
             tipo = solicitacao.tipo_corrida
-            chave = f"{bloco_id}_{tipo}"
+            chave = f"{grupo_bloco}_{tipo}"
             grupos[chave].append(solicitacao)
         
         return grupos
@@ -159,13 +166,9 @@ class AgrupadorViagensV2:
         if not solicitacoes:
             return []
         
-        # Agrupa solicitações por bloco
-        solicitacoes_por_bloco = {}
-        for solicitacao in solicitacoes:
-            bloco_id = solicitacao.bloco_id
-            if bloco_id not in solicitacoes_por_bloco:
-                solicitacoes_por_bloco[bloco_id] = []
-            solicitacoes_por_bloco[bloco_id].append(solicitacao)
+        # Não re-agrupa por bloco individual, mantém todas as solicitações juntas
+        # para permitir que subgrupos (CPV1.1, CPV1.2, CPV1.3) completem a capacidade
+        solicitacoes_por_bloco = {'grupo_completo': solicitacoes}
         
         # Processa cada bloco separadamente
         grupos = []

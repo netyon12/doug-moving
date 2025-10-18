@@ -29,9 +29,15 @@
                                 <!-- Se supervisor tem múltiplas plantas, mostra select -->
                                 <select class="form-select" id="planta_id" name="planta_id" required>
                                     <option value="" disabled selected>Selecione...</option>
-                                    {% for planta in current_user.supervisor.plantas %}
+                                    {% if current_user.role == 'supervisor' %}
+                                        {# Mostra apenas plantas associadas ao supervisor #}
+                                        {% for planta in plantas_supervisor %}
                                         <option value="{{ planta.id }}">{{ planta.nome }}</option>
-                                    {% endfor %}
+                                        {% endfor %}
+                                    {% elif current_user.role == 'admin' %}
+                                        {# Admin vê todas as plantas da empresa selecionada (via JavaScript) #}
+                                        {# Este campo será populado dinamicamente quando selecionar a empresa #}
+                                    {% endif %}
                                 </select>
                             {% endif %}
                         </div>
@@ -499,12 +505,45 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // =========================================================================
+    // VALIDAÇÃO DE DATA MÍNIMA (NÃO PERMITIR DATAS NO PASSADO)
+    // =========================================================================
+    
+    // Define data mínima como hoje para todos os campos de data
+    const hoje = new Date();
+    const hojeISO = hoje.toISOString().split('T')[0];
+    
+    // Aplica a todos os inputs de data-hora
+    const camposData = document.querySelectorAll('input[type="datetime-local"]');
+    camposData.forEach(campo => {
+        campo.setAttribute('min', hojeISO + 'T00:00');
+    });
+    
+    // =========================================================================
     // VALIDAÇÃO DO FORMULÁRIO ANTES DO SUBMIT
     // =========================================================================
     const form = document.querySelector('form');
     
     form.addEventListener('submit', function(e) {
-        // Verifica se há pelo menos um colaborador na tabela
+        // VALIDAÇÃO 1: Verifica se há datas no passado
+        const agora = new Date();
+        let temDataPassada = false;
+        
+        camposData.forEach(campo => {
+            if (campo.value) {
+                const dataEscolhida = new Date(campo.value);
+                if (dataEscolhida < agora) {
+                    temDataPassada = true;
+                }
+            }
+        });
+        
+        if (temDataPassada) {
+            e.preventDefault();
+            alert('⚠️ Atenção!\n\nNão é permitido criar solicitações com data/hora no passado.\n\nPor favor, selecione uma data a partir de hoje.');
+            return false;
+        }
+        
+        // VALIDAÇÃO 2: Verifica se há pelo menos um colaborador na tabela
         const tableBody = document.getElementById('solicitacoes_table_body');
         const rows = tableBody.querySelectorAll('tr');
         

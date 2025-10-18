@@ -150,6 +150,22 @@ def solicitacoes():
 def nova_solicitacao():
     if request.method == 'POST':
         try:
+            # NOVA VALIDAÇÃO: Verifica se há datas no passado
+            from datetime import date
+            hoje = date.today()
+            
+            horarios_entrada = request.form.getlist('horario_entrada[]')
+            horarios_saida = request.form.getlist('horario_saida[]')
+            horarios_desligamento = request.form.getlist('horario_desligamento[]')
+            
+            # Valida todas as datas
+            for horario in horarios_entrada + horarios_saida + horarios_desligamento:
+                if horario:
+                    data_horario = datetime.strptime(horario, '%Y-%m-%dT%H:%M').date()
+                    if data_horario < hoje:
+                        flash('Não é permitido criar solicitações com data no passado.', 'danger')
+                        return redirect(url_for('admin.nova_solicitacao'))
+                    
             # Obtém o tipo de corrida e normaliza (lowercase, sem acentos)
             tipo_corrida = request.form.get('tipo_corrida')
             if not tipo_corrida:
@@ -461,14 +477,23 @@ def nova_solicitacao():
     if current_user.role == 'admin':
         empresas = Empresa.query.order_by(Empresa.nome).all()
         return render_template('nova_solicitacao.html', empresas=empresas)
-    
-    # Se for supervisor, a lógica anterior se mantém
+
+    # Se for supervisor, filtra apenas plantas associadas
     elif current_user.role == 'supervisor':
         if not current_user.supervisor:
             flash('Perfil de supervisor não encontrado.', 'danger')
             return redirect(url_for('home'))
-        # Não precisa passar nada extra, o template já acessa via current_user
-        return render_template('nova_solicitacao.html')
+        
+        # Busca plantas associadas ao supervisor
+        plantas_supervisor = current_user.supervisor.plantas  # Relacionamento many-to-many
+        
+        # Se não tiver plantas associadas, mostra aviso
+        if not plantas_supervisor:
+            flash('Você não está associado a nenhuma planta. Entre em contato com o administrador.', 'warning')
+            return redirect(url_for('home'))
+        
+        # Passa as plantas para o template
+        return render_template('nova_solicitacao.html', plantas_supervisor=plantas_supervisor)
 
 
 

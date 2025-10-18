@@ -81,13 +81,13 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="veiculos-tab" data-bs-toggle="tab" data-bs-target="#tab-veiculos" type="button" role="tab">
                 <i class="bi bi-car-front"></i> Veículos 
-                <span class="badge bg-primary">{{ total_veiculos }}</span>
+                <span class="badge bg-primary" id="badge-total-veiculos">{{ total_veiculos }}</span>
             </button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="fretados-tab" data-bs-toggle="tab" data-bs-target="#tab-fretados" type="button" role="tab">
                 <i class="bi bi-bus-front"></i> Fretados 
-                <span class="badge bg-danger">{{ total_fretados }}</span>
+                <span class="badge bg-danger" id="badge-total-fretados">{{ total_fretados }}</span>
             </button>
         </li>
     </ul>
@@ -103,23 +103,23 @@
                 <div class="card-body">
                     {% if veiculos %}
                         <div class="row" id="veiculos-container">
-                            {% set veiculo_index = 0 %}
+                            {% set ns = namespace(veiculo_index=0) %}
                             {% for grupo_bloco, grupos in veiculos.items() %}
                                 <div class="mb-4">
                                     <h6 class="text-primary"><i class="bi bi-geo-alt"></i> Grupo de Blocos: {{ grupo_bloco }}</h6>
                                     <div class="row">
                                         {% for grupo in grupos %}
-                                        <div class="col-md-6 mb-3 veiculo-card" data-grupo-id="veiculo-{{ veiculo_index }}" data-tipo="veiculo">
+                                        <div class="col-md-6 mb-3 veiculo-card" data-grupo-id="veiculo-{{ ns.veiculo_index }}" data-tipo="veiculo">
                                             <div class="card border-primary">
                                                 <div class="card-header bg-light">
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <h6 class="mb-0">
-                                                            <i class="bi bi-car-front-fill"></i> Veículo {{ veiculo_index + 1 }}
+                                                            <i class="bi bi-car-front-fill"></i> Veículo {{ ns.veiculo_index + 1 }}
                                                             <span class="badge bg-primary grupo-count">{{ grupo|length }} passageiros</span>
                                                         </h6>
                                                         <div>
                                                             <input type="checkbox" class="form-check-input grupo-checkbox" 
-                                                                   data-grupo-index="{{ veiculo_index }}" checked>
+                                                                   data-grupo-index="{{ ns.veiculo_index }}" checked>
                                                             <label class="form-check-label ms-1">Incluir</label>
                                                         </div>
                                                     </div>
@@ -160,7 +160,7 @@
                                                                 <td>
                                                                     <button class="btn btn-sm btn-primary btn-mover" 
                                                                             data-solicitacao-id="{{ solicitacao.id }}"
-                                                                            data-grupo-atual="veiculo-{{ veiculo_index }}"
+                                                                            data-grupo-atual="veiculo-{{ ns.veiculo_index }}"
                                                                             title="Mover para outro grupo">
                                                                         <i class="bi bi-arrow-left-right"></i>
                                                                     </button>
@@ -172,7 +172,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% set veiculo_index = veiculo_index + 1 %}
+                                        {% set ns.veiculo_index = ns.veiculo_index + 1 %}
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -198,13 +198,13 @@
                 <div class="card-body">
                     {% if fretados %}
                         <div class="row" id="fretados-container">
-                            {% set fretado_index = 0 %}
+                            {% set ns_fretado = namespace(fretado_index=0) %}
                             {% for grupo_bloco, dados in fretados.items() %}
                                 <div class="mb-4">
                                     <h6 class="text-danger"><i class="bi bi-geo-alt"></i> Grupo de Blocos: {{ grupo_bloco }}</h6>
                                     <div class="row">
                                         {% for sugestao in dados.sugestoes %}
-                                        <div class="col-md-6 mb-3 fretado-card" data-grupo-id="fretado-{{ fretado_index }}" data-tipo="fretado">
+                                        <div class="col-md-6 mb-3 fretado-card" data-grupo-id="fretado-{{ ns_fretado.fretado_index }}" data-tipo="fretado">
                                             <div class="card border-danger">
                                                 <div class="card-header bg-light">
                                                     <div class="d-flex justify-content-between align-items-center">
@@ -214,7 +214,7 @@
                                                         </h6>
                                                         <div>
                                                             <input type="checkbox" class="form-check-input grupo-checkbox" 
-                                                                   data-grupo-index="{{ fretado_index }}" checked>
+                                                                   data-grupo-index="{{ ns_fretado.fretado_index }}" checked>
                                                             <label class="form-check-label ms-1">Incluir</label>
                                                         </div>
                                                     </div>
@@ -258,7 +258,7 @@
                                                                 <td>
                                                                     <button class="btn btn-sm btn-danger btn-mover" 
                                                                             data-solicitacao-id="{{ solicitacao.id }}"
-                                                                            data-grupo-atual="fretado-{{ fretado_index }}"
+                                                                            data-grupo-atual="fretado-{{ ns_fretado.fretado_index }}"
                                                                             title="Mover para outro grupo">
                                                                         <i class="bi bi-arrow-left-right"></i>
                                                                     </button>
@@ -270,7 +270,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {% set fretado_index = fretado_index + 1 %}
+                                        {% set ns_fretado.fretado_index = ns_fretado.fretado_index + 1 %}
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -395,6 +395,9 @@ document.addEventListener('DOMContentLoaded', function() {
             atualizarEstatisticas();
         });
     });
+    
+    // Atualiza as estatísticas no carregamento inicial
+    atualizarEstatisticas();
 });
 
 function mostrarModalMover() {
@@ -426,7 +429,13 @@ function atualizarGruposDestino() {
         // Não inclui o grupo atual
         if (grupoId !== grupoAtual) {
             const count = grupo.querySelector('.grupo-count').textContent;
-            const nome = grupo.querySelector('h6').textContent.split('\n')[0].trim();
+            
+            // Extrai o nome do grupo sem o badge
+            const h6Element = grupo.querySelector('h6');
+            const h6Clone = h6Element.cloneNode(true);
+            const badge = h6Clone.querySelector('.grupo-count');
+            if (badge) badge.remove();
+            const nome = h6Clone.textContent.trim();
             
             const option = document.createElement('option');
             option.value = grupoId;
@@ -614,6 +623,10 @@ function atualizarEstatisticas() {
     document.getElementById('stat-total-veiculos').textContent = totalVeiculos;
     document.getElementById('stat-total-passageiros').textContent = totalPassageiros;
     document.getElementById('stat-grupos-selecionados').textContent = totalFretados + totalVeiculos;
+    
+    // Atualiza os badges das abas
+    document.getElementById('badge-total-veiculos').textContent = totalVeiculos;
+    document.getElementById('badge-total-fretados').textContent = totalFretados;
 }
 
 function mostrarModalConfirmacao() {
@@ -702,4 +715,3 @@ function finalizarAgrupamento() {
 }
 </script>
 {% endblock %}
-

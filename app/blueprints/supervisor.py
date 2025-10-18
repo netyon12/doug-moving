@@ -62,23 +62,27 @@ def dashboard_supervisor():
     ).count() if viagens_ids else 0
 
     # KPI 4: Taxa de Ocupação Média (calculada com base nas viagens)
+    # KPI 4: Taxa de Ocupação Média (calculada com base nas viagens FINALIZADAS)
+    # Busca capacidade dos parâmetros gerais
+    config_capacidade = Configuracao.query.filter_by(chave='capacidade_veiculo').first()
+    capacidade_veiculo = int(config_capacidade.valor) if config_capacidade and config_capacidade.valor else 3
+
     if viagens_ids:
-        viagens = Viagem.query.filter(Viagem.id.in_(viagens_ids)).all()
-        taxas_ocupacao = []
+        # Filtra apenas viagens FINALIZADAS
+        viagens_finalizadas = Viagem.query.filter(
+            Viagem.id.in_(viagens_ids),
+            Viagem.status == 'Finalizada'
+        ).all()
         
-        # Capacidade padrão de veículos (4 passageiros)
-        CAPACIDADE_PADRAO = 4
-        
-        for viagem in viagens:
-            if viagem.motorista:
-                num_colaboradores = len(viagem.solicitacoes)
-                # Usa quantidade_passageiros da viagem ou capacidade padrão
-                capacidade = viagem.quantidade_passageiros if viagem.quantidade_passageiros else CAPACIDADE_PADRAO
-                if capacidade > 0:
-                    taxa = (num_colaboradores / capacidade) * 100
-                    taxas_ocupacao.append(taxa)
-        
-        taxa_ocupacao_media = sum(taxas_ocupacao) / len(taxas_ocupacao) if taxas_ocupacao else 0
+        if viagens_finalizadas:
+            # Soma total de passageiros transportados
+            total_passageiros = sum(viagem.quantidade_passageiros or 0 for viagem in viagens_finalizadas)
+            total_viagens = len(viagens_finalizadas)
+            
+            # Fórmula: (Total Passageiros) / (Total Viagens × Capacidade) × 100
+            taxa_ocupacao_media = (total_passageiros / (total_viagens * capacidade_veiculo)) * 100 if total_viagens > 0 else 0
+        else:
+            taxa_ocupacao_media = 0
     else:
         taxa_ocupacao_media = 0
 

@@ -440,6 +440,22 @@ def iniciar_viagem(viagem_id):
             'mensagem': 'Você não tem permissão para iniciar esta viagem.'
         }), 403
     
+    # VALIDAÇÃO: Verifica se o motorista já tem outra viagem EM ANDAMENTO
+    # (Motorista não pode dirigir duas corridas ao mesmo tempo)
+    viagem_em_andamento = Viagem.query.filter(
+        and_(
+            Viagem.motorista_id == motorista.id,
+            Viagem.status == 'Em Andamento',
+            Viagem.id != viagem_id  # Exclui a própria viagem
+        )
+    ).first()
+    
+    if viagem_em_andamento:
+        return jsonify({
+            'sucesso': False,
+            'mensagem': f'Você já tem uma viagem em andamento (Viagem #{viagem_em_andamento.id}). Finalize a viagem atual antes de iniciar uma nova.'
+        }), 400
+    
     # Verifica se a viagem pode ser iniciada
     if not viagem.pode_ser_iniciada(motorista_id):
         return jsonify({
@@ -577,6 +593,64 @@ def finalizar_viagem(viagem_id):
 # ROTAS DE API (PARA ATUALIZAÇÕES VIA AJAX)
 # =============================================================================
 
+@motorista_bp.route('/toggle-disponibilidade', methods=['POST'])
+@login_required
+@role_required('motorista')
+def toggle_disponibilidade():
+    """Alterna o status de disponibilidade do motorista entre online e offline."""
+    
+    motorista = current_user.motorista
+    
+    # Verifica se o motorista tem viagens em andamento
+    viagens_em_andamento = Viagem.query.filter(
+        and_(
+            Viagem.motorista_id == motorista.id,
+            Viagem.status == 'Em Andamento'
+        )
+    ).count()
+    
+    # Se tiver viagem em andamento, não pode ficar offline
+    if viagens_em_andamento > 0:
+        return jsonify({
+            'sucesso': False,
+            'mensagem': 'Você não pode ficar offline enquanto tiver uma viagem em andamento. Finalize a viagem primeiro.'
+        }), 400
+    
+    try:
+        # Alterna entre online e offline
+        if motorista.status_disponibilidade == 'online':
+            motorista.status_disponibilidade = 'offline'
+            mensagem = 'Você está agora OFFLINE. Não receberá novas viagens.'
+        else:
+            motorista.status_disponibilidade = 'online'
+            mensagem = 'Você está agora ONLINE. Pode receber novas viagens.'
+        
+        db.session.commit()
+        
+        # Registra no log de auditoria
+        log_audit(
+            action=AuditAction.UPDATE,
+            resource_type='Motorista',
+            resource_id=motorista.id,
+            user_id=current_user.id,
+            user_name=current_user.email,
+            changes={'status_disponibilidade': {'before': 'online' if motorista.status_disponibilidade == 'offline' else 'offline', 'after': motorista.status_disponibilidade}}
+        )
+        
+        return jsonify({
+            'sucesso': True,
+            'mensagem': mensagem,
+            'novo_status': motorista.status_disponibilidade
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'sucesso': False,
+            'mensagem': f'Erro ao alterar disponibilidade: {str(e)}'
+        }), 500
+
+
 @motorista_bp.route('/atualizar_status_disponibilidade', methods=['POST'])
 @login_required
 @role_required('motorista')
@@ -610,11 +684,11 @@ def atualizar_status_disponibilidade():
         
         # Registra no log de auditoria
         log_audit(
-            action=AuditAction.MOTORISTA_STATUS_UPDATE,
+            action=AuditAction.UPDATE,
             resource_type='Motorista',
             resource_id=motorista.id,
             user_id=current_user.id,
-            username=current_user.email,
+            user_name=current_user.email,
             changes={'status': {'before': status_anterior, 'after': novo_status}}
         )
         
@@ -724,4 +798,3 @@ def minhas_viagens():
         plantas=plantas,
         blocos=blocos
     )
-

@@ -6,10 +6,64 @@
 <div class="container-fluid mt-4">
     
     <!-- HEADER COM INFORMAÇÕES DO MOTORISTA -->
-    <div class="row mb-4">
+    <div class="row mb-3">
         <div class="col-12">
             <h2><i class="fas fa-tachometer-alt"></i> Dashboard do Motorista</h2>
             <p class="text-muted">Bem-vindo, <strong>{{ motorista.nome }}</strong></p>
+        </div>
+    </div>
+
+    <!-- INDICADOR DE STATUS DESTACADO -->
+    {% set status_info = motorista.get_status_badge() %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body py-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8 text-center text-md-start">
+                            <div class="d-flex align-items-center justify-content-center justify-content-md-start">
+                                <div class="me-4">
+                                    <i class="bi bi-{{ status_info.icone }} text-white" style="font-size: 3.5rem;"></i>
+                                </div>
+                                <div>
+                                    <h6 class="text-white text-uppercase mb-2" style="letter-spacing: 2px; font-weight: 600;">
+                                        Seu Status Atual
+                                    </h6>
+                                    <h1 class="mb-0">
+                                        <span class="badge {{ status_info.classe }} shadow" style="font-size: 1.8rem; padding: 0.8rem 2rem;">
+                                            <i class="bi bi-{{ status_info.icone }}"></i> {{ status_info.texto }}
+                                        </span>
+                                    </h1>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-center text-md-end mt-3 mt-md-0">
+                            <button type="button" 
+                                    class="btn btn-light btn-lg shadow" 
+                                    onclick="toggleDisponibilidade()"
+                                    id="btnToggleStatus"
+                                    style="padding: 0.8rem 2rem; font-weight: 600;">
+                                <i class="bi bi-power" style="font-size: 1.2rem;"></i>
+                                {% if motorista.status_disponibilidade == 'online' %}
+                                    Ficar Offline
+                                {% else %}
+                                    Ficar Online
+                                {% endif %}
+                            </button>
+                            <div class="mt-2">
+                                <small class="text-white-50">
+                                    <i class="bi bi-info-circle"></i> 
+                                    {% if motorista.status_disponibilidade == 'online' %}
+                                        Você está visível para novas viagens
+                                    {% else %}
+                                        Você não receberá novas viagens
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -92,6 +146,8 @@
                     <thead class="table-light">
                         <tr>
                             <th>ID</th>
+                            <th>Empresa</th>
+                            <th>Planta</th>
                             <th>Tipo</th>
                             <th>Passageiros</th>
                             <th>Horário</th>
@@ -104,6 +160,12 @@
                         {% for viagem in viagens_disponiveis %}
                         <tr>
                             <td><strong>#{{ viagem.id }}</strong></td>
+                            <td>
+                                {{ viagem.empresa.nome if viagem.empresa else 'N/A' }}
+                            </td>
+                            <td>
+                                {{ viagem.planta.nome if viagem.planta else 'N/A' }}
+                            </td>
                             <td>
                                 <span class="badge bg-secondary">{{ viagem.tipo_corrida|upper }}</span>
                             </td>
@@ -131,7 +193,7 @@
                                         onclick="aceitarViagem({{ viagem.id }})">
                                     <i class="fas fa-check"></i> Aceitar
                                 </button>
-                                <button type="button" class="btn btn-sm btn-outline-info" 
+                                <button type="button" class="btn btn-sm btn-info" 
                                         onclick="verDetalhesViagem({{ viagem.id }})">
                                     <i class="fas fa-eye"></i> Ver Detalhes
                                 </button>
@@ -155,12 +217,23 @@
             <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Minhas Próximas Viagens</h5>
         </div>
         <div class="card-body">
+            {% set tem_viagem_em_andamento = (viagens_em_andamento > 0) %}
+            
+            {% if tem_viagem_em_andamento %}
+            <div class="alert alert-warning" role="alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Atenção:</strong> Você já tem uma viagem em andamento. Finalize a viagem atual antes de iniciar outra.
+            </div>
+            {% endif %}
+            
             {% if minhas_viagens %}
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead class="table-light">
                         <tr>
                             <th>ID</th>
+                            <th>Empresa</th>
+                            <th>Planta</th>
                             <th>Status</th>
                             <th>Tipo</th>
                             <th>Passageiros</th>
@@ -173,6 +246,12 @@
                         {% for viagem in minhas_viagens %}
                         <tr>
                             <td><strong>#{{ viagem.id }}</strong></td>
+                            <td>
+                                {{ viagem.empresa.nome if viagem.empresa else 'N/A' }}
+                            </td>
+                            <td>
+                                {{ viagem.planta.nome if viagem.planta else 'N/A' }}
+                            </td>
                             <td>
                                 {% if viagem.status == 'Agendada' %}
                                     <span class="badge bg-warning text-dark">Agendada</span>
@@ -202,10 +281,11 @@
                             <td class="text-center">
                                 {% if viagem.status == 'Agendada' %}
                                     <button type="button" class="btn btn-sm btn-success" 
-                                            onclick="iniciarViagem({{ viagem.id }})">
+                                            onclick="iniciarViagem({{ viagem.id }})"
+                                            {% if tem_viagem_em_andamento %}disabled title="Finalize a viagem em andamento primeiro"{% endif %}>
                                         <i class="fas fa-play"></i> Iniciar
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-outline-danger" 
+                                    <button type="button" class="btn btn-sm btn-danger" 
                                             onclick="cancelarViagem({{ viagem.id }})">
                                         <i class="fas fa-times"></i> Cancelar
                                     </button>
@@ -215,7 +295,7 @@
                                         <i class="fas fa-check-circle"></i> Finalizar
                                     </button>
                                 {% endif %}
-                                <button type="button" class="btn btn-sm btn-outline-info" 
+                                <button type="button" class="btn btn-sm btn-info" 
                                         onclick="verDetalhesViagem({{ viagem.id }})">
                                     <i class="fas fa-eye"></i> Detalhes
                                 </button>
@@ -328,7 +408,11 @@ function finalizarViagem(viagemId) {
     .then(response => response.json())
     .then(data => {
         if (data.sucesso) {
-            alert(data.mensagem + '\nValor do repasse: R$ ' + data.valor_repasse.toFixed(2));
+            let mensagem = data.mensagem;
+            if (data.valor_repasse !== undefined && data.valor_repasse !== null) {
+                mensagem += '\nValor do repasse: R$ ' + data.valor_repasse.toFixed(2);
+            }
+            alert(mensagem);
             location.reload();
         } else {
             alert('Erro: ' + data.mensagem);
@@ -397,7 +481,28 @@ function verDetalhesViagem(viagemId) {
         `;
     });
 }
+
+// Função para alternar disponibilidade (Online/Offline)
+function toggleDisponibilidade() {
+    fetch('/motorista/toggle-disponibilidade', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.sucesso) {
+            alert(data.mensagem);
+            location.reload();
+        } else {
+            alert('Erro: ' + data.mensagem);
+        }
+    })
+    .catch(error => {
+        alert('Erro ao alterar disponibilidade: ' + error);
+    });
+}
 </script>
 
 {% endblock %}
-
