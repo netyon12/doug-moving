@@ -84,12 +84,12 @@
                                 <label for="telefone" class="form-label">Telefone</label>
                                 <input type="tel" class="form-control" id="telefone" name="telefone" 
                                        value="{{ colaborador.telefone if colaborador else '' }}" 
-                                       placeholder="(DD) 9NNNN-NNNN" 
+                                       placeholder="(DD) 98877-6655" 
                                        maxlength="15"
-                                       style="color: #000;"
+                                       style="color: #b6b4b4; opacity: 0.4 !important;"
                                        onfocus="this.style.color='#000'"
                                        onblur="if(this.value=='') this.style.color='#000'">
-                                <small class="form-text text-muted">Formato: (81) 98875-1618</small>
+                                <small class="form-text text-muted">Formato: (DD) 98877-6655</small>
                             </div>
                             <div class="col-md-5 mb-3"><label for="email" class="form-label">E-mail</label><input type="email" class="form-control" id="email" name="email" value="{{ colaborador.email if colaborador else '' }}"></div>
                         </div>
