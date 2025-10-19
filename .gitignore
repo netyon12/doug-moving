@@ -28,3 +28,11 @@ env/
 *.sqlite3
 
 *.xlsx
+
+# Arquivos de sistema do macOS e Windows
+.DS_Store
+desktop.ini
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
