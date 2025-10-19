@@ -80,7 +80,17 @@
                         </div>
                         <div class="row">
                             <div class="col-md-2 mb-3"><label for="uf" class="form-label">UF</label><input type="text" class="form-control" id="uf" name="uf" value="{{ colaborador.uf if colaborador else '' }}" maxlength="2"></div>
-                            <div class="col-md-5 mb-3"><label for="telefone" class="form-label">Telefone</label><input type="tel" class="form-control" id="telefone" name="telefone" value="{{ colaborador.telefone if colaborador else '' }}"></div>
+                            <div class="col-md-5 mb-3">
+                                <label for="telefone" class="form-label">Telefone</label>
+                                <input type="tel" class="form-control" id="telefone" name="telefone" 
+                                       value="{{ colaborador.telefone if colaborador else '' }}" 
+                                       placeholder="(DD) 9NNNN-NNNN" 
+                                       maxlength="15"
+                                       style="color: #000;"
+                                       onfocus="this.style.color='#000'"
+                                       onblur="if(this.value=='') this.style.color='#000'">
+                                <small class="form-text text-muted">Formato: (81) 98875-1618</small>
+                            </div>
                             <div class="col-md-5 mb-3"><label for="email" class="form-label">E-mail</label><input type="email" class="form-control" id="email" name="email" value="{{ colaborador.email if colaborador else '' }}"></div>
                         </div>
                         <div class="mb-3">
@@ -144,6 +154,37 @@ document.addEventListener('DOMContentLoaded', function() {
             buscarBlocoPorBairro(nomeBairro);
         }
     });
+    
+    // Máscara de telefone
+    const campoTelefone = document.getElementById('telefone');
+    if (campoTelefone) {
+        // Aplica máscara ao digitar
+        campoTelefone.addEventListener('input', function(e) {
+            let valor = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            
+            // Limita a 11 dígitos
+            if (valor.length > 11) {
+                valor = valor.substring(0, 11);
+            }
+            
+            // Aplica a máscara
+            if (valor.length <= 11) {
+                valor = valor.replace(/^(\d{2})(\d)/g, '($1) $2'); // Adiciona parênteses no DDD
+                valor = valor.replace(/(\d{5})(\d)/, '$1-$2'); // Adiciona hífen
+            }
+            
+            e.target.value = valor;
+        });
+        
+        // Ao carregar a página, formata o telefone se já existir
+        if (campoTelefone.value) {
+            let valorInicial = campoTelefone.value.replace(/\D/g, '');
+            if (valorInicial.length === 11) {
+                valorInicial = valorInicial.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+                campoTelefone.value = valorInicial;
+            }
+        }
+    }
     
     function buscarBlocoPorBairro(nomeBairro) {
         // Mostra feedback visual

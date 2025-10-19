@@ -36,13 +36,29 @@ def cadastrar_colaborador():
         # Lógica para pegar o ID da empresa e planta corretamente
         if current_user.role == 'supervisor':
             empresa_id = current_user.supervisor.empresa_id
-            # Se supervisor tem múltiplas plantas, pega do formulário, senão usa a primeira
             planta_id = request.form.get('planta_id')
             if not planta_id and current_user.supervisor.plantas:
                 planta_id = current_user.supervisor.plantas[0].id
         else: # Para Admin e Gerente
             empresa_id = request.form.get('empresa_id')
             planta_id = request.form.get('planta_id')
+
+        # Validação do telefone
+        telefone = request.form.get('telefone', '').replace(' ', '').replace('-', '').replace('(', '').replace(')', '').replace('.', '')
+        if telefone and (not telefone.isdigit() or len(telefone) != 11):
+            flash('O telefone deve conter exatamente 11 dígitos (DDD + número). Exemplo: 81988751618', 'warning')
+            # Retorna para o formulário mantendo os dados
+            if current_user.role == 'admin':
+                empresas = Empresa.query.all()
+                plantas = Planta.query.all()
+            elif current_user.role == 'gerente':
+                empresas = [current_user.gerente.empresa]
+                plantas = Planta.query.filter_by(empresa_id=current_user.gerente.empresa_id).all()
+            else:
+                empresas = [current_user.supervisor.empresa]
+                plantas = current_user.supervisor.plantas
+            blocos = Bloco.query.order_by(Bloco.codigo_bloco).all()
+            return render_template('form_colaborador.html', aba_ativa='colaboradores', empresas=empresas, plantas=plantas, blocos=blocos)
 
         novo_colaborador = Colaborador(
             nome=request.form.get('nome'),
@@ -55,15 +71,13 @@ def cadastrar_colaborador():
             bairro=request.form.get('bairro'),
             cidade=request.form.get('cidade'),
             uf=request.form.get('uf'),
-            telefone=request.form.get('telefone'),
+            telefone=telefone,
             email=request.form.get('email'),
-            # Salva o ID do bloco selecionado
             bloco_id=request.form.get('bloco_id') or None
         )
         db.session.add(novo_colaborador)
         db.session.commit()
-        flash(
-            f'Colaborador "{novo_colaborador.nome}" cadastrado com sucesso!', 'success')
+        flash(f'Colaborador "{novo_colaborador.nome}" cadastrado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='colaboradores'))
 
     # Lógica do GET: passa todos os dados para os dropdowns
@@ -101,7 +115,6 @@ def editar_colaborador(colaborador_id):
 
         if current_user.role == 'supervisor':
             colaborador.empresa_id = current_user.supervisor.empresa_id
-            # Se supervisor tem múltiplas plantas, pega do formulário, senão usa a primeira
             planta_id = request.form.get('planta_id')
             if not planta_id and current_user.supervisor.plantas:
                 planta_id = current_user.supervisor.plantas[0].id
@@ -110,23 +123,33 @@ def editar_colaborador(colaborador_id):
             colaborador.empresa_id = request.form.get('empresa_id')
             colaborador.planta_id = request.form.get('planta_id')
 
+        # Validação do telefone
+        telefone = request.form.get('telefone', '').replace(' ', '').replace('-', '').replace('(', '').replace(')', '').replace('.', '')
+        if telefone and (not telefone.isdigit() or len(telefone) != 11):
+            flash('O telefone deve conter exatamente 11 dígitos (DDD + número). Exemplo: 81988751618', 'warning')
+            if current_user.role == 'admin':
+                empresas = Empresa.query.all()
+                plantas = Planta.query.all()
+            else:
+                empresas = [current_user.empresa]
+                plantas = [current_user.planta]
+            blocos = Bloco.query.order_by(Bloco.codigo_bloco).all()
+            return render_template('form_colaborador.html', aba_ativa='colaboradores', colaborador=colaborador, empresas=empresas, plantas=plantas, blocos=blocos)
+
         colaborador.nome = request.form.get('nome')
         colaborador.matricula = request.form.get('matricula')
-        #colaborador.empresa_id = request.form.get('empresa_id')
-        #colaborador.planta_id = request.form.get('planta_id')
         colaborador.status = request.form.get('status')
         colaborador.endereco = request.form.get('endereco')
         colaborador.nro = request.form.get('nro')
         colaborador.bairro = request.form.get('bairro')
         colaborador.cidade = request.form.get('cidade')
         colaborador.uf = request.form.get('uf')
-        colaborador.telefone = request.form.get('telefone')
+        colaborador.telefone = telefone
         colaborador.email = request.form.get('email')
-        colaborador.bloco_id = request.form.get('bloco_id') or None  # Atualiza o ID do bloco
+        colaborador.bloco_id = request.form.get('bloco_id') or None
 
         db.session.commit()
-        flash(
-            f'Colaborador "{colaborador.nome}" atualizado com sucesso!', 'success')
+        flash(f'Colaborador "{colaborador.nome}" atualizado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='colaboradores'))
 
     # Lógica do GET para edição
