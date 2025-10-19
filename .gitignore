@@ -29,9 +29,17 @@ env/
 
 *.xlsx
 
-# Arquivos de sistema do macOS e Windows
+# Arquivos de sistema do macOS
 .DS_Store
+
+
+# Arquivos do Windows
 desktop.ini
+*.ini
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 
 # Arquivos temporários do Python
 __pycache__/
