@@ -75,20 +75,6 @@ def create_app():
             return value
 
 
-    # --- ROTA PWA OFFLINE ---
-    @app.route('/offline')
-    def offline():
-        """Página exibida quando o usuário está offline."""
-        from flask import render_template
-        return render_template('offline.html')
-    
-    # --- ROTA INSTRUÇÕES DE INSTALAÇÃO PWA ---
-    @app.route('/instalar')
-    def instalar():
-        """Página com instruções para instalar o PWA no smartphone."""
-        from flask import render_template
-        return render_template('instalar.html')
-
     # --- ROTA PRINCIPAL (PORTA DE ENTRADA) ---
     @app.route('/')
     @login_required

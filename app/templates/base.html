@@ -323,6 +323,134 @@
                 display: none !important;
             }
         }
+
+        /* ========================================== */
+        /* BANNER DE INSTALAÇÃO PWA */
+        /* ========================================== */
+        #pwa-install-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, var(--gomobi-black) 0%, var(--gomobi-gray-dark) 100%);
+            color: white;
+            padding: 1rem;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.3);
+            border-top: 3px solid var(--gomobi-yellow);
+            z-index: 1060;
+            display: none;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        #pwa-install-banner.show {
+            display: block;
+        }
+
+        .pwa-banner-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 1rem;
+        }
+
+        .pwa-banner-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gomobi-yellow);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--gomobi-black);
+            flex-shrink: 0;
+        }
+
+        .pwa-banner-text {
+            flex: 1;
+        }
+
+        .pwa-banner-text h5 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gomobi-yellow);
+        }
+
+        .pwa-banner-text p {
+            margin: 0;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .pwa-banner-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .pwa-btn-install {
+            background: linear-gradient(135deg, var(--gomobi-yellow) 0%, var(--gomobi-yellow-dark) 100%);
+            color: var(--gomobi-black);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pwa-btn-install:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 185, 95, 0.4);
+        }
+
+        .pwa-btn-close {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pwa-btn-close:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        @media (max-width: 768px) {
+            .pwa-banner-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .pwa-banner-buttons {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .pwa-btn-install,
+            .pwa-btn-close {
+                width: 100%;
+            }
+
+            .pwa-banner-text p {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body data-user-role="{{ current_user.role }}" data-user-planta-id="{% if current_user.role == 'supervisor' %}{{ current_user.supervisor.planta_id }}{% endif %}">
@@ -563,6 +691,7 @@
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('audit.logs_gerais') }}"><i class="bi bi-clipboard-data"></i> Logs de Auditoria</a></li>
                                     {% endif %}
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.editar_perfil') }}">Editar Meu Perfil</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('instalar') }}"><i class="bi bi-phone-fill"></i> Como Instalar o App</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -572,6 +701,27 @@
 
             <!-- Área de Conteúdo Principal -->
             <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <!-- Banner de Instalação PWA -->
+                <div id="pwa-install-banner">
+                    <div class="pwa-banner-content">
+                        <div class="pwa-banner-icon">
+                            <i class="bi bi-download"></i>
+                        </div>
+                        <div class="pwa-banner-text">
+                            <h5><i class="bi bi-phone-fill"></i> Instalar Go Mobi</h5>
+                            <p>Acesse mais rápido! Instale o app na tela inicial do seu smartphone.</p>
+                        </div>
+                        <div class="pwa-banner-buttons">
+                            <button id="pwa-btn-install" class="pwa-btn-install">
+                                <i class="bi bi-download"></i> Instalar
+                            </button>
+                            <button id="pwa-btn-dismiss" class="pwa-btn-close">
+                                <i class="bi bi-x"></i> Agora não
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Mensagens Flash -->
                 {% with messages = get_flashed_messages(with_categories=true) %}
                     {% if messages %}
@@ -631,39 +781,97 @@
             });
         }
 
-        // Botão de instalação do PWA
+        // ========================================== //
+        // PWA INSTALL BANNER - ANDROID CHROME ONLY //
+        // ========================================== //
         let deferredPrompt;
+
+        // Captura o evento beforeinstallprompt (apenas Android Chrome)
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Previne o prompt automático
             e.preventDefault();
             deferredPrompt = e;
             
-            // Mostra botão de instalação (se existir)
-            const installButton = document.getElementById('pwa-install-button');
-            if (installButton) {
-                installButton.style.display = 'block';
-                
-                installButton.addEventListener('click', () => {
-                    installButton.style.display = 'none';
-                    deferredPrompt.prompt();
+            // Não mostra o banner se:
+            // 1. Já foi dispensado pelo usuário
+            // 2. PWA já está instalado
+            if (localStorage.getItem('pwa-banner-dismissed') === 'true') {
+                return;
+            }
+            
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                return; // Já está instalado
+            }
+            
+            // Mostra o banner após 3 segundos (para não ser intrusivo)
+            setTimeout(() => {
+                showInstallBanner();
+            }, 3000);
+        });
+
+        function showInstallBanner() {
+            const banner = document.getElementById('pwa-install-banner');
+            if (!banner) return;
+            
+            banner.classList.add('show');
+            
+            // Botão Instalar
+            const btnInstall = document.getElementById('pwa-btn-install');
+            if (btnInstall) {
+                btnInstall.addEventListener('click', () => {
+                    banner.classList.remove('show');
                     
-                    deferredPrompt.userChoice.then((choiceResult) => {
-                        if (choiceResult.outcome === 'accepted') {
-                            console.log('Usuário aceitou instalar o PWA');
-                        } else {
-                            console.log('Usuário recusou instalar o PWA');
-                        }
-                        deferredPrompt = null;
-                    });
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        deferredPrompt.userChoice.then((choiceResult) => {
+                            if (choiceResult.outcome === 'accepted') {
+                                console.log('Usuário aceitou instalar o Go Mobi PWA');
+                                localStorage.setItem('pwa-installed', 'true');
+                            } else {
+                                console.log('Usuário recusou instalar o Go Mobi PWA');
+                            }
+                            deferredPrompt = null;
+                        });
+                    } else {
+                        // Se não houver deferredPrompt (iOS), redireciona para página de instruções
+                        window.location.href = '/instalar';
+                    }
                 });
             }
-        });
+            
+            // Botão Dispensar
+            const btnDismiss = document.getElementById('pwa-btn-dismiss');
+            if (btnDismiss) {
+                btnDismiss.addEventListener('click', () => {
+                    banner.classList.remove('show');
+                    localStorage.setItem('pwa-banner-dismissed', 'true');
+                });
+            }
+            
+            // Auto-fechar após 15 segundos
+            setTimeout(() => {
+                if (banner.classList.contains('show')) {
+                    banner.classList.remove('show');
+                }
+            }, 15000);
+        }
 
         // Detecta quando o app foi instalado
         window.addEventListener('appinstalled', () => {
             console.log('Go Mobi PWA foi instalado com sucesso!');
+            localStorage.setItem('pwa-installed', 'true');
             deferredPrompt = null;
+            
+            // Esconde o banner se estiver visível
+            const banner = document.getElementById('pwa-install-banner');
+            if (banner) {
+                banner.classList.remove('show');
+            }
         });
+
+        // Verifica se já está instalado ao carregar a página
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            localStorage.setItem('pwa-installed', 'true');
+        }
     </script>
     
     <script>
