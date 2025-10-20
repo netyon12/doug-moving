@@ -218,12 +218,25 @@ def importar_colaboradores():
 
                 # Valida número de campos
                 if len(row) < 7:
-                    erros.append(f"Linha {i}: Número insuficiente de campos (esperado 7, encontrado {len(row)})")
+                    erros.append(f"Linha {i}: Número insuficiente de campos (esperado pelo menos 7, encontrado {len(row)})")
                     linhas_ignoradas += 1
                     continue
 
-                # Desempacota: matricula;nome;empresa;planta;email;telefone;status
-                matricula, nome, empresa_nome, planta_nome, email, telefone, status = row[:7]
+                # Desempacota os campos (com valores padrão para campos opcionais)
+                # Formato: matricula;nome;empresa;planta;email;telefone;endereco;nro;bairro;cidade;uf;bloco;status
+                matricula = row[0] if len(row) > 0 else ''
+                nome = row[1] if len(row) > 1 else ''
+                empresa_nome = row[2] if len(row) > 2 else ''
+                planta_nome = row[3] if len(row) > 3 else ''
+                email = row[4] if len(row) > 4 else ''
+                telefone = row[5] if len(row) > 5 else ''
+                endereco = row[6] if len(row) > 6 else ''
+                nro = row[7] if len(row) > 7 else ''
+                bairro = row[8] if len(row) > 8 else ''
+                cidade = row[9] if len(row) > 9 else ''
+                uf = row[10] if len(row) > 10 else ''
+                bloco_codigo = row[11] if len(row) > 11 else ''
+                status = row[12] if len(row) > 12 else 'Ativo'
 
                 # Validações
                 if not matricula or not nome:
@@ -236,6 +249,24 @@ def importar_colaboradores():
                     erros.append(f"Linha {i}: Matrícula '{matricula}' já existe no sistema")
                     linhas_ignoradas += 1
                     continue
+
+                # Busca bloco (se fornecido)
+                bloco_id = None
+                if bloco_codigo:
+                    bloco = Bloco.query.filter_by(codigo_bloco=bloco_codigo).first()
+                    if bloco:
+                        bloco_id = bloco.id
+                    else:
+                        erros.append(f"Linha {i}: Bloco '{bloco_codigo}' não encontrado (colaborador será criado sem bloco)")
+
+                # Limpa e valida telefone (remove caracteres especiais e garante 11 dígitos)
+                if telefone:
+                    telefone_limpo = telefone.replace(' ', '').replace('-', '').replace('(', '').replace(')', '').replace('.', '')
+                    if telefone_limpo and (not telefone_limpo.isdigit() or len(telefone_limpo) != 11):
+                        erros.append(f"Linha {i}: Telefone '{telefone}' inválido (deve ter 11 dígitos). Colaborador será criado sem telefone.")
+                        telefone_limpo = None
+                else:
+                    telefone_limpo = None
 
                 # Busca empresa
                 empresa = Empresa.query.filter_by(nome=empresa_nome).first()
@@ -263,9 +294,16 @@ def importar_colaboradores():
                     empresa_id=empresa.id,
                     planta_id=planta.id,
                     email=email if email else None,
-                    telefone=telefone if telefone else None,
+                    telefone=telefone_limpo,
+                    endereco=endereco if endereco else None,
+                    nro=nro if nro else None,
+                    bairro=bairro if bairro else None,
+                    cidade=cidade if cidade else None,
+                    uf=uf if uf else None,
+                    bloco_id=bloco_id,
                     status=status if status else 'Ativo'
                 )
+                
                 db.session.add(novo_colaborador)
                 colaboradores_adicionados += 1
 
