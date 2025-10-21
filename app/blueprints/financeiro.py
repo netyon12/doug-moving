@@ -94,15 +94,19 @@ def gerar_fatura():
             return redirect(url_for('financeiro.gerar_fatura'))
         
         try:
-            # Buscar viagens selecionadas
-            viagens = Viagem.query.filter(Viagem.id.in_(viagens_ids)).all()
+            # Buscar viagens selecionadas (com hora parada)
+            viagens = Viagem.query.options(db.joinedload(Viagem.hora_parada)).filter(Viagem.id.in_(viagens_ids)).all()
             
             if not viagens:
                 flash('Nenhuma viagem selecionada!', 'danger')
                 return redirect(url_for('financeiro.gerar_fatura'))
             
-            # Calcular valor total
-            valor_total = sum([float(v.valor) for v in viagens])
+            # Calcular valor total (incluindo hora parada)
+            valor_total = 0.0
+            for v in viagens:
+                valor_total += float(v.valor) if v.valor else 0.0
+                if v.hora_parada:
+                    valor_total += float(v.hora_parada.valor_adicional)
             
             # Gerar número do título
             ultimo_titulo = FinContasReceber.query.order_by(FinContasReceber.id.desc()).first()
@@ -172,7 +176,7 @@ def buscar_viagens_receber():
         viagens_faturadas_ids = db.session.query(FinReceberViagens.viagem_id).all()
         viagens_faturadas_ids = [v[0] for v in viagens_faturadas_ids]
         
-        viagens = Viagem.query.filter(
+        viagens = Viagem.query.options(db.joinedload(Viagem.hora_parada)).filter(
             and_(
                 Viagem.empresa_id == int(empresa_id),
                 Viagem.status == 'Finalizada',
@@ -187,16 +191,22 @@ def buscar_viagens_receber():
         valor_total = 0
         
         for v in viagens:
+            # Calcular valor incluindo hora parada
+            valor_viagem = float(v.valor) if v.valor else 0.0
+            if v.hora_parada:
+                valor_viagem += float(v.hora_parada.valor_adicional)
+            
             viagens_data.append({
                 'id': v.id,
                 'data': v.data_criacao.strftime('%d/%m/%Y %H:%M') if v.data_criacao else 'N/A',
                 'tipo': v.tipo_corrida,
                 'passageiros': v.quantidade_passageiros,
-                'valor': float(v.valor) if v.valor else 0.0,
+                'valor': valor_viagem,
                 'bloco': v.bloco.codigo_bloco if v.bloco else 'N/A',
-                'motorista': v.motorista.nome if v.motorista else 'Não atribuído'
+                'motorista': v.motorista.nome if v.motorista else 'Não atribuído',
+                'tem_hp': bool(v.hora_parada)
             })
-            valor_total += float(v.valor) if v.valor else 0.0
+            valor_total += valor_viagem
         
         return jsonify({
             'success': True,
@@ -349,15 +359,19 @@ def gerar_pagamento():
             return redirect(url_for('financeiro.gerar_pagamento'))
         
         try:
-            # Buscar viagens selecionadas
-            viagens = Viagem.query.filter(Viagem.id.in_(viagens_ids)).all()
+            # Buscar viagens selecionadas (com hora parada)
+            viagens = Viagem.query.options(db.joinedload(Viagem.hora_parada)).filter(Viagem.id.in_(viagens_ids)).all()
             
             if not viagens:
                 flash('Nenhuma viagem selecionada!', 'danger')
                 return redirect(url_for('financeiro.gerar_pagamento'))
             
-            # Calcular valor total (repasse)
-            valor_total = sum([float(v.valor_repasse) for v in viagens if v.valor_repasse])
+            # Calcular valor total de repasse (incluindo hora parada)
+            valor_total = 0.0
+            for v in viagens:
+                valor_total += float(v.valor_repasse) if v.valor_repasse else 0.0
+                if v.hora_parada:
+                    valor_total += float(v.hora_parada.repasse_adicional)
             
             # Gerar número do título
             ultimo_titulo = FinContasPagar.query.order_by(FinContasPagar.id.desc()).first()
@@ -427,7 +441,7 @@ def buscar_viagens_pagar():
         viagens_pagas_ids = db.session.query(FinPagarViagens.viagem_id).all()
         viagens_pagas_ids = [v[0] for v in viagens_pagas_ids]
         
-        viagens = Viagem.query.filter(
+        viagens = Viagem.query.options(db.joinedload(Viagem.hora_parada)).filter(
             and_(
                 Viagem.motorista_id == int(motorista_id),
                 Viagem.status == 'Finalizada',
@@ -442,14 +456,19 @@ def buscar_viagens_pagar():
         valor_total = 0
         
         for v in viagens:
+            # Calcular repasse incluindo hora parada
             valor_repasse = float(v.valor_repasse) if v.valor_repasse else 0.0
+            if v.hora_parada:
+                valor_repasse += float(v.hora_parada.repasse_adicional)
+            
             viagens_data.append({
                 'id': v.id,
                 'data': v.data_criacao.strftime('%d/%m/%Y %H:%M') if v.data_criacao else 'N/A',
                 'tipo': v.tipo_corrida,
                 'passageiros': v.quantidade_passageiros,
                 'valor_repasse': valor_repasse,
-                'bloco': v.bloco.codigo_bloco if v.bloco else 'N/A'
+                'bloco': v.bloco.codigo_bloco if v.bloco else 'N/A',
+                'tem_hp': bool(v.hora_parada)
             })
             valor_total += valor_repasse
         
@@ -526,4 +545,3 @@ def excluir_pagar(titulo_id):
         flash(f'Erro ao excluir título: {str(e)}', 'danger')
     
     return redirect(url_for('financeiro.contas_pagar'))
-

@@ -307,7 +307,7 @@ def dados_conferencia_viagens():
         colaborador_id = request.form.get('colaborador_id')  # NOVO FILTRO
         
         # Construir query
-        query = Viagem.query
+        query = Viagem.query.options(db.joinedload(Viagem.hora_parada))
         
         # APLICAR PERMISSÕES POR PERFIL
         if current_user.role == 'supervisor':
@@ -412,8 +412,10 @@ def dados_conferencia_viagens():
                 except:
                     pass
             
-            # Calcular valor
+            # Calcular valor (incluindo hora parada)
             valor_viagem = float(viagem.valor) if viagem.valor else 0.0
+            if viagem.hora_parada:
+                valor_viagem += float(viagem.hora_parada.valor_adicional)
             valor_total += valor_viagem
             
             # Determinar data da viagem (prioridade: entrada > saida > desligamento)
@@ -497,7 +499,7 @@ def dados_conferencia_motoristas():
         status = request.form.get('status')
         
         # Construir query
-        query = Viagem.query
+        query = Viagem.query.options(db.joinedload(Viagem.hora_parada))
         
         # APLICAR PERMISSÕES POR PERFIL
         motorista_id_usuario = get_user_motorista_id()
@@ -561,7 +563,10 @@ def dados_conferencia_motoristas():
                 except:
                     pass
             
+            # Calcular repasse (incluindo hora parada)
             valor_repasse = float(viagem.valor_repasse) if viagem.valor_repasse else 0.0
+            if viagem.hora_parada:
+                valor_repasse += float(viagem.hora_parada.repasse_adicional)
             valor_total_repasse += valor_repasse
             
             # Determinar data da viagem

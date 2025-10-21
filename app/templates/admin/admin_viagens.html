@@ -117,6 +117,7 @@
                             <th>Blocos</th>
                             <th>Motorista</th>
                             <th>Valor</th>
+                            <th class="text-center">HP</th>
                             <th class="text-center">Ações</th>
                         </tr>
                     </thead>
@@ -179,8 +180,19 @@
                             <td>
                                 {% if viagem.valor %}
                                 R$ {{ "%.2f"|format(viagem.valor) }}
+                                {% if viagem.hora_parada %}
+                                <br><small class="text-success">+ R$ {{ "%.2f"|format(viagem.hora_parada.valor_adicional) }} (HP)</small>
+                                {% endif %}
                                 {% else %}
                                 N/A
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if viagem.hora_parada %}
+                                <i class="bi bi-clock-fill text-warning" 
+                                title="Hora Parada: {{ viagem.hora_parada.periodos_30min }}x30min"></i>
+                                {% else %}
+                                <span class="text-muted">-</span>
                                 {% endif %}
                             </td>
                             <td class="text-center">
@@ -199,6 +211,14 @@
                                     </button>
                                     {% endif %}
                                     
+                                    {% if current_user.role == 'admin' and viagem.status == 'Finalizada' %}
+                                    <button type="button" class="btn btn-sm btn-warning" 
+                                            onclick="abrirModalHoraParada({{ viagem.id }})"
+                                            title="{% if viagem.hora_parada %}Editar{% else %}Adicionar{% endif %} Hora Parada">
+                                        <i class="bi bi-clock"></i>
+                                    </button>
+                                    {% endif %}
+
                                     {% if viagem.status not in ['Finalizada', 'Cancelada'] %}
                                     <button type="button" class="btn btn-sm btn-danger" 
                                             onclick="cancelarViagem({{ viagem.id }})"
@@ -562,5 +582,228 @@
         });
     });
 </script>
-{% endblock %}
 
+
+<!-- Modal Hora Parada -->
+<div class="modal fade" id="modalHoraParada" tabindex="-1" aria-labelledby="modalHoraParadaLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="modalHoraParadaLabel">
+                    <i class="bi bi-clock"></i> Adicionar Hora Parada
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formHoraParada">
+                    <input type="hidden" id="hp_viagem_id" name="viagem_id">
+                    
+                    <!-- Informações da Viagem -->
+                    <div class="alert alert-info">
+                        <strong>Viagem:</strong> #<span id="hp_viagem_id_display"></span>  
+
+                        <strong>Tipo:</strong> <span id="hp_tipo_corrida"></span>  
+
+                        <strong>Motorista:</strong> <span id="hp_motorista_nome"></span>
+                    </div>
+                    
+                    <!-- Cálculo do Atraso -->
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label"><strong>Horário Agendado:</strong></label>
+                            <p id="hp_horario_agendado" class="mb-0"></p>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label"><strong>Horário Real Início:</strong></label>
+                            <p id="hp_horario_real_inicio" class="mb-0"></p>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <strong>Atraso:</strong> <span id="hp_minutos_atraso"></span> minutos
+                    </div>
+                    
+                    <!-- Períodos de 30min -->
+                    <div class="mb-3">
+                        <label for="hp_periodos_30min" class="form-label">
+                            <strong>Períodos de 30min a cobrar:</strong>
+                        </label>
+                        <input type="number" class="form-control" id="hp_periodos_30min" name="periodos_30min" 
+                               min="1" value="1" required>
+                        <small class="form-text text-muted">
+                            Sugestão baseada no atraso: <span id="hp_periodos_sugeridos"></span> período(s)
+                        </small>
+                    </div>
+                    
+                    <!-- Valores que serão acrescentados -->
+                    <div class="alert alert-success">
+                        <p class="mb-1"><strong>⚠️ Será acrescentado:</strong></p>
+                        <ul class="mb-0">
+                            <li>Valor da viagem: <strong>R$ <span id="hp_valor_adicional">0,00</span></strong></li>
+                            <li>Repasse motorista: <strong>R$ <span id="hp_repasse_adicional">0,00</span></strong></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Observações -->
+                    <div class="mb-3">
+                        <label for="hp_observacoes" class="form-label">Observações:</label>
+                        <textarea class="form-control" id="hp_observacoes" name="observacoes" rows="2" 
+                                  placeholder="Ex: Colaborador atrasou 30min"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnExcluirHP" style="display:none;" 
+                        onclick="excluirHoraParada()">
+                    <i class="bi bi-trash"></i> Excluir
+                </button>
+                <button type="button" class="btn btn-warning" onclick="salvarHoraParada()">
+                    <i class="bi bi-check-circle"></i> Confirmar Cobrança
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+// ===========================================================================================
+// FUNÇÕES DE HORA PARADA
+// ===========================================================================================
+
+let valorPeriodoHP = 71.02;
+let repassePeriodoHP = 29.00;
+
+function abrirModalHoraParada(viagemId) {
+    // Busca dados da viagem para o modal
+    fetch(`/admin/viagens/${viagemId}/hora-parada`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const d = data.dados;
+                
+                // Atualiza valores globais
+                valorPeriodoHP = d.valor_periodo;
+                repassePeriodoHP = d.repasse_periodo;
+                
+                // Preenche modal
+                document.getElementById('hp_viagem_id').value = d.viagem_id;
+                document.getElementById('hp_viagem_id_display').textContent = d.viagem_id;
+                document.getElementById('hp_tipo_corrida').textContent = d.tipo_corrida;
+                document.getElementById('hp_motorista_nome').textContent = d.motorista_nome;
+                document.getElementById('hp_horario_agendado').textContent = d.horario_agendado;
+                document.getElementById('hp_horario_real_inicio').textContent = d.horario_real_inicio;
+                document.getElementById('hp_minutos_atraso').textContent = d.minutos_atraso;
+                document.getElementById('hp_periodos_sugeridos').textContent = d.periodos_sugeridos;
+                
+                // Define períodos
+                if (d.editando) {
+                    document.getElementById('hp_periodos_30min').value = d.periodos_atual;
+                    document.getElementById('hp_observacoes').value = d.observacoes_atual;
+                    document.getElementById('modalHoraParadaLabel').innerHTML = '<i class="bi bi-clock"></i> Editar Hora Parada';
+                    document.getElementById('btnExcluirHP').style.display = 'inline-block';
+                } else {
+                    document.getElementById('hp_periodos_30min').value = d.periodos_sugeridos;
+                    document.getElementById('hp_observacoes').value = '';
+                    document.getElementById('modalHoraParadaLabel').innerHTML = '<i class="bi bi-clock"></i> Adicionar Hora Parada';
+                    document.getElementById('btnExcluirHP').style.display = 'none';
+                }
+                
+                // Calcula valores iniciais
+                calcularValoresHP();
+                
+                // Abre modal
+                const modal = new bootstrap.Modal(document.getElementById('modalHoraParada'));
+                modal.show();
+            } else {
+                alert('Erro: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            alert('Erro ao carregar dados da hora parada.');
+        });
+}
+
+function calcularValoresHP() {
+    const periodos = parseInt(document.getElementById('hp_periodos_30min').value) || 1;
+    const valorAdicional = valorPeriodoHP * periodos;
+    const repasseAdicional = repassePeriodoHP * periodos;
+    
+    document.getElementById('hp_valor_adicional').textContent = valorAdicional.toFixed(2).replace('.', ',');
+    document.getElementById('hp_repasse_adicional').textContent = repasseAdicional.toFixed(2).replace('.', ',');
+}
+
+// Atualiza valores quando mudar os períodos
+document.addEventListener('DOMContentLoaded', function() {
+    const inputPeriodos = document.getElementById('hp_periodos_30min');
+    if (inputPeriodos) {
+        inputPeriodos.addEventListener('input', calcularValoresHP);
+    }
+});
+
+function salvarHoraParada() {
+    const viagemId = document.getElementById('hp_viagem_id').value;
+    const formData = new FormData(document.getElementById('formHoraParada'));
+    
+    fetch(`/admin/viagens/${viagemId}/hora-parada`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            // Fecha modal
+            bootstrap.Modal.getInstance(document.getElementById('modalHoraParada')).hide();
+            // Recarrega página
+            location.reload();
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao salvar hora parada.');
+    });
+}
+
+function excluirHoraParada() {
+    if (!confirm('Tem certeza que deseja excluir a hora parada desta viagem?')) {
+        return;
+    }
+    
+    const viagemId = document.getElementById('hp_viagem_id').value;
+    
+    fetch(`/admin/viagens/${viagemId}/hora-parada`, {
+        method: 'DELETE'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            // Fecha modal
+            bootstrap.Modal.getInstance(document.getElementById('modalHoraParada')).hide();
+            // Recarrega página
+            location.reload();
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        alert('Erro ao excluir hora parada.');
+    });
+}
+
+// ===========================================================================================
+// FIM DAS FUNÇÕES DE HORA PARADA
+// ===========================================================================================
+</script>
+
+
+
+
+{% endblock %}

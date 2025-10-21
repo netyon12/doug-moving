@@ -794,6 +794,12 @@ class Viagem(db.Model):
         for solicitacao in self.solicitacoes:
             solicitacao.status = 'Finalizada'
         
+        # MELHORIA 1: Se é viagem de desligamento, altera status do colaborador para 'Desligado'
+        if self.tipo_corrida == 'desligamento':
+            for solicitacao in self.solicitacoes:
+                if solicitacao.colaborador:
+                    solicitacao.colaborador.status = 'Desligado'
+        
         return True
     
     def cancelar_viagem(self, motivo, user_id):
@@ -1395,3 +1401,126 @@ class Fretado(db.Model):
 # FIM DO MODELO DE FRETADO
 # ===========================================================================================
 
+
+
+# ===========================================================================================
+# MODELO DE HORA PARADA
+# ===========================================================================================
+
+class ViagemHoraParada(db.Model):
+    """
+    Modelo para registrar cobranças de hora parada em viagens.
+    
+    Hora parada é cobrada quando o colaborador atrasa para iniciar a viagem.
+    A cada 30 minutos de atraso, é acrescentado um valor fixo na viagem e no repasse do motorista.
+    
+    Regras:
+    - Apenas 1 registro de hora parada por viagem (UNIQUE constraint)
+    - Valores configuráveis via tabela 'configuracao'
+    - Apenas Admin pode adicionar/editar/excluir
+    - Cálculo automático baseado na diferença entre horário agendado e horário real de início
+    """
+    __tablename__ = 'viagem_hora_parada'
+    
+    # === IDENTIFICAÇÃO ===
+    id = db.Column(db.Integer, primary_key=True)
+    viagem_id = db.Column(db.Integer, db.ForeignKey('viagem.id'), nullable=False, unique=True)
+    
+    # === CÁLCULO DO ATRASO ===
+    tipo_corrida = db.Column(db.String(20), nullable=False)  # 'entrada', 'saida', 'desligamento'
+    horario_agendado = db.Column(db.DateTime, nullable=False)  # Horário que deveria iniciar
+    horario_real_inicio = db.Column(db.DateTime, nullable=False)  # Horário que realmente iniciou (data_inicio da viagem)
+    minutos_atraso = db.Column(db.Integer, nullable=False)  # Diferença em minutos
+    periodos_30min = db.Column(db.Integer, nullable=False)  # Quantos períodos de 30min cobrar
+    
+    # === VALORES FINANCEIROS ===
+    valor_adicional = db.Column(db.Numeric(10, 2), nullable=False)  # Valor adicional na viagem (ex: 71,02 x períodos)
+    repasse_adicional = db.Column(db.Numeric(10, 2), nullable=False)  # Repasse adicional ao motorista (ex: 29,00 x períodos)
+    
+    # === AUDITORIA ===
+    observacoes = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    
+    # === RELACIONAMENTOS ===
+    viagem = db.relationship('Viagem', backref=db.backref('hora_parada', uselist=False, cascade="all, delete-orphan"))
+    created_by = db.relationship('User', backref='horas_paradas_criadas')
+    
+    def __repr__(self):
+        return f'<ViagemHoraParada Viagem#{self.viagem_id} - {self.periodos_30min}x30min - R$ {self.valor_adicional}>'
+    
+    def to_dict(self):
+        """Converte o registro para dicionário."""
+        return {
+            'id': self.id,
+            'viagem_id': self.viagem_id,
+            'tipo_corrida': self.tipo_corrida,
+            'horario_agendado': self.horario_agendado.isoformat() if self.horario_agendado else None,
+            'horario_real_inicio': self.horario_real_inicio.isoformat() if self.horario_real_inicio else None,
+            'minutos_atraso': self.minutos_atraso,
+            'periodos_30min': self.periodos_30min,
+            'valor_adicional': float(self.valor_adicional) if self.valor_adicional else 0.00,
+            'repasse_adicional': float(self.repasse_adicional) if self.repasse_adicional else 0.00,
+            'observacoes': self.observacoes,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'created_by_user_id': self.created_by_user_id,
+            'created_by_name': self.created_by.username if self.created_by else None
+        }
+    
+    @staticmethod
+    def calcular_periodos(minutos_atraso):
+        """
+        Calcula quantos períodos de 30min devem ser cobrados.
+        
+        Regra: A cada 30 minutos de atraso, cobra 1 período.
+        - 1 a 30 minutos = 1 período
+        - 31 a 60 minutos = 2 períodos
+        - 61 a 90 minutos = 3 períodos
+        - etc.
+        
+        Args:
+            minutos_atraso (int): Minutos de atraso
+            
+        Returns:
+            int: Número de períodos de 30min a cobrar
+        """
+        import math
+        if minutos_atraso <= 0:
+            return 0
+        return math.ceil(minutos_atraso / 30)
+    
+    @staticmethod
+    def obter_valores_configurados():
+        """
+        Obtém os valores configurados de hora parada.
+        
+        Returns:
+            tuple: (valor_periodo, repasse_periodo)
+        """
+        from app.models import Configuracao
+        
+        # Valores padrão
+        valor_periodo = 71.02
+        repasse_periodo = 29.00
+        
+        # Busca valores configurados
+        config_valor = Configuracao.query.filter_by(chave='hora_parada_valor_periodo').first()
+        config_repasse = Configuracao.query.filter_by(chave='hora_parada_repasse_periodo').first()
+        
+        if config_valor:
+            try:
+                valor_periodo = float(config_valor.valor)
+            except ValueError:
+                pass
+        
+        if config_repasse:
+            try:
+                repasse_periodo = float(config_repasse.valor)
+            except ValueError:
+                pass
+        
+        return (valor_periodo, repasse_periodo)
+
+# ===========================================================================================
+# FIM DO MODELO DE HORA PARADA
+# ===========================================================================================

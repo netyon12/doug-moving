@@ -18,7 +18,7 @@ import csv
 from .. import db
 from ..models import (
     User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
-    Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao
+    Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao, ViagemHoraParada
 )
 from ..decorators import permission_required
 from app import query_filters
@@ -35,8 +35,8 @@ from app.services.whatsapp_service import whatsapp_service
 def viagens():
     """Lista e filtra viagens criadas no sistema"""
     try:
-        # Busca base de viagens
-        query = Viagem.query
+        # Busca base de viagens (com eager loading de hora_parada)
+        query = Viagem.query.options(db.joinedload(Viagem.hora_parada))
         
         # Aplica filtros
         filtro_viagem_id = request.args.get('viagem_id', '')
@@ -318,3 +318,219 @@ def cancelar_viagem(viagem_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
+
+
+# ===========================================================================================
+# ROTAS DE HORA PARADA
+# ===========================================================================================
+
+@admin_bp.route('/viagens/<int:viagem_id>/hora-parada', methods=['GET'])
+@login_required
+@permission_required(['admin'])
+def viagem_hora_parada_form(viagem_id):
+    """
+    Exibe o formulário (modal) para adicionar/editar hora parada em uma viagem.
+    Apenas Admin tem acesso.
+    """
+    try:
+        from ..models import ViagemHoraParada
+        import math
+        
+        # Busca a viagem
+        viagem = Viagem.query.get_or_404(viagem_id)
+        
+        # Verifica se a viagem está finalizada
+        if viagem.status != 'Finalizada':
+            return jsonify({
+                'success': False,
+                'message': 'Hora parada só pode ser adicionada em viagens finalizadas.'
+            }), 400
+        
+        # Verifica se já existe hora parada cadastrada
+        hora_parada_existente = ViagemHoraParada.query.filter_by(viagem_id=viagem_id).first()
+        
+        # Determina o horário agendado baseado no tipo de corrida
+        horario_agendado = None
+        if viagem.tipo_corrida == 'entrada':
+            horario_agendado = viagem.horario_entrada
+        elif viagem.tipo_corrida == 'saida':
+            horario_agendado = viagem.horario_saida
+        elif viagem.tipo_corrida == 'desligamento':
+            horario_agendado = viagem.horario_desligamento
+        
+        # Horário real de início
+        horario_real_inicio = viagem.data_inicio
+        
+        # Calcula atraso em minutos
+        minutos_atraso = 0
+        if horario_agendado and horario_real_inicio:
+            diferenca = horario_real_inicio - horario_agendado
+            minutos_atraso = int(diferenca.total_seconds() / 60)
+        
+        # Calcula períodos sugeridos
+        periodos_sugeridos = ViagemHoraParada.calcular_periodos(minutos_atraso) if minutos_atraso > 0 else 1
+        
+        # Obtém valores configurados
+        valor_periodo, repasse_periodo = ViagemHoraParada.obter_valores_configurados()
+        
+        # Prepara dados para o modal
+        dados = {
+            'viagem_id': viagem.id,
+            'tipo_corrida': viagem.tipo_corrida,
+            'motorista_nome': viagem.nome_motorista,
+            'horario_agendado': horario_agendado.strftime('%d/%m/%Y %H:%M') if horario_agendado else 'N/A',
+            'horario_real_inicio': horario_real_inicio.strftime('%d/%m/%Y %H:%M') if horario_real_inicio else 'N/A',
+            'minutos_atraso': minutos_atraso,
+            'periodos_sugeridos': periodos_sugeridos,
+            'valor_periodo': float(valor_periodo),
+            'repasse_periodo': float(repasse_periodo),
+            'editando': hora_parada_existente is not None
+        }
+        
+        # Se está editando, adiciona dados existentes
+        if hora_parada_existente:
+            dados['hp_id'] = hora_parada_existente.id
+            dados['periodos_atual'] = hora_parada_existente.periodos_30min
+            dados['observacoes_atual'] = hora_parada_existente.observacoes or ''
+        
+        return jsonify({'success': True, 'dados': dados})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@admin_bp.route('/viagens/<int:viagem_id>/hora-parada', methods=['POST'])
+@login_required
+@permission_required(['admin'])
+def viagem_hora_parada_salvar(viagem_id):
+    """
+    Salva (cria ou atualiza) a hora parada de uma viagem.
+    Apenas Admin tem acesso.
+    """
+    try:
+        from ..models import ViagemHoraParada
+        
+        # Busca a viagem
+        viagem = Viagem.query.get_or_404(viagem_id)
+        
+        # Verifica se a viagem está finalizada
+        if viagem.status != 'Finalizada':
+            return jsonify({
+                'success': False,
+                'message': 'Hora parada só pode ser adicionada em viagens finalizadas.'
+            }), 400
+        
+        # Obtém dados do formulário
+        periodos_30min = int(request.form.get('periodos_30min', 1))
+        observacoes = request.form.get('observacoes', '').strip()
+        
+        # Validação
+        if periodos_30min < 1:
+            return jsonify({
+                'success': False,
+                'message': 'O número de períodos deve ser maior ou igual a 1.'
+            }), 400
+        
+        # Determina o horário agendado baseado no tipo de corrida
+        horario_agendado = None
+        if viagem.tipo_corrida == 'entrada':
+            horario_agendado = viagem.horario_entrada
+        elif viagem.tipo_corrida == 'saida':
+            horario_agendado = viagem.horario_saida
+        elif viagem.tipo_corrida == 'desligamento':
+            horario_agendado = viagem.horario_desligamento
+        
+        # Horário real de início
+        horario_real_inicio = viagem.data_inicio
+        
+        # Calcula atraso em minutos
+        minutos_atraso = 0
+        if horario_agendado and horario_real_inicio:
+            diferenca = horario_real_inicio - horario_agendado
+            minutos_atraso = int(diferenca.total_seconds() / 60)
+        
+        # Obtém valores configurados
+        valor_periodo, repasse_periodo = ViagemHoraParada.obter_valores_configurados()
+        
+        # Calcula valores totais
+        valor_adicional = valor_periodo * periodos_30min
+        repasse_adicional = repasse_periodo * periodos_30min
+        
+        # Verifica se já existe hora parada
+        hora_parada = ViagemHoraParada.query.filter_by(viagem_id=viagem_id).first()
+        
+        if hora_parada:
+            # Atualiza existente
+            hora_parada.periodos_30min = periodos_30min
+            hora_parada.valor_adicional = valor_adicional
+            hora_parada.repasse_adicional = repasse_adicional
+            hora_parada.observacoes = observacoes
+            mensagem = f'Hora parada da viagem #{viagem.id} atualizada com sucesso!'
+        else:
+            # Cria novo registro
+            hora_parada = ViagemHoraParada(
+                viagem_id=viagem_id,
+                tipo_corrida=viagem.tipo_corrida,
+                horario_agendado=horario_agendado,
+                horario_real_inicio=horario_real_inicio,
+                minutos_atraso=minutos_atraso,
+                periodos_30min=periodos_30min,
+                valor_adicional=valor_adicional,
+                repasse_adicional=repasse_adicional,
+                observacoes=observacoes,
+                created_by_user_id=current_user.id
+            )
+            db.session.add(hora_parada)
+            mensagem = f'Hora parada adicionada à viagem #{viagem.id} com sucesso!'
+        
+        db.session.commit()
+        
+        flash(mensagem, 'success')
+        return jsonify({
+            'success': True,
+            'message': mensagem,
+            'valor_adicional': float(valor_adicional),
+            'repasse_adicional': float(repasse_adicional)
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@admin_bp.route('/viagens/<int:viagem_id>/hora-parada', methods=['DELETE'])
+@login_required
+@permission_required(['admin'])
+def viagem_hora_parada_excluir(viagem_id):
+    """
+    Exclui a hora parada de uma viagem.
+    Apenas Admin tem acesso.
+    """
+    try:
+        from ..models import ViagemHoraParada
+        
+        # Busca a hora parada
+        hora_parada = ViagemHoraParada.query.filter_by(viagem_id=viagem_id).first()
+        
+        if not hora_parada:
+            return jsonify({
+                'success': False,
+                'message': 'Hora parada não encontrada para esta viagem.'
+            }), 404
+        
+        db.session.delete(hora_parada)
+        db.session.commit()
+        
+        flash(f'Hora parada da viagem #{viagem_id} excluída com sucesso!', 'success')
+        return jsonify({
+            'success': True,
+            'message': 'Hora parada excluída com sucesso!'
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# ===========================================================================================
+# FIM DAS ROTAS DE HORA PARADA
+# ===========================================================================================

@@ -38,6 +38,8 @@ def configuracoes():
         tempo_cortesia_str = request.form.get('tempo_cortesia')
         max_passageiros_str = request.form.get('max_passageiros')
         limite_fretado_str = request.form.get('limite_fretado')
+        hora_parada_valor_str = request.form.get('hora_parada_valor')
+        hora_parada_repasse_str = request.form.get('hora_parada_repasse')
 
         # Salva Tempo de Cortesia
         config_cortesia = Configuracao.query.filter_by(
@@ -69,6 +71,26 @@ def configuracoes():
         else:
             config_limite.valor = limite_fretado_str
 
+        # Salva Valor Hora Parada (Viagem)
+        config_hp_valor = Configuracao.query.filter_by(
+            chave='hora_parada_valor_periodo').first()
+        if not config_hp_valor:
+            config_hp_valor = Configuracao(
+                chave='hora_parada_valor_periodo', valor=hora_parada_valor_str)
+            db.session.add(config_hp_valor)
+        else:
+            config_hp_valor.valor = hora_parada_valor_str
+
+        # Salva Valor Hora Parada (Repasse Motorista)
+        config_hp_repasse = Configuracao.query.filter_by(
+            chave='hora_parada_repasse_periodo').first()
+        if not config_hp_repasse:
+            config_hp_repasse = Configuracao(
+                chave='hora_parada_repasse_periodo', valor=hora_parada_repasse_str)
+            db.session.add(config_hp_repasse)
+        else:
+            config_hp_repasse.valor = hora_parada_repasse_str
+
         db.session.commit()
         flash('Configurações salvas com sucesso!', 'success')
         return redirect(url_for('admin.configuracoes'))
@@ -80,16 +102,24 @@ def configuracoes():
         chave='MAX_PASSAGEIROS_POR_VIAGEM').first()
     config_limite = Configuracao.query.filter_by(
         chave='limite_fretado').first()
+    config_hp_valor = Configuracao.query.filter_by(
+        chave='hora_parada_valor_periodo').first()
+    config_hp_repasse = Configuracao.query.filter_by(
+        chave='hora_parada_repasse_periodo').first()
     
     # Valores padrão
     tempo_cortesia = config_cortesia.valor if config_cortesia else '30'
     max_passageiros = config_passageiros.valor if config_passageiros else '3'
     limite_fretado = config_limite.valor if config_limite else '9'
+    hora_parada_valor = config_hp_valor.valor if config_hp_valor else '71.02'
+    hora_parada_repasse = config_hp_repasse.valor if config_hp_repasse else '29.00'
 
     return render_template('configuracoes.html', 
                          tempo_cortesia=tempo_cortesia,
                          max_passageiros=max_passageiros,
-                         limite_fretado=limite_fretado)
+                         limite_fretado=limite_fretado,
+                         hora_parada_valor=hora_parada_valor,
+                         hora_parada_repasse=hora_parada_repasse)
 
 
 
@@ -670,4 +700,3 @@ def api_turnos_por_planta(planta_id):
 # =============================================================================
 # ROTAS DE AGRUPAMENTO DE VIAGENS
 # =============================================================================
-

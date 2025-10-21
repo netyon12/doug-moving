@@ -78,6 +78,42 @@
                             </small>
                         </div>
 
+                        <!-- Valor Hora Parada (Viagem) -->
+                        <div class="mb-4">
+                            <label for="hora_parada_valor" class="form-label fw-bold">
+                                <i class="bi bi-currency-dollar me-1"></i>Valor Hora Parada - Viagem (R$)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="hora_parada_valor" 
+                                   name="hora_parada_valor" 
+                                   value="{{ hora_parada_valor }}" 
+                                   min="0" 
+                                   step="0.01" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Valor cobrado do cliente por período de 30 minutos de hora parada (recomendado: R$ 71,02).
+                            </small>
+                        </div>
+
+                        <!-- Valor Hora Parada (Repasse Motorista) -->
+                        <div class="mb-4">
+                            <label for="hora_parada_repasse" class="form-label fw-bold">
+                                <i class="bi bi-cash-coin me-1"></i>Valor Hora Parada - Repasse Motorista (R$)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="hora_parada_repasse" 
+                                   name="hora_parada_repasse" 
+                                   value="{{ hora_parada_repasse }}" 
+                                   min="0" 
+                                   step="0.01" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Valor repassado ao motorista por período de 30 minutos de hora parada (recomendado: R$ 29,00).
+                            </small>
+                        </div>
+
                         <!-- Botões -->
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">
