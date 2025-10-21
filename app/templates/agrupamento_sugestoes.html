@@ -153,8 +153,12 @@
                                                                     {% set tipo_lower = solicitacao.tipo_corrida|lower if solicitacao.tipo_corrida else '' %}
                                                                     {% if tipo_lower == 'entrada' %}
                                                                         {{ solicitacao.horario_entrada if solicitacao.horario_entrada else 'N/A' }}
-                                                                    {% else %}
+                                                                    {% elif tipo_lower == 'saida' %}
                                                                         {{ solicitacao.horario_saida if solicitacao.horario_saida else 'N/A' }}
+                                                                    {% elif tipo_lower == 'desligamento' %}
+                                                                        {{ solicitacao.horario_desligamento if solicitacao.horario_desligamento else 'N/A' }}
+                                                                    {% else %}
+                                                                        N/A
                                                                     {% endif %}
                                                                 </td>
                                                                 <td>
@@ -251,8 +255,12 @@
                                                                     {% set tipo_lower = solicitacao.tipo_corrida|lower if solicitacao.tipo_corrida else '' %}
                                                                     {% if tipo_lower == 'entrada' %}
                                                                         {{ solicitacao.horario_entrada if solicitacao.horario_entrada else 'N/A' }}
-                                                                    {% else %}
+                                                                    {% elif tipo_lower == 'saida' %}
                                                                         {{ solicitacao.horario_saida if solicitacao.horario_saida else 'N/A' }}
+                                                                    {% elif tipo_lower == 'desligamento' %}
+                                                                        {{ solicitacao.horario_desligamento if solicitacao.horario_desligamento else 'N/A' }}
+                                                                    {% else %}
+                                                                        N/A
                                                                     {% endif %}
                                                                 </td>
                                                                 <td>

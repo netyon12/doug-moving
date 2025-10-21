@@ -30,6 +30,20 @@ from app.services.notification_service import notification_service
 from ..utils.admin_audit import log_audit, log_viagem_audit, AuditAction
 
 
+def formatar_horario(horario):
+    """Formata horário para HH:MM, funciona com datetime ou string"""
+    if not horario:
+        return ''
+    # Se for datetime, usa strftime
+    if hasattr(horario, 'strftime'):
+        return horario.strftime('%H:%M')
+    # Se for string, extrai HH:MM
+    horario_str = str(horario)
+    if len(horario_str) >= 16:  # Formato: "2025-10-21 20:36:00"
+        return horario_str[11:16]
+    return horario_str
+
+
 def serializar_solicitacao(sol):
     """Converte objeto Solicitacao em dicionário"""
     return {
@@ -39,9 +53,9 @@ def serializar_solicitacao(sol):
         'bloco_id': sol.colaborador.bloco_id if sol.colaborador else None,
         'bloco_codigo': sol.colaborador.bloco.codigo_bloco if sol.colaborador and sol.colaborador.bloco else '',
         'tipo_corrida': sol.tipo_corrida,
-        'horario_entrada': sol.horario_entrada.strftime('%H:%M') if sol.horario_entrada else '',
-        'horario_saida': sol.horario_saida.strftime('%H:%M') if sol.horario_saida else '',
-        'horario_desligamento': sol.horario_desligamento.strftime('%H:%M') if sol.horario_desligamento else ''
+        'horario_entrada': formatar_horario(sol.horario_entrada),
+        'horario_saida': formatar_horario(sol.horario_saida),
+        'horario_desligamento': formatar_horario(sol.horario_desligamento)
     }
 
 
