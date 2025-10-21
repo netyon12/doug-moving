@@ -453,6 +453,7 @@ def finalizar_agrupamento():
         viagens_criadas = 0
         fretados_criados = 0
         solicitacoes_agrupadas = 0
+        viagens_ids_para_notificar = []  # ✅ NOVA: Lista para armazenar IDs das viagens
         
         for grupo in grupos:
             if not grupo or not isinstance(grupo, dict):
@@ -591,6 +592,9 @@ def finalizar_agrupamento():
                     db.session.add(novo_fretado)
                     db.session.flush()  # Para obter o ID
                     
+                    # ✅ CORREÇÃO: Define bloco_codigo antes de usar
+                    bloco_codigo = blocos_unicos[0] if blocos_unicos else 'N/A'
+                    
                     # AUDITORIA: Registra criação de fretado
                     log_audit(
                         action=AuditAction.CREATE,
@@ -601,7 +605,7 @@ def finalizar_agrupamento():
                         changes={
                             'colaborador': nome_colaborador,
                             'tipo_corrida': solicitacao.tipo_corrida,
-                            'bloco': grupo_bloco
+                            'bloco': bloco_codigo  # ✅ CORRIGIDO
                         }
                     )
                     
@@ -668,17 +672,71 @@ def finalizar_agrupamento():
                     solicitacoes_agrupadas += 1
                 
                 viagens_criadas += 1
-                
-                # Notifica motoristas sobre nova viagem disponível - Envia Whatsapp
-                try:
-                    enviadas = notification_service.notificar_viagem_disponivel(nova_viagem)
-                    if enviadas > 0:
-                        print(f"Viagem #{nova_viagem.id}: {enviadas} motoristas notificados")
-                except Exception as e:
-                    print(f"Erro ao notificar motoristas sobre viagem #{nova_viagem.id}: {e}")
-                    # Não interrompe o processo se notificação falhar
+                viagens_ids_para_notificar.append(nova_viagem.id)  # ✅ NOVA: Armazena ID para notificar depois
         
         db.session.commit()
+        
+        # ✅ NOVA: Envia notificações WhatsApp em background (assíncrono)
+        if viagens_ids_para_notificar:
+            import threading
+            import logging
+            from flask import current_app
+            logger = logging.getLogger(__name__)
+            
+            # ✅ Captura o app ANTES de criar a thread
+            app = current_app._get_current_object()
+            
+            def enviar_notificacoes():
+                """Worker thread que cria sua própria sessão do banco de dados"""
+                from app import db as db_module
+                from app.models import Viagem
+                from sqlalchemy.orm import scoped_session, sessionmaker
+                
+                # Usa o contexto da aplicação (app capturado antes da thread)
+                with app.app_context():
+                    # Cria nova sessão para esta thread
+                    session_factory = sessionmaker(bind=db_module.engine)
+                    Session = scoped_session(session_factory)
+                    session_local = Session()  # Retorna Session
+                    
+                    total_enviadas = 0
+                    total_erros = 0
+                    
+                    try:
+                        for viagem_id in viagens_ids_para_notificar:
+                            try:
+                                # Recarrega a viagem usando a nova sessão
+                                viagem = session_local.query(Viagem).get(viagem_id)
+                                
+                                if not viagem:
+                                    logger.warning(f"⚠️  Viagem #{viagem_id} não encontrada")
+                                    continue
+                                
+                                enviadas = notification_service.notificar_viagem_disponivel(viagem)
+                                if enviadas > 0:
+                                    logger.info(f"✅ Viagem #{viagem.id}: {enviadas} motorista(s) notificado(s)")
+                                    total_enviadas += enviadas
+                                else:
+                                    logger.warning(f"⚠️  Viagem #{viagem.id}: Nenhum motorista notificado")
+                            except Exception as e:
+                                logger.error(f"❌ Erro ao notificar motoristas sobre viagem #{viagem_id}: {e}")
+                                total_erros += 1
+                        
+                        # Log final
+                        if total_enviadas > 0:
+                            logger.info(f"🎉 Total: {total_enviadas} notificação(ões) enviada(s) com sucesso")
+                        if total_erros > 0:
+                            logger.error(f"⚠️  Total: {total_erros} erro(s) ao enviar notificações")
+                    
+                    finally:
+                        # Fecha a sessão da thread
+                        session_local.close()   # ✅ Fecha a sessão
+                        Session.remove()        # ✅ Remove do registry do scoped_session
+            
+            # Inicia thread em background
+            thread = threading.Thread(target=enviar_notificacoes, daemon=True)
+            thread.start()
+            logger.info(f"📤 Iniciando envio assíncrono de notificações para {len(viagens_ids_para_notificar)} viagem(ns)...")
         
         # Limpa a sessão
         from flask import session
@@ -691,6 +749,9 @@ def finalizar_agrupamento():
         if viagens_criadas > 0:
             mensagem += f' {viagens_criadas} viagem(ns) criada(s).'
         mensagem += f' Total: {solicitacoes_agrupadas} solicitação(ões) agrupada(s).'
+        
+        if viagens_ids_para_notificar:
+            mensagem += f' Notificações WhatsApp sendo enviadas em background.'
         
         return jsonify({
             'success': True,
@@ -863,10 +924,3 @@ def mesclar_grupos():
         
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
-
-
-
-
-# =============================================================================
-# ROTAS DE GERENCIAMENTO DE VIAGENS
-# =============================================================================

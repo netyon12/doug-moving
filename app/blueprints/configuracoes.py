@@ -15,7 +15,7 @@ from io import StringIO
 import io
 import csv
 
-from .. import db
+from .. import db, cache
 from ..models import (
     User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
     Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao
@@ -681,8 +681,9 @@ def api_supervisores_por_planta(planta_id):
 
 @admin_bp.route('/api/plantas/<int:planta_id>/turnos')
 @login_required
+@cache.cached(timeout=3600, query_string=True)  # Cache por 1 hora
 def api_turnos_por_planta(planta_id):
-    """API para buscar turnos de uma planta"""
+    """API para buscar turnos de uma planta (com cache)"""
     turnos = Turno.query.filter_by(planta_id=planta_id).order_by(Turno.horario_inicio).all()
     
     resultado = []
@@ -697,6 +698,3 @@ def api_turnos_por_planta(planta_id):
     return jsonify(resultado)
 
 
-# =============================================================================
-# ROTAS DE AGRUPAMENTO DE VIAGENS
-# =============================================================================

@@ -5,10 +5,19 @@ from werkzeug.security import generate_password_hash
 import click
 from sqlalchemy import text
 from flask_migrate import Migrate
+import logging
 
 # Cria a aplicação usando a nossa factory
 app = create_app()
 migrate = Migrate(app, db)  # ← ADICIONE ESTA LINHA
+
+# Configurar logging
+logging.basicConfig(
+    level=logging.INFO,  # ou DEBUG para ver tudo
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+
 
 # =============================================================================
 # COMANDOS DE LINHA DE COMANDO (CLI)

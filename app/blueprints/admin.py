@@ -20,6 +20,7 @@ Data: 2024-10-13
 """
 
 from flask import Blueprint
+import logging
 
 # =============================================================================
 # CRIAÇÃO DO BLUEPRINT
@@ -64,6 +65,12 @@ MODULOS_CARREGADOS = [
     'configuracoes',
 ]
 
-print(f"✅ Blueprint Admin carregado (v{__version__})")
-print(f"   Módulos ativos: {', '.join(MODULOS_CARREGADOS)}")
+
+logger = logging.getLogger(__name__)
+
+logger.info(f"✅ Blueprint Admin carregado (v{__version__})")
+logger.info(f"   Módulos ativos: {', '.join(MODULOS_CARREGADOS)}")
+
+#print(f"✅ Blueprint Admin carregado (v{__version__})")
+#print(f"   Módulos ativos: {', '.join(MODULOS_CARREGADOS)}")
 

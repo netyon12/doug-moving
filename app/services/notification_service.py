@@ -65,9 +65,9 @@ class NotificationService:
         
         quantidade_passageiros = viagem.quantidade_passageiros or 0
         
-        # Formata valor da viagem
-        if viagem.valor:
-            valor_texto = f"R$ {float(viagem.valor):.2f}".replace('.', ',')
+        # Formata valor do repasse (o que o motorista recebe)
+        if viagem.valor_repasse:  # ✅ Valor que o motorista recebe
+            valor_texto = f"R$ {float(viagem.valor_repasse):.2f}".replace('.', ',')
         else:
             valor_texto = 'Não informado'
         
@@ -79,7 +79,7 @@ Nova Viagem disponível no aplicativo Go Mobi! *[ID Viagem: {viagem_id}]*
 Acesse a plataforma para agendar sua corrida com o colaborador!
 *Blocos da Viagem:* {blocos}
 *Nro de Passageiros:* {passageiros}
-*Valor da Corrida:* {valor}
+*Valor do Repasse:* {valor}
 
 Acesse a Go Mobi: https://doug-moving.onrender.com/"""
         

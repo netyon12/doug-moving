@@ -4,10 +4,32 @@ from flask import Flask, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, login_required, current_user, logout_user
+from flask_caching import Cache
 
 # Instâncias das extensões
 db = SQLAlchemy()
 login_manager = LoginManager()
+cache = Cache()
+
+
+def create_scoped_session():
+    """
+    Cria uma sessão isolada do SQLAlchemy para uso em threads.
+    
+    Esta função é usada quando precisamos acessar o banco de dados
+    em threads background (como notificações assíncronas).
+    
+    Returns:
+        scoped_session: Sessão isolada do SQLAlchemy
+    """
+    from sqlalchemy.orm import scoped_session, sessionmaker
+    
+    # Cria uma nova sessão usando o engine existente
+    session_factory = sessionmaker(bind=db.engine)
+    Session = scoped_session(session_factory)
+    
+    return Session
+
 
 def create_app():
     """Cria e configura a instância da aplicação Flask."""
@@ -20,11 +42,16 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///doug_moving.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['UPLOAD_FOLDER'] = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/profile_pics')
+    
+    # Configuração do Flask-Caching
+    app.config['CACHE_TYPE'] = 'SimpleCache'  # Cache em memória
+    app.config['CACHE_DEFAULT_TIMEOUT'] = 3600  # 1 hora
 
     # --- INICIALIZAÇÃO DAS EXTENSÕES ---
     db.init_app(app)
     login_manager.init_app(app)
-    migrate = Migrate(app, db)  # ← ADICIONE AQUI
+    cache.init_app(app)
+    migrate = Migrate(app, db)
     
     # Configuração do Flask-Login
     from .models import User
@@ -118,7 +145,3 @@ def create_app():
             return redirect(url_for('auth.login'))
 
     return app
-
-
-
-

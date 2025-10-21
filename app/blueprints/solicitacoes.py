@@ -14,6 +14,7 @@ from sqlalchemy import func, or_
 from io import StringIO
 import io
 import csv
+import logging
 
 from .. import db
 from ..models import (
@@ -28,6 +29,9 @@ from .admin import admin_bp
 # IMPORTAR SISTEMA DE AUDITORIA
 from ..utils.admin_audit import log_audit, AuditAction
 
+logger = logging.getLogger(__name__)
+# No início do arquivo
+logger.info("Módulo solicitacoes carregado")
 
 @admin_bp.route('/solicitacoes')
 @login_required
@@ -35,6 +39,8 @@ from ..utils.admin_audit import log_audit, AuditAction
 def solicitacoes():
     # --- LÓGICA DE FILTRAGEM ---
     query = Solicitacao.query
+    
+
 
     # Filtro por perfil
     if current_user.role == 'gerente':
@@ -140,15 +146,16 @@ def solicitacoes():
         filtros=filtros
     )
 
-
-
+    
 
 @admin_bp.route('/nova_solicitacao', methods=['GET', 'POST'])
 @login_required
 # Permissão atualizada para incluir 'admin'
 @permission_required(['supervisor', 'admin'])
 def nova_solicitacao():
+    
     if request.method == 'POST':
+        logger.debug(f"Nova solicitação recebida: {request.form}")
         try:
             # NOVA VALIDAÇÃO: Verifica se há datas no passado
             from datetime import date
@@ -438,6 +445,9 @@ def nova_solicitacao():
             
             db.session.commit()
             
+            # Log no Terminal de Sucesso
+            logger.info(f"{solicitacoes_criadas} solicitação(ões) criada(s) com sucesso")
+
             # AUDITORIA: Registra criação de solicitações
             for sol_id in solicitacoes_ids_criadas:
                 log_audit(
