@@ -96,8 +96,20 @@
                         <div class="mb-3">
                             <label for="status" class="form-label">Status*</label>
                             <select class="form-select" id="status" name="status" required>
-                                <option value="Ativo" {% if colaborador and colaborador.status == 'Ativo' %}selected{% endif %}>Ativo</option>
-                                <option value="Inativo" {% if colaborador and colaborador.status == 'Inativo' %}selected{% endif %}>Inativo</option>
+                                {% if status_opcoes %}
+                                    {% for status in status_opcoes %}
+                                        <option value="{{ status }}" 
+                                            {% if colaborador and colaborador.status == status %}selected{% endif %}>
+                                            {{ status }}
+                                        </option>
+                                    {% endfor %}
+                                {% else %}
+                                    <!-- Fallback caso status_opcoes não seja passado -->
+                                    <option value="Ativo" {% if colaborador and colaborador.status == 'Ativo' %}selected{% endif %}>Ativo</option>
+                                    <option value="Inativo" {% if colaborador and colaborador.status == 'Inativo' %}selected{% endif %}>Inativo</option>
+                                    <option value="Desligado" {% if colaborador and colaborador.status == 'Desligado' %}selected{% endif %}>Desligado</option>
+                                    <option value="Ausente" {% if colaborador and colaborador.status == 'Ausente' %}selected{% endif %}>Ausente</option>
+                                {% endif %}
                             </select>
                         </div>
 

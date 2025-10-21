@@ -58,7 +58,7 @@ def cadastrar_colaborador():
                 empresas = [current_user.supervisor.empresa]
                 plantas = current_user.supervisor.plantas
             blocos = Bloco.query.order_by(Bloco.codigo_bloco).all()
-            return render_template('form_colaborador.html', aba_ativa='colaboradores', empresas=empresas, plantas=plantas, blocos=blocos)
+            return render_template('form_colaborador.html', aba_ativa='colaboradores', empresas=empresas, plantas=plantas, blocos=blocos, status_opcoes=Colaborador.STATUS_VALIDOS)
 
         novo_colaborador = Colaborador(
             nome=request.form.get('nome'),
@@ -98,7 +98,8 @@ def cadastrar_colaborador():
         aba_ativa='colaboradores',
         empresas=empresas,
         plantas=plantas,
-        blocos=blocos  # Adiciona blocos ao contexto
+        blocos=blocos,
+        status_opcoes=Colaborador.STATUS_VALIDOS
     )
 
 
@@ -134,7 +135,7 @@ def editar_colaborador(colaborador_id):
                 empresas = [current_user.empresa]
                 plantas = [current_user.planta]
             blocos = Bloco.query.order_by(Bloco.codigo_bloco).all()
-            return render_template('form_colaborador.html', aba_ativa='colaboradores', colaborador=colaborador, empresas=empresas, plantas=plantas, blocos=blocos)
+            return render_template('form_colaborador.html', aba_ativa='colaboradores', colaborador=colaborador, empresas=empresas, plantas=plantas, blocos=blocos, status_opcoes=Colaborador.STATUS_VALIDOS)
 
         colaborador.nome = request.form.get('nome')
         colaborador.matricula = request.form.get('matricula')
@@ -168,7 +169,8 @@ def editar_colaborador(colaborador_id):
         colaborador=colaborador,
         empresas=empresas,
         plantas=plantas,
-        blocos=blocos
+        blocos=blocos,
+        status_opcoes=Colaborador.STATUS_VALIDOS
     )
 
 

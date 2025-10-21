@@ -372,6 +372,18 @@ class Supervisor(db.Model):
 
 class Colaborador(db.Model):
     __tablename__ = 'colaborador'
+
+    # ========== ADICIONAR ESTAS LINHAS ==========
+    # Constantes de status
+    STATUS_ATIVO = 'Ativo'
+    STATUS_INATIVO = 'Inativo'
+    STATUS_DESLIGADO = 'Desligado'
+    STATUS_AUSENTE = 'Ausente'
+    
+    STATUS_VALIDOS = [STATUS_ATIVO, STATUS_INATIVO, STATUS_DESLIGADO, STATUS_AUSENTE]
+    # ============================================
+
+
     id = db.Column(db.Integer, primary_key=True)
     # ID do Colaborador (matrícula)
     matricula = db.Column(db.String(50), unique=True, nullable=False)
