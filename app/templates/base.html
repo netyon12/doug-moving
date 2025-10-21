@@ -453,7 +453,14 @@
         }
     </style>
 </head>
-<body data-user-role="{{ current_user.role }}" data-user-planta-id="{% if current_user.role == 'supervisor' %}{{ current_user.supervisor.planta_id }}{% endif %}">
+<body 
+    data-user-role="{{ current_user.role }}" 
+    {% if current_user.role == 'supervisor' and current_user.supervisor.plantas|length == 1 %}
+    data-user-planta-id="{{ current_user.supervisor.plantas[0].id }}"
+    {% elif current_user.role == 'supervisor' and current_user.supervisor.plantas|length > 1 %}
+    data-user-planta-id=""
+    {% endif %}
+>
     <!-- Navbar Superior - Go Mobi Style -->
     <nav class="navbar navbar-dark navbar-gomobi fixed-top p-0 shadow">
         <!-- Botão Hambúrguer para Mobile -->
@@ -942,4 +949,3 @@
     {% block scripts %}{% endblock %}
 </body>
 </html>
-
