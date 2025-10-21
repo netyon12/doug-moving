@@ -414,6 +414,19 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // ========================================================================
+        // NOVA VALIDAÇÃO: Verificar se colaborador tem bloco cadastrado
+        // ========================================================================
+        if (!selectedColaborador.bloco || selectedColaborador.bloco === 'N/A' || selectedColaborador.bloco === '') {
+            alert('❌ ERRO: O colaborador selecionado não possui bloco cadastrado.\n\n' +
+                '📝 Por favor, edite o cadastro do colaborador e associe-o a um bloco antes de criar a solicitação.\n\n' +
+                '👤 Colaborador: ' + selectedColaborador.nome + '\n' +
+                '🔢 Matrícula: ' + selectedColaborador.matricula + '\n\n' +
+                '💡 Dica: Vá em Colaboradores → Editar → Selecione um Bloco → Salvar');
+            return;
+        }
+        // ========================================================================
+
         const tipo = tipoCorrida.value;
         if (!tipo) {
             alert('Por favor, selecione o tipo de corrida primeiro.');
