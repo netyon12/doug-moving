@@ -527,9 +527,15 @@ def finalizar_agrupamento():
                 horario_saida = primeira.horario_saida
                 horario_desligamento = primeira.horario_desligamento
             
+            # 🔍 DEBUG: Log para diagnóstico
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"🔍 DEBUG FRETADO: len(solicitacoes)={len(solicitacoes)}, grupos_blocos_unicos={grupos_blocos_unicos}, mesmo_grupo_bloco={mesmo_grupo_bloco}")
+            
             # REGRA: Se 10+ passageiros do mesmo GRUPO DE BLOCO, cria FRETADO; senão, cria VIAGEM
             # Exemplo: CPV2.1 + CPV2.5 = mesmo grupo (CPV2) → pode criar fretado
             if len(solicitacoes) >= 10 and mesmo_grupo_bloco:
+                logger.info(f"✅ CRIANDO FRETADO: {len(solicitacoes)} passageiros do grupo {grupos_blocos_unicos[0]}")
                 # Cria 1 registro de FRETADO para CADA colaborador
                 for solicitacao in solicitacoes:
                     colaborador = solicitacao.colaborador
@@ -629,7 +635,9 @@ def finalizar_agrupamento():
                     solicitacoes_agrupadas += 1
                 
                 fretados_criados += 1  # Conta como 1 grupo de fretado criado
+                logger.info(f"🎉 FRETADO CRIADO: {len(solicitacoes)} registros na tabela fretado")
             else:
+                logger.info(f"⚠️ CRIANDO VIAGEM: len={len(solicitacoes)}, mesmo_grupo={mesmo_grupo_bloco}")
                 # Cria VIAGEM
                 nova_viagem = Viagem(
                     # Status
