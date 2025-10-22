@@ -479,10 +479,24 @@ def finalizar_agrupamento():
             colaboradores_ids = [sol.colaborador_id for sol in solicitacoes]
             colaboradores_json = json.dumps(colaboradores_ids)
             
-            # Coleta blocos únicos do grupo
-            blocos_unicos = list(set([sol.bloco_id for sol in solicitacoes if sol.bloco_id]))
-            bloco_principal = blocos_unicos[0] if blocos_unicos else None
-            blocos_ids_str = ','.join(map(str, blocos_unicos)) if blocos_unicos else None
+            # Coleta blocos únicos do grupo (por ID)
+            blocos_unicos_ids = list(set([sol.bloco_id for sol in solicitacoes if sol.bloco_id]))
+            bloco_principal = blocos_unicos_ids[0] if blocos_unicos_ids else None
+            blocos_ids_str = ','.join(map(str, blocos_unicos_ids)) if blocos_unicos_ids else None
+            
+            # ✅ CORREÇÃO: Coleta GRUPOS de blocos únicos (prefixo antes do ponto)
+            # Exemplo: CPV2.1 e CPV2.5 → ambos são do grupo "CPV2"
+            grupos_blocos_unicos = set()
+            for sol in solicitacoes:
+                if sol.colaborador and sol.colaborador.bloco:
+                    codigo_bloco = sol.colaborador.bloco.codigo_bloco  # Ex: "CPV2.1"
+                    if codigo_bloco:
+                        # Pega o prefixo antes do ponto (CPV2.1 → CPV2)
+                        grupo_bloco = codigo_bloco.split('.')[0] if '.' in codigo_bloco else codigo_bloco
+                        grupos_blocos_unicos.add(grupo_bloco)
+            
+            grupos_blocos_unicos = list(grupos_blocos_unicos)
+            mesmo_grupo_bloco = len(grupos_blocos_unicos) == 1
             
             # REGRA: Pega o MAIOR valor entre as solicitações (não soma)
             valores = [sol.valor for sol in solicitacoes if sol.valor is not None]
@@ -513,8 +527,9 @@ def finalizar_agrupamento():
                 horario_saida = primeira.horario_saida
                 horario_desligamento = primeira.horario_desligamento
             
-            # REGRA: Se 10+ passageiros do mesmo bloco, cria FRETADO; senão, cria VIAGEM
-            if len(solicitacoes) >= 10 and len(blocos_unicos) == 1:
+            # REGRA: Se 10+ passageiros do mesmo GRUPO DE BLOCO, cria FRETADO; senão, cria VIAGEM
+            # Exemplo: CPV2.1 + CPV2.5 = mesmo grupo (CPV2) → pode criar fretado
+            if len(solicitacoes) >= 10 and mesmo_grupo_bloco:
                 # Cria 1 registro de FRETADO para CADA colaborador
                 for solicitacao in solicitacoes:
                     colaborador = solicitacao.colaborador
@@ -568,7 +583,7 @@ def finalizar_agrupamento():
                         empresa_id=solicitacao.empresa_id,
                         planta_id=solicitacao.planta_id,
                         bloco_id=solicitacao.colaborador.bloco_id if colaborador else None,
-                        grupo_bloco=blocos_unicos[0] if blocos_unicos else None,
+                        grupo_bloco=grupos_blocos_unicos[0] if grupos_blocos_unicos else None,
                         
                         # Tipo de viagem
                         tipo_linha='FIXA',
@@ -593,7 +608,7 @@ def finalizar_agrupamento():
                     db.session.flush()  # Para obter o ID
                     
                     # ✅ CORREÇÃO: Define bloco_codigo antes de usar
-                    bloco_codigo = blocos_unicos[0] if blocos_unicos else 'N/A'
+                    bloco_codigo = grupos_blocos_unicos[0] if grupos_blocos_unicos else 'N/A'
                     
                     # AUDITORIA: Registra criação de fretado
                     log_audit(
