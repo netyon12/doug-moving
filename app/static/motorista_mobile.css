@@ -397,6 +397,11 @@
         display: none !important;
     }
     
+    /* Mostrar elementos mobile */
+    .show-mobile-only {
+        display: block !important;
+    }
+    
     /* Ocultar tabelas em mobile */
     .table-responsive {
         display: none !important;
