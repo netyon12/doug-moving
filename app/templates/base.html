@@ -33,6 +33,9 @@
     <!-- Seu CSS customizado -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css' ) }}">
     
+    <!-- CSS customizado por página -->
+    {% block extra_css %}{% endblock %}
+    
     <style>
         /* ========================================== */
         /* PALETA DE CORES GO MOBI */
