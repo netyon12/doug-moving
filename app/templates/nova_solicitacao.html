@@ -300,6 +300,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+
+
+     // =========================================================================
+    // LÓGICA PARA SUPERVISOR COM MÚLTIPLAS PLANTAS: CARREGAR TURNOS
+    // =========================================================================
+    // Se for supervisor e não tiver plantaId definido (múltiplas plantas),
+    // adiciona evento para carregar turnos quando selecionar a planta
+    if (userRole === 'supervisor' && !userPlantaId && plantaSelect) {
+        plantaSelect.addEventListener('change', function() {
+            plantaIdAtual = this.value;
+            if (plantaIdAtual) {
+                console.log('Supervisor selecionou planta:', plantaIdAtual);
+                carregarTurnos(plantaIdAtual);
+            }
+        });
+    }
+
     // =========================================================================
     // FUNÇÃO: CARREGAR TURNOS DA PLANTA
     // =========================================================================
@@ -491,6 +508,17 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Evento para recalcular turno da entrada
             inputEntrada.addEventListener('change', function() {
+                // ✅ Valida se a data/hora não é retroativa
+                if (this.value) {
+                    const dataEscolhida = new Date(this.value);
+                    const agoraValidacao = new Date();
+                    if (dataEscolhida < agoraValidacao) {
+                        alert('⚠️ Atenção!\n\nNão é permitido selecionar data/hora no passado.\n\nPor favor, selecione uma data/hora a partir de AGORA.');
+                        this.value = '';  // Limpa o campo
+                        inputTurnoEntrada.value = '';
+                        return;
+                    }
+                }
                 inputTurnoEntrada.value = calcularTurno(this.value);
             });
         }
@@ -503,6 +531,17 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Evento para recalcular turno da saída
             inputSaida.addEventListener('change', function() {
+                // ✅ Valida se a data/hora não é retroativa
+                if (this.value) {
+                    const dataEscolhida = new Date(this.value);
+                    const agoraValidacao = new Date();
+                    if (dataEscolhida < agoraValidacao) {
+                        alert('⚠️ Atenção!\n\nNão é permitido selecionar data/hora no passado.\n\nPor favor, selecione uma data/hora a partir de AGORA.');
+                        this.value = '';  // Limpa o campo
+                        inputTurnoSaida.value = '';
+                        return;
+                    }
+                }
                 inputTurnoSaida.value = calcularTurno(this.value);
             });
         }
@@ -515,6 +554,17 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Evento para recalcular turno do desligamento
             inputDesligamento.addEventListener('change', function() {
+                // ✅ Valida se a data/hora não é retroativa
+                if (this.value) {
+                    const dataEscolhida = new Date(this.value);
+                    const agoraValidacao = new Date();
+                    if (dataEscolhida < agoraValidacao) {
+                        alert('⚠️ Atenção!\n\nNão é permitido selecionar data/hora no passado.\n\nPor favor, selecione uma data/hora a partir de AGORA.');
+                        this.value = '';  // Limpa o campo
+                        inputTurnoDesligamento.value = '';
+                        return;
+                    }
+                }
                 inputTurnoDesligamento.value = calcularTurno(this.value);
             });
         }
@@ -536,14 +586,76 @@ document.addEventListener('DOMContentLoaded', function() {
     // VALIDAÇÃO DE DATA MÍNIMA (NÃO PERMITIR DATAS NO PASSADO)
     // =========================================================================
     
-    // Define data mínima como hoje para todos os campos de data
-    const hoje = new Date();
-    const hojeISO = hoje.toISOString().split('T')[0];
+    // ✅ Define data/hora mínima como AGORA (não permite retroativo)
+    const agora = new Date();
     
-    // Aplica a todos os inputs de data-hora
-    const camposData = document.querySelectorAll('input[type="datetime-local"]');
-    camposData.forEach(campo => {
-        campo.setAttribute('min', hojeISO + 'T00:00');
+    // Formata para o formato datetime-local (YYYY-MM-DDTHH:MM)
+    const ano = agora.getFullYear();
+    const mes = String(agora.getMonth() + 1).padStart(2, '0');
+    const dia = String(agora.getDate()).padStart(2, '0');
+    const hora = String(agora.getHours()).padStart(2, '0');
+    const minuto = String(agora.getMinutes()).padStart(2, '0');
+    const dataHoraMinima = `${ano}-${mes}-${dia}T${hora}:${minuto}`;
+    
+    // ✅ Função para aplicar data mínima em todos os campos datetime-local
+    function aplicarDataMinima() {
+        const camposData = document.querySelectorAll('input[type="datetime-local"]');
+        camposData.forEach(campo => {
+            campo.setAttribute('min', dataHoraMinima);
+        });
+    }
+    
+    // Aplica inicialmente
+    aplicarDataMinima();
+    
+    // ✅ Reaplica quando novos campos são adicionados (tabela de colaboradores)
+    const observer = new MutationObserver(function() {
+        aplicarDataMinima();
+    });
+    
+    // Reutiliza a variável tableBody já declarada anteriormente (linha ~81)
+    if (tableBody) {
+        observer.observe(tableBody, { childList: true, subtree: true });
+    }
+    
+    // =========================================================================
+    // VALIDAÇÃO NOS CAMPOS PADRÃO DE HORÁRIO
+    // =========================================================================
+    
+    // ✅ Adiciona validação no campo de entrada padrão
+    defaultEntrada.addEventListener('change', function() {
+        if (this.value) {
+            const dataEscolhida = new Date(this.value);
+            const agoraValidacao = new Date();
+            if (dataEscolhida < agoraValidacao) {
+                alert('⚠️ Atenção!\n\nNão é permitido selecionar data/hora no passado.\n\nPor favor, selecione uma data/hora a partir de AGORA.');
+                this.value = '';  // Limpa o campo
+            }
+        }
+    });
+    
+    // ✅ Adiciona validação no campo de saída padrão
+    defaultSaida.addEventListener('change', function() {
+        if (this.value) {
+            const dataEscolhida = new Date(this.value);
+            const agoraValidacao = new Date();
+            if (dataEscolhida < agoraValidacao) {
+                alert('⚠️ Atenção!\n\nNão é permitido selecionar data/hora no passado.\n\nPor favor, selecione uma data/hora a partir de AGORA.');
+                this.value = '';  // Limpa o campo
+            }
+        }
+    });
+    
+    // ✅ Adiciona validação no campo de desligamento padrão
+    defaultDesligamento.addEventListener('change', function() {
+        if (this.value) {
+            const dataEscolhida = new Date(this.value);
+            const agoraValidacao = new Date();
+            if (dataEscolhida < agoraValidacao) {
+                alert('⚠️ Atenção!\n\nNão é permitido selecionar data/hora no passado.\n\nPor favor, selecione uma data/hora a partir de AGORA.');
+                this.value = '';  // Limpa o campo
+            }
+        }
     });
     
     // =========================================================================
@@ -552,22 +664,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     
     form.addEventListener('submit', function(e) {
-        // VALIDAÇÃO 1: Verifica se há datas no passado
-        const agora = new Date();
+        // ✅ VALIDAÇÃO 1: Verifica se há datas no passado (hora atual)
+        const agoraSubmit = new Date();
         let temDataPassada = false;
+        let campoComErro = null;
         
-        camposData.forEach(campo => {
+        // Busca TODOS os campos datetime-local no momento do submit (incluindo os da tabela)
+        const todosCamposData = document.querySelectorAll('input[type="datetime-local"]');
+        
+        todosCamposData.forEach(campo => {
             if (campo.value) {
                 const dataEscolhida = new Date(campo.value);
-                if (dataEscolhida < agora) {
+                if (dataEscolhida < agoraSubmit) {
                     temDataPassada = true;
+                    campoComErro = campo;
                 }
             }
         });
         
         if (temDataPassada) {
             e.preventDefault();
-            alert('⚠️ Atenção!\n\nNão é permitido criar solicitações com data/hora no passado.\n\nPor favor, selecione uma data a partir de hoje.');
+            alert('⚠️ Atenção!\n\nNão é permitido criar solicitações com data/hora no passado.\n\nPor favor, selecione uma data/hora a partir de AGORA.');
+            
+            // Destaca o campo com erro
+            if (campoComErro) {
+                campoComErro.focus();
+                campoComErro.style.borderColor = '#dc3545';
+                campoComErro.style.borderWidth = '2px';
+                setTimeout(function() {
+                    campoComErro.style.borderColor = '';
+                    campoComErro.style.borderWidth = '';
+                }, 3000);
+            }
+            
             return false;
         }
         

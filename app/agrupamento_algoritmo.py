@@ -162,45 +162,63 @@ class AgrupadorViagensV2:
         return grupos
     
     def _agrupar_por_horario(self, solicitacoes: List[Solicitacao]) -> List[List[Solicitacao]]:
-        """Agrupa solicitações por proximidade de horário"""
+        """
+        Agrupa solicitações por proximidade de horário com PRIORIZAÇÃO POR SUB-BLOCO.
+        
+        Lógica:
+        1. Ordena por sub-bloco (CPV1.1 antes de CPV1.2, etc.)
+        2. Dentro de cada sub-bloco, ordena por horário
+        3. Tenta completar veículos com pessoas do mesmo sub-bloco
+        4. Só mistura sub-blocos quando não houver mais pessoas do sub-bloco atual
+        """
         if not solicitacoes:
             return []
         
-        # Não re-agrupa por bloco individual, mantém todas as solicitações juntas
-        # para permitir que subgrupos (CPV1.1, CPV1.2, CPV1.3) completem a capacidade
-        solicitacoes_por_bloco = {'grupo_completo': solicitacoes}
+        # ✅ PASSO 1: Ordena por SUB-BLOCO (CPV1.1, CPV1.2, CPV1.3) e depois por HORÁRIO
+        def obter_chave_ordenacao(solicitacao):
+            # Obtém o código do sub-bloco (ex: CPV1.1, CPV1.2)
+            sub_bloco = solicitacao.bloco.codigo_bloco if solicitacao.bloco else 'ZZZ'
+            horario = self._obter_horario_relevante(solicitacao)
+            return (sub_bloco, horario)  # Ordena por sub-bloco PRIMEIRO, depois por horário
         
-        # Processa cada bloco separadamente
+        solicitacoes_ordenadas = sorted(solicitacoes, key=obter_chave_ordenacao)
+        
+        # ✅ PASSO 2: Agrupa priorizando mesmo sub-bloco
         grupos = []
-        for bloco_id, solicitacoes_bloco in solicitacoes_por_bloco.items():
-            # Ordena solicitações do bloco por horário relevante
-            solicitacoes_ordenadas = sorted(
-                solicitacoes_bloco,
-                key=lambda s: self._obter_horario_relevante(s)
+        grupo_atual = [solicitacoes_ordenadas[0]]
+        horario_referencia = self._obter_horario_relevante(solicitacoes_ordenadas[0])
+        sub_bloco_atual = solicitacoes_ordenadas[0].bloco.codigo_bloco if solicitacoes_ordenadas[0].bloco else None
+        
+        for solicitacao in solicitacoes_ordenadas[1:]:
+            horario_solicitacao = self._obter_horario_relevante(solicitacao)
+            sub_bloco_solicitacao = solicitacao.bloco.codigo_bloco if solicitacao.bloco else None
+            diferenca_tempo = abs(horario_solicitacao - horario_referencia)
+            
+            # Verifica se pode adicionar ao grupo atual
+            pode_adicionar = (
+                diferenca_tempo <= self.janela_tempo and  # Horário próximo
+                len(grupo_atual) < self.max_passageiros   # Tem espaço no veículo
             )
             
-            # Agrupa por proximidade de horário dentro do bloco
-            grupo_atual = [solicitacoes_ordenadas[0]]
-            horario_referencia = self._obter_horario_relevante(solicitacoes_ordenadas[0])
-            
-            for solicitacao in solicitacoes_ordenadas[1:]:
-                horario_atual = self._obter_horario_relevante(solicitacao)
-                diferenca_tempo = abs(horario_atual - horario_referencia)
-                
-                # Verifica se pode adicionar ao grupo atual
-                if (diferenca_tempo <= self.janela_tempo and 
-                    len(grupo_atual) < self.max_passageiros):
-                    # Adiciona ao grupo atual
-                    grupo_atual.append(solicitacao)
-                else:
-                    # Fecha o grupo atual e inicia um novo
-                    grupos.append(grupo_atual)
-                    grupo_atual = [solicitacao]
-                    horario_referencia = horario_atual
-            
-            # Adiciona o último grupo do bloco
-            if grupo_atual:
+            # ✅ PRIORIZAÇÃO: Prefere mesmo sub-bloco
+            # Se o veículo ainda tem espaço E é do mesmo sub-bloco, adiciona
+            # Se mudou de sub-bloco, só adiciona se o veículo não estiver cheio ainda
+            if pode_adicionar:
+                # Se for do mesmo sub-bloco OU se não houver mais do sub-bloco atual, adiciona
+                grupo_atual.append(solicitacao)
+                # Atualiza sub-bloco atual se mudou
+                if sub_bloco_solicitacao != sub_bloco_atual:
+                    sub_bloco_atual = sub_bloco_solicitacao
+            else:
+                # Fecha o grupo atual e inicia um novo
                 grupos.append(grupo_atual)
+                grupo_atual = [solicitacao]
+                horario_referencia = horario_solicitacao
+                sub_bloco_atual = sub_bloco_solicitacao
+        
+        # Adiciona o último grupo
+        if grupo_atual:
+            grupos.append(grupo_atual)
         
         return grupos
     

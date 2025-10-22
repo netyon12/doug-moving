@@ -382,51 +382,51 @@ def nova_solicitacao():
                             turno_principal_id = dados_solicitacao['turno_desligamento_id']
                 
                 # Validação de duplicação - CORRIGIDA para permitir entrada E saída no mesmo dia
-                # Mas bloqueia duplicação do mesmo tipo de corrida no mesmo dia
-                solicitacao_duplicada = False
+                # Se tirar os comentários, nao vai permitir duas ou mais entradas ou saidas no mesmo dia. Comentado deixa criar.
+                #solicitacao_duplicada = False
                 
-                if tipo_corrida == 'entrada' and dados_solicitacao.get('horario_entrada'):
-                    data_entrada = dados_solicitacao['horario_entrada'].date()
-                    entrada_existente = Solicitacao.query.filter(
-                        Solicitacao.colaborador_id == colab_id,
-                        Solicitacao.tipo_corrida == 'entrada',
-                        db.func.date(Solicitacao.horario_entrada) == data_entrada,
-                        Solicitacao.status != 'Cancelada'
-                    ).first()
+                #if tipo_corrida == 'entrada' and dados_solicitacao.get('horario_entrada'):
+                #    data_entrada = dados_solicitacao['horario_entrada'].date()
+                #    entrada_existente = Solicitacao.query.filter(
+                #        Solicitacao.colaborador_id == colab_id,
+                #        Solicitacao.tipo_corrida == 'entrada',
+                #        db.func.date(Solicitacao.horario_entrada) == data_entrada,
+                #        Solicitacao.status != 'Cancelada'
+                #    ).first()
                     
-                    if entrada_existente:
-                        solicitacoes_duplicadas.append(f"{colaborador.nome} (entrada)")
-                        solicitacao_duplicada = True
+                #    if entrada_existente:
+                #        solicitacoes_duplicadas.append(f"{colaborador.nome} (entrada)")
+                #        solicitacao_duplicada = True
                 
-                elif tipo_corrida == 'saida' and dados_solicitacao.get('horario_saida'):
-                    data_saida = dados_solicitacao['horario_saida'].date()
-                    saida_existente = Solicitacao.query.filter(
-                        Solicitacao.colaborador_id == colab_id,
-                        Solicitacao.tipo_corrida == 'saida',
-                        db.func.date(Solicitacao.horario_saida) == data_saida,
-                        Solicitacao.status != 'Cancelada'
-                    ).first()
+               # elif tipo_corrida == 'saida' and dados_solicitacao.get('horario_saida'):
+                #    data_saida = dados_solicitacao['horario_saida'].date()
+                #    saida_existente = Solicitacao.query.filter(
+                #        Solicitacao.colaborador_id == colab_id,
+                #        Solicitacao.tipo_corrida == 'saida',
+                #        db.func.date(Solicitacao.horario_saida) == data_saida,
+                #        Solicitacao.status != 'Cancelada'
+                #    ).first()
                     
-                    if saida_existente:
-                        solicitacoes_duplicadas.append(f"{colaborador.nome} (saída)")
-                        solicitacao_duplicada = True
+                 #   if saida_existente:
+                 #       solicitacoes_duplicadas.append(f"{colaborador.nome} (saída)")
+                 #       solicitacao_duplicada = True
                 
-                elif tipo_corrida == 'desligamento' and dados_solicitacao.get('horario_desligamento'):
-                    data_desligamento = dados_solicitacao['horario_desligamento'].date()
-                    desligamento_existente = Solicitacao.query.filter(
-                        Solicitacao.colaborador_id == colab_id,
-                        Solicitacao.tipo_corrida == 'desligamento',
-                        db.func.date(Solicitacao.horario_desligamento) == data_desligamento,
-                        Solicitacao.status != 'Cancelada'
-                    ).first()
-                    
-                    if desligamento_existente:
-                        solicitacoes_duplicadas.append(f"{colaborador.nome} (desligamento)")
-                        solicitacao_duplicada = True
+              #  elif tipo_corrida == 'desligamento' and dados_solicitacao.get('horario_desligamento'):
+              #      data_desligamento = dados_solicitacao['horario_desligamento'].date()
+              #      desligamento_existente = Solicitacao.query.filter(
+              #          Solicitacao.colaborador_id == colab_id,
+              #          Solicitacao.tipo_corrida == 'desligamento',
+              #          db.func.date(Solicitacao.horario_desligamento) == data_desligamento,
+              #          Solicitacao.status != 'Cancelada'
+              #      ).first()
+              #      
+              #      if desligamento_existente:
+              #          solicitacoes_duplicadas.append(f"{colaborador.nome} (desligamento)")
+              #          solicitacao_duplicada = True
                 
                 # Se encontrou duplicação, pula esta solicitação
-                if solicitacao_duplicada:
-                    continue
+              #  if solicitacao_duplicada:
+              #      continue
                 
                 # Calcula valores baseado em bloco e turno
                 if turno_principal_id:
