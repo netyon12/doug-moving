@@ -2,11 +2,247 @@
 
 {% block title %}Dashboard - Motorista{% endblock %}
 
+{% block extra_css %}
+<!-- CSS Mobile Responsivo -->
+<link rel="stylesheet" href="{{ url_for('static', filename='motorista_mobile.css') }}">
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid mt-4">
     
+    <!-- ========================================================================
+         VERSÃO MOBILE (< 768px)
+         ======================================================================== -->
+    
+    <!-- HEADER MOBILE -->
+    <div class="mobile-header show-mobile-only">
+        <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
+        <p>Bem-vindo, <strong>{{ motorista.nome }}</strong></p>
+    </div>
+    
+    <!-- CARDS DE ESTATÍSTICAS MOBILE -->
+    <div class="stats-grid-mobile show-mobile-only">
+        <div class="stat-card-mobile stat-agendadas">
+            <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
+            <div class="stat-value">{{ viagens_agendadas }}</div>
+            <div class="stat-label">Agendadas</div>
+        </div>
+        
+        <div class="stat-card-mobile stat-andamento">
+            <div class="stat-icon"><i class="bi bi-arrow-repeat"></i></div>
+            <div class="stat-value">{{ viagens_em_andamento }}</div>
+            <div class="stat-label">Em Andamento</div>
+        </div>
+        
+        <div class="stat-card-mobile stat-finalizadas">
+            <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
+            <div class="stat-value">{{ viagens_finalizadas_mes }}</div>
+            <div class="stat-label">Finalizadas (Mês)</div>
+        </div>
+        
+        <div class="stat-card-mobile stat-disponiveis">
+            <div class="stat-icon"><i class="bi bi-list-task"></i></div>
+            <div class="stat-value">{{ viagens_disponiveis|length }}</div>
+            <div class="stat-label">Disponíveis</div>
+        </div>
+    </div>
+    
+    <!-- VIAGENS DISPONÍVEIS - MOBILE -->
+    <div class="show-mobile-only">
+        <div class="secao-titulo-mobile">
+            <span class="icon"><i class="bi bi-clipboard-check"></i></span>
+            <span>Viagens Disponíveis</span>
+            <span class="badge">{{ viagens_disponiveis|length }}</span>
+        </div>
+        
+        {% if viagens_disponiveis %}
+            {% for viagem in viagens_disponiveis %}
+            <div class="viagem-card-mobile">
+                <!-- Header do Card -->
+                <div class="viagem-card-header">
+                    <div class="viagem-id">#{{ viagem.id }}</div>
+                    <div class="viagem-tipo {{ viagem.tipo_corrida|lower }}">
+                        {{ viagem.tipo_corrida }}
+                    </div>
+                </div>
+                
+                <!-- Valor em Destaque -->
+                <div class="viagem-valor">
+                    <span class="icon">💰</span>
+                    <span>R$ {{ "%.2f"|format(viagem.valor_repasse or 0) }}</span>
+                </div>
+                
+                <!-- Grid de Detalhes -->
+                <div class="viagem-detalhes-grid">
+                    <div class="viagem-detalhe-item">
+                        <span class="icon"><i class="bi bi-people-fill"></i></span>
+                        <span class="value">{{ viagem.quantidade_passageiros }} passageiros</span>
+                    </div>
+                    
+                    <div class="viagem-detalhe-item">
+                        <span class="icon"><i class="bi bi-clock-fill"></i></span>
+                        <span class="value">
+                            {% if viagem.horario_entrada %}
+                                {{ viagem.horario_entrada.strftime('%H:%M') }}
+                            {% elif viagem.horario_saida %}
+                                {{ viagem.horario_saida.strftime('%H:%M') }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    {% if viagem.bloco %}
+                    <div class="viagem-detalhe-item">
+                        <span class="icon"><i class="bi bi-geo-alt-fill"></i></span>
+                        <span class="value">{{ viagem.bloco.codigo_bloco }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="viagem-detalhe-item">
+                        <span class="icon"><i class="bi bi-building"></i></span>
+                        <span class="value">{{ viagem.planta.nome if viagem.planta else 'N/A' }}</span>
+                    </div>
+                </div>
+                
+                <!-- Botões de Ação -->
+                <div class="viagem-acoes">
+                    <button type="button" class="btn-mobile btn-mobile-outline" 
+                            onclick="verDetalhesViagem({{ viagem.id }})">
+                        <span class="icon"><i class="bi bi-eye-fill"></i></span>
+                        <span>Detalhes</span>
+                    </button>
+                    <button type="button" class="btn-mobile btn-mobile-success" 
+                            onclick="aceitarViagem({{ viagem.id }})">
+                        <span class="icon"><i class="bi bi-check-circle-fill"></i></span>
+                        <span>Aceitar</span>
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state-mobile">
+                <div class="icon"><i class="bi bi-inbox"></i></div>
+                <div class="title">Nenhuma viagem disponível</div>
+                <div class="message">Não há viagens disponíveis para aceite no momento.</div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- MINHAS VIAGENS - MOBILE -->
+    <div class="show-mobile-only" style="margin-top: 32px;">
+        <div class="secao-titulo-mobile">
+            <span class="icon"><i class="bi bi-calendar-event"></i></span>
+            <span>Minhas Viagens</span>
+            <span class="badge">{{ minhas_viagens|length }}</span>
+        </div>
+        
+        {% if minhas_viagens %}
+            {% for viagem in minhas_viagens %}
+            <div class="viagem-card-mobile">
+                <!-- Header do Card -->
+                <div class="viagem-card-header">
+                    <div class="viagem-id">#{{ viagem.id }}</div>
+                    <div class="viagem-tipo {{ viagem.tipo_corrida|lower }}">
+                        {{ viagem.tipo_corrida }}
+                    </div>
+                </div>
+                
+                <!-- Status Badge -->
+                <div class="status-badge-mobile {{ viagem.status|lower|replace(' ', '-') }}">
+                    {% if viagem.status == 'Agendada' %}
+                        <i class="bi bi-calendar-check"></i> Agendada
+                    {% elif viagem.status == 'Em Andamento' %}
+                        <i class="bi bi-arrow-repeat"></i> Em Andamento
+                    {% else %}
+                        <i class="bi bi-info-circle"></i> {{ viagem.status }}
+                    {% endif %}
+                </div>
+                
+                <!-- Valor em Destaque -->
+                <div class="viagem-valor">
+                    <span class="icon">💰</span>
+                    <span>R$ {{ "%.2f"|format(viagem.valor_repasse or 0) }}</span>
+                </div>
+                
+                <!-- Grid de Detalhes -->
+                <div class="viagem-detalhes-grid">
+                    <div class="viagem-detalhe-item">
+                        <span class="icon"><i class="bi bi-people-fill"></i></span>
+                        <span class="value">{{ viagem.quantidade_passageiros }} passageiros</span>
+                    </div>
+                    
+                    <div class="viagem-detalhe-item">
+                        <span class="icon"><i class="bi bi-clock-fill"></i></span>
+                        <span class="value">
+                            {% if viagem.horario_entrada %}
+                                {{ viagem.horario_entrada.strftime('%H:%M') }}
+                            {% elif viagem.horario_saida %}
+                                {{ viagem.horario_saida.strftime('%H:%M') }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    {% if viagem.bloco %}
+                    <div class="viagem-detalhe-item">
+                        <span class="icon"><i class="bi bi-geo-alt-fill"></i></span>
+                        <span class="value">{{ viagem.bloco.codigo_bloco }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="viagem-detalhe-item">
+                        <span class="icon"><i class="bi bi-building"></i></span>
+                        <span class="value">{{ viagem.planta.nome if viagem.planta else 'N/A' }}</span>
+                    </div>
+                </div>
+                
+                <!-- Botões de Ação -->
+                <div class="viagem-acoes">
+                    {% if viagem.status == 'Agendada' %}
+                        <button type="button" class="btn-mobile btn-mobile-danger" 
+                                onclick="cancelarViagem({{ viagem.id }})">
+                            <span class="icon"><i class="bi bi-x-circle-fill"></i></span>
+                            <span>Cancelar</span>
+                        </button>
+                        <button type="button" class="btn-mobile btn-mobile-success" 
+                                onclick="iniciarViagem({{ viagem.id }})">
+                            <span class="icon"><i class="bi bi-play-circle-fill"></i></span>
+                            <span>Iniciar</span>
+                        </button>
+                    {% elif viagem.status == 'Em Andamento' %}
+                        <button type="button" class="btn-mobile btn-mobile-outline" 
+                                onclick="verDetalhesViagem({{ viagem.id }})">
+                            <span class="icon"><i class="bi bi-eye-fill"></i></span>
+                            <span>Detalhes</span>
+                        </button>
+                        <button type="button" class="btn-mobile btn-mobile-primary" 
+                                onclick="finalizarViagem({{ viagem.id }})">
+                            <span class="icon"><i class="bi bi-check-circle-fill"></i></span>
+                            <span>Finalizar</span>
+                        </button>
+                    {% else %}
+                        <button type="button" class="btn-mobile btn-mobile-outline" 
+                                onclick="verDetalhesViagem({{ viagem.id }})">
+                            <span class="icon"><i class="bi bi-eye-fill"></i></span>
+                            <span>Ver Detalhes</span>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state-mobile">
+                <div class="icon"><i class="bi bi-calendar-x"></i></div>
+                <div class="title">Nenhuma viagem agendada</div>
+                <div class="message">Você não tem viagens agendadas ou em andamento.</div>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- ========================================================================
+         VERSÃO DESKTOP (>= 768px) - MANTÉM LAYOUT ORIGINAL
+         ======================================================================== -->
+    
     <!-- HEADER COM INFORMAÇÕES DO MOTORISTA -->
-    <div class="row mb-3">
+    <div class="row mb-3 hide-mobile">
         <div class="col-12">
             <h2><i class="fas fa-tachometer-alt"></i> Dashboard do Motorista</h2>
             <p class="text-muted">Bem-vindo, <strong>{{ motorista.nome }}</strong></p>
@@ -15,7 +251,7 @@
 
     <!-- INDICADOR DE STATUS DESTACADO -->
     {% set status_info = motorista.get_status_badge() %}
-    <div class="row mb-4">
+    <div class="row mb-4 hide-mobile">
         <div class="col-12">
             <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                 <div class="card-body py-4">
@@ -68,7 +304,7 @@
     </div>
 
     <!-- CARDS DE ESTATÍSTICAS -->
-    <div class="row mb-4">
+    <div class="row mb-4 hide-mobile">
         <div class="col-md-3">
             <div class="card text-white bg-primary shadow-sm">
                 <div class="card-body">
@@ -135,7 +371,7 @@
     </div>
 
     <!-- VIAGENS DISPONÍVEIS PARA ACEITAR -->
-    <div class="card mb-4 shadow-sm">
+    <div class="card mb-4 shadow-sm hide-mobile">
         <div class="card-header bg-info text-white">
             <h5 class="mb-0"><i class="fas fa-clipboard-list"></i> Viagens Disponíveis para Aceitar</h5>
         </div>
@@ -193,7 +429,7 @@
                                         onclick="aceitarViagem({{ viagem.id }})">
                                     <i class="fas fa-check"></i> Aceitar
                                 </button>
-                                <button type="button" class="btn btn-sm btn-info" 
+                                <button type="button" class="btn btn-sm btn-outline-info" 
                                         onclick="verDetalhesViagem({{ viagem.id }})">
                                     <i class="fas fa-eye"></i> Ver Detalhes
                                 </button>
@@ -212,20 +448,11 @@
     </div>
 
     <!-- MINHAS PRÓXIMAS VIAGENS -->
-    <div class="card mb-4 shadow-sm">
+    <div class="card mb-4 shadow-sm hide-mobile">
         <div class="card-header bg-primary text-white">
             <h5 class="mb-0"><i class="fas fa-calendar-alt"></i> Minhas Próximas Viagens</h5>
         </div>
         <div class="card-body">
-            {% set tem_viagem_em_andamento = (viagens_em_andamento > 0) %}
-            
-            {% if tem_viagem_em_andamento %}
-            <div class="alert alert-warning" role="alert">
-                <i class="fas fa-exclamation-triangle"></i>
-                <strong>Atenção:</strong> Você já tem uma viagem em andamento. Finalize a viagem atual antes de iniciar outra.
-            </div>
-            {% endif %}
-            
             {% if minhas_viagens %}
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
@@ -281,11 +508,10 @@
                             <td class="text-center">
                                 {% if viagem.status == 'Agendada' %}
                                     <button type="button" class="btn btn-sm btn-success" 
-                                            onclick="iniciarViagem({{ viagem.id }})"
-                                            {% if tem_viagem_em_andamento %}disabled title="Finalize a viagem em andamento primeiro"{% endif %}>
+                                            onclick="iniciarViagem({{ viagem.id }})">
                                         <i class="fas fa-play"></i> Iniciar
                                     </button>
-                                    <button type="button" class="btn btn-sm btn-danger" 
+                                    <button type="button" class="btn btn-sm btn-outline-danger" 
                                             onclick="cancelarViagem({{ viagem.id }})">
                                         <i class="fas fa-times"></i> Cancelar
                                     </button>
@@ -295,7 +521,7 @@
                                         <i class="fas fa-check-circle"></i> Finalizar
                                     </button>
                                 {% endif %}
-                                <button type="button" class="btn btn-sm btn-info" 
+                                <button type="button" class="btn btn-sm btn-outline-info" 
                                         onclick="verDetalhesViagem({{ viagem.id }})">
                                     <i class="fas fa-eye"></i> Detalhes
                                 </button>
@@ -408,11 +634,7 @@ function finalizarViagem(viagemId) {
     .then(response => response.json())
     .then(data => {
         if (data.sucesso) {
-            let mensagem = data.mensagem;
-            if (data.valor_repasse !== undefined && data.valor_repasse !== null) {
-                mensagem += '\nValor do repasse: R$ ' + data.valor_repasse.toFixed(2);
-            }
-            alert(mensagem);
+            alert(data.mensagem + '\nValor do repasse: R$ ' + data.valor_repasse.toFixed(2));
             location.reload();
         } else {
             alert('Erro: ' + data.mensagem);
@@ -506,3 +728,4 @@ function toggleDisponibilidade() {
 </script>
 
 {% endblock %}
+
