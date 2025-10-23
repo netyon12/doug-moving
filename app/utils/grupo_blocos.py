@@ -75,8 +75,17 @@ def agrupar_solicitacoes_por_grupo_bloco(solicitacoes: List[Solicitacao]) -> Dic
     grupos = defaultdict(list)
     
     for sol in solicitacoes:
-        if sol.bloco and sol.bloco.codigo_bloco:
-            grupo = extrair_grupo_bloco(sol.bloco.codigo_bloco)
+        # ✅ CORREÇÃO: Busca bloco através do colaborador
+        codigo_bloco = None
+        
+        # Tenta obter bloco de várias formas (compatibilidade)
+        if sol.bloco and hasattr(sol.bloco, 'codigo_bloco'):
+            codigo_bloco = sol.bloco.codigo_bloco
+        elif sol.colaborador and sol.colaborador.bloco and hasattr(sol.colaborador.bloco, 'codigo_bloco'):
+            codigo_bloco = sol.colaborador.bloco.codigo_bloco
+        
+        if codigo_bloco:
+            grupo = extrair_grupo_bloco(codigo_bloco)
             if grupo:
                 grupos[grupo].append(sol)
     
@@ -238,4 +247,3 @@ def gerar_resumo_agrupamento(solicitacoes: List[Solicitacao]) -> Dict:
         'grupos_bloco_veiculos': list(veiculos.keys()),
         'limite_configurado': obter_limite_fretado()
     }
-
