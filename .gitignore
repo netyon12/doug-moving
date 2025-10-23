@@ -14,18 +14,20 @@ __pycache__/
 # Arquivos de ambiente virtual
 .flaskenv
 venv/
+venv/*
 .venv/
 env/
 .env
+.env.local
+.env.staging
+.env.production
+.env*
 
 
 # Arquivos de configuração do editor
 .vscode/
 .idea/
 
-# Arquivos de Banco de Dados
-*.db
-*.sqlite3
 
 *.xlsx
 
@@ -44,3 +46,4 @@ $RECYCLE.BIN/
 # Arquivos temporários do Python
 __pycache__/
 *.pyc
+*.pyo

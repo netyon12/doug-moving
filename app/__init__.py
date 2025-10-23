@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, login_required, current_user, logout_user
 from flask_caching import Cache
+from dotenv import load_dotenv
 
 # Instâncias das extensões
 db = SQLAlchemy()
@@ -143,5 +144,19 @@ def create_app():
             flash('Perfil de usuário inválido. Por favor, contate o suporte.', 'danger')
             logout_user()
             return redirect(url_for('auth.login'))
+
+    # Carrega variáveis de ambiente
+    load_dotenv()
+
+    class Config:
+        # Banco de dados (lê de variável de ambiente)
+        SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+        SQLALCHEMY_TRACK_MODIFICATIONS = False
+        
+        # Outras configs
+        SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key')
+        FLASK_ENV = os.getenv('FLASK_ENV', 'production')
+        DEBUG = os.getenv('FLASK_DEBUG', 'False') == 'True'
+
 
     return app

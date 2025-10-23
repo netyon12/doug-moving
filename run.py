@@ -6,6 +6,11 @@ import click
 from sqlalchemy import text
 from flask_migrate import Migrate
 import logging
+from dotenv import load_dotenv
+import os
+
+# Carrega .env automaticamente
+load_dotenv('.env')
 
 # Cria a aplicação usando a nossa factory
 app = create_app()
