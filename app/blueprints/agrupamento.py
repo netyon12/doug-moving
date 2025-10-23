@@ -468,7 +468,7 @@ def finalizar_agrupamento():
             
             # Busca as solicitações do grupo
             solicitacoes = Solicitacao.query.options(
-                joinedload(Solicitacao.colaborador).joinedload('bloco')
+                joinedload(Solicitacao.colaborador).joinedload(Colaborador.bloco)
             ).filter(Solicitacao.id.in_(grupo_ids)).all()
             
             if not solicitacoes:
