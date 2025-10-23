@@ -619,26 +619,32 @@ def finalizar_agrupamento():
                     # ✅ CORREÇÃO: Define bloco_codigo antes de usar
                     bloco_codigo = grupos_blocos_unicos[0] if grupos_blocos_unicos else 'N/A'
                     
-                    # AUDITORIA: Registra criação de fretado
-                    log_audit(
-                        action=AuditAction.CREATE,
-                        resource_type='Fretado',
-                        resource_id=novo_fretado.id,
-                        status='SUCCESS',
-                        severity='INFO',
-                        changes={
-                            'colaborador': nome_colaborador,
-                            'tipo_corrida': solicitacao.tipo_corrida,
-                            'bloco': bloco_codigo  # ✅ CORRIGIDO
-                        }
-                    )
+                    # AUDITORIA: Registra criação de fretado (com proteção contra erros)
+                    try:
+                        # Limita tamanho dos campos para evitar erro de truncação
+                        nome_curto = nome_colaborador[:50] if nome_colaborador else 'N/A'
+                        log_audit(
+                            action=AuditAction.CREATE,
+                            resource_type='Fretado',
+                            resource_id=novo_fretado.id,
+                            status='SUCCESS',
+                            severity='INFO',
+                            changes={
+                                'colaborador': nome_curto,
+                                'tipo_corrida': solicitacao.tipo_corrida[:20],
+                                'bloco': bloco_codigo[:20]
+                            }
+                        )
+                    except Exception as audit_error:
+                        # Se auditoria falhar, apenas loga mas não interrompe a criação do fretado
+                        logger.warning(f"⚠️  Erro ao criar log de auditoria (não crítico): {audit_error}")
                     
                     # Atualiza status da solicitação
                     solicitacao.status = 'Fretado'
                     solicitacoes_agrupadas += 1
                 
                 fretados_criados += 1  # Conta como 1 grupo de fretado criado
-                logger.info(f"🎉 FRETADO CRIADO: {len(solicitacoes)} registros na tabela fretado")
+                logger.info(f"🎉 FRETADO CRIADO: {len(solicitacoes)} registros na tabela fretado para o grupo {grupos_blocos_unicos[0] if grupos_blocos_unicos else 'N/A'}")
             else:
                 logger.info(f"⚠️ CRIANDO VIAGEM: len={len(solicitacoes)}, mesmo_grupo={mesmo_grupo_bloco}")
                 # Cria VIAGEM
