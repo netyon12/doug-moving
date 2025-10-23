@@ -635,7 +635,6 @@ def finalizar_agrupamento():
                     
                     # Atualiza status da solicitação
                     solicitacao.status = 'Fretado'
-                    solicitacao.fretado_id = novo_fretado.id
                     solicitacoes_agrupadas += 1
                 
                 fretados_criados += 1  # Conta como 1 grupo de fretado criado
