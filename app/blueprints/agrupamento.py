@@ -616,29 +616,6 @@ def finalizar_agrupamento():
                     db.session.add(novo_fretado)
                     db.session.flush()  # Para obter o ID
                     
-                    # ✅ CORREÇÃO: Define bloco_codigo antes de usar
-                    bloco_codigo = grupos_blocos_unicos[0] if grupos_blocos_unicos else 'N/A'
-                    
-                    # AUDITORIA: Registra criação de fretado (com proteção contra erros)
-                    try:
-                        # Limita tamanho dos campos para evitar erro de truncação
-                        nome_curto = nome_colaborador[:50] if nome_colaborador else 'N/A'
-                        log_audit(
-                            action=AuditAction.CREATE,
-                            resource_type='Fretado',
-                            resource_id=novo_fretado.id,
-                            status='SUCCESS',
-                            severity='INFO',
-                            changes={
-                                'colaborador': nome_curto,
-                                'tipo_corrida': solicitacao.tipo_corrida[:20],
-                                'bloco': bloco_codigo[:20]
-                            }
-                        )
-                    except Exception as audit_error:
-                        # Se auditoria falhar, apenas loga mas não interrompe a criação do fretado
-                        logger.warning(f"⚠️  Erro ao criar log de auditoria (não crítico): {audit_error}")
-                    
                     # Atualiza status da solicitação
                     solicitacao.status = 'Fretado'
                     solicitacoes_agrupadas += 1
