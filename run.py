@@ -18,7 +18,8 @@ migrate = Migrate(app, db)  # ← ADICIONE ESTA LINHA
 
 # Configurar logging
 logging.basicConfig(
-    level=logging.INFO,  # ou DEBUG para ver tudo
+    # ou DEBUG para ver tudo ou WARNING para apenas avisos e erros.
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
@@ -27,44 +28,41 @@ logging.basicConfig(
 # =============================================================================
 # COMANDOS DE LINHA DE COMANDO (CLI)
 # =============================================================================
+# PERIGOSO ESSA FUNÇÃO ABAIXO!!!!!
+#
+# @app.cli.command('db-drop')
+# def db_drop():
+#    """Apaga todas as tabelas do banco de dados (modo PostgreSQL)."""
+#    # Comando específico para PostgreSQL para forçar a exclusão em cascata
+#    db.session.execute(text('DROP SCHEMA public CASCADE;'))
+#    db.session.execute(text('CREATE SCHEMA public;'))
+#    db.session.commit()
+#    print('Banco de dados (schema) reiniciado com sucesso.')
 
-@app.cli.command('db-drop')
-def db_drop():
-    """Apaga todas as tabelas do banco de dados (modo PostgreSQL)."""
-    # Comando específico para PostgreSQL para forçar a exclusão em cascata
-    db.session.execute(text('DROP SCHEMA public CASCADE;'))
-    db.session.execute(text('CREATE SCHEMA public;'))
-    db.session.commit()
-    print('Banco de dados (schema) reiniciado com sucesso.')
 
-
-
-### CRIAÇÃO DO USUÁRIO ADMIN NO BANCO
+# CRIAÇÃO DO USUÁRIO ADMIN NO BANCO
 
 @app.cli.command('db-create')
 def db_create():
     """Cria todas as tabelas do banco de dados a partir dos modelos."""
     db.create_all()
     print('Banco de dados criado com sucesso.')
-    
+
     # Bloco que cria o admin inicial automaticamente
     with app.app_context():
         if not User.query.filter_by(role='admin').first():
             print("Nenhum admin encontrado, criando um novo...")
-            hashed_password = generate_password_hash('admin', method='pbkdf2:sha256')
-            admin_user = User(email='admin@netyonsolutions.com', password=hashed_password, role='admin')
+            hashed_password = generate_password_hash(
+                'admin', method='pbkdf2:sha256')
+            admin_user = User(email='admin@netyonsolutions.com',
+                              password=hashed_password, role='admin')
             db.session.add(admin_user)
             db.session.commit()
             print("Admin 'admin@netyonsolutions.com' criado com sucesso!")
 
 
-
-
-
-
 # =============================================================================
 # EXECUÇÃO DA APLICAÇÃO
 # =============================================================================
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

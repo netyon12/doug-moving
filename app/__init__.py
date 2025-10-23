@@ -16,19 +16,19 @@ cache = Cache()
 def create_scoped_session():
     """
     Cria uma sessão isolada do SQLAlchemy para uso em threads.
-    
+
     Esta função é usada quando precisamos acessar o banco de dados
     em threads background (como notificações assíncronas).
-    
+
     Returns:
         scoped_session: Sessão isolada do SQLAlchemy
     """
     from sqlalchemy.orm import scoped_session, sessionmaker
-    
+
     # Cria uma nova sessão usando o engine existente
     session_factory = sessionmaker(bind=db.engine)
     Session = scoped_session(session_factory)
-    
+
     return Session
 
 
@@ -40,10 +40,14 @@ def create_app():
     # Carrega as configurações (SECRET_KEY, DATABASE_URL, etc.)
     # Exemplo: app.config.from_object('config.Config')
     app.config['SECRET_KEY'] = 'uma-chave-secreta-muito-forte-e-diferente'
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///doug_moving.db')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+        'DATABASE_URL', 'sqlite:///doug_moving.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['UPLOAD_FOLDER'] = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'static/profile_pics')
-    
+    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_ECHO'] = False  # Para não mostrar as queries SQL no terminal.
+    app.config['UPLOAD_FOLDER'] = os.path.join(os.path.abspath(
+        os.path.dirname(__file__)), 'static/profile_pics')
+
     # Configuração do Flask-Caching
     app.config['CACHE_TYPE'] = 'SimpleCache'  # Cache em memória
     app.config['CACHE_DEFAULT_TIMEOUT'] = 3600  # 1 hora
@@ -53,17 +57,18 @@ def create_app():
     login_manager.init_app(app)
     cache.init_app(app)
     migrate = Migrate(app, db)
-    
+
     # Configuração do Flask-Login
     from .models import User
+
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
-    
-    login_manager.login_view = 'auth.login' # Aponta para a rota 'login' dentro do blueprint 'auth'
+
+    # Aponta para a rota 'login' dentro do blueprint 'auth'
+    login_manager.login_view = 'auth.login'
     login_manager.login_message = "Por favor, faça o login para acessar esta página."
     login_manager.login_message_category = "info"
-
 
     # --- REGISTRO DOS BLUEPRINTS ---
     # Importa e registra cada blueprint da sua nova estrutura
@@ -92,8 +97,8 @@ def create_app():
     from .blueprints.financeiro import financeiro_bp
     app.register_blueprint(financeiro_bp)
 
-
     # --- FILTROS PERSONALIZADOS DO JINJA2 ---
+
     @app.template_filter('number_format')
     def number_format_filter(value):
         """Formata números com separador de milhares."""
@@ -102,14 +107,14 @@ def create_app():
         except (ValueError, TypeError):
             return value
 
-
     # --- ROTA PWA OFFLINE ---
+
     @app.route('/offline')
     def offline():
         """Página exibida quando o usuário está offline."""
         from flask import render_template
         return render_template('offline.html')
-    
+
     # --- ROTA INSTRUÇÕES DE INSTALAÇÃO PWA ---
     @app.route('/instalar')
     def instalar():
@@ -127,18 +132,18 @@ def create_app():
         if current_user.role == 'admin':
             # Redireciona para a função 'dashboard' dentro do blueprint 'admin'
             return redirect(url_for('admin.admin_dashboard'))
-        
+
         elif current_user.role == 'gerente':
             return redirect(url_for('gerente.dashboard_gerente'))
-        
+
         elif current_user.role == 'supervisor':
             # Redireciona para a função 'dashboard' dentro do blueprint 'supervisor'
             return redirect(url_for('supervisor.dashboard_supervisor'))
-            
+
         elif current_user.role == 'motorista':
             # Redireciona para a função 'dashboard' dentro do blueprint 'motorista'
             return redirect(url_for('motorista.dashboard_motorista'))
-            
+
         else:
             # Caso de segurança: se a role for desconhecida, desloga o usuário.
             flash('Perfil de usuário inválido. Por favor, contate o suporte.', 'danger')
@@ -152,11 +157,10 @@ def create_app():
         # Banco de dados (lê de variável de ambiente)
         SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
         SQLALCHEMY_TRACK_MODIFICATIONS = False
-        
+
         # Outras configs
         SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key')
         FLASK_ENV = os.getenv('FLASK_ENV', 'production')
         DEBUG = os.getenv('FLASK_DEBUG', 'False') == 'True'
-
 
     return app
