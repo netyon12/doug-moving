@@ -11,6 +11,7 @@ from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from sqlalchemy import func, or_
+from sqlalchemy.orm import joinedload
 from io import StringIO
 import io
 import csv
@@ -466,7 +467,9 @@ def finalizar_agrupamento():
                 continue
             
             # Busca as solicitações do grupo
-            solicitacoes = Solicitacao.query.filter(Solicitacao.id.in_(grupo_ids)).all()
+            solicitacoes = Solicitacao.query.options(
+                joinedload(Solicitacao.colaborador).joinedload('bloco')
+            ).filter(Solicitacao.id.in_(grupo_ids)).all()
             
             if not solicitacoes:
                 continue
@@ -632,6 +635,7 @@ def finalizar_agrupamento():
                     
                     # Atualiza status da solicitação
                     solicitacao.status = 'Fretado'
+                    solicitacao.fretado_id = novo_fretado.id
                     solicitacoes_agrupadas += 1
                 
                 fretados_criados += 1  # Conta como 1 grupo de fretado criado
