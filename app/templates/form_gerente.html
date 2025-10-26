@@ -52,16 +52,26 @@
                                     {% endfor %}
                                 </select>
                             </div>
+                            
+                            <!-- NOVO: Campo de seleção múltipla de plantas -->
                             <div class="col-md-6 mb-3">
-                                <label for="planta_id" class="form-label">Planta*</label>
-                                <select class="form-select" id="planta_id" name="planta_id" required>
-                                    <option value="" disabled selected>Selecione...</option>
-                                    {% for planta in plantas %}
-                                        <option value="{{ planta.id }}" {% if gerente and gerente.planta_id == planta.id %}selected{% endif %}>{{ planta.nome }}</option>
-                                    {% endfor %}
+                                <label for="plantas_ids" class="form-label">Plantas* <small class="text-muted">(Ctrl+Click para múltiplas)</small></label>
+                                <select class="form-select" id="plantas_ids" name="plantas_ids" multiple required size="5">
+                                    {% if gerente %}
+                                        {% set plantas_gerente_ids = gerente.plantas.all() | map(attribute='id') | list %}
+                                        {% for planta in plantas %}
+                                            <option value="{{ planta.id }}" {% if planta.id in plantas_gerente_ids %}selected{% endif %}>
+                                                {{ planta.nome }}
+                                            </option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <!-- Plantas serão carregadas dinamicamente via JavaScript após selecionar empresa -->
+                                    {% endif %}
                                 </select>
+                                <small class="form-text text-muted">Selecione uma ou mais plantas da mesma empresa.</small>
                             </div>
                         </div>
+                        
                         <div class="mb-3">
                             <label class="form-label">Centros de Custo*</label>
                             <div class="card p-3" style="max-height: 200px; overflow-y: auto;">
@@ -83,6 +93,7 @@
                             </div>
                             <small class="form-text text-muted">Marque todos os centros de custo de responsabilidade do gerente.</small>
                         </div>
+                        
                         <div class="mb-3">
                             <label for="status" class="form-label">Status*</label>
                             <select class="form-select" id="status" name="status" required>
@@ -104,4 +115,59 @@
         </div>
     </div>
 </div>
+
+<script>
+// JavaScript para filtrar plantas por empresa selecionada
+document.addEventListener('DOMContentLoaded', function() {
+    const empresaSelect = document.getElementById('empresa_id');
+    const plantasSelect = document.getElementById('plantas_ids');
+    
+    // Armazenar todas as plantas disponíveis
+    const todasPlantas = {{ plantas_json|safe }};
+    
+    function atualizarPlantas() {
+        const empresaId = parseInt(empresaSelect.value);
+        
+        if (!empresaId) {
+            plantasSelect.innerHTML = '<option value="" disabled>Selecione uma empresa primeiro</option>';
+            return;
+        }
+        
+        // Filtrar plantas pela empresa selecionada
+        const plantasFiltradas = todasPlantas.filter(p => p.empresa_id === empresaId);
+        
+        // Limpar opções atuais
+        plantasSelect.innerHTML = '';
+        
+        // Adicionar novas opções
+        plantasFiltradas.forEach(planta => {
+            const option = document.createElement('option');
+            option.value = planta.id;
+            option.textContent = planta.nome;
+            
+            // Manter seleção se estiver editando
+            {% if gerente %}
+            const plantasSelecionadas = {{ gerente_plantas_ids|safe }};
+            if (plantasSelecionadas.includes(planta.id)) {
+                option.selected = true;
+            }
+            {% endif %}
+            
+            plantasSelect.appendChild(option);
+        });
+        
+        if (plantasFiltradas.length === 0) {
+            plantasSelect.innerHTML = '<option value="" disabled>Nenhuma planta cadastrada para esta empresa</option>';
+        }
+    }
+    
+    // Atualizar plantas quando empresa mudar
+    empresaSelect.addEventListener('change', atualizarPlantas);
+    
+    // Carregar plantas inicialmente se empresa já estiver selecionada
+    if (empresaSelect.value) {
+        atualizarPlantas();
+    }
+});
+</script>
 {% endblock %}

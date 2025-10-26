@@ -33,7 +33,6 @@ from ..utils.admin_audit import log_audit, AuditAction
 @login_required
 @permission_required('admin')
 def cadastrar_empresa():
-    
 
     if request.method == 'POST':
         nome = request.form.get('nome')
@@ -59,7 +58,7 @@ def cadastrar_empresa():
         )
         db.session.add(nova_empresa)
         db.session.commit()
-        
+
         # AUDITORIA: Registra criação de empresa
         log_audit(
             action=AuditAction.CREATE,
@@ -87,7 +86,7 @@ def editar_empresa(empresa_id):
     if request.method == 'POST':
         # Captura valores antigos
         valores_antigos = {'nome': empresa.nome, 'cnpj': empresa.cnpj}
-        
+
         empresa.nome = request.form.get('nome')
         empresa.cnpj = request.form.get('cnpj')
         empresa.endereco = request.form.get('endereco')
@@ -124,7 +123,7 @@ def excluir_empresa(empresa_id):
 
     db.session.delete(empresa)
     db.session.commit()
-        
+
     # AUDITORIA: Registra exclusão
     log_audit(
         action=AuditAction.DELETE,
@@ -132,9 +131,10 @@ def excluir_empresa(empresa_id):
         resource_id=empresa_id,
         status='SUCCESS',
         severity='WARNING',
-        changes={'dados_excluidos': {'nome': nome_empresa, 'cnpj': empresa_cnpj}}
+        changes={'dados_excluidos': {
+            'nome': nome_empresa, 'cnpj': empresa_cnpj}}
     )
-        
+
     flash(f'Empresa "{nome_empresa}" excluída com sucesso.', 'success')
     return redirect(url_for('admin.admin_dashboard', aba='empresas'))
 
@@ -152,10 +152,11 @@ def cadastrar_planta():
     if request.method == 'POST':
         # --- LÓGICA DE VALIDAÇÃO DO ID ---
         planta_id = request.form.get('id')
-        
+
         # Verifica se o ID já está em uso
         if Planta.query.get(planta_id):
-            flash(f'O ID de planta "{planta_id}" já está em uso. Por favor, escolha outro.', 'danger')
+            flash(
+                f'O ID de planta "{planta_id}" já está em uso. Por favor, escolha outro.', 'danger')
             # Retorna para o formulário mantendo os dados digitados
             empresas = Empresa.query.order_by(Empresa.nome).all()
             return render_template('form_planta.html', aba_ativa='plantas', empresas=empresas)
@@ -168,7 +169,7 @@ def cadastrar_planta():
         )
         db.session.add(nova_planta)
         db.session.commit()
-        
+
         # AUDITORIA
         log_audit(
             action=AuditAction.CREATE,
@@ -176,9 +177,11 @@ def cadastrar_planta():
             resource_id=nova_planta.id,
             status='SUCCESS',
             severity='INFO',
-            changes={'nome': nova_planta.nome, 'empresa_id': nova_planta.empresa_id}
+            changes={'nome': nova_planta.nome,
+                     'empresa_id': nova_planta.empresa_id}
         )
-        flash(f'Planta "{nova_planta.nome}" cadastrada com sucesso!', 'success')
+        flash(
+            f'Planta "{nova_planta.nome}" cadastrada com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='plantas'))
 
     # A lógica do GET permanece a mesma
@@ -196,7 +199,7 @@ def editar_planta(planta_id):
 
     if request.method == 'POST':
         valores_antigos = {'nome': planta.nome}
-        
+
         planta.nome = request.form.get('nome')
         planta.empresa_id = request.form.get('empresa_id')
 
@@ -225,7 +228,7 @@ def excluir_planta(planta_id):
     nome_planta = planta.nome
     db.session.delete(planta)
     db.session.commit()
-        
+
     # AUDITORIA
     log_audit(
         action=AuditAction.DELETE,
@@ -235,7 +238,7 @@ def excluir_planta(planta_id):
         severity='WARNING',
         changes={'dados_excluidos': {'nome': nome_planta}}
     )
-        
+
     flash(f'Planta "{nome_planta}" excluída com sucesso.', 'success')
     return redirect(url_for('admin.admin_dashboard', aba='plantas'))
 
@@ -330,14 +333,16 @@ def cadastrar_turno():
 
     if request.method == 'POST':
         nome_turno = request.form.get('nome')
-        
+
         # Valida se o nome do turno é válido
         if not Turno.validar_nome(nome_turno):
-            flash(f'Nome de turno inválido! Use um dos valores permitidos: {", ".join(Turno.TURNOS_VALIDOS)}', 'danger')
+            flash(
+                f'Nome de turno inválido! Use um dos valores permitidos: {", ".join(Turno.TURNOS_VALIDOS)}', 'danger')
             empresas = Empresa.query.order_by(Empresa.nome).all()
-            plantas = Planta.query.join(Empresa).order_by(Empresa.nome, Planta.nome).all()
+            plantas = Planta.query.join(Empresa).order_by(
+                Empresa.nome, Planta.nome).all()
             return render_template('form_turno.html', aba_ativa='turnos', empresas=empresas, plantas=plantas)
-        
+
         novo_turno = Turno(
             nome=nome_turno,
             horario_inicio=datetime.strptime(
@@ -369,15 +374,17 @@ def editar_turno(turno_id):
 
     if request.method == 'POST':
         nome_turno = request.form.get('nome')
-        
+
         # Valida se o nome do turno é válido
         if not Turno.validar_nome(nome_turno):
-            flash(f'Nome de turno inválido! Use um dos valores permitidos: {", ".join(Turno.TURNOS_VALIDOS)}', 'danger')
+            flash(
+                f'Nome de turno inválido! Use um dos valores permitidos: {", ".join(Turno.TURNOS_VALIDOS)}', 'danger')
             empresas = Empresa.query.order_by(Empresa.nome).all()
-            plantas = Planta.query.join(Empresa).order_by(Empresa.nome, Planta.nome).all()
+            plantas = Planta.query.join(Empresa).order_by(
+                Empresa.nome, Planta.nome).all()
             turnos_validos = Turno.TURNOS_VALIDOS
             return render_template('form_turno.html', aba_ativa='turnos', turno=turno, empresas=empresas, plantas=plantas, turnos_validos=turnos_validos)
-        
+
         turno.nome = nome_turno
         turno.horario_inicio = datetime.strptime(
             request.form.get('horario_inicio'), '%H:%M').time()
@@ -431,7 +438,7 @@ def cadastrar_bloco():
         def processar_valor(campo_nome):
             valor_str = request.form.get(campo_nome, '0').replace(',', '.')
             return float(valor_str) if valor_str else 0.0
-        
+
         novo_bloco = Bloco(
             empresa_id=request.form.get('empresa_id'),
             codigo_bloco=request.form.get('codigo_bloco'),
@@ -449,7 +456,7 @@ def cadastrar_bloco():
         )
         db.session.add(novo_bloco)
         db.session.commit()
-        
+
         # AUDITORIA
         log_audit(
             action=AuditAction.CREATE,
@@ -457,13 +464,16 @@ def cadastrar_bloco():
             resource_id=novo_bloco.id,
             status='SUCCESS',
             severity='INFO',
-            changes={'codigo_bloco': novo_bloco.codigo_bloco, 'empresa_id': novo_bloco.empresa_id}
+            changes={'codigo_bloco': novo_bloco.codigo_bloco,
+                     'empresa_id': novo_bloco.empresa_id}
         )
 
-        flash(f'Bloco "{novo_bloco.codigo_bloco}" cadastrado. Agora associe os bairros.', 'success')
+        flash(
+            f'Bloco "{novo_bloco.codigo_bloco}" cadastrado. Agora associe os bairros.', 'success')
         return redirect(url_for('admin.associar_bairros_bloco', bloco_id=novo_bloco.id))
 
-    empresas = Empresa.query.filter_by(status='Ativo').order_by(Empresa.nome).all()
+    empresas = Empresa.query.filter_by(
+        status='Ativo').order_by(Empresa.nome).all()
     turnos_validos = Turno.TURNOS_VALIDOS
     return render_template('form_bloco.html', aba_ativa='blocos', empresas=empresas, turnos_validos=turnos_validos, bloco=None)
 
@@ -478,17 +488,17 @@ def editar_bloco(bloco_id):
 
     if request.method == 'POST':
         valores_antigos = {'codigo_bloco': bloco.codigo_bloco}
-        
+
         # Processa os valores dos 4 turnos fixos
         def processar_valor(campo_nome):
             valor_str = request.form.get(campo_nome, '0').replace(',', '.')
             return float(valor_str) if valor_str else 0.0
-        
+
         bloco.empresa_id = request.form.get('empresa_id')
         bloco.codigo_bloco = request.form.get('codigo_bloco')
         bloco.nome_bloco = request.form.get('nome_bloco')
         bloco.status = request.form.get('status')
-        
+
         # Atualiza os valores dos 4 turnos fixos
         bloco.valor_turno1 = processar_valor('valor_turno1')
         bloco.repasse_turno1 = processar_valor('repasse_turno1')
@@ -500,7 +510,7 @@ def editar_bloco(bloco_id):
         bloco.repasse_admin = processar_valor('repasse_admin')
 
         db.session.commit()
-        
+
         # AUDITORIA
         if valores_antigos['codigo_bloco'] != bloco.codigo_bloco:
             log_audit(
@@ -509,12 +519,15 @@ def editar_bloco(bloco_id):
                 resource_id=bloco.id,
                 status='SUCCESS',
                 severity='INFO',
-                changes={'codigo_bloco': {'before': valores_antigos['codigo_bloco'], 'after': bloco.codigo_bloco}}
+                changes={'codigo_bloco': {
+                    'before': valores_antigos['codigo_bloco'], 'after': bloco.codigo_bloco}}
             )
-        flash(f'Bloco "{bloco.codigo_bloco}" atualizado com sucesso!', 'success')
+        flash(
+            f'Bloco "{bloco.codigo_bloco}" atualizado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='blocos'))
 
-    empresas = Empresa.query.filter_by(status='Ativo').order_by(Empresa.nome).all()
+    empresas = Empresa.query.filter_by(
+        status='Ativo').order_by(Empresa.nome).all()
     turnos_validos = Turno.TURNOS_VALIDOS
     return render_template('form_bloco.html', aba_ativa='blocos', bloco=bloco, empresas=empresas, turnos_validos=turnos_validos)
 
@@ -686,6 +699,21 @@ def cadastrar_gerente():
             flash('Este e-mail de acesso já está em uso.', 'warning')
             return redirect(request.url)
 
+        # Validar plantas selecionadas
+        plantas_ids = request.form.getlist('plantas_ids')
+        if not plantas_ids:
+            flash('Selecione pelo menos uma planta.', 'error')
+            return redirect(request.url)
+
+        # Validar que todas as plantas são da mesma empresa
+        empresa_id = request.form.get('empresa_id')
+        plantas = Planta.query.filter(Planta.id.in_(plantas_ids)).all()
+
+        if not all(p.empresa_id == int(empresa_id) for p in plantas):
+            flash(
+                'Todas as plantas devem pertencer à mesma empresa selecionada.', 'error')
+            return redirect(request.url)
+
         # 1. Criar o User
         hashed_password = generate_password_hash(
             request.form.get('senha'), method='pbkdf2:sha256')
@@ -693,25 +721,30 @@ def cadastrar_gerente():
         db.session.add(new_user)
         db.session.commit()
 
-        # 2. Criar o Gerente
+        # 2. Criar o Gerente (SEM planta_id)
         novo_gerente = Gerente(
             user_id=new_user.id,
             nome=request.form.get('nome'),
-            email=email,  # Opcional, pode ser o mesmo do login
-            empresa_id=request.form.get('empresa_id'),
-            planta_id=request.form.get('planta_id'),
+            email=email,
+            empresa_id=empresa_id,
             status=request.form.get('status')
         )
-
-        # 3. Associar Centros de Custo
-        cc_ids = request.form.getlist('centros_custo')
-        centros_custo = CentroCusto.query.filter(
-            CentroCusto.id.in_(cc_ids)).all()
-        novo_gerente.centros_custo.extend(centros_custo)
-
         db.session.add(novo_gerente)
+        db.session.flush()  # Gera o ID do gerente
+
+        # 3. Associar Plantas (NOVO)
+        for planta in plantas:
+            novo_gerente.plantas.append(planta)
+
+        # 4. Associar Centros de Custo
+        cc_ids = request.form.getlist('centros_custo')
+        if cc_ids:
+            centros_custo = CentroCusto.query.filter(
+                CentroCusto.id.in_(cc_ids)).all()
+            novo_gerente.centros_custo.extend(centros_custo)
+
         db.session.commit()
-        
+
         # AUDITORIA
         log_audit(
             action=AuditAction.CREATE,
@@ -719,7 +752,11 @@ def cadastrar_gerente():
             resource_id=novo_gerente.id,
             status='SUCCESS',
             severity='INFO',
-            changes={'nome': novo_gerente.nome, 'email': email}
+            changes={
+                'nome': novo_gerente.nome,
+                'email': email,
+                'plantas': [p.nome for p in plantas]
+            }
         )
         flash(
             f'Gerente "{novo_gerente.nome}" cadastrado com sucesso!', 'success')
@@ -729,7 +766,23 @@ def cadastrar_gerente():
     empresas = Empresa.query.order_by(Empresa.nome).all()
     plantas = Planta.query.order_by(Planta.nome).all()
     centros_custo = CentroCusto.query.order_by(CentroCusto.nome).all()
-    return render_template('form_gerente.html', aba_ativa='gerentes', empresas=empresas, plantas=plantas, centros_custo=centros_custo)
+
+    # Serializar plantas para JSON (para o JavaScript)
+    import json
+    plantas_json = json.dumps([{
+        'id': p.id,
+        'nome': p.nome,
+        'empresa_id': p.empresa_id
+    } for p in plantas])
+
+    return render_template(
+        'form_gerente.html',
+        aba_ativa='gerentes',
+        empresas=empresas,
+        plantas=plantas,
+        centros_custo=centros_custo,
+        plantas_json=plantas_json
+    )
 
 
 @admin_bp.route('/gerentes/editar/<int:gerente_id>', methods=['GET', 'POST'])
@@ -741,12 +794,30 @@ def editar_gerente(gerente_id):
     gerente = Gerente.query.get_or_404(gerente_id)
 
     if request.method == 'POST':
-        valores_antigos = {'nome': gerente.nome, 'email': gerente.user.email}
-        
+        valores_antigos = {
+            'nome': gerente.nome,
+            'email': gerente.user.email,
+            'plantas': [p.nome for p in gerente.plantas.all()]
+        }
+
+        # Validar plantas selecionadas
+        plantas_ids = request.form.getlist('plantas_ids')
+        if not plantas_ids:
+            flash('Selecione pelo menos uma planta.', 'error')
+            return redirect(request.url)
+
+        # Validar que todas as plantas são da mesma empresa
+        empresa_id = request.form.get('empresa_id')
+        plantas = Planta.query.filter(Planta.id.in_(plantas_ids)).all()
+
+        if not all(p.empresa_id == int(empresa_id) for p in plantas):
+            flash(
+                'Todas as plantas devem pertencer à mesma empresa selecionada.', 'error')
+            return redirect(request.url)
+
         # 1. Atualizar dados do Gerente
         gerente.nome = request.form.get('nome')
-        gerente.empresa_id = request.form.get('empresa_id')
-        gerente.planta_id = request.form.get('planta_id')
+        gerente.empresa_id = empresa_id
         gerente.status = request.form.get('status')
 
         # 2. Atualizar dados do User
@@ -756,18 +827,31 @@ def editar_gerente(gerente_id):
             gerente.user.password = generate_password_hash(
                 nova_senha, method='pbkdf2:sha256')
 
-        # 3. Atualizar Centros de Custo
-        gerente.centros_custo.clear()  # Limpa as associações antigas
+        # 3. Atualizar Plantas (NOVO)
+        # Limpar associações antigas e adicionar novas
+        gerente.plantas = []
+        for planta in plantas:
+            gerente.plantas.append(planta)
+
+        # 4. Atualizar Centros de Custo
+        gerente.centros_custo.clear()
         cc_ids = request.form.getlist('centros_custo')
-        centros_custo = CentroCusto.query.filter(
-            CentroCusto.id.in_(cc_ids)).all()
-        gerente.centros_custo.extend(centros_custo)
+        if cc_ids:
+            centros_custo = CentroCusto.query.filter(
+                CentroCusto.id.in_(cc_ids)).all()
+            gerente.centros_custo.extend(centros_custo)
 
         db.session.commit()
-        
+
         # AUDITORIA
-        valores_novos = {'nome': gerente.nome, 'email': gerente.user.email}
-        mudancas = {k: {'before': valores_antigos[k], 'after': v} for k, v in valores_novos.items() if valores_antigos[k] != v}
+        valores_novos = {
+            'nome': gerente.nome,
+            'email': gerente.user.email,
+            'plantas': [p.nome for p in gerente.plantas.all()]
+        }
+        mudancas = {k: {'before': valores_antigos[k], 'after': v}
+                    for k, v in valores_novos.items()
+                    if valores_antigos[k] != v}
         if mudancas:
             log_audit(
                 action=AuditAction.UPDATE,
@@ -784,7 +868,28 @@ def editar_gerente(gerente_id):
     empresas = Empresa.query.order_by(Empresa.nome).all()
     plantas = Planta.query.order_by(Planta.nome).all()
     centros_custo = CentroCusto.query.order_by(CentroCusto.nome).all()
-    return render_template('form_gerente.html', aba_ativa='gerentes', gerente=gerente, empresas=empresas, plantas=plantas, centros_custo=centros_custo)
+
+    # Serializar plantas para JSON (para o JavaScript)
+    import json
+    plantas_json = json.dumps([{
+        'id': p.id,
+        'nome': p.nome,
+        'empresa_id': p.empresa_id
+    } for p in plantas])
+
+    # IDs das plantas do gerente
+    gerente_plantas_ids = [p.id for p in gerente.plantas.all()]
+
+    return render_template(
+        'form_gerente.html',
+        aba_ativa='gerentes',
+        gerente=gerente,
+        empresas=empresas,
+        plantas=plantas,
+        centros_custo=centros_custo,
+        plantas_json=plantas_json,
+        gerente_plantas_ids=gerente_plantas_ids
+    )
 
 
 @admin_bp.route('/gerentes/excluir/<int:gerente_id>', methods=['POST'])
@@ -815,16 +920,17 @@ def excluir_gerente(gerente_id):
 @login_required
 @permission_required(['admin', 'gerente'])
 def cadastrar_supervisor():
-    
+
     if request.method == 'POST':
         if current_user.role == 'gerente':
             empresa_id = current_user.gerente.empresa_id
             gerente_id = current_user.gerente.id
-        else: # Se for admin
+        else:  # Se for admin
             empresa_id = request.form.get('empresa_id')
             gerente_id = request.form.get('gerente_id')
 
-        empresa_id = current_user.gerente.empresa_id if current_user.role == 'gerente' else request.form.get('empresa_id')
+        empresa_id = current_user.gerente.empresa_id if current_user.role == 'gerente' else request.form.get(
+            'empresa_id')
         email = request.form.get('email')
         if User.query.filter_by(email=email).first():
             flash('Este e-mail de acesso já está em uso.', 'warning')
@@ -857,7 +963,8 @@ def cadastrar_supervisor():
 
         # 3. Associar Plantas (Múltiplas)
         plantas_ids = request.form.getlist('plantas_ids')
-        novo_supervisor.plantas = Planta.query.filter(Planta.id.in_(plantas_ids)).all()
+        novo_supervisor.plantas = Planta.query.filter(
+            Planta.id.in_(plantas_ids)).all()
 
         # 4. Associar Turnos e Centros de Custo
         novo_supervisor.turnos.extend(Turno.query.filter(
@@ -867,7 +974,7 @@ def cadastrar_supervisor():
 
         db.session.add(novo_supervisor)
         db.session.commit()
-        
+
         # AUDITORIA
         log_audit(
             action=AuditAction.CREATE,
@@ -880,14 +987,15 @@ def cadastrar_supervisor():
         flash(
             f'Supervisor "{novo_supervisor.nome}" cadastrado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='supervisores'))
-    
+
     # Prepara dados para o formulário
     if current_user.role == 'admin':
         empresas = Empresa.query.order_by(Empresa.nome).all()
         gerentes = Gerente.query.order_by(Gerente.nome).all()
-    else: # Se for gerente
+    else:  # Se for gerente
         empresas = [current_user.gerente.empresa]
-        gerentes = [current_user.gerente] # Passa uma lista com o próprio gerente
+        # Passa uma lista com o próprio gerente
+        gerentes = [current_user.gerente]
 
     # Prepara dados para o formulário GET
     empresas = Empresa.query.all()
@@ -909,8 +1017,9 @@ def editar_supervisor(supervisor_id):
     supervisor = Supervisor.query.get_or_404(supervisor_id)
 
     if request.method == 'POST':
-        valores_antigos = {'nome': supervisor.nome, 'email': supervisor.user.email}
-        
+        valores_antigos = {'nome': supervisor.nome,
+                           'email': supervisor.user.email}
+
         # 1. Atualizar dados do Supervisor
         supervisor.nome = request.form.get('nome')
         supervisor.matricula = request.form.get('matricula')
@@ -932,7 +1041,8 @@ def editar_supervisor(supervisor_id):
 
         # 3. Atualizar Plantas (Múltiplas)
         plantas_ids = request.form.getlist('plantas_ids')
-        supervisor.plantas = Planta.query.filter(Planta.id.in_(plantas_ids)).all()
+        supervisor.plantas = Planta.query.filter(
+            Planta.id.in_(plantas_ids)).all()
 
         # 4. Atualizar Turnos e Centros de Custo
         supervisor.turnos.clear()
@@ -943,10 +1053,12 @@ def editar_supervisor(supervisor_id):
             CentroCusto.id.in_(request.form.getlist('centros_ids'))).all())
 
         db.session.commit()
-        
+
         # AUDITORIA
-        valores_novos = {'nome': supervisor.nome, 'email': supervisor.user.email}
-        mudancas = {k: {'before': valores_antigos[k], 'after': v} for k, v in valores_novos.items() if valores_antigos[k] != v}
+        valores_novos = {'nome': supervisor.nome,
+                         'email': supervisor.user.email}
+        mudancas = {k: {'before': valores_antigos[k], 'after': v}
+                    for k, v in valores_novos.items() if valores_antigos[k] != v}
         if mudancas:
             log_audit(
                 action=AuditAction.UPDATE,
@@ -959,11 +1071,11 @@ def editar_supervisor(supervisor_id):
         flash(
             f'Supervisor "{supervisor.nome}" atualizado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='supervisores'))
-    
+
     if current_user.role == 'admin':
         empresas = Empresa.query.all()
         gerentes = Gerente.query.all()
-    else: # Se for gerente
+    else:  # Se for gerente
         empresas = [current_user.gerente.empresa]
         gerentes = [current_user.gerente]
 

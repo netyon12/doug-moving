@@ -9,6 +9,7 @@ from sqlalchemy import func
 
 gerente_bp = Blueprint('gerente', __name__, url_prefix='/gerente')
 
+
 @gerente_bp.route('/dashboard')
 @login_required
 @permission_required(['gerente'])
@@ -23,7 +24,8 @@ def dashboard_gerente():
         return redirect(url_for('auth.logout'))
 
     # Obter IDs dos supervisores gerenciados
-    ids_supervisores = [s.id for s in Supervisor.query.filter_by(gerente_id=gerente_profile.id).all()]
+    ids_supervisores = [s.id for s in Supervisor.query.filter_by(
+        gerente_id=gerente_profile.id).all()]
 
     # KPI 1: Solicitações Pendentes
     solicitacoes_pendentes = Solicitacao.query.filter(
@@ -47,20 +49,22 @@ def dashboard_gerente():
     # KPI 4: Taxa de Ocupação Média (calcular com base nas solicitações)
     # Buscar configuração de max_passageiros
     from ..models import Configuracao
-    config_max_pass = Configuracao.query.filter_by(chave='MAX_PASSAGEIROS_POR_VIAGEM').first()
+    config_max_pass = Configuracao.query.filter_by(
+        chave='MAX_PASSAGEIROS_POR_VIAGEM').first()
     max_passageiros = int(config_max_pass.valor) if config_max_pass else 4
-    
+
     # Calcular taxa de ocupação média das viagens agendadas/em andamento
     viagens_ativas = db.session.query(Viagem).join(Solicitacao).filter(
         Solicitacao.supervisor_id.in_(ids_supervisores),
         Viagem.status.in_(['Agendada', 'Em Andamento'])
     ).distinct().all()
-    
+
     if viagens_ativas:
         taxas = []
         for viagem in viagens_ativas:
             num_passageiros = len(viagem.solicitacoes)
-            taxa = (num_passageiros / max_passageiros) * 100 if max_passageiros > 0 else 0
+            taxa = (num_passageiros / max_passageiros) * \
+                100 if max_passageiros > 0 else 0
             taxas.append(taxa)
         taxa_ocupacao_media = sum(taxas) / len(taxas) if taxas else 0
     else:
@@ -84,10 +88,14 @@ def dashboard_gerente():
     # KPI 7: Total de Supervisores Ativos
     total_supervisores = len(ids_supervisores)
 
-    # KPI 8: Total de Colaboradores da Planta
-    total_colaboradores = Colaborador.query.filter_by(
-        planta_id=gerente_profile.planta_id
-    ).count()
+    # KPI 8: Total de Colaboradores de Todas as Plantas do Gerente
+    plantas_ids = [p.id for p in gerente_profile.plantas.all()]
+    if plantas_ids:
+        total_colaboradores = Colaborador.query.filter(
+            Colaborador.planta_id.in_(plantas_ids)
+        ).count()
+    else:
+        total_colaboradores = 0
 
     return render_template(
         'dashboard_gerente.html',
@@ -117,10 +125,12 @@ def solicitacoes():
         return redirect(url_for('auth.logout'))
 
     # Obter IDs dos supervisores gerenciados
-    ids_supervisores = [s.id for s in Supervisor.query.filter_by(gerente_id=gerente_profile.id).all()]
+    ids_supervisores = [s.id for s in Supervisor.query.filter_by(
+        gerente_id=gerente_profile.id).all()]
 
     # Query base
-    query = Solicitacao.query.filter(Solicitacao.supervisor_id.in_(ids_supervisores))
+    query = Solicitacao.query.filter(
+        Solicitacao.supervisor_id.in_(ids_supervisores))
 
     # Aplicar filtros
     id_solicitacao = request.args.get('id_solicitacao')
@@ -136,47 +146,50 @@ def solicitacoes():
 
     if id_solicitacao:
         query = query.filter(Solicitacao.id == int(id_solicitacao))
-    
+
     if colaborador_nome:
         query = query.join(Colaborador).filter(
             Colaborador.nome.ilike(f'%{colaborador_nome}%')
         )
-    
+
     if colaborador_matricula:
         query = query.join(Colaborador).filter(
             Colaborador.matricula.ilike(f'%{colaborador_matricula}%')
         )
-    
+
     if viagem_id:
         query = query.filter(Solicitacao.viagem_id == int(viagem_id))
-    
+
     if status:
         query = query.filter(Solicitacao.status == status)
-    
+
     if data_inicio:
         data_inicio_dt = datetime.strptime(data_inicio, '%Y-%m-%d')
         query = query.filter(Solicitacao.data_criacao >= data_inicio_dt)
-    
+
     if data_fim:
-        data_fim_dt = datetime.strptime(data_fim, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
+        data_fim_dt = datetime.strptime(
+            data_fim, '%Y-%m-%d').replace(hour=23, minute=59, second=59)
         query = query.filter(Solicitacao.data_criacao <= data_fim_dt)
-    
+
     if supervisor_id:
         query = query.filter(Solicitacao.supervisor_id == int(supervisor_id))
-    
+
     if bloco_id:
         query = query.filter(Solicitacao.bloco_id == int(bloco_id))
-    
+
     if planta:
-        query = query.join(Colaborador).filter(
-            Colaborador.planta.ilike(f'%{planta}%')
+        from ..models import Planta
+        query = query.join(Colaborador).join(Planta).filter(
+            Planta.nome.ilike(f'%{planta}%')
         )
 
     # Executar query
     solicitacoes = query.order_by(Solicitacao.id.desc()).all()
 
     # Buscar supervisores e blocos para os filtros
-    todos_supervisores = Supervisor.query.filter(Supervisor.id.in_(ids_supervisores)).order_by(Supervisor.nome).all()
+    todos_supervisores = Supervisor.query.filter(
+        Supervisor.id.in_(ids_supervisores)).order_by(Supervisor.nome).all()
     todos_blocos = Bloco.query.order_by(Bloco.codigo_bloco).all()
 
     return render_template(
@@ -198,14 +211,14 @@ def visualizar_solicitacao(id):
         return redirect(url_for('home'))
 
     solicitacao = Solicitacao.query.get_or_404(id)
-    
+
     # Verifica se a solicitação pertence a um supervisor gerenciado
     gerente_profile = current_user.gerente
-    ids_supervisores = [s.id for s in Supervisor.query.filter_by(gerente_id=gerente_profile.id).all()]
-    
+    ids_supervisores = [s.id for s in Supervisor.query.filter_by(
+        gerente_id=gerente_profile.id).all()]
+
     if solicitacao.supervisor_id not in ids_supervisores:
         flash('Você não tem permissão para visualizar esta solicitação.', 'danger')
         return redirect(url_for('gerente.solicitacoes'))
-    
-    return render_template('visualizar_solicitacao_gerente.html', solicitacao=solicitacao)
 
+    return render_template('visualizar_solicitacao_gerente.html', solicitacao=solicitacao)

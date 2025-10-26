@@ -39,16 +39,16 @@ def fretados():
     empresa_id = request.args.get('empresa_id', '')
     planta_id = request.args.get('planta_id', '')
     bloco_id = request.args.get('bloco_id', '')
-    
+
     # Query base - NÃO PRECISA DE JOIN!
     # A tabela fretado JÁ TEM todos os dados do colaborador
     query = Fretado.query
-    
+
     # Filtro por data
     if data_filtro:
         try:
             data_obj = datetime.strptime(data_filtro, '%Y-%m-%d').date()
-            
+
             # Filtra por qualquer horário (entrada, saída ou desligamento)
             # Usa func.date() para comparar apenas a data
             query = query.filter(
@@ -69,44 +69,47 @@ def fretados():
             )
         except ValueError:
             flash('Data inválida', 'error')
-    
+
     # Filtro por empresa
     if empresa_id:
         try:
             query = query.filter(Fretado.empresa_id == int(empresa_id))
         except ValueError:
             pass
-    
+
     # Filtro por planta
     if planta_id:
         try:
             query = query.filter(Fretado.planta_id == int(planta_id))
         except ValueError:
             pass
-    
+
     # Filtro por bloco
     if bloco_id:
         try:
             query = query.filter(Fretado.bloco_id == int(bloco_id))
         except ValueError:
             pass
-    
+
     # Filtro por permissão do usuário
     if current_user.role == 'gerente':
         gerente = Gerente.query.filter_by(user_id=current_user.id).first()
         if gerente:
             query = query.filter(Fretado.empresa_id == gerente.empresa_id)
-            if gerente.planta_id:
-                query = query.filter(Fretado.planta_id == gerente.planta_id)
-    
+            # Gerente vê fretados de todas as suas plantas
+            plantas_ids = [p.id for p in gerente.plantas.all()]
+            if plantas_ids:
+                query = query.filter(Fretado.planta_id.in_(plantas_ids))
+
     elif current_user.role == 'supervisor':
-        supervisor = Supervisor.query.filter_by(user_id=current_user.id).first()
+        supervisor = Supervisor.query.filter_by(
+            user_id=current_user.id).first()
         if supervisor:
             query = query.filter(Fretado.empresa_id == supervisor.empresa_id)
             if supervisor.plantas:
                 plantas_ids = [p.id for p in supervisor.plantas]
                 query = query.filter(Fretado.planta_id.in_(plantas_ids))
-    
+
     # Ordena por data/horário (usa coalesce para pegar o primeiro horário disponível)
     fretados = query.order_by(
         func.coalesce(
@@ -115,18 +118,18 @@ def fretados():
             Fretado.horario_desligamento
         ).desc()
     ).all()
-    
+
     # ===================================================================
     # MONTA LISTA DE COLABORADORES
     # ===================================================================
     # A tabela fretado JÁ TEM os dados, só precisa formatar
     colaboradores_fretados = []
-    
+
     for fretado in fretados:
         # Determina o horário principal
         horario = fretado.horario_entrada or fretado.horario_saida or fretado.horario_desligamento
         horario_str = horario.strftime('%d/%m/%Y %H:%M') if horario else 'N/A'
-        
+
         colaboradores_fretados.append({
             'fretado_id': fretado.id,
             'matricula': fretado.matricula or 'N/A',
@@ -142,19 +145,19 @@ def fretados():
             'data_horario': horario_str,
             'status': fretado.status
         })
-    
+
     # Busca dados para os filtros
     empresas = Empresa.query.filter_by(status='Ativa').all()
     plantas = Planta.query.all()
     blocos = Bloco.query.filter_by(status='Ativo').all()
-    
+
     # Filtra plantas por empresa se selecionada
     if empresa_id:
         try:
             plantas = [p for p in plantas if p.empresa_id == int(empresa_id)]
         except ValueError:
             pass
-    
+
     return render_template(
         'fretados/listagem.html',
         colaboradores_fretados=colaboradores_fretados,
@@ -174,17 +177,17 @@ def exportar_fretados():
     Exporta os fretados filtrados para Excel ou CSV.
     """
     formato = request.args.get('formato', 'excel')  # 'excel' ou 'csv'
-    
+
     # Aplica os mesmos filtros da listagem
     data_hoje = date.today().strftime('%Y-%m-%d')
     data_filtro = request.args.get('data_filtro', data_hoje)
     empresa_id = request.args.get('empresa_id', '')
     planta_id = request.args.get('planta_id', '')
     bloco_id = request.args.get('bloco_id', '')
-    
+
     # Query base
     query = Fretado.query
-    
+
     # Filtro por data
     if data_filtro:
         try:
@@ -207,44 +210,47 @@ def exportar_fretados():
             )
         except ValueError:
             pass
-    
+
     # Filtro por empresa
     if empresa_id:
         try:
             query = query.filter(Fretado.empresa_id == int(empresa_id))
         except ValueError:
             pass
-    
+
     # Filtro por planta
     if planta_id:
         try:
             query = query.filter(Fretado.planta_id == int(planta_id))
         except ValueError:
             pass
-    
+
     # Filtro por bloco
     if bloco_id:
         try:
             query = query.filter(Fretado.bloco_id == int(bloco_id))
         except ValueError:
             pass
-    
+
     # Filtro por permissão do usuário
     if current_user.role == 'gerente':
         gerente = Gerente.query.filter_by(user_id=current_user.id).first()
         if gerente:
             query = query.filter(Fretado.empresa_id == gerente.empresa_id)
-            if gerente.planta_id:
-                query = query.filter(Fretado.planta_id == gerente.planta_id)
-    
+            # Gerente vê fretados de todas as suas plantas
+            plantas_ids = [p.id for p in gerente.plantas.all()]
+            if plantas_ids:
+                query = query.filter(Fretado.planta_id.in_(plantas_ids))
+
     elif current_user.role == 'supervisor':
-        supervisor = Supervisor.query.filter_by(user_id=current_user.id).first()
+        supervisor = Supervisor.query.filter_by(
+            user_id=current_user.id).first()
         if supervisor:
             query = query.filter(Fretado.empresa_id == supervisor.empresa_id)
             if supervisor.plantas:
                 plantas_ids = [p.id for p in supervisor.plantas]
                 query = query.filter(Fretado.planta_id.in_(plantas_ids))
-    
+
     fretados = query.order_by(
         func.coalesce(
             Fretado.horario_entrada,
@@ -252,14 +258,14 @@ def exportar_fretados():
             Fretado.horario_desligamento
         ).desc()
     ).all()
-    
+
     # Monta lista de colaboradores
     colaboradores_fretados = []
-    
+
     for fretado in fretados:
         horario = fretado.horario_entrada or fretado.horario_saida or fretado.horario_desligamento
         horario_str = horario.strftime('%d/%m/%Y %H:%M') if horario else 'N/A'
-        
+
         colaboradores_fretados.append({
             'fretado_id': fretado.id,
             'matricula': fretado.matricula or 'N/A',
@@ -275,7 +281,7 @@ def exportar_fretados():
             'data_horario': horario_str,
             'status': fretado.status
         })
-    
+
     if formato == 'csv':
         return exportar_csv(colaboradores_fretados)
     else:
@@ -286,7 +292,7 @@ def exportar_csv(colaboradores_fretados):
     """Exporta colaboradores em fretados para CSV com separador ;"""
     output = StringIO()
     writer = csv.writer(output, delimiter=';')
-    
+
     # Cabeçalho
     writer.writerow([
         'ID Fretado',
@@ -303,7 +309,7 @@ def exportar_csv(colaboradores_fretados):
         'Data/Horário',
         'Status'
     ])
-    
+
     # Dados
     for item in colaboradores_fretados:
         writer.writerow([
@@ -321,7 +327,7 @@ def exportar_csv(colaboradores_fretados):
             item['data_horario'],
             item['status']
         ])
-    
+
     # Prepara o response
     output.seek(0)
     return Response(
@@ -339,9 +345,10 @@ def exportar_excel(colaboradores_fretados):
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = 'Fretados - Colaboradores'
-    
+
     # Estilos
-    header_fill = PatternFill(start_color='4472C4', end_color='4472C4', fill_type='solid')
+    header_fill = PatternFill(start_color='4472C4',
+                              end_color='4472C4', fill_type='solid')
     header_font = Font(bold=True, color='FFFFFF')
     header_alignment = Alignment(horizontal='center', vertical='center')
     border = Border(
@@ -350,7 +357,7 @@ def exportar_excel(colaboradores_fretados):
         top=Side(style='thin'),
         bottom=Side(style='thin')
     )
-    
+
     # Cabeçalhos
     headers = [
         'ID Fretado',
@@ -367,40 +374,46 @@ def exportar_excel(colaboradores_fretados):
         'Data/Horário',
         'Status'
     ]
-    
+
     for col_num, header in enumerate(headers, 1):
         cell = ws.cell(row=1, column=col_num, value=header)
         cell.fill = header_fill
         cell.font = header_font
         cell.alignment = header_alignment
         cell.border = border
-    
+
     # Dados
     for row_num, item in enumerate(colaboradores_fretados, 2):
-        ws.cell(row=row_num, column=1, value=item['fretado_id']).border = border
+        ws.cell(row=row_num, column=1,
+                value=item['fretado_id']).border = border
         ws.cell(row=row_num, column=2, value=item['matricula']).border = border
-        ws.cell(row=row_num, column=3, value=item['nome_colaborador']).border = border
+        ws.cell(row=row_num, column=3,
+                value=item['nome_colaborador']).border = border
         ws.cell(row=row_num, column=4, value=item['bairro']).border = border
         ws.cell(row=row_num, column=5, value=item['cidade']).border = border
         ws.cell(row=row_num, column=6, value=item['telefone']).border = border
         ws.cell(row=row_num, column=7, value=item['empresa']).border = border
         ws.cell(row=row_num, column=8, value=item['planta']).border = border
         ws.cell(row=row_num, column=9, value=item['bloco']).border = border
-        ws.cell(row=row_num, column=10, value=item['tipo_linha']).border = border
-        ws.cell(row=row_num, column=11, value=item['tipo_corrida']).border = border
-        ws.cell(row=row_num, column=12, value=item['data_horario']).border = border
+        ws.cell(row=row_num, column=10,
+                value=item['tipo_linha']).border = border
+        ws.cell(row=row_num, column=11,
+                value=item['tipo_corrida']).border = border
+        ws.cell(row=row_num, column=12,
+                value=item['data_horario']).border = border
         ws.cell(row=row_num, column=13, value=item['status']).border = border
-    
+
     # Ajusta largura das colunas
     column_widths = [12, 12, 25, 20, 15, 15, 20, 20, 12, 12, 15, 18, 12]
     for col_num, width in enumerate(column_widths, 1):
-        ws.column_dimensions[openpyxl.utils.get_column_letter(col_num)].width = width
-    
+        ws.column_dimensions[openpyxl.utils.get_column_letter(
+            col_num)].width = width
+
     # Salva em BytesIO
     output = BytesIO()
     wb.save(output)
     output.seek(0)
-    
+
     return Response(
         output.getvalue(),
         mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -408,4 +421,3 @@ def exportar_excel(colaboradores_fretados):
             'Content-Disposition': f'attachment; filename=fretados_colaboradores_{date.today().strftime("%Y%m%d")}.xlsx'
         }
     )
-

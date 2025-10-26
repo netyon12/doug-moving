@@ -7,6 +7,9 @@ from flask_login import LoginManager, login_required, current_user, logout_user
 from flask_caching import Cache
 from dotenv import load_dotenv
 
+# Carrega variáveis de ambiente do arquivo .env
+load_dotenv()
+
 # Instâncias das extensões
 db = SQLAlchemy()
 login_manager = LoginManager()
@@ -44,7 +47,8 @@ def create_app():
         'DATABASE_URL', 'sqlite:///doug_moving.db')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    app.config['SQLALCHEMY_ECHO'] = False  # Para não mostrar as queries SQL no terminal.
+    # Para não mostrar as queries SQL no terminal.
+    app.config['SQLALCHEMY_ECHO'] = False
     app.config['UPLOAD_FOLDER'] = os.path.join(os.path.abspath(
         os.path.dirname(__file__)), 'static/profile_pics')
 
@@ -162,5 +166,17 @@ def create_app():
         SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key')
         FLASK_ENV = os.getenv('FLASK_ENV', 'production')
         DEBUG = os.getenv('FLASK_DEBUG', 'False') == 'True'
+
+    # ===== NOVO: Context Processor para Timeout =====
+
+    @app.context_processor
+    def inject_timeout_config():
+        """Injeta configuração de timeout em todos os templates."""
+        from .models import Configuracao
+        config_timeout = Configuracao.query.filter_by(
+            chave='timeout_inatividade_minutos'
+        ).first()
+        timeout = int(config_timeout.valor) if config_timeout else 30
+        return {'timeout_config': timeout}
 
     return app

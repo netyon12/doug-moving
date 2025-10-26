@@ -5,7 +5,7 @@ Módulo de Solicitações
 CRUD de solicitações e exportação.
 """
 
-from flask import Blueprint, render_template, request, redirect, url_for, flash, Response, jsonify, abort
+from flask import Blueprint, render_template, request, redirect, url_for, flash, Response, jsonify, abort, current_app
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
@@ -50,7 +50,7 @@ def solicitacoes():
     elif current_user.role == 'supervisor':
         query = query.filter(Solicitacao.supervisor_id ==
                              current_user.supervisor.id)
-        
+
     # Filtros do formulário
     filtros = request.args
 
@@ -58,7 +58,7 @@ def solicitacoes():
     if not filtros.get('data_inicio') and not filtros.get('data_fim'):
         hoje = date.today()
         primeiro_dia_mes = date(hoje.year, hoje.month, 1)
-        
+
         # Calcula o último dia do mês
         if hoje.month == 12:
             ultimo_dia_mes = date(hoje.year, 12, 31)
@@ -66,18 +66,16 @@ def solicitacoes():
             proximo_mes = date(hoje.year, hoje.month + 1, 1)
             from datetime import timedelta
             ultimo_dia_mes = proximo_mes - timedelta(days=1)
-        
+
         # Cria um dicionário mutável com os filtros padrão
         filtros_dict = dict(filtros)
         filtros_dict['data_inicio'] = primeiro_dia_mes.strftime('%Y-%m-%d')
         filtros_dict['data_fim'] = ultimo_dia_mes.strftime('%Y-%m-%d')
-        
+
         # Atualiza a variável filtros
         from werkzeug.datastructures import ImmutableMultiDict
         filtros = ImmutableMultiDict(filtros_dict)
     # ===== FIM =====
-
-    
 
     # NOVOS FILTROS - ID da Solicitação
     if filtros.get('id_solicitacao'):
@@ -509,9 +507,13 @@ def nova_solicitacao():
 
             db.session.commit()
 
-            # Log no Terminal de Sucesso
-            logger.info(
-                f"{solicitacoes_criadas} solicitação(ões) criada(s) com sucesso")
+            # ✅ LOG RESUMIDO (MELHOR)
+            current_app.logger.info(
+                f"✅ SOLICITAÇÕES CRIADAS: Total={solicitacoes_criadas}, "
+                f"IDs={solicitacoes_ids_criadas}, "
+                f"Supervisor={current_user.supervisor.nome}, "
+                f"Tipo={tipo_corrida}"
+            )
 
             # AUDITORIA: Registra criação de solicitações
             for sol_id in solicitacoes_ids_criadas:
@@ -543,6 +545,7 @@ def nova_solicitacao():
 
         except Exception as e:
             db.session.rollback()
+            current_app.logger.error(f"❌ ERRO ao criar solicitação: {str(e)}")
             flash(f'Erro ao criar solicitações: {str(e)}', 'danger')
             import traceback
             print(traceback.format_exc())  # Log detalhado no console

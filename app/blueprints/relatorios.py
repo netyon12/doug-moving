@@ -57,7 +57,8 @@ def get_user_planta_id():
     if current_user.role == 'admin':
         return None
     elif current_user.role == 'gerente' and current_user.gerente:
-        return current_user.gerente.planta_id
+        # Gerente tem múltiplas plantas, retorna None
+        return None
     elif current_user.role == 'supervisor' and current_user.supervisor:
         return current_user.supervisor.planta_id
     return None
@@ -83,18 +84,18 @@ def get_user_motorista_id():
 @login_required
 def listagem_solicitacoes():
     """Exibe a tela de filtros para o relatório de solicitações"""
-    
+
     # Buscar dados para os filtros baseado no perfil
     empresa_id_usuario = get_user_empresa_id()
     planta_id_usuario = get_user_planta_id()
     supervisor_id_usuario = get_user_supervisor_id()
-    
+
     # Filtrar empresas baseado no perfil
     if empresa_id_usuario:
         empresas = Empresa.query.filter_by(id=empresa_id_usuario).all()
     else:
         empresas = Empresa.query.all()
-    
+
     # Filtrar plantas baseado no perfil
     if planta_id_usuario:
         plantas = Planta.query.filter_by(id=planta_id_usuario).all()
@@ -102,15 +103,15 @@ def listagem_solicitacoes():
         plantas = Planta.query.filter_by(empresa_id=empresa_id_usuario).all()
     else:
         plantas = Planta.query.all()
-    
+
     blocos = Bloco.query.all()
-    
+
     # Buscar supervisores (apenas para admin)
     if current_user.role == 'admin':
         supervisores = Supervisor.query.all()
     else:
         supervisores = []
-    
+
     return render_template(
         'relatorios/listagem_solicitacoes.html',
         empresas=empresas,
@@ -128,7 +129,7 @@ def listagem_solicitacoes():
 @login_required
 def dados_listagem_solicitacoes():
     """Retorna os dados do relatório de solicitações em JSON"""
-    
+
     try:
         # Receber filtros
         data_inicio = request.form.get('data_inicio')
@@ -140,28 +141,28 @@ def dados_listagem_solicitacoes():
         tipo_corrida = request.form.get('tipo_corrida')
         tipo_linha = request.form.get('tipo_linha')
         supervisor_id = request.form.get('supervisor_id')
-        
+
         # Construir query
         query = Solicitacao.query
-        
+
         # APLICAR PERMISSÕES POR PERFIL
         if current_user.role == 'supervisor':
             # Supervisor vê apenas suas solicitações
             supervisor_id_usuario = get_user_supervisor_id()
             if supervisor_id_usuario:
                 query = query.filter_by(supervisor_id=supervisor_id_usuario)
-        
+
         elif current_user.role == 'gerente':
             # Gerente vê todas as solicitações da planta
             planta_id_usuario = get_user_planta_id()
             if planta_id_usuario:
                 query = query.filter_by(planta_id=planta_id_usuario)
-        
+
         elif current_user.role == 'admin':
             # Admin pode filtrar por supervisor se quiser
             if supervisor_id:
                 query = query.filter_by(supervisor_id=supervisor_id)
-        
+
         # Aplicar filtros de empresa e planta (respeitando permissões)
         if empresa_id:
             # Validar se o usuário tem permissão para ver essa empresa
@@ -177,7 +178,7 @@ def dados_listagem_solicitacoes():
             empresa_id_usuario = get_user_empresa_id()
             if empresa_id_usuario:
                 query = query.filter_by(empresa_id=empresa_id_usuario)
-        
+
         # Aplicar filtros de data
         if data_inicio and data_fim:
             data_inicio_dt = datetime.strptime(data_inicio, '%Y-%m-%d')
@@ -185,36 +186,39 @@ def dados_listagem_solicitacoes():
             data_fim_dt = data_fim_dt.replace(hour=23, minute=59, second=59)
             query = query.filter(Solicitacao.data_criacao >= data_inicio_dt)
             query = query.filter(Solicitacao.data_criacao <= data_fim_dt)
-        
+
         if planta_id:
             query = query.filter_by(planta_id=planta_id)
-        
+
         if bloco_id:
             query = query.filter_by(bloco_id=bloco_id)
-        
+
         if status:
             query = query.filter_by(status=status)
-        
+
         if tipo_corrida:
             query = query.filter_by(tipo_corrida=tipo_corrida)
-        
+
         if tipo_linha:
             query = query.filter_by(tipo_linha=tipo_linha)
-        
+
         # Executar query
         solicitacoes = query.order_by(Solicitacao.data_criacao.desc()).all()
-        
+
         # Formatar dados para JSON
         dados = []
-        
+
         for sol in solicitacoes:
             # Buscar dados relacionados
-            colaborador = Colaborador.query.get(sol.colaborador_id) if sol.colaborador_id else None
-            empresa = Empresa.query.get(sol.empresa_id) if sol.empresa_id else None
+            colaborador = Colaborador.query.get(
+                sol.colaborador_id) if sol.colaborador_id else None
+            empresa = Empresa.query.get(
+                sol.empresa_id) if sol.empresa_id else None
             planta = Planta.query.get(sol.planta_id) if sol.planta_id else None
             bloco = Bloco.query.get(sol.bloco_id) if sol.bloco_id else None
-            supervisor = Supervisor.query.get(sol.supervisor_id) if sol.supervisor_id else None
-            
+            supervisor = Supervisor.query.get(
+                sol.supervisor_id) if sol.supervisor_id else None
+
             dados.append({
                 'id': sol.id,
                 'data_criacao': sol.data_criacao.strftime('%d/%m/%Y %H:%M') if sol.data_criacao else '',
@@ -225,21 +229,23 @@ def dados_listagem_solicitacoes():
                 'tipo_linha': sol.tipo_linha or 'N/A',
                 'tipo_corrida': sol.tipo_corrida or 'N/A',
                 'status': sol.status or 'N/A',
-                'solicitante': supervisor.nome if supervisor else 'N/A',  # ADICIONADO: nome do solicitante
+                # ADICIONADO: nome do solicitante
+                'solicitante': supervisor.nome if supervisor else 'N/A',
                 'horario_entrada': sol.horario_entrada.strftime('%H:%M') if sol.horario_entrada else '',
                 'horario_saida': sol.horario_saida.strftime('%H:%M') if sol.horario_saida else '',
                 'valor': float(sol.valor) if sol.valor else 0.0,
                 'valor_repasse': float(sol.valor_repasse) if sol.valor_repasse else 0.0
             })
-        
+
         return jsonify({
             'success': True,
             'dados': dados,
             'total': len(dados)
         })
-        
+
     except Exception as e:
-        current_app.logger.error(f"Erro ao gerar relatório de solicitações: {str(e)}")
+        current_app.logger.error(
+            f"Erro ao gerar relatório de solicitações: {str(e)}")
         import traceback
         traceback.print_exc()
         return jsonify({
@@ -254,17 +260,17 @@ def dados_listagem_solicitacoes():
 @login_required
 def conferencia_viagens():
     """Exibe a tela de filtros para o relatório de conferência de viagens"""
-    
+
     # Buscar dados para os filtros baseado no perfil
     empresa_id_usuario = get_user_empresa_id()
     planta_id_usuario = get_user_planta_id()
-    
+
     # Filtrar empresas baseado no perfil
     if empresa_id_usuario:
         empresas = Empresa.query.filter_by(id=empresa_id_usuario).all()
     else:
         empresas = Empresa.query.all()
-    
+
     # Filtrar plantas baseado no perfil
     if planta_id_usuario:
         plantas = Planta.query.filter_by(id=planta_id_usuario).all()
@@ -272,11 +278,11 @@ def conferencia_viagens():
         plantas = Planta.query.filter_by(empresa_id=empresa_id_usuario).all()
     else:
         plantas = Planta.query.all()
-    
+
     # Buscar motoristas e colaboradores para filtros
     motoristas = Motorista.query.all()
     colaboradores = Colaborador.query.all()
-    
+
     return render_template(
         'relatorios/conferencia_viagens.html',
         empresas=empresas,
@@ -293,7 +299,7 @@ def conferencia_viagens():
 @login_required
 def dados_conferencia_viagens():
     """Retorna os dados do relatório de conferência de viagens em JSON"""
-    
+
     try:
         # Receber filtros
         data_inicio = request.form.get('data_inicio')
@@ -305,18 +311,20 @@ def dados_conferencia_viagens():
         tipo_linha = request.form.get('tipo_linha')
         motorista_id = request.form.get('motorista_id')  # NOVO FILTRO
         colaborador_id = request.form.get('colaborador_id')  # NOVO FILTRO
-        
+
         # Construir query
         query = Viagem.query.options(db.joinedload(Viagem.hora_parada))
-        
+
         # APLICAR PERMISSÕES POR PERFIL
         if current_user.role == 'supervisor':
             # Supervisor vê apenas viagens das solicitações que ele fez
             supervisor_id_usuario = get_user_supervisor_id()
             if supervisor_id_usuario:
                 # Buscar IDs de viagens das solicitações do supervisor
-                solicitacoes_supervisor = Solicitacao.query.filter_by(supervisor_id=supervisor_id_usuario).all()
-                viagem_ids = [sol.viagem_id for sol in solicitacoes_supervisor if sol.viagem_id]
+                solicitacoes_supervisor = Solicitacao.query.filter_by(
+                    supervisor_id=supervisor_id_usuario).all()
+                viagem_ids = [
+                    sol.viagem_id for sol in solicitacoes_supervisor if sol.viagem_id]
                 if viagem_ids:
                     query = query.filter(Viagem.id.in_(viagem_ids))
                 else:
@@ -327,13 +335,13 @@ def dados_conferencia_viagens():
                         'total': 0,
                         'valor_total': 0.0
                     })
-        
+
         elif current_user.role == 'gerente':
             # Gerente vê todas as viagens da planta
             planta_id_usuario = get_user_planta_id()
             if planta_id_usuario:
                 query = query.filter_by(planta_id=planta_id_usuario)
-        
+
         # Aplicar filtros de empresa e planta (respeitando permissões)
         if empresa_id:
             # Validar se o usuário tem permissão para ver essa empresa
@@ -349,57 +357,65 @@ def dados_conferencia_viagens():
             empresa_id_usuario = get_user_empresa_id()
             if empresa_id_usuario:
                 query = query.filter_by(empresa_id=empresa_id_usuario)
-        
+
         # CORRIGIDO: Filtrar por data da viagem (horario_entrada, horario_saida, horario_desligamento)
         if data_inicio and data_fim:
             data_inicio_dt = datetime.strptime(data_inicio, '%Y-%m-%d')
             data_fim_dt = datetime.strptime(data_fim, '%Y-%m-%d')
             data_fim_dt = data_fim_dt.replace(hour=23, minute=59, second=59)
-            
+
             # Filtrar por qualquer um dos horários da viagem
             query = query.filter(
                 db.or_(
-                    db.and_(Viagem.horario_entrada >= data_inicio_dt, Viagem.horario_entrada <= data_fim_dt),
-                    db.and_(Viagem.horario_saida >= data_inicio_dt, Viagem.horario_saida <= data_fim_dt),
-                    db.and_(Viagem.horario_desligamento >= data_inicio_dt, Viagem.horario_desligamento <= data_fim_dt)
+                    db.and_(Viagem.horario_entrada >= data_inicio_dt,
+                            Viagem.horario_entrada <= data_fim_dt),
+                    db.and_(Viagem.horario_saida >= data_inicio_dt,
+                            Viagem.horario_saida <= data_fim_dt),
+                    db.and_(Viagem.horario_desligamento >= data_inicio_dt,
+                            Viagem.horario_desligamento <= data_fim_dt)
                 )
             )
-        
+
         if planta_id:
             query = query.filter_by(planta_id=planta_id)
-        
+
         if status:
             query = query.filter_by(status=status)
-        
+
         if tipo_corrida:
             query = query.filter_by(tipo_corrida=tipo_corrida)
-        
+
         if tipo_linha:
             query = query.filter_by(tipo_linha=tipo_linha)
-        
+
         # NOVO: Filtro por motorista
         if motorista_id:
             query = query.filter_by(motorista_id=motorista_id)
-        
+
         # NOVO: Filtro por colaborador (busca em colaboradores_ids)
         if colaborador_id:
             # Precisa buscar viagens que contenham esse colaborador_id no JSON
-            query = query.filter(Viagem.colaboradores_ids.like(f'%{colaborador_id}%'))
-        
+            query = query.filter(
+                Viagem.colaboradores_ids.like(f'%{colaborador_id}%'))
+
         # Executar query
         viagens = query.order_by(Viagem.id.desc()).all()
-        
+
         # Formatar dados para JSON
         dados = []
         valor_total = 0.0
-        
+
         for viagem in viagens:
             # Buscar dados relacionados
-            empresa = Empresa.query.get(viagem.empresa_id) if viagem.empresa_id else None
-            planta = Planta.query.get(viagem.planta_id) if viagem.planta_id else None
-            bloco = Bloco.query.get(viagem.bloco_id) if viagem.bloco_id else None
-            motorista = Motorista.query.get(viagem.motorista_id) if viagem.motorista_id else None
-            
+            empresa = Empresa.query.get(
+                viagem.empresa_id) if viagem.empresa_id else None
+            planta = Planta.query.get(
+                viagem.planta_id) if viagem.planta_id else None
+            bloco = Bloco.query.get(
+                viagem.bloco_id) if viagem.bloco_id else None
+            motorista = Motorista.query.get(
+                viagem.motorista_id) if viagem.motorista_id else None
+
             # Buscar colaboradores
             colaboradores = []
             if viagem.colaboradores_ids:
@@ -411,13 +427,13 @@ def dados_conferencia_viagens():
                             colaboradores.append(col.nome)
                 except:
                     pass
-            
+
             # Calcular valor (incluindo hora parada)
             valor_viagem = float(viagem.valor) if viagem.valor else 0.0
             if viagem.hora_parada:
                 valor_viagem += float(viagem.hora_parada.valor_adicional)
             valor_total += valor_viagem
-            
+
             # Determinar data da viagem (prioridade: entrada > saida > desligamento)
             data_viagem = None
             if viagem.horario_entrada:
@@ -426,10 +442,11 @@ def dados_conferencia_viagens():
                 data_viagem = viagem.horario_saida
             elif viagem.horario_desligamento:
                 data_viagem = viagem.horario_desligamento
-            
+
             dados.append({
                 'id': viagem.id,
-                'data_viagem': data_viagem.strftime('%d/%m/%Y') if data_viagem else 'N/A',  # CORRIGIDO
+                # CORRIGIDO
+                'data_viagem': data_viagem.strftime('%d/%m/%Y') if data_viagem else 'N/A',
                 'empresa': empresa.nome if empresa else 'N/A',
                 'planta': planta.nome if planta else 'N/A',
                 'bloco': bloco.codigo_bloco if bloco else 'N/A',  # CORRIGIDO: usar codigo_bloco
@@ -445,16 +462,17 @@ def dados_conferencia_viagens():
                 'horario_saida': viagem.horario_saida.strftime('%H:%M') if viagem.horario_saida else ''
                 # REMOVIDO: valor_repasse (conforme solicitado)
             })
-        
+
         return jsonify({
             'success': True,
             'dados': dados,
             'total': len(dados),
             'valor_total': valor_total
         })
-        
+
     except Exception as e:
-        current_app.logger.error(f"Erro ao gerar relatório de viagens: {str(e)}")
+        current_app.logger.error(
+            f"Erro ao gerar relatório de viagens: {str(e)}")
         import traceback
         traceback.print_exc()
         return jsonify({
@@ -469,15 +487,15 @@ def dados_conferencia_viagens():
 @login_required
 def conferencia_motoristas():
     """Exibe a tela de filtros para o relatório de conferência de motoristas"""
-    
+
     motorista_id_usuario = get_user_motorista_id()
-    
+
     # Se for motorista, só pode ver suas próprias viagens
     if current_user.role == 'motorista':
         motoristas = Motorista.query.filter_by(id=motorista_id_usuario).all()
     else:
         motoristas = Motorista.query.all()
-    
+
     return render_template(
         'relatorios/conferencia_motoristas.html',
         motoristas=motoristas,
@@ -490,20 +508,20 @@ def conferencia_motoristas():
 @login_required
 def dados_conferencia_motoristas():
     """Retorna os dados do relatório de conferência de motoristas em JSON"""
-    
+
     try:
         # Receber filtros
         data_inicio = request.form.get('data_inicio')
         data_fim = request.form.get('data_fim')
         motorista_id = request.form.get('motorista_id')
         status = request.form.get('status')
-        
+
         # Construir query
         query = Viagem.query.options(db.joinedload(Viagem.hora_parada))
-        
+
         # APLICAR PERMISSÕES POR PERFIL
         motorista_id_usuario = get_user_motorista_id()
-        
+
         if current_user.role == 'motorista':
             # Motorista só vê suas próprias viagens
             if motorista_id_usuario:
@@ -520,37 +538,43 @@ def dados_conferencia_motoristas():
             # Admin pode filtrar por qualquer motorista
             if motorista_id:
                 query = query.filter_by(motorista_id=motorista_id)
-        
+
         # CORRIGIDO: Filtrar por data da viagem (não por data_inicio ou data_finalizacao)
         if data_inicio and data_fim:
             data_inicio_dt = datetime.strptime(data_inicio, '%Y-%m-%d')
             data_fim_dt = datetime.strptime(data_fim, '%Y-%m-%d')
             data_fim_dt = data_fim_dt.replace(hour=23, minute=59, second=59)
-            
+
             # Filtrar por qualquer um dos horários da viagem
             query = query.filter(
                 db.or_(
-                    db.and_(Viagem.horario_entrada >= data_inicio_dt, Viagem.horario_entrada <= data_fim_dt),
-                    db.and_(Viagem.horario_saida >= data_inicio_dt, Viagem.horario_saida <= data_fim_dt),
-                    db.and_(Viagem.horario_desligamento >= data_inicio_dt, Viagem.horario_desligamento <= data_fim_dt)
+                    db.and_(Viagem.horario_entrada >= data_inicio_dt,
+                            Viagem.horario_entrada <= data_fim_dt),
+                    db.and_(Viagem.horario_saida >= data_inicio_dt,
+                            Viagem.horario_saida <= data_fim_dt),
+                    db.and_(Viagem.horario_desligamento >= data_inicio_dt,
+                            Viagem.horario_desligamento <= data_fim_dt)
                 )
             )
-        
+
         if status:
             query = query.filter_by(status=status)
-        
+
         # Executar query
         viagens = query.order_by(Viagem.id.desc()).all()
-        
+
         # Formatar dados para JSON
         dados = []
         valor_total_repasse = 0.0
-        
+
         for viagem in viagens:
-            motorista = Motorista.query.get(viagem.motorista_id) if viagem.motorista_id else None
-            empresa = Empresa.query.get(viagem.empresa_id) if viagem.empresa_id else None
-            planta = Planta.query.get(viagem.planta_id) if viagem.planta_id else None
-            
+            motorista = Motorista.query.get(
+                viagem.motorista_id) if viagem.motorista_id else None
+            empresa = Empresa.query.get(
+                viagem.empresa_id) if viagem.empresa_id else None
+            planta = Planta.query.get(
+                viagem.planta_id) if viagem.planta_id else None
+
             # Buscar colaboradores da viagem
             colaboradores = []
             if viagem.colaboradores_ids:
@@ -562,13 +586,14 @@ def dados_conferencia_motoristas():
                             colaboradores.append(col.nome)
                 except:
                     pass
-            
+
             # Calcular repasse (incluindo hora parada)
-            valor_repasse = float(viagem.valor_repasse) if viagem.valor_repasse else 0.0
+            valor_repasse = float(
+                viagem.valor_repasse) if viagem.valor_repasse else 0.0
             if viagem.hora_parada:
                 valor_repasse += float(viagem.hora_parada.repasse_adicional)
             valor_total_repasse += valor_repasse
-            
+
             # Determinar data da viagem
             data_viagem = None
             if viagem.horario_entrada:
@@ -577,10 +602,11 @@ def dados_conferencia_motoristas():
                 data_viagem = viagem.horario_saida
             elif viagem.horario_desligamento:
                 data_viagem = viagem.horario_desligamento
-            
+
             dados.append({
                 'id': viagem.id,
-                'data_viagem': data_viagem.strftime('%d/%m/%Y') if data_viagem else 'N/A',  # CORRIGIDO
+                # CORRIGIDO
+                'data_viagem': data_viagem.strftime('%d/%m/%Y') if data_viagem else 'N/A',
                 'horario': data_viagem.strftime('%H:%M') if data_viagem else 'N/A',
                 'motorista': motorista.nome if motorista else viagem.nome_motorista or 'N/A',
                 'empresa': empresa.nome if empresa else 'N/A',
@@ -589,19 +615,21 @@ def dados_conferencia_motoristas():
                 'status': viagem.status or 'N/A',
                 'placa': viagem.placa_veiculo or 'N/A',
                 'qtd_passageiros': viagem.quantidade_passageiros or 0,
-                'colaboradores': ', '.join(colaboradores) if colaboradores else 'N/A',  # ADICIONADO
+                # ADICIONADO
+                'colaboradores': ', '.join(colaboradores) if colaboradores else 'N/A',
                 'valor_repasse': valor_repasse
             })
-        
+
         return jsonify({
             'success': True,
             'dados': dados,
             'total': len(dados),
             'valor_total_repasse': valor_total_repasse
         })
-        
+
     except Exception as e:
-        current_app.logger.error(f"Erro ao gerar relatório de motoristas: {str(e)}")
+        current_app.logger.error(
+            f"Erro ao gerar relatório de motoristas: {str(e)}")
         import traceback
         traceback.print_exc()
         return jsonify({
@@ -635,51 +663,52 @@ def exportar_excel(tipo):
     try:
         dados_json = request.form.get('dados')
         dados = json.loads(dados_json)
-        
+
         # Criar workbook
         wb = openpyxl.Workbook()
         ws = wb.active
-        
+
         # Estilos
         header_font = Font(bold=True, color="FFFFFF")
-        header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+        header_fill = PatternFill(
+            start_color="4472C4", end_color="4472C4", fill_type="solid")
         header_alignment = Alignment(horizontal="center", vertical="center")
-        
+
         # Definir colunas baseado no tipo
         if tipo == 'solicitacoes':
             ws.title = "Listagem de Solicitações"
-            colunas = ['ID', 'Data', 'Colaborador', 'Empresa', 'Planta', 'Bloco', 
-                      'Tipo Linha', 'Tipo Corrida', 'Status', 'Solicitante', 
-                      'Entrada', 'Saída', 'Valor']
+            colunas = ['ID', 'Data', 'Colaborador', 'Empresa', 'Planta', 'Bloco',
+                       'Tipo Linha', 'Tipo Corrida', 'Status', 'Solicitante',
+                       'Entrada', 'Saída', 'Valor']
             campos = ['id', 'data_criacao', 'colaborador', 'empresa', 'planta', 'bloco',
-                     'tipo_linha', 'tipo_corrida', 'status', 'solicitante',
-                     'horario_entrada', 'horario_saida', 'valor']
-        
+                      'tipo_linha', 'tipo_corrida', 'status', 'solicitante',
+                      'horario_entrada', 'horario_saida', 'valor']
+
         elif tipo == 'viagens':
             ws.title = "Conferência de Viagens"
             colunas = ['ID', 'Data', 'Empresa', 'Planta', 'Bloco', 'Tipo Linha',
-                      'Tipo Corrida', 'Status', 'Motorista', 'Placa', 'Colaboradores',
-                      'Passageiros', 'Valor']
+                       'Tipo Corrida', 'Status', 'Motorista', 'Placa', 'Colaboradores',
+                       'Passageiros', 'Valor']
             campos = ['id', 'data_viagem', 'empresa', 'planta', 'bloco', 'tipo_linha',
-                     'tipo_corrida', 'status', 'motorista', 'placa', 'colaboradores',
-                     'qtd_passageiros', 'valor']
-        
+                      'tipo_corrida', 'status', 'motorista', 'placa', 'colaboradores',
+                      'qtd_passageiros', 'valor']
+
         elif tipo == 'motoristas':
             ws.title = "Conferência de Motoristas"
             colunas = ['ID', 'Data', 'Horário', 'Motorista', 'Empresa', 'Planta',
-                      'Tipo Corrida', 'Status', 'Placa', 'Passageiros', 'Colaboradores',
-                      'Valor Repasse']
+                       'Tipo Corrida', 'Status', 'Placa', 'Passageiros', 'Colaboradores',
+                       'Valor Repasse']
             campos = ['id', 'data_viagem', 'horario', 'motorista', 'empresa', 'planta',
-                     'tipo_corrida', 'status', 'placa', 'qtd_passageiros', 'colaboradores',
-                     'valor_repasse']
-        
+                      'tipo_corrida', 'status', 'placa', 'qtd_passageiros', 'colaboradores',
+                      'valor_repasse']
+
         # Escrever cabeçalho
         for col_num, coluna in enumerate(colunas, 1):
             cell = ws.cell(row=1, column=col_num, value=coluna)
             cell.font = header_font
             cell.fill = header_fill
             cell.alignment = header_alignment
-        
+
         # Escrever dados
         for row_num, item in enumerate(dados, 2):
             for col_num, campo in enumerate(campos, 1):
@@ -687,7 +716,7 @@ def exportar_excel(tipo):
                 if isinstance(valor, float):
                     valor = f"R$ {valor:.2f}"
                 ws.cell(row=row_num, column=col_num, value=valor)
-        
+
         # Ajustar largura das colunas
         for col in ws.columns:
             max_length = 0
@@ -700,12 +729,12 @@ def exportar_excel(tipo):
                     pass
             adjusted_width = min(max_length + 2, 50)
             ws.column_dimensions[column].width = adjusted_width
-        
+
         # Salvar em memória
         output = BytesIO()
         wb.save(output)
         output.seek(0)
-        
+
         # Enviar arquivo
         filename = f"relatorio_{tipo}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.xlsx"
         return send_file(
@@ -714,7 +743,7 @@ def exportar_excel(tipo):
             as_attachment=True,
             download_name=filename
         )
-        
+
     except Exception as e:
         current_app.logger.error(f"Erro ao exportar Excel: {str(e)}")
         import traceback
@@ -731,48 +760,49 @@ def exportar_pdf(tipo):
     try:
         dados_json = request.form.get('dados')
         dados = json.loads(dados_json)
-        
+
         # Criar PDF em memória
         output = BytesIO()
-        doc = SimpleDocTemplate(output, pagesize=landscape(A4), topMargin=0.5*inch, bottomMargin=0.5*inch)
+        doc = SimpleDocTemplate(output, pagesize=landscape(
+            A4), topMargin=0.5*inch, bottomMargin=0.5*inch)
         elements = []
-        
+
         # Estilos
         styles = getSampleStyleSheet()
         title_style = styles['Heading1']
-        
+
         # Definir colunas e dados baseado no tipo
         if tipo == 'solicitacoes':
             titulo = "Listagem de Solicitações"
-            colunas = ['ID', 'Data', 'Colaborador', 'Empresa', 'Planta', 'Bloco', 
-                      'Tipo Linha', 'Tipo Corrida', 'Status', 'Solicitante', 'Valor']
+            colunas = ['ID', 'Data', 'Colaborador', 'Empresa', 'Planta', 'Bloco',
+                       'Tipo Linha', 'Tipo Corrida', 'Status', 'Solicitante', 'Valor']
             campos = ['id', 'data_criacao', 'colaborador', 'empresa', 'planta', 'bloco',
-                     'tipo_linha', 'tipo_corrida', 'status', 'solicitante', 'valor']
+                      'tipo_linha', 'tipo_corrida', 'status', 'solicitante', 'valor']
             col_widths = [0.4*inch, 1*inch, 1.2*inch, 1*inch, 1*inch, 0.8*inch,
-                         0.8*inch, 0.8*inch, 0.8*inch, 1*inch, 0.8*inch]
-        
+                          0.8*inch, 0.8*inch, 0.8*inch, 1*inch, 0.8*inch]
+
         elif tipo == 'viagens':
             titulo = "Conferência de Viagens"
             colunas = ['ID', 'Data', 'Empresa', 'Planta', 'Tipo Linha', 'Tipo Corrida',
-                      'Status', 'Motorista', 'Placa', 'Passag.', 'Valor']
+                       'Status', 'Motorista', 'Placa', 'Passag.', 'Valor']
             campos = ['id', 'data_viagem', 'empresa', 'planta', 'tipo_linha', 'tipo_corrida',
-                     'status', 'motorista', 'placa', 'qtd_passageiros', 'valor']
+                      'status', 'motorista', 'placa', 'qtd_passageiros', 'valor']
             col_widths = [0.4*inch, 0.8*inch, 1.2*inch, 1*inch, 0.8*inch, 0.8*inch,
-                         0.8*inch, 1.2*inch, 0.8*inch, 0.6*inch, 0.8*inch]
-        
+                          0.8*inch, 1.2*inch, 0.8*inch, 0.6*inch, 0.8*inch]
+
         elif tipo == 'motoristas':
             titulo = "Conferência de Motoristas"
             colunas = ['ID', 'Data', 'Motorista', 'Empresa', 'Planta', 'Tipo Corrida',
-                      'Status', 'Passag.', 'Valor Repasse']
+                       'Status', 'Passag.', 'Valor Repasse']
             campos = ['id', 'data_viagem', 'motorista', 'empresa', 'planta', 'tipo_corrida',
-                     'status', 'qtd_passageiros', 'valor_repasse']
+                      'status', 'qtd_passageiros', 'valor_repasse']
             col_widths = [0.4*inch, 0.8*inch, 1.5*inch, 1.2*inch, 1*inch, 0.8*inch,
-                         0.8*inch, 0.6*inch, 1*inch]
-        
+                          0.8*inch, 0.6*inch, 1*inch]
+
         # Adicionar título
         elements.append(Paragraph(titulo, title_style))
         elements.append(Paragraph("<br/>", styles['Normal']))
-        
+
         # Preparar dados da tabela
         table_data = [colunas]
         for item in dados:
@@ -783,10 +813,10 @@ def exportar_pdf(tipo):
                     valor = f"R$ {valor:.2f}"
                 row.append(str(valor))
             table_data.append(row)
-        
+
         # Criar tabela
         table = Table(table_data, colWidths=col_widths, repeatRows=1)
-        
+
         # Estilo da tabela
         table.setStyle(TableStyle([
             # Cabeçalho
@@ -800,15 +830,16 @@ def exportar_pdf(tipo):
             ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
             ('FONTSIZE', (0, 1), (-1, -1), 7),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#F2F2F2')])
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1),
+             [colors.white, colors.HexColor('#F2F2F2')])
         ]))
-        
+
         elements.append(table)
-        
+
         # Gerar PDF
         doc.build(elements)
         output.seek(0)
-        
+
         # Enviar arquivo
         filename = f"relatorio_{tipo}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
         return send_file(
@@ -817,7 +848,7 @@ def exportar_pdf(tipo):
             as_attachment=True,
             download_name=filename
         )
-        
+
     except Exception as e:
         current_app.logger.error(f"Erro ao exportar PDF: {str(e)}")
         import traceback

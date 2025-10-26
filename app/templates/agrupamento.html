@@ -39,6 +39,22 @@
                 {% endfor %}
             </select>
         </div>
+        
+        <!-- NOVO: Filtro de Planta (apenas para Gerente) -->
+        {% if current_user.role == 'gerente' %}
+        <div class="col-md-2">
+            <label for="planta_id" class="form-label">Planta</label>
+            <select class="form-select" id="planta_id" name="planta_id">
+                <option value="">Todas</option>
+                {% for planta in plantas_gerente %}
+                <option value="{{ planta.id }}" {% if filtros.get('planta_id')|string == planta.id|string %}selected{% endif %}>
+                    {{ planta.nome }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+
         <div class="col-md-2">
             <label for="status" class="form-label">Status</label>
             <select class="form-select" id="status" name="status">
@@ -343,6 +359,13 @@ document.getElementById('btn_agrupar_automatico').addEventListener('click', func
     const blocoId = document.getElementById('bloco_id').value;
     const status = document.getElementById('status').value;
     
+    // NOVO: Adicionar filtro de planta se existir
+    let plantaId = '';
+    const plantaSelect = document.getElementById('planta_id');
+    if (plantaSelect) {
+        plantaId = plantaSelect.value;
+    }
+    
     let url = '{{ url_for("admin.gerar_sugestoes_agrupamento") }}?';
     url += 'data_filtro=' + encodeURIComponent(dataFiltro);
     
@@ -356,6 +379,11 @@ document.getElementById('btn_agrupar_automatico').addEventListener('click', func
     
     if (status) {
         url += '&status=' + encodeURIComponent(status);
+    }
+    
+    // NOVO: Adicionar planta_id se selecionado
+    if (plantaId) {
+        url += '&planta_id=' + encodeURIComponent(plantaId);
     }
     
     window.location.href = url;

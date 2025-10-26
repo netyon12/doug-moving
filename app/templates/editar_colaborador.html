@@ -58,7 +58,11 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="bairro" class="form-label">Bairro</label>
-                                    <input type="text" class="form-control" id="bairro" name="bairro" value="{{ colaborador.bairro or '' }}">
+                                    <input type="text" class="form-control" id="bairro" name="bairro" 
+                                        value="{{ colaborador.bairro or '' }}" 
+                                        list="bairros-list" 
+                                        autocomplete="off">
+                                    <datalist id="bairros-list"></datalist>
                                 </div>
                                 <div class="mb-3">
                                     <label for="cidade" class="form-label">Cidade</label>
@@ -81,4 +85,77 @@
         </div>
     </div>
 </div>
+
+<script>
+// ===== AUTOCOMPLETE DE BAIRROS =====
+document.addEventListener('DOMContentLoaded', function() {
+    const bairroInput = document.getElementById('bairro');
+    const bairrosList = document.getElementById('bairros-list');
+    const blocoSelect = document.getElementById('bloco');
+    
+    // Armazena os dados dos bairros para preencher o bloco
+    let bairrosData = {};
+    
+    // Evento de digitação no campo Bairro
+    bairroInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        // Só busca se tiver pelo menos 2 caracteres
+        if (query.length < 2) {
+            bairrosList.innerHTML = '';
+            return;
+        }
+        
+        // Faz requisição para a API
+        fetch(`/admin/api/bairros/buscar?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                // Limpa a lista anterior
+                bairrosList.innerHTML = '';
+                bairrosData = {};
+                
+                // Adiciona as opções na datalist
+                data.forEach(bairro => {
+                    const option = document.createElement('option');
+                    option.value = bairro.nome;
+                    
+                    // Adiciona informação do bloco como label
+                    if (bairro.bloco_codigo) {
+                        option.setAttribute('data-bloco-id', bairro.bloco_id);
+                        option.label = `${bairro.nome} (Bloco: ${bairro.bloco_codigo})`;
+                    }
+                    
+                    bairrosList.appendChild(option);
+                    
+                    // Armazena os dados para uso posterior
+                    bairrosData[bairro.nome] = {
+                        bloco_id: bairro.bloco_id,
+                        bloco_codigo: bairro.bloco_codigo
+                    };
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao buscar bairros:', error);
+            });
+    });
+    
+    // Evento de mudança no campo Bairro (quando seleciona da lista)
+    bairroInput.addEventListener('change', function() {
+        const bairroNome = this.value.trim();
+        
+        // Se o bairro selecionado existe nos dados, preenche o bloco
+        if (bairrosData[bairroNome] && bairrosData[bairroNome].bloco_id) {
+            blocoSelect.value = bairrosData[bairroNome].bloco_id;
+            
+            // Feedback visual
+            blocoSelect.style.backgroundColor = '#d4edda';
+            setTimeout(() => {
+                blocoSelect.style.backgroundColor = '';
+            }, 1000);
+        }
+    });
+});
+// ===== FIM DO AUTOCOMPLETE =====
+</script>
+
 {% endblock %}

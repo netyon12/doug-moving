@@ -114,6 +114,26 @@
                             </small>
                         </div>
 
+                        <!-- Timeout de Inatividade -->
+                        <div class="mb-4">
+                            <label for="timeout_inatividade" class="form-label fw-bold">
+                                <i class="bi bi-hourglass-split me-1"></i>Timeout de Inatividade (minutos)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="timeout_inatividade" 
+                                   name="timeout_inatividade" 
+                                   value="{{ timeout_inatividade }}" 
+                                   min="5" 
+                                   max="120" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Tempo de inatividade antes de deslogar automaticamente (5 a 120 minutos)
+                            </small>
+                        </div>
+
+
+
                         <!-- Botões -->
                         <div class="d-flex justify-content-end gap-2 mt-4">
                             <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">
@@ -126,6 +146,8 @@
                     </form>
                 </div>
             </div>
+
+            
 
             <!-- Card de Informações -->
             <div class="card shadow-sm mt-4">

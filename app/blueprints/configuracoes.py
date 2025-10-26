@@ -41,6 +41,18 @@ def configuracoes():
         hora_parada_valor_str = request.form.get('hora_parada_valor')
         hora_parada_repasse_str = request.form.get('hora_parada_repasse')
 
+        # ===== NOVO: Salva Timeout de Inatividade =====
+        timeout_inatividade_str = request.form.get('timeout_inatividade')
+        config_timeout = Configuracao.query.filter_by(
+            chave='timeout_inatividade_minutos').first()
+        if not config_timeout:
+            config_timeout = Configuracao(
+                chave='timeout_inatividade_minutos', valor=timeout_inatividade_str or '30')
+            db.session.add(config_timeout)
+        else:
+            config_timeout.valor = timeout_inatividade_str or '30'
+        # ===== FIM DO NOVO CÓDIGO =====
+
         # Salva Tempo de Cortesia
         config_cortesia = Configuracao.query.filter_by(
             chave='TEMPO_CORTESIA_MINUTOS').first()
@@ -106,7 +118,7 @@ def configuracoes():
         chave='hora_parada_valor_periodo').first()
     config_hp_repasse = Configuracao.query.filter_by(
         chave='hora_parada_repasse_periodo').first()
-    
+
     # Valores padrão
     tempo_cortesia = config_cortesia.valor if config_cortesia else '30'
     max_passageiros = config_passageiros.valor if config_passageiros else '3'
@@ -114,14 +126,19 @@ def configuracoes():
     hora_parada_valor = config_hp_valor.valor if config_hp_valor else '71.02'
     hora_parada_repasse = config_hp_repasse.valor if config_hp_repasse else '29.00'
 
-    return render_template('configuracoes.html', 
-                         tempo_cortesia=tempo_cortesia,
-                         max_passageiros=max_passageiros,
-                         limite_fretado=limite_fretado,
-                         hora_parada_valor=hora_parada_valor,
-                         hora_parada_repasse=hora_parada_repasse)
+    # ===== NOVO: Busca Timeout de Inatividade =====
+    config_timeout = Configuracao.query.filter_by(
+        chave='timeout_inatividade_minutos').first()
+    timeout_inatividade = int(config_timeout.valor) if config_timeout else 30
+    # ===== FIM DO NOVO CÓDIGO =====
 
-
+    return render_template('configuracoes.html',
+                           tempo_cortesia=tempo_cortesia,
+                           max_passageiros=max_passageiros,
+                           limite_fretado=limite_fretado,
+                           hora_parada_valor=hora_parada_valor,
+                           hora_parada_repasse=hora_parada_repasse,
+                           timeout_inatividade=timeout_inatividade)
 
 # =============================================================================
 # ROTA DE EXPORTAÇÃO CSV
@@ -238,7 +255,8 @@ def importar_colaboradores():
             linhas_ignoradas = 0
             erros = []
 
-            for i, row in enumerate(csv_reader, 2):  # Começa em 2 por causa do cabeçalho
+            # Começa em 2 por causa do cabeçalho
+            for i, row in enumerate(csv_reader, 2):
                 # Validação para garantir que a linha não está vazia
                 if not any(field.strip() for field in row):
                     continue
@@ -248,7 +266,8 @@ def importar_colaboradores():
 
                 # Valida número de campos
                 if len(row) < 7:
-                    erros.append(f"Linha {i}: Número insuficiente de campos (esperado pelo menos 7, encontrado {len(row)})")
+                    erros.append(
+                        f"Linha {i}: Número insuficiente de campos (esperado pelo menos 7, encontrado {len(row)})")
                     linhas_ignoradas += 1
                     continue
 
@@ -270,30 +289,36 @@ def importar_colaboradores():
 
                 # Validações
                 if not matricula or not nome:
-                    erros.append(f"Linha {i}: Matrícula e nome são obrigatórios")
+                    erros.append(
+                        f"Linha {i}: Matrícula e nome são obrigatórios")
                     linhas_ignoradas += 1
                     continue
 
                 # Verifica se matrícula já existe
                 if Colaborador.query.filter_by(matricula=matricula).first():
-                    erros.append(f"Linha {i}: Matrícula '{matricula}' já existe no sistema")
+                    erros.append(
+                        f"Linha {i}: Matrícula '{matricula}' já existe no sistema")
                     linhas_ignoradas += 1
                     continue
 
                 # Busca bloco (se fornecido)
                 bloco_id = None
                 if bloco_codigo:
-                    bloco = Bloco.query.filter_by(codigo_bloco=bloco_codigo).first()
+                    bloco = Bloco.query.filter_by(
+                        codigo_bloco=bloco_codigo).first()
                     if bloco:
                         bloco_id = bloco.id
                     else:
-                        erros.append(f"Linha {i}: Bloco '{bloco_codigo}' não encontrado (colaborador será criado sem bloco)")
+                        erros.append(
+                            f"Linha {i}: Bloco '{bloco_codigo}' não encontrado (colaborador será criado sem bloco)")
 
                 # Limpa e valida telefone (remove caracteres especiais e garante 11 dígitos)
                 if telefone:
-                    telefone_limpo = telefone.replace(' ', '').replace('-', '').replace('(', '').replace(')', '').replace('.', '')
+                    telefone_limpo = telefone.replace(' ', '').replace(
+                        '-', '').replace('(', '').replace(')', '').replace('.', '')
                     if telefone_limpo and (not telefone_limpo.isdigit() or len(telefone_limpo) != 11):
-                        erros.append(f"Linha {i}: Telefone '{telefone}' inválido (deve ter 11 dígitos). Colaborador será criado sem telefone.")
+                        erros.append(
+                            f"Linha {i}: Telefone '{telefone}' inválido (deve ter 11 dígitos). Colaborador será criado sem telefone.")
                         telefone_limpo = None
                 else:
                     telefone_limpo = None
@@ -301,14 +326,17 @@ def importar_colaboradores():
                 # Busca empresa
                 empresa = Empresa.query.filter_by(nome=empresa_nome).first()
                 if not empresa:
-                    erros.append(f"Linha {i}: Empresa '{empresa_nome}' não encontrada")
+                    erros.append(
+                        f"Linha {i}: Empresa '{empresa_nome}' não encontrada")
                     linhas_ignoradas += 1
                     continue
 
                 # Busca planta
-                planta = Planta.query.filter_by(nome=planta_nome, empresa_id=empresa.id).first()
+                planta = Planta.query.filter_by(
+                    nome=planta_nome, empresa_id=empresa.id).first()
                 if not planta:
-                    erros.append(f"Linha {i}: Planta '{planta_nome}' não encontrada para a empresa '{empresa_nome}'")
+                    erros.append(
+                        f"Linha {i}: Planta '{planta_nome}' não encontrada para a empresa '{empresa_nome}'")
                     linhas_ignoradas += 1
                     continue
 
@@ -333,7 +361,7 @@ def importar_colaboradores():
                     bloco_id=bloco_id,
                     status=status if status else 'Ativo'
                 )
-                
+
                 db.session.add(novo_colaborador)
                 colaboradores_adicionados += 1
 
@@ -341,22 +369,26 @@ def importar_colaboradores():
 
             # Mensagens de feedback
             if colaboradores_adicionados > 0:
-                flash(f'{colaboradores_adicionados} colaboradores importados com sucesso!', 'success')
+                flash(
+                    f'{colaboradores_adicionados} colaboradores importados com sucesso!', 'success')
             if linhas_ignoradas > 0:
-                flash(f'{linhas_ignoradas} linhas foram ignoradas por problemas nos dados.', 'warning')
+                flash(
+                    f'{linhas_ignoradas} linhas foram ignoradas por problemas nos dados.', 'warning')
                 # Mostra os primeiros 5 erros
                 for erro in erros[:5]:
                     flash(erro, 'info')
                 if len(erros) > 5:
                     flash(f'... e mais {len(erros) - 5} erros.', 'info')
             if colaboradores_adicionados == 0 and linhas_ignoradas == 0:
-                flash('O arquivo estava vazio ou não continha dados válidos para importação.', 'info')
+                flash(
+                    'O arquivo estava vazio ou não continha dados válidos para importação.', 'info')
 
             return redirect(url_for('admin.admin_dashboard', aba='colaboradores'))
 
         except Exception as e:
             db.session.rollback()
-            flash(f'Ocorreu um erro crítico ao processar o arquivo: {e}', 'danger')
+            flash(
+                f'Ocorreu um erro crítico ao processar o arquivo: {e}', 'danger')
             return redirect(request.url)
 
     # GET: Busca empresas e plantas para o template
@@ -390,7 +422,8 @@ def importar_supervisores():
             linhas_ignoradas = 0
             erros = []
 
-            for i, row in enumerate(csv_reader, 2):  # Começa em 2 por causa do cabeçalho
+            # Começa em 2 por causa do cabeçalho
+            for i, row in enumerate(csv_reader, 2):
                 if not any(field.strip() for field in row):
                     continue
 
@@ -398,7 +431,8 @@ def importar_supervisores():
 
                 # Valida número de campos
                 if len(row) < 7:
-                    erros.append(f"Linha {i}: Número insuficiente de campos (esperado 7, encontrado {len(row)})")
+                    erros.append(
+                        f"Linha {i}: Número insuficiente de campos (esperado 7, encontrado {len(row)})")
                     linhas_ignoradas += 1
                     continue
 
@@ -407,13 +441,15 @@ def importar_supervisores():
 
                 # Validações
                 if not matricula or not nome or not email or not senha:
-                    erros.append(f"Linha {i}: Matrícula, nome, email e senha são obrigatórios")
+                    erros.append(
+                        f"Linha {i}: Matrícula, nome, email e senha são obrigatórios")
                     linhas_ignoradas += 1
                     continue
 
                 # Verifica se matrícula já existe
                 if Supervisor.query.filter_by(matricula=matricula).first():
-                    erros.append(f"Linha {i}: Matrícula '{matricula}' já existe no sistema")
+                    erros.append(
+                        f"Linha {i}: Matrícula '{matricula}' já existe no sistema")
                     linhas_ignoradas += 1
                     continue
 
@@ -426,14 +462,17 @@ def importar_supervisores():
                 # Busca empresa
                 empresa = Empresa.query.filter_by(nome=empresa_nome).first()
                 if not empresa:
-                    erros.append(f"Linha {i}: Empresa '{empresa_nome}' não encontrada")
+                    erros.append(
+                        f"Linha {i}: Empresa '{empresa_nome}' não encontrada")
                     linhas_ignoradas += 1
                     continue
 
                 # Busca planta
-                planta = Planta.query.filter_by(nome=planta_nome, empresa_id=empresa.id).first()
+                planta = Planta.query.filter_by(
+                    nome=planta_nome, empresa_id=empresa.id).first()
                 if not planta:
-                    erros.append(f"Linha {i}: Planta '{planta_nome}' não encontrada para a empresa '{empresa_nome}'")
+                    erros.append(
+                        f"Linha {i}: Planta '{planta_nome}' não encontrada para a empresa '{empresa_nome}'")
                     linhas_ignoradas += 1
                     continue
 
@@ -443,8 +482,10 @@ def importar_supervisores():
                     status = 'Ativo'  # Valor padrão
 
                 # Cria usuário
-                hashed_password = generate_password_hash(senha, method='pbkdf2:sha256')
-                new_user = User(email=email, password=hashed_password, role='supervisor')
+                hashed_password = generate_password_hash(
+                    senha, method='pbkdf2:sha256')
+                new_user = User(
+                    email=email, password=hashed_password, role='supervisor')
                 db.session.add(new_user)
                 db.session.flush()  # Para obter o user_id
 
@@ -465,22 +506,26 @@ def importar_supervisores():
 
             # Mensagens de feedback
             if supervisores_adicionados > 0:
-                flash(f'{supervisores_adicionados} supervisores importados com sucesso!', 'success')
+                flash(
+                    f'{supervisores_adicionados} supervisores importados com sucesso!', 'success')
             if linhas_ignoradas > 0:
-                flash(f'{linhas_ignoradas} linhas foram ignoradas por problemas nos dados.', 'warning')
+                flash(
+                    f'{linhas_ignoradas} linhas foram ignoradas por problemas nos dados.', 'warning')
                 # Mostra os primeiros 5 erros
                 for erro in erros[:5]:
                     flash(erro, 'info')
                 if len(erros) > 5:
                     flash(f'... e mais {len(erros) - 5} erros.', 'info')
             if supervisores_adicionados == 0 and linhas_ignoradas == 0:
-                flash('O arquivo estava vazio ou não continha dados válidos para importação.', 'info')
+                flash(
+                    'O arquivo estava vazio ou não continha dados válidos para importação.', 'info')
 
             return redirect(url_for('admin.admin_dashboard', aba='supervisores'))
 
         except Exception as e:
             db.session.rollback()
-            flash(f'Ocorreu um erro crítico ao processar o arquivo: {e}', 'danger')
+            flash(
+                f'Ocorreu um erro crítico ao processar o arquivo: {e}', 'danger')
             return redirect(request.url)
 
     # GET: Busca empresas e plantas para o template
@@ -514,7 +559,8 @@ def importar_motoristas():
             linhas_ignoradas = 0
             erros = []
 
-            for i, row in enumerate(csv_reader, 2):  # Começa em 2 por causa do cabeçalho
+            # Começa em 2 por causa do cabeçalho
+            for i, row in enumerate(csv_reader, 2):
                 if not any(field.strip() for field in row):
                     continue
 
@@ -522,16 +568,19 @@ def importar_motoristas():
 
                 # Valida número de campos
                 if len(row) < 8:
-                    erros.append(f"Linha {i}: Número insuficiente de campos (esperado 8, encontrado {len(row)})")
+                    erros.append(
+                        f"Linha {i}: Número insuficiente de campos (esperado 8, encontrado {len(row)})")
                     linhas_ignoradas += 1
                     continue
 
                 # Ordem: nome;cpf_cnpj;email;senha;telefone;chave_pix;veiculo_nome;veiculo_placa
-                nome, cpf_cnpj, email, senha, telefone, chave_pix, veiculo_nome, veiculo_placa = row[:8]
+                nome, cpf_cnpj, email, senha, telefone, chave_pix, veiculo_nome, veiculo_placa = row[
+                    :8]
 
                 # Validações
                 if not nome or not cpf_cnpj or not email or not senha:
-                    erros.append(f"Linha {i}: Nome, CPF/CNPJ, email e senha são obrigatórios")
+                    erros.append(
+                        f"Linha {i}: Nome, CPF/CNPJ, email e senha são obrigatórios")
                     linhas_ignoradas += 1
                     continue
 
@@ -543,19 +592,23 @@ def importar_motoristas():
 
                 # Verifica se CPF/CNPJ já existe
                 if Motorista.query.filter_by(cpf_cnpj=cpf_cnpj).first():
-                    erros.append(f"Linha {i}: CPF/CNPJ '{cpf_cnpj}' já está cadastrado")
+                    erros.append(
+                        f"Linha {i}: CPF/CNPJ '{cpf_cnpj}' já está cadastrado")
                     linhas_ignoradas += 1
                     continue
 
                 # Verifica se placa já existe (se fornecida)
                 if veiculo_placa and Motorista.query.filter_by(veiculo_placa=veiculo_placa).first():
-                    erros.append(f"Linha {i}: Placa '{veiculo_placa}' já está em uso")
+                    erros.append(
+                        f"Linha {i}: Placa '{veiculo_placa}' já está em uso")
                     linhas_ignoradas += 1
                     continue
 
                 # Cria usuário
-                hashed_password = generate_password_hash(senha, method='pbkdf2:sha256')
-                new_user = User(email=email, password=hashed_password, role='motorista')
+                hashed_password = generate_password_hash(
+                    senha, method='pbkdf2:sha256')
+                new_user = User(
+                    email=email, password=hashed_password, role='motorista')
                 db.session.add(new_user)
                 db.session.flush()  # Para obter o user_id
 
@@ -578,26 +631,29 @@ def importar_motoristas():
 
             # Mensagens de feedback
             if motoristas_adicionados > 0:
-                flash(f'{motoristas_adicionados} motoristas importados com sucesso!', 'success')
+                flash(
+                    f'{motoristas_adicionados} motoristas importados com sucesso!', 'success')
             if linhas_ignoradas > 0:
-                flash(f'{linhas_ignoradas} linhas foram ignoradas por problemas nos dados.', 'warning')
+                flash(
+                    f'{linhas_ignoradas} linhas foram ignoradas por problemas nos dados.', 'warning')
                 # Mostra os primeiros 5 erros
                 for erro in erros[:5]:
                     flash(erro, 'info')
                 if len(erros) > 5:
                     flash(f'... e mais {len(erros) - 5} erros.', 'info')
             if motoristas_adicionados == 0 and linhas_ignoradas == 0:
-                flash('O arquivo estava vazio ou não continha dados válidos para importação.', 'info')
+                flash(
+                    'O arquivo estava vazio ou não continha dados válidos para importação.', 'info')
 
             return redirect(url_for('admin.admin_dashboard', aba='motoristas'))
 
         except Exception as e:
             db.session.rollback()
-            flash(f'Ocorreu um erro crítico ao processar o arquivo: {e}', 'danger')
+            flash(
+                f'Ocorreu um erro crítico ao processar o arquivo: {e}', 'danger')
             return redirect(request.url)
 
     return render_template('config/importar_motoristas.html')
-
 
 
 # =============================================================================
@@ -610,13 +666,13 @@ def api_buscar_colaboradores():
     """API para buscar colaboradores por nome ou matrícula"""
     query_str = request.args.get('q', '').strip()
     planta_id = request.args.get('planta_id', type=int)
-    
+
     if len(query_str) < 2:
         return jsonify([])
-    
+
     # Monta a query base
     query = Colaborador.query.filter(Colaborador.status == 'Ativo')
-    
+
     # Filtra por planta se especificado
     if planta_id:
         query = query.filter(Colaborador.planta_id == planta_id)
@@ -625,7 +681,7 @@ def api_buscar_colaboradores():
         plantas_ids = [p.id for p in current_user.supervisor.plantas]
         if plantas_ids:
             query = query.filter(Colaborador.planta_id.in_(plantas_ids))
-    
+
     # Busca por nome ou matrícula
     query = query.filter(
         or_(
@@ -633,9 +689,9 @@ def api_buscar_colaboradores():
             Colaborador.matricula.ilike(f'%{query_str}%')
         )
     ).limit(10)
-    
+
     colaboradores = query.all()
-    
+
     # Retorna JSON com os dados necessários
     resultado = []
     for colab in colaboradores:
@@ -647,7 +703,36 @@ def api_buscar_colaboradores():
             'bloco_id': colab.bloco_id,
             'turnos': [{'id': t.id, 'nome': t.nome} for t in colab.turnos]
         })
-    
+
+    return jsonify(resultado)
+
+
+@admin_bp.route('/api/bairros/buscar')
+@login_required
+def api_buscar_bairros():
+    """API para buscar bairros com autocomplete."""
+    query = request.args.get('q', '').strip()
+
+    # Retorna vazio se a busca for muito curta
+    if len(query) < 2:
+        return jsonify([])
+
+    # Busca bairros que contenham o texto digitado (case-insensitive)
+    # Usando ilike para busca sem diferenciar maiúsculas/minúsculas
+    bairros = Bairro.query.filter(
+        Bairro.nome.ilike(f'%{query}%')
+    ).order_by(Bairro.nome).limit(20).all()
+
+    # Retorna lista de bairros com informações do bloco
+    resultado = []
+    for b in bairros:
+        resultado.append({
+            'id': b.id,
+            'nome': b.nome,
+            'bloco_id': b.bloco_id,
+            'bloco_codigo': b.bloco.codigo_bloco if b.bloco else None
+        })
+
     return jsonify(resultado)
 
 
@@ -657,11 +742,12 @@ def api_plantas_por_empresa(empresa_id):
     """API para buscar plantas de uma empresa"""
     if current_user.role != 'admin':
         return jsonify({'error': 'Acesso negado'}), 403
-    
-    plantas = Planta.query.filter_by(empresa_id=empresa_id).order_by(Planta.nome).all()
-    
+
+    plantas = Planta.query.filter_by(
+        empresa_id=empresa_id).order_by(Planta.nome).all()
+
     resultado = [{'id': p.id, 'nome': p.nome} for p in plantas]
-    
+
     return jsonify(resultado)
 
 
@@ -673,9 +759,10 @@ def api_supervisores_por_planta(planta_id):
         planta_id=planta_id,
         status='Ativo'
     ).order_by(Supervisor.nome).all()
-    
-    resultado = [{'id': s.id, 'nome': s.nome, 'matricula': s.matricula} for s in supervisores]
-    
+
+    resultado = [{'id': s.id, 'nome': s.nome, 'matricula': s.matricula}
+                 for s in supervisores]
+
     return jsonify(resultado)
 
 
@@ -684,8 +771,9 @@ def api_supervisores_por_planta(planta_id):
 @cache.cached(timeout=3600, query_string=True)  # Cache por 1 hora
 def api_turnos_por_planta(planta_id):
     """API para buscar turnos de uma planta (com cache)"""
-    turnos = Turno.query.filter_by(planta_id=planta_id).order_by(Turno.horario_inicio).all()
-    
+    turnos = Turno.query.filter_by(
+        planta_id=planta_id).order_by(Turno.horario_inicio).all()
+
     resultado = []
     for turno in turnos:
         resultado.append({
@@ -694,7 +782,5 @@ def api_turnos_por_planta(planta_id):
             'horario_inicio': turno.horario_inicio.strftime('%H:%M') if turno.horario_inicio else '',
             'horario_fim': turno.horario_fim.strftime('%H:%M') if turno.horario_fim else ''
         })
-    
+
     return jsonify(resultado)
-
-

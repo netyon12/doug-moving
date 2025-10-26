@@ -300,7 +300,14 @@
                 <tr>
                     <td>{{ item.nome }}</td>
                     <td>{{ item.user.email }}</td>
-                    <td>{{ item.planta.nome }}</td>
+                    <td>
+                        {% set plantas_list = item.plantas.all() %}
+                        {% if plantas_list %}
+                            {{ plantas_list | map(attribute='nome') | join(', ') }}
+                        {% else %}
+                            <span class="text-muted">Nenhuma planta</span>
+                        {% endif %}
+                    </td>
                     <td>{{ item.empresa.nome }}</td>
                     <td>
                         <span class="badge bg-{{ 'success' if item.status == 'Ativo' else 'secondary' }}">

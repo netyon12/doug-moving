@@ -67,15 +67,15 @@ class CentroCusto(db.Model):
 
 class Turno(db.Model):
     __tablename__ = 'turno'
-    
+
     # Constantes para os nomes fixos de turno
     TURNO_1 = '1° Turno'
     TURNO_2 = '2° Turno'
     TURNO_3 = '3° Turno'
     TURNO_ADMIN = 'Administrativo'
-    
+
     TURNOS_VALIDOS = [TURNO_1, TURNO_2, TURNO_3, TURNO_ADMIN]
-    
+
     id = db.Column(db.Integer, primary_key=True)
     # Apenas valores permitidos: "1° Turno", "2° Turno", "3° Turno", "Administrativo"
     nome = db.Column(db.String(100), nullable=False)
@@ -93,12 +93,12 @@ class Turno(db.Model):
 
     def __repr__(self):
         return f'<Turno {self.nome} ({self.horario_inicio}-{self.horario_fim})>'
-    
+
     @staticmethod
     def validar_nome(nome):
         """Valida se o nome do turno está entre os valores permitidos."""
         return nome in Turno.TURNOS_VALIDOS
-    
+
     def get_campo_valor_bloco(self):
         """Retorna o nome do campo de valor no modelo Bloco correspondente a este turno."""
         mapeamento = {
@@ -108,7 +108,7 @@ class Turno(db.Model):
             self.TURNO_ADMIN: 'valor_admin'
         }
         return mapeamento.get(self.nome)
-    
+
     def get_campo_repasse_bloco(self):
         """Retorna o nome do campo de repasse no modelo Bloco correspondente a este turno."""
         mapeamento = {
@@ -156,14 +156,14 @@ class Bloco(db.Model):
 
     def __repr__(self):
         return f'<Bloco {self.codigo_bloco}>'
-    
+
     def get_valor_por_turno(self, turno_obj):
         """
         Retorna o valor do bloco para um determinado turno.
-        
+
         Args:
             turno_obj: Objeto Turno ou string com o nome do turno
-            
+
         Returns:
             Decimal: Valor do bloco para o turno especificado
         """
@@ -171,7 +171,7 @@ class Bloco(db.Model):
             nome_turno = turno_obj.nome
         else:
             nome_turno = turno_obj
-            
+
         mapeamento = {
             Turno.TURNO_1: self.valor_turno1,
             Turno.TURNO_2: self.valor_turno2,
@@ -179,14 +179,14 @@ class Bloco(db.Model):
             Turno.TURNO_ADMIN: self.valor_admin
         }
         return mapeamento.get(nome_turno, 0.00)
-    
+
     def get_repasse_por_turno(self, turno_obj):
         """
         Retorna o valor de repasse do bloco para um determinado turno.
-        
+
         Args:
             turno_obj: Objeto Turno ou string com o nome do turno
-            
+
         Returns:
             Decimal: Valor de repasse para o turno especificado
         """
@@ -194,7 +194,7 @@ class Bloco(db.Model):
             nome_turno = turno_obj.nome
         else:
             nome_turno = turno_obj
-            
+
         mapeamento = {
             Turno.TURNO_1: self.repasse_turno1,
             Turno.TURNO_2: self.repasse_turno2,
@@ -202,11 +202,11 @@ class Bloco(db.Model):
             Turno.TURNO_ADMIN: self.repasse_admin
         }
         return mapeamento.get(nome_turno, 0.00)
-    
+
     def set_valor_por_turno(self, turno_obj, valor):
         """
         Define o valor do bloco para um determinado turno.
-        
+
         Args:
             turno_obj: Objeto Turno ou string com o nome do turno
             valor: Valor a ser definido
@@ -215,7 +215,7 @@ class Bloco(db.Model):
             nome_turno = turno_obj.nome
         else:
             nome_turno = turno_obj
-            
+
         if nome_turno == Turno.TURNO_1:
             self.valor_turno1 = valor
         elif nome_turno == Turno.TURNO_2:
@@ -224,11 +224,11 @@ class Bloco(db.Model):
             self.valor_turno3 = valor
         elif nome_turno == Turno.TURNO_ADMIN:
             self.valor_admin = valor
-    
+
     def set_repasse_por_turno(self, turno_obj, repasse):
         """
         Define o valor de repasse do bloco para um determinado turno.
-        
+
         Args:
             turno_obj: Objeto Turno ou string com o nome do turno
             repasse: Valor de repasse a ser definido
@@ -237,7 +237,7 @@ class Bloco(db.Model):
             nome_turno = turno_obj.nome
         else:
             nome_turno = turno_obj
-            
+
         if nome_turno == Turno.TURNO_1:
             self.repasse_turno1 = repasse
         elif nome_turno == Turno.TURNO_2:
@@ -287,6 +287,24 @@ class Bairro(db.Model):
 #         return f'<Valor Bloco {self.bloco.codigo_bloco} - Turno {self.turno.nome}: R${self.valor}>'
 
 
+# =============================================================================
+# TABELA DE ASSOCIAÇÃO GERENTE-PLANTA (N:N)
+# =============================================================================
+# IMPORTANTE: Esta tabela DEVE estar ANTES da classe Gerente
+gerente_planta_association = db.Table('gerente_planta_association',
+                                      db.Column('id', db.Integer,
+                                                primary_key=True),
+                                      db.Column('gerente_id', db.Integer, db.ForeignKey(
+                                          'gerente.id', ondelete='CASCADE'), nullable=False),
+                                      db.Column('planta_id', db.Integer, db.ForeignKey(
+                                          'planta.id', ondelete='CASCADE'), nullable=False),
+                                      db.Column('created_at', db.DateTime,
+                                                default=datetime.utcnow),
+                                      db.UniqueConstraint(
+                                          'gerente_id', 'planta_id', name='uq_gerente_planta')
+                                      )
+
+
 class Gerente(db.Model):
     __tablename__ = 'gerente'
     id = db.Column(db.Integer, primary_key=True)
@@ -296,15 +314,27 @@ class Gerente(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     empresa_id = db.Column(db.Integer, db.ForeignKey(
         'empresa.id'), nullable=False)
-    planta_id = db.Column(db.Integer, db.ForeignKey(
-        'planta.id'), nullable=False)
+
+    # REMOVIDO: planta_id (agora usa relacionamento N:N)
+    # planta_id = db.Column(db.Integer, db.ForeignKey('planta.id'), nullable=False)
+
     # Ativo, Inativo, Desligado, Ausente
     status = db.Column(db.String(20), nullable=False, default='Ativo')
 
     # Relacionamentos
     user = db.relationship('User', back_populates='gerente', uselist=False)
     empresa = db.relationship('Empresa')
-    planta = db.relationship('Planta')
+
+    # REMOVIDO: Relacionamento 1:N com Planta
+    # planta = db.relationship('Planta')
+
+    # NOVO: Relacionamento N:N com Planta
+    plantas = db.relationship(
+        'Planta',
+        secondary='gerente_planta_association',
+        backref=db.backref('gerentes', lazy='dynamic'),
+        lazy='dynamic'
+    )
 
     # Relacionamento muitos-para-muitos com CentroCusto
     centros_custo = db.relationship(
@@ -312,6 +342,14 @@ class Gerente(db.Model):
 
     def __repr__(self):
         return f'<Gerente {self.nome}>'
+
+    def get_plantas_ids(self):
+        """Retorna lista de IDs das plantas associadas ao gerente"""
+        return [p.id for p in self.plantas.all()]
+
+    def get_empresa_plantas(self):
+        """Retorna apenas plantas da empresa do gerente"""
+        return self.plantas.filter_by(empresa_id=self.empresa_id).all()
 
 
 # Tabela de associação para o relacionamento Muitos-para-Muitos entre Gerente e CentroCusto
@@ -360,11 +398,14 @@ class Supervisor(db.Model):
     # Relacionamentos
     user = db.relationship('User', back_populates='supervisor', uselist=False)
     empresa = db.relationship('Empresa')
-    planta = db.relationship('Planta', foreign_keys=[planta_id], overlaps="plantas")  # Relacionamento antigo (compatibilidade)
+    # Relacionamento antigo (compatibilidade)
+    planta = db.relationship('Planta', foreign_keys=[
+                             planta_id], overlaps="plantas")
     gerente = db.relationship('Gerente')
 
     # Relacionamentos Muitos-para-Muitos
-    plantas = db.relationship('Planta', secondary='supervisor_planta_association', overlaps="planta")  # NOVO: Múltiplas plantas
+    plantas = db.relationship('Planta', secondary='supervisor_planta_association',
+                              overlaps="planta")  # NOVO: Múltiplas plantas
     turnos = db.relationship('Turno', secondary='supervisor_turno_association')
     centros_custo = db.relationship(
         'CentroCusto', secondary='supervisor_centro_custo_association')
@@ -379,10 +420,10 @@ class Colaborador(db.Model):
     STATUS_INATIVO = 'Inativo'
     STATUS_DESLIGADO = 'Desligado'
     STATUS_AUSENTE = 'Ausente'
-    
-    STATUS_VALIDOS = [STATUS_ATIVO, STATUS_INATIVO, STATUS_DESLIGADO, STATUS_AUSENTE]
-    # ============================================
 
+    STATUS_VALIDOS = [STATUS_ATIVO, STATUS_INATIVO,
+                      STATUS_DESLIGADO, STATUS_AUSENTE]
+    # ============================================
 
     id = db.Column(db.Integer, primary_key=True)
     # ID do Colaborador (matrícula)
@@ -440,7 +481,7 @@ class Motorista(db.Model):
     status = db.Column(db.String(20), nullable=False,
                        default='Ativo')  # Ativo ou Inativo
     status_disponibilidade = db.Column(db.String(20), nullable=False,
-                       default='online')  # online ou offline
+                                       default='online')  # online ou offline
     data_cadastro = db.Column(db.DateTime, default=datetime.utcnow)
 
     # Informações do Veículo
@@ -454,18 +495,18 @@ class Motorista(db.Model):
     # Relacionamentos
     user = db.relationship('User', back_populates='motorista', uselist=False)
     viagens = db.relationship('Viagem', back_populates='motorista')
-    
+
     def get_status_atual(self):
         """
         Retorna o status atual do motorista baseado em suas viagens.
-        
+
         Returns:
             str: 'offline', 'disponivel', 'agendado', 'ocupado'
         """
         # Se motorista está offline manualmente
         if self.status_disponibilidade == 'offline':
             return 'offline'
-        
+
         # Verifica se tem viagem em andamento
         viagem_em_andamento = Viagem.query.filter_by(
             motorista_id=self.id,
@@ -473,7 +514,7 @@ class Motorista(db.Model):
         ).first()
         if viagem_em_andamento:
             return 'ocupado'
-        
+
         # Verifica se tem viagem agendada
         viagem_agendada = Viagem.query.filter_by(
             motorista_id=self.id,
@@ -481,19 +522,19 @@ class Motorista(db.Model):
         ).first()
         if viagem_agendada:
             return 'agendado'
-        
+
         # Se não tem viagens e está online
         return 'disponivel'
-    
+
     def get_status_badge(self):
         """
         Retorna a classe CSS e texto para o badge de status.
-        
+
         Returns:
             dict: {'classe': 'bg-success', 'texto': 'Disponível', 'icone': 'check-circle'}
         """
         status = self.get_status_atual()
-        
+
         badges = {
             'disponivel': {
                 'classe': 'bg-success',
@@ -516,7 +557,7 @@ class Motorista(db.Model):
                 'icone': 'power'
             }
         }
-        
+
         return badges.get(status, badges['disponivel'])
 
 # --- TABELAS DE ASSOCIAÇÃO PARA RELACIONAMENTOS M-M ---
@@ -652,7 +693,7 @@ class Configuracao(db.Model):
 class Viagem(db.Model):
     """
     Modelo de Viagem com estrutura completa para gerenciamento de transporte.
-    
+
     Status possíveis:
     - 'Pendente': Viagem criada após agrupamento, aguardando motorista aceitar
     - 'Agendada': Motorista aceitou a viagem
@@ -661,293 +702,329 @@ class Viagem(db.Model):
     - 'Cancelada': Viagem cancelada por Admin/Supervisor/Motorista
     """
     __tablename__ = 'viagem'
-    
+
     # === IDENTIFICAÇÃO ===
     id = db.Column(db.Integer, primary_key=True)
-    
+
     # === LOCALIZAÇÃO E CONTEXTO ===
-    empresa_id = db.Column(db.Integer, db.ForeignKey('empresa.id'), nullable=False)
-    planta_id = db.Column(db.Integer, db.ForeignKey('planta.id'), nullable=False)
-    bloco_id = db.Column(db.Integer, db.ForeignKey('bloco.id'), nullable=True)  # Bloco principal
-    blocos_ids = db.Column(db.String(255), nullable=True)  # "1,3,5" para múltiplos blocos
-    
+    empresa_id = db.Column(db.Integer, db.ForeignKey(
+        'empresa.id'), nullable=False)
+    planta_id = db.Column(db.Integer, db.ForeignKey(
+        'planta.id'), nullable=False)
+    bloco_id = db.Column(db.Integer, db.ForeignKey(
+        'bloco.id'), nullable=True)  # Bloco principal
+    # "1,3,5" para múltiplos blocos
+    blocos_ids = db.Column(db.String(255), nullable=True)
+
     # === TIPO DE VIAGEM ===
     tipo_linha = db.Column(db.String(10), nullable=False)  # 'FIXA' ou 'EXTRA'
-    tipo_corrida = db.Column(db.String(20), nullable=False)  # 'entrada', 'saida', 'entrada_saida', 'desligamento'
-    
+    # 'entrada', 'saida', 'entrada_saida', 'desligamento'
+    tipo_corrida = db.Column(db.String(20), nullable=False)
+
     # === HORÁRIOS ===
     horario_entrada = db.Column(db.DateTime, nullable=True)
     horario_saida = db.Column(db.DateTime, nullable=True)
     horario_desligamento = db.Column(db.DateTime, nullable=True)
-    
+
     # === PASSAGEIROS ===
-    colaboradores_ids = db.Column(db.Text, nullable=True)  # JSON: "[1, 5, 8, 12]"
-    quantidade_passageiros = db.Column(db.Integer, default=0)  # Calculado automaticamente
-    
+    colaboradores_ids = db.Column(
+        db.Text, nullable=True)  # JSON: "[1, 5, 8, 12]"
+    quantidade_passageiros = db.Column(
+        db.Integer, default=0)  # Calculado automaticamente
+
     # === MOTORISTA E VEÍCULO ===
-    motorista_id = db.Column(db.Integer, db.ForeignKey('motorista.id'), nullable=True)
-    nome_motorista = db.Column(db.String(150), nullable=True)  # Preenchido quando motorista aceitar
-    placa_veiculo = db.Column(db.String(20), nullable=True)  # Preenchido quando motorista aceitar
-    
+    motorista_id = db.Column(
+        db.Integer, db.ForeignKey('motorista.id'), nullable=True)
+    # Preenchido quando motorista aceitar
+    nome_motorista = db.Column(db.String(150), nullable=True)
+    # Preenchido quando motorista aceitar
+    placa_veiculo = db.Column(db.String(20), nullable=True)
+
     # === VALORES FINANCEIROS ===
-    valor = db.Column(db.Numeric(10, 2), nullable=True)  # Valor total da viagem (MAIOR valor entre solicitações)
-    valor_repasse = db.Column(db.Numeric(10, 2), nullable=True)  # Valor de repasse para o motorista
-    
+    # Valor total da viagem (MAIOR valor entre solicitações)
+    valor = db.Column(db.Numeric(10, 2), nullable=True)
+    # Valor de repasse para o motorista
+    valor_repasse = db.Column(db.Numeric(10, 2), nullable=True)
+
     # === STATUS E CONTROLE ===
     status = db.Column(db.String(20), nullable=False, default='Pendente')
-    motivo_cancelamento = db.Column(db.Text, nullable=True)  # Preenchido se cancelada
-    cancelado_por_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Quem cancelou
-    
+    motivo_cancelamento = db.Column(
+        db.Text, nullable=True)  # Preenchido se cancelada
+    cancelado_por_user_id = db.Column(db.Integer, db.ForeignKey(
+        'user.id'), nullable=True)  # Quem cancelou
+
     # === AUDITORIA E TIMESTAMPS ===
-    created_by_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Quem criou (admin/supervisor)
-    data_criacao = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    data_atualizacao = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
-    data_inicio = db.Column(db.DateTime, nullable=True)  # Quando motorista iniciou
-    data_finalizacao = db.Column(db.DateTime, nullable=True)  # Quando motorista finalizou
-    data_cancelamento = db.Column(db.DateTime, nullable=True)  # Quando foi cancelada
-    
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey(
+        'user.id'), nullable=True)  # Quem criou (admin/supervisor)
+    data_criacao = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow)
+    data_atualizacao = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # Quando motorista iniciou
+    data_inicio = db.Column(db.DateTime, nullable=True)
+    # Quando motorista finalizou
+    data_finalizacao = db.Column(db.DateTime, nullable=True)
+    data_cancelamento = db.Column(
+        db.DateTime, nullable=True)  # Quando foi cancelada
+
     # === RELACIONAMENTOS ===
     empresa = db.relationship('Empresa', backref='viagens')
     planta = db.relationship('Planta', backref='viagens')
     bloco = db.relationship('Bloco', backref='viagens')
     motorista = db.relationship('Motorista', back_populates='viagens')
-    solicitacoes = db.relationship('Solicitacao', back_populates='viagem', cascade="all, delete-orphan")
-    created_by = db.relationship('User', foreign_keys=[created_by_user_id], backref='viagens_criadas')
-    cancelado_por = db.relationship('User', foreign_keys=[cancelado_por_user_id], backref='viagens_canceladas')
+    solicitacoes = db.relationship(
+        'Solicitacao', back_populates='viagem', cascade="all, delete-orphan")
+    created_by = db.relationship(
+        'User', foreign_keys=[created_by_user_id], backref='viagens_criadas')
+    cancelado_por = db.relationship(
+        'User', foreign_keys=[cancelado_por_user_id], backref='viagens_canceladas')
 
     def __repr__(self):
         motorista_info = self.nome_motorista if self.nome_motorista else "Não atribuído"
         return f'<Viagem {self.id} - {motorista_info} - Status: {self.status}>'
-    
+
     # === MÉTODOS AUXILIARES ===
-    
+
     def pode_ser_aceita(self):
         """Verifica se a viagem pode ser aceita por um motorista."""
         return self.status == 'Pendente' and self.motorista_id is None
-    
+
     def pode_ser_iniciada(self, motorista_id):
         """Verifica se a viagem pode ser iniciada pelo motorista especificado."""
         return self.status == 'Agendada' and self.motorista_id == motorista_id
-    
+
     def pode_ser_finalizada(self, motorista_id):
         """Verifica se a viagem pode ser finalizada pelo motorista especificado."""
         return self.status == 'Em Andamento' and self.motorista_id == motorista_id
-    
+
     def pode_ser_cancelada(self):
         """Verifica se a viagem pode ser cancelada."""
         return self.status in ['Pendente', 'Agendada']
-    
+
     def aceitar_viagem(self, motorista):
         """
         Aceita a viagem para um motorista específico.
-        
+
         Args:
             motorista: Objeto Motorista que está aceitando a viagem
-            
+
         Returns:
             bool: True se aceito com sucesso, False caso contrário
         """
         if not self.pode_ser_aceita():
             return False
-        
+
         self.motorista_id = motorista.id
         self.nome_motorista = motorista.nome
         self.placa_veiculo = motorista.veiculo_placa
         self.status = 'Agendada'
         self.data_atualizacao = datetime.utcnow()
-        
+
         # Atualiza status das solicitações
-        for solicitacao in self.solicitacoes:
-            solicitacao.status = 'Agendada'
-        
+        if self.solicitacoes:
+            for solicitacao in self.solicitacoes:
+                solicitacao.status = 'Agendada'
+
         return True
-    
+
     def iniciar_viagem(self, motorista_id):
         """
         Inicia a viagem.
-        
+
         Args:
             motorista_id: ID do motorista que está iniciando
-            
+
         Returns:
             bool: True se iniciado com sucesso, False caso contrário
         """
         if not self.pode_ser_iniciada(motorista_id):
             return False
-        
+
         self.status = 'Em Andamento'
         self.data_inicio = datetime.utcnow()
         self.data_atualizacao = datetime.utcnow()
-        
+
         # Atualiza status das solicitações
-        for solicitacao in self.solicitacoes:
-            solicitacao.status = 'Em Andamento'
-        
+        if self.solicitacoes:
+            for solicitacao in self.solicitacoes:
+                solicitacao.status = 'Em Andamento'
+
         return True
-    
+
     def finalizar_viagem(self, motorista_id):
         """
         Finaliza a viagem.
-        
+
         Args:
             motorista_id: ID do motorista que está finalizando
-            
+
         Returns:
             bool: True se finalizado com sucesso, False caso contrário
         """
         if not self.pode_ser_finalizada(motorista_id):
             return False
-        
+
         self.status = 'Finalizada'
         self.data_finalizacao = datetime.utcnow()
         self.data_atualizacao = datetime.utcnow()
-        
+
         # Atualiza status das solicitações
-        for solicitacao in self.solicitacoes:
-            solicitacao.status = 'Finalizada'
-        
-        # MELHORIA 1: Se é viagem de desligamento, altera status do colaborador para 'Desligado'
-        if self.tipo_corrida == 'desligamento':
+        if self.solicitacoes:
             for solicitacao in self.solicitacoes:
-                if solicitacao.colaborador:
-                    solicitacao.colaborador.status = 'Desligado'
-        
+                solicitacao.status = 'Finalizada'
+
+            # MELHORIA 1: Se é viagem de desligamento, altera status do colaborador para 'Desligado'
+            if self.tipo_corrida == 'desligamento':
+                for solicitacao in self.solicitacoes:
+                    if solicitacao.colaborador:
+                        solicitacao.colaborador.status = 'Desligado'
+
         return True
-    
+
     def cancelar_viagem(self, motivo, user_id):
         """
         Cancela a viagem e reverte as solicitações para Pendente.
-        
+
         Args:
             motivo: Motivo do cancelamento
             user_id: ID do usuário que está cancelando
-            
+
         Returns:
             bool: True se cancelado com sucesso, False caso contrário
         """
         if not self.pode_ser_cancelada():
             return False
-        
+
         self.status = 'Cancelada'
         self.motivo_cancelamento = motivo
         self.cancelado_por_user_id = user_id
         self.data_cancelamento = datetime.utcnow()
         self.data_atualizacao = datetime.utcnow()
-        
+
         # Reverte solicitações para Pendente
         for solicitacao in self.solicitacoes:
             solicitacao.status = 'Pendente'
             solicitacao.viagem_id = None
-        
+
         return True
-    
+
     def get_colaboradores_lista(self):
         """
         Retorna lista de IDs dos colaboradores a partir do campo JSON.
-        
+
         Returns:
             list: Lista de IDs de colaboradores
         """
         if not self.colaboradores_ids:
             return []
-        
+
         try:
             import json
             return json.loads(self.colaboradores_ids)
         except:
             # Se não for JSON válido, tenta split por vírgula
             return [int(x.strip()) for x in self.colaboradores_ids.split(',') if x.strip().isdigit()]
-    
+
     def get_blocos_lista(self):
         """
         Retorna lista de IDs dos blocos a partir do campo string.
-        
+
         Returns:
             list: Lista de IDs de blocos
         """
         if not self.blocos_ids:
             return [self.bloco_id] if self.bloco_id else []
-        
+
         try:
             return [int(x.strip()) for x in self.blocos_ids.split(',') if x.strip().isdigit()]
         except:
             return [self.bloco_id] if self.bloco_id else []
-        
 
     def desassociar_motorista(self):
         """
         Desassocia o motorista da viagem, tornando-a disponível novamente.
         Usado quando o motorista cancela antes de iniciar a viagem.
-        
+
         Returns:
             bool: True se desassociado com sucesso, False caso contrário
         """
         # Só pode desassociar se estiver Agendada (motorista aceitou mas não iniciou)
         if self.status != 'Agendada':
             return False
-        
+
         # Remove associação com motorista
         self.motorista_id = None
         self.nome_motorista = None
         self.placa_veiculo = None
-        
+
         # Volta status para Pendente
         self.status = 'Pendente'
         self.data_atualizacao = datetime.utcnow()
-        
+
         # Reverte status das solicitações para Pendente
         for solicitacao in self.solicitacoes:
             solicitacao.status = 'Pendente'
-        
+
         return True
-
-
-
-
-
 
 
 class Solicitacao(db.Model):
     __tablename__ = 'solicitacao'
     id = db.Column(db.Integer, primary_key=True)
-    
+
     # Relacionamentos principais
-    colaborador_id = db.Column(db.Integer, db.ForeignKey('colaborador.id'), nullable=False)
-    supervisor_id = db.Column(db.Integer, db.ForeignKey('supervisor.id'), nullable=False)
-    empresa_id = db.Column(db.Integer, db.ForeignKey('empresa.id'), nullable=False)
-    planta_id = db.Column(db.Integer, db.ForeignKey('planta.id'), nullable=False)
+    colaborador_id = db.Column(db.Integer, db.ForeignKey(
+        'colaborador.id'), nullable=False)
+    supervisor_id = db.Column(db.Integer, db.ForeignKey(
+        'supervisor.id'), nullable=False)
+    empresa_id = db.Column(db.Integer, db.ForeignKey(
+        'empresa.id'), nullable=False)
+    planta_id = db.Column(db.Integer, db.ForeignKey(
+        'planta.id'), nullable=False)
     bloco_id = db.Column(db.Integer, db.ForeignKey('bloco.id'), nullable=False)
-    
+
     # Tipo de linha e corrida
     tipo_linha = db.Column(db.String(10), nullable=False)  # 'FIXA' ou 'EXTRA'
-    tipo_corrida = db.Column(db.String(20), nullable=False)  # 'entrada', 'saida', 'entrada_saida', 'desligamento'
-    
+    # 'entrada', 'saida', 'entrada_saida', 'desligamento'
+    tipo_corrida = db.Column(db.String(20), nullable=False)
+
     # Horários
     horario_entrada = db.Column(db.DateTime, nullable=True)
     horario_saida = db.Column(db.DateTime, nullable=True)
     horario_desligamento = db.Column(db.DateTime, nullable=True)
-    
+
     # Turnos (referências aos turnos calculados)
-    turno_entrada_id = db.Column(db.Integer, db.ForeignKey('turno.id'), nullable=True)
-    turno_saida_id = db.Column(db.Integer, db.ForeignKey('turno.id'), nullable=True)
-    turno_desligamento_id = db.Column(db.Integer, db.ForeignKey('turno.id'), nullable=True)
-    
+    turno_entrada_id = db.Column(
+        db.Integer, db.ForeignKey('turno.id'), nullable=True)
+    turno_saida_id = db.Column(
+        db.Integer, db.ForeignKey('turno.id'), nullable=True)
+    turno_desligamento_id = db.Column(
+        db.Integer, db.ForeignKey('turno.id'), nullable=True)
+
     # Status e viagem/fretado
-    status = db.Column(db.String(20), nullable=False, default='Pendente')  # Pendente, Agrupada, Fretado, Finalizada, Cancelada
-    viagem_id = db.Column(db.Integer, db.ForeignKey('viagem.id'), nullable=True)  # NULL até agrupar
-    fretado_id = db.Column(db.Integer, db.ForeignKey('fretado.id'), nullable=True)  # NULL até agrupar como fretado
-    
+    # Pendente, Agrupada, Fretado, Finalizada, Cancelada
+    status = db.Column(db.String(20), nullable=False, default='Pendente')
+    viagem_id = db.Column(db.Integer, db.ForeignKey(
+        'viagem.id'), nullable=True)  # NULL até agrupar
+    fretado_id = db.Column(db.Integer, db.ForeignKey(
+        'fretado.id'), nullable=True)  # NULL até agrupar como fretado
+
     # Valores financeiros
-    valor = db.Column(db.Numeric(10, 2), nullable=True)  # Valor baseado em ValorBlocoTurno
-    valor_repasse = db.Column(db.Numeric(10, 2), nullable=True)  # Valor de repasse para o motorista
-    
+    # Valor baseado em ValorBlocoTurno
+    valor = db.Column(db.Numeric(10, 2), nullable=True)
+    # Valor de repasse para o motorista
+    valor_repasse = db.Column(db.Numeric(10, 2), nullable=True)
+
     # Rastreamento de quem criou
-    created_by_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Usuário que criou a solicitação
-    
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey(
+        'user.id'), nullable=True)  # Usuário que criou a solicitação
+
     # Timestamps
-    data_criacao = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    data_atualizacao = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+    data_criacao = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow)
+    data_atualizacao = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
     # Relacionamentos
     colaborador = db.relationship('Colaborador', backref='solicitacoes')
     supervisor = db.relationship('Supervisor', backref='solicitacoes')
@@ -956,16 +1033,17 @@ class Solicitacao(db.Model):
     bloco = db.relationship('Bloco', backref='solicitacoes')
     turno_entrada = db.relationship('Turno', foreign_keys=[turno_entrada_id])
     turno_saida = db.relationship('Turno', foreign_keys=[turno_saida_id])
-    turno_desligamento = db.relationship('Turno', foreign_keys=[turno_desligamento_id])
+    turno_desligamento = db.relationship(
+        'Turno', foreign_keys=[turno_desligamento_id])
     viagem = db.relationship('Viagem', back_populates='solicitacoes')
-    fretado = db.relationship('Fretado', backref='solicitacoes', foreign_keys='Solicitacao.fretado_id')
-    created_by = db.relationship('User', foreign_keys=[created_by_user_id], backref='solicitacoes_criadas')
+    fretado = db.relationship(
+        'Fretado', backref='solicitacoes', foreign_keys='Solicitacao.fretado_id')
+    created_by = db.relationship(
+        'User', foreign_keys=[created_by_user_id], backref='solicitacoes_criadas')
 
     def __repr__(self):
         return f'<Solicitacao {self.id} - {self.colaborador.nome} - {self.tipo_corrida}>'
-    
 
-    
 
 # ===========================================================================================
 # TABELAS DE AUDITORIA E LOGS
@@ -974,9 +1052,9 @@ class Solicitacao(db.Model):
 class AuditLog(db.Model):
     """
     Tabela principal de auditoria para registrar todas as operações do sistema.
-    
+
     Segue padrões de conformidade: GDPR, SOX, ISO 27001, LGPD
-    
+
     Campos essenciais:
     - Quem fez (user_id, user_name)
     - O que fez (action, resource_type, resource_id)
@@ -986,47 +1064,61 @@ class AuditLog(db.Model):
     - Detalhes (changes, reason)
     """
     __tablename__ = 'audit_log'
-    
+
     # Identificação
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, index=True)
-    
+    timestamp = db.Column(db.DateTime, nullable=False,
+                          default=datetime.utcnow, index=True)
+
     # Usuário que executou a ação
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True, index=True)
-    user_name = db.Column(db.String(100), nullable=True)  # Desnormalizado para histórico
-    user_role = db.Column(db.String(50), nullable=True)  # admin, motorista, supervisor, etc.
-    
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'user.id'), nullable=True, index=True)
+    # Desnormalizado para histórico
+    user_name = db.Column(db.String(100), nullable=True)
+    # admin, motorista, supervisor, etc.
+    user_role = db.Column(db.String(50), nullable=True)
+
     # Ação executada
-    action = db.Column(db.String(50), nullable=False, index=True)  # CREATE, UPDATE, DELETE, LOGIN, etc.
-    resource_type = db.Column(db.String(50), nullable=False, index=True)  # Viagem, User, Motorista, etc.
-    resource_id = db.Column(db.Integer, nullable=True, index=True)  # ID do recurso afetado
-    
+    # CREATE, UPDATE, DELETE, LOGIN, etc.
+    action = db.Column(db.String(50), nullable=False, index=True)
+    # Viagem, User, Motorista, etc.
+    resource_type = db.Column(db.String(50), nullable=False, index=True)
+    resource_id = db.Column(db.Integer, nullable=True,
+                            index=True)  # ID do recurso afetado
+
     # Status da operação
-    status = db.Column(db.String(20), nullable=False, default='SUCCESS')  # SUCCESS, FAILED, ERROR
-    
+    status = db.Column(db.String(20), nullable=False,
+                       default='SUCCESS')  # SUCCESS, FAILED, ERROR
+
     # Contexto da requisição
     ip_address = db.Column(db.String(45), nullable=True)  # IPv4 ou IPv6
-    user_agent = db.Column(db.String(255), nullable=True)  # Navegador/dispositivo
-    request_method = db.Column(db.String(10), nullable=True)  # GET, POST, PUT, DELETE
+    # Navegador/dispositivo
+    user_agent = db.Column(db.String(255), nullable=True)
+    # GET, POST, PUT, DELETE
+    request_method = db.Column(db.String(10), nullable=True)
     route = db.Column(db.String(255), nullable=True)  # Rota/endpoint acessado
     module = db.Column(db.String(50), nullable=True)  # Blueprint/módulo
-    
+
     # Detalhes da mudança
     changes = db.Column(db.Text, nullable=True)  # JSON com before/after
-    reason = db.Column(db.Text, nullable=True)  # Motivo da ação (quando aplicável)
-    error_message = db.Column(db.Text, nullable=True)  # Mensagem de erro (se falhou)
-    
+    # Motivo da ação (quando aplicável)
+    reason = db.Column(db.Text, nullable=True)
+    # Mensagem de erro (se falhou)
+    error_message = db.Column(db.Text, nullable=True)
+
     # Metadados adicionais
     session_id = db.Column(db.String(100), nullable=True)  # ID da sessão
-    duration_ms = db.Column(db.Integer, nullable=True)  # Tempo de execução em ms
-    severity = db.Column(db.String(20), nullable=False, default='INFO')  # INFO, WARNING, ERROR, CRITICAL
-    
+    # Tempo de execução em ms
+    duration_ms = db.Column(db.Integer, nullable=True)
+    # INFO, WARNING, ERROR, CRITICAL
+    severity = db.Column(db.String(20), nullable=False, default='INFO')
+
     # Relacionamentos
     user = db.relationship('User', backref='audit_logs')
-    
+
     def __repr__(self):
         return f'<AuditLog {self.id}: {self.user_name} - {self.action} {self.resource_type}#{self.resource_id}>'
-    
+
     def to_dict(self):
         """Converte o log para dicionário."""
         return {
@@ -1056,7 +1148,7 @@ class AuditLog(db.Model):
 class ViagemAuditoria(db.Model):
     """
     Tabela específica para auditoria de viagens.
-    
+
     Registra todo o histórico de mudanças de uma viagem:
     - Criação
     - Aceitação por motorista
@@ -1064,27 +1156,30 @@ class ViagemAuditoria(db.Model):
     - Finalização
     - Cancelamento/Desassociação
     - Mudanças de status
-    
+
     Permite rastreabilidade completa do ciclo de vida da viagem.
     """
     __tablename__ = 'viagem_auditoria'
-    
+
     # Identificação
     id = db.Column(db.Integer, primary_key=True)
-    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, index=True)
-    
+    timestamp = db.Column(db.DateTime, nullable=False,
+                          default=datetime.utcnow, index=True)
+
     # Viagem relacionada
-    viagem_id = db.Column(db.Integer, db.ForeignKey('viagem.id'), nullable=False, index=True)
-    
+    viagem_id = db.Column(db.Integer, db.ForeignKey(
+        'viagem.id'), nullable=False, index=True)
+
     # Usuário que executou a ação
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     user_name = db.Column(db.String(100), nullable=True)
     user_role = db.Column(db.String(50), nullable=True)
-    
+
     # Motorista envolvido (se aplicável)
-    motorista_id = db.Column(db.Integer, db.ForeignKey('motorista.id'), nullable=True, index=True)
+    motorista_id = db.Column(db.Integer, db.ForeignKey(
+        'motorista.id'), nullable=True, index=True)
     motorista_nome = db.Column(db.String(100), nullable=True)
-    
+
     # Ação executada
     action = db.Column(db.String(50), nullable=False, index=True)
     # Ações possíveis:
@@ -1096,30 +1191,31 @@ class ViagemAuditoria(db.Model):
     # - MOTORISTA_DESASSOCIADO (motorista cancelou)
     # - STATUS_ALTERADO
     # - DADOS_ATUALIZADOS
-    
+
     # Status antes e depois
     status_anterior = db.Column(db.String(20), nullable=True)
     status_novo = db.Column(db.String(20), nullable=True)
-    
+
     # Detalhes da mudança
     changes = db.Column(db.Text, nullable=True)  # JSON com todas as mudanças
-    reason = db.Column(db.Text, nullable=True)  # Motivo (especialmente para cancelamentos)
-    
+    # Motivo (especialmente para cancelamentos)
+    reason = db.Column(db.Text, nullable=True)
+
     # Valores financeiros (para rastreamento)
     valor_repasse_anterior = db.Column(db.Numeric(10, 2), nullable=True)
     valor_repasse_novo = db.Column(db.Numeric(10, 2), nullable=True)
-    
+
     # Contexto
     ip_address = db.Column(db.String(45), nullable=True)
-    
+
     # Relacionamentos
     viagem = db.relationship('Viagem', backref='historico_auditoria')
     user = db.relationship('User', backref='viagens_auditadas')
     motorista = db.relationship('Motorista', backref='viagens_auditadas')
-    
+
     def __repr__(self):
         return f'<ViagemAuditoria {self.id}: Viagem#{self.viagem_id} - {self.action} por {self.user_name}>'
-    
+
     def to_dict(self):
         """Converte o registro para dicionário."""
         return {
@@ -1147,8 +1243,6 @@ class ViagemAuditoria(db.Model):
 # ===========================================================================================
 
 
-
-
 # ===========================================================================================
 # MÓDULO FINANCEIRO
 # ===========================================================================================
@@ -1156,26 +1250,31 @@ class ViagemAuditoria(db.Model):
 class FinContasReceber(db.Model):
     """Modelo para Contas a Receber (Títulos das Empresas)"""
     __tablename__ = 'fin_contas_receber'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     numero_titulo = db.Column(db.String(50), unique=True, nullable=False)
-    empresa_id = db.Column(db.Integer, db.ForeignKey('empresa.id'), nullable=False)
+    empresa_id = db.Column(db.Integer, db.ForeignKey(
+        'empresa.id'), nullable=False)
     valor_total = db.Column(db.Numeric(10, 2), nullable=False)
     data_emissao = db.Column(db.Date, nullable=False)
     data_vencimento = db.Column(db.Date, nullable=False)
     data_recebimento = db.Column(db.Date)
-    status = db.Column(db.String(20), nullable=False, default='Aberto')  # Aberto, Recebido, Vencido, Cancelado
+    # Aberto, Recebido, Vencido, Cancelado
+    status = db.Column(db.String(20), nullable=False, default='Aberto')
     numero_nota_fiscal = db.Column(db.String(100))
     observacoes = db.Column(db.Text)
-    created_by_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_by_user_id = db.Column(
+        db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
     # Relacionamentos
     empresa = db.relationship('Empresa', backref='titulos_receber')
     created_by = db.relationship('User', backref='titulos_receber_criados')
-    viagens = db.relationship('FinReceberViagens', back_populates='conta_receber', cascade="all, delete-orphan")
-    
+    viagens = db.relationship(
+        'FinReceberViagens', back_populates='conta_receber', cascade="all, delete-orphan")
+
     def __repr__(self):
         return f'<FinContasReceber {self.numero_titulo} - {self.empresa.nome if self.empresa else "N/A"}>'
 
@@ -1183,20 +1282,24 @@ class FinContasReceber(db.Model):
 class FinReceberViagens(db.Model):
     """Modelo para vincular viagens aos títulos a receber"""
     __tablename__ = 'fin_receber_viagens'
-    
+
     id = db.Column(db.Integer, primary_key=True)
-    conta_receber_id = db.Column(db.Integer, db.ForeignKey('fin_contas_receber.id', ondelete='CASCADE'), nullable=False)
-    viagem_id = db.Column(db.Integer, db.ForeignKey('viagem.id'), nullable=False)
+    conta_receber_id = db.Column(db.Integer, db.ForeignKey(
+        'fin_contas_receber.id', ondelete='CASCADE'), nullable=False)
+    viagem_id = db.Column(db.Integer, db.ForeignKey(
+        'viagem.id'), nullable=False)
     valor_viagem = db.Column(db.Numeric(10, 2), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
     # Relacionamentos
-    conta_receber = db.relationship('FinContasReceber', back_populates='viagens')
+    conta_receber = db.relationship(
+        'FinContasReceber', back_populates='viagens')
     viagem = db.relationship('Viagem', backref='titulo_receber')
-    
+
     # Constraint única para evitar duplicação
-    __table_args__ = (db.UniqueConstraint('conta_receber_id', 'viagem_id', name='_conta_viagem_receber_uc'),)
-    
+    __table_args__ = (db.UniqueConstraint('conta_receber_id',
+                      'viagem_id', name='_conta_viagem_receber_uc'),)
+
     def __repr__(self):
         return f'<FinReceberViagens Título:{self.conta_receber_id} Viagem:{self.viagem_id}>'
 
@@ -1204,27 +1307,33 @@ class FinReceberViagens(db.Model):
 class FinContasPagar(db.Model):
     """Modelo para Contas a Pagar (Títulos dos Motoristas)"""
     __tablename__ = 'fin_contas_pagar'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     numero_titulo = db.Column(db.String(50), unique=True, nullable=False)
-    motorista_id = db.Column(db.Integer, db.ForeignKey('motorista.id'), nullable=False)
+    motorista_id = db.Column(db.Integer, db.ForeignKey(
+        'motorista.id'), nullable=False)
     valor_total = db.Column(db.Numeric(10, 2), nullable=False)
     data_emissao = db.Column(db.Date, nullable=False)
     data_vencimento = db.Column(db.Date, nullable=False)
     data_pagamento = db.Column(db.Date)
-    status = db.Column(db.String(20), nullable=False, default='Aberto')  # Aberto, Pago, Vencido, Cancelado
-    forma_pagamento = db.Column(db.String(50))  # PIX, Transferência, Dinheiro, etc.
+    # Aberto, Pago, Vencido, Cancelado
+    status = db.Column(db.String(20), nullable=False, default='Aberto')
+    # PIX, Transferência, Dinheiro, etc.
+    forma_pagamento = db.Column(db.String(50))
     comprovante_pagamento = db.Column(db.String(255))  # Caminho do arquivo
     observacoes = db.Column(db.Text)
-    created_by_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    created_by_user_id = db.Column(
+        db.Integer, db.ForeignKey('user.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
     # Relacionamentos
     motorista = db.relationship('Motorista', backref='titulos_pagar')
     created_by = db.relationship('User', backref='titulos_pagar_criados')
-    viagens = db.relationship('FinPagarViagens', back_populates='conta_pagar', cascade="all, delete-orphan")
-    
+    viagens = db.relationship(
+        'FinPagarViagens', back_populates='conta_pagar', cascade="all, delete-orphan")
+
     def __repr__(self):
         return f'<FinContasPagar {self.numero_titulo} - {self.motorista.nome if self.motorista else "N/A"}>'
 
@@ -1232,28 +1341,29 @@ class FinContasPagar(db.Model):
 class FinPagarViagens(db.Model):
     """Modelo para vincular viagens aos títulos a pagar"""
     __tablename__ = 'fin_pagar_viagens'
-    
+
     id = db.Column(db.Integer, primary_key=True)
-    conta_pagar_id = db.Column(db.Integer, db.ForeignKey('fin_contas_pagar.id', ondelete='CASCADE'), nullable=False)
-    viagem_id = db.Column(db.Integer, db.ForeignKey('viagem.id'), nullable=False)
+    conta_pagar_id = db.Column(db.Integer, db.ForeignKey(
+        'fin_contas_pagar.id', ondelete='CASCADE'), nullable=False)
+    viagem_id = db.Column(db.Integer, db.ForeignKey(
+        'viagem.id'), nullable=False)
     valor_repasse = db.Column(db.Numeric(10, 2), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
+
     # Relacionamentos
     conta_pagar = db.relationship('FinContasPagar', back_populates='viagens')
     viagem = db.relationship('Viagem', backref='titulo_pagar')
-    
+
     # Constraint única para evitar duplicação
-    __table_args__ = (db.UniqueConstraint('conta_pagar_id', 'viagem_id', name='_conta_viagem_pagar_uc'),)
-    
+    __table_args__ = (db.UniqueConstraint('conta_pagar_id',
+                      'viagem_id', name='_conta_viagem_pagar_uc'),)
+
     def __repr__(self):
         return f'<FinPagarViagens Título:{self.conta_pagar_id} Viagem:{self.viagem_id}>'
 
 # ===========================================================================================
 # FIM DO MÓDULO FINANCEIRO
 # ===========================================================================================
-
-
 
 
 # ===========================================================================================
@@ -1263,125 +1373,140 @@ class FinPagarViagens(db.Model):
 class Fretado(db.Model):
     """
     Modelo de Fretado para gerenciar registros individuais de colaboradores em fretados.
-    
+
     Cada colaborador que vai de fretado gera 1 registro nesta tabela.
     Similar à estrutura da tabela Solicitacao, mas para fretados.
     """
     __tablename__ = 'fretado'
-    
+
     # === IDENTIFICAÇÃO ===
     id = db.Column(db.Integer, primary_key=True)
-    
+
     # === REFERÊNCIAS ===
-    solicitacao_id = db.Column(db.Integer, db.ForeignKey('solicitacao.id'), nullable=False)  # ID da solicitação original
-    colaborador_id = db.Column(db.Integer, db.ForeignKey('colaborador.id'), nullable=False)  # ID do colaborador
-    
+    solicitacao_id = db.Column(db.Integer, db.ForeignKey(
+        'solicitacao.id'), nullable=False)  # ID da solicitação original
+    colaborador_id = db.Column(db.Integer, db.ForeignKey(
+        'colaborador.id'), nullable=False)  # ID do colaborador
+
     # === DADOS DO COLABORADOR ===
-    nome_colaborador = db.Column(db.String(150), nullable=False)  # Nome do colaborador
-    matricula = db.Column(db.String(50), nullable=True)  # Matrícula do colaborador
-    telefone = db.Column(db.String(20), nullable=True)  # Telefone do colaborador
-    
+    nome_colaborador = db.Column(
+        db.String(150), nullable=False)  # Nome do colaborador
+    # Matrícula do colaborador
+    matricula = db.Column(db.String(50), nullable=True)
+    # Telefone do colaborador
+    telefone = db.Column(db.String(20), nullable=True)
+
     # === ENDEREÇO DO COLABORADOR ===
     endereco = db.Column(db.String(255), nullable=True)  # Endereço completo
     bairro = db.Column(db.String(100), nullable=True)  # Bairro
     cidade = db.Column(db.String(100), nullable=True)  # Cidade
-    
+
     # === LOCALIZAÇÃO E CONTEXTO ===
-    empresa_id = db.Column(db.Integer, db.ForeignKey('empresa.id'), nullable=False)
-    planta_id = db.Column(db.Integer, db.ForeignKey('planta.id'), nullable=False)
-    bloco_id = db.Column(db.Integer, db.ForeignKey('bloco.id'), nullable=True)  # Bloco do colaborador
-    grupo_bloco = db.Column(db.String(50), nullable=True)  # Ex: "CPV1", "SJC1" - raiz do código do bloco
-    
+    empresa_id = db.Column(db.Integer, db.ForeignKey(
+        'empresa.id'), nullable=False)
+    planta_id = db.Column(db.Integer, db.ForeignKey(
+        'planta.id'), nullable=False)
+    bloco_id = db.Column(db.Integer, db.ForeignKey(
+        'bloco.id'), nullable=True)  # Bloco do colaborador
+    # Ex: "CPV1", "SJC1" - raiz do código do bloco
+    grupo_bloco = db.Column(db.String(50), nullable=True)
+
     # === TIPO DE VIAGEM ===
     tipo_linha = db.Column(db.String(10), nullable=False)  # 'FIXA' ou 'EXTRA'
-    tipo_corrida = db.Column(db.String(20), nullable=False)  # 'entrada', 'saida', 'entrada_saida', 'desligamento'
-    
+    # 'entrada', 'saida', 'entrada_saida', 'desligamento'
+    tipo_corrida = db.Column(db.String(20), nullable=False)
+
     # === HORÁRIOS ===
     horario_entrada = db.Column(db.DateTime, nullable=True)
     horario_saida = db.Column(db.DateTime, nullable=True)
     horario_desligamento = db.Column(db.DateTime, nullable=True)
-    
+
     # === STATUS E CONTROLE ===
-    status = db.Column(db.String(20), nullable=False, default='Fretado')  # Status: 'Fretado'
+    status = db.Column(db.String(20), nullable=False,
+                       default='Fretado')  # Status: 'Fretado'
     observacoes = db.Column(db.Text, nullable=True)  # Observações gerais
-    
+
     # === AUDITORIA E TIMESTAMPS ===
-    created_by_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # Quem criou
-    data_criacao = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    data_atualizacao = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+    created_by_user_id = db.Column(db.Integer, db.ForeignKey(
+        'user.id'), nullable=True)  # Quem criou
+    data_criacao = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow)
+    data_atualizacao = db.Column(
+        db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
     # === RELACIONAMENTOS ===
     solicitacao = db.relationship('Solicitacao', foreign_keys=[solicitacao_id])
     colaborador = db.relationship('Colaborador', foreign_keys=[colaborador_id])
     empresa = db.relationship('Empresa', foreign_keys=[empresa_id])
     planta = db.relationship('Planta', foreign_keys=[planta_id])
     bloco = db.relationship('Bloco', foreign_keys=[bloco_id])
-    created_by = db.relationship('User', foreign_keys=[created_by_user_id], backref='fretados_criados')
+    created_by = db.relationship(
+        'User', foreign_keys=[created_by_user_id], backref='fretados_criados')
 
     def __repr__(self):
         return f'<Fretado {self.id} - {self.nome_colaborador} - {self.grupo_bloco}>'
-    
+
     # === MÉTODOS AUXILIARES ===
-    
+
     def get_colaboradores_lista(self):
         """
         Retorna lista de IDs dos colaboradores a partir do campo JSON.
-        
+
         Returns:
             list: Lista de IDs de colaboradores
         """
         if not self.colaboradores_ids:
             return []
-        
+
         try:
             import json
             return json.loads(self.colaboradores_ids)
         except:
             # Se não for JSON válido, tenta split por vírgula
             return [int(x.strip()) for x in self.colaboradores_ids.split(',') if x.strip().isdigit()]
-    
+
     def get_blocos_lista(self):
         """
         Retorna lista de IDs dos blocos a partir do campo string.
-        
+
         Returns:
             list: Lista de IDs de blocos
         """
         if not self.blocos_ids:
             return [self.bloco_id] if self.bloco_id else []
-        
+
         try:
             return [int(x.strip()) for x in self.blocos_ids.split(',') if x.strip().isdigit()]
         except:
             return [self.bloco_id] if self.bloco_id else []
-    
+
     @staticmethod
     def extrair_grupo_bloco(codigo_bloco):
         """
         Extrai o grupo de bloco a partir do código do bloco.
-        
+
         Exemplos:
             CPV1.1 → CPV1
             CPV1.2 → CPV1
             SJC1.3 → SJC1
             ABC → ABC (sem ponto, retorna o próprio código)
-        
+
         Args:
             codigo_bloco: String com o código do bloco
-            
+
         Returns:
             str: Grupo do bloco (raiz antes do último ponto)
         """
         if not codigo_bloco:
             return None
-        
+
         # Se tem ponto, pega tudo antes do último ponto
         if '.' in codigo_bloco:
             return codigo_bloco.rsplit('.', 1)[0]
-        
+
         # Se não tem ponto, retorna o próprio código
         return codigo_bloco
-    
+
     def to_dict(self):
         """Converte o fretado para dicionário."""
         return {
@@ -1414,7 +1539,6 @@ class Fretado(db.Model):
 # ===========================================================================================
 
 
-
 # ===========================================================================================
 # MODELO DE HORA PARADA
 # ===========================================================================================
@@ -1422,10 +1546,10 @@ class Fretado(db.Model):
 class ViagemHoraParada(db.Model):
     """
     Modelo para registrar cobranças de hora parada em viagens.
-    
+
     Hora parada é cobrada quando o colaborador atrasa para iniciar a viagem.
     A cada 30 minutos de atraso, é acrescentado um valor fixo na viagem e no repasse do motorista.
-    
+
     Regras:
     - Apenas 1 registro de hora parada por viagem (UNIQUE constraint)
     - Valores configuráveis via tabela 'configuracao'
@@ -1433,34 +1557,45 @@ class ViagemHoraParada(db.Model):
     - Cálculo automático baseado na diferença entre horário agendado e horário real de início
     """
     __tablename__ = 'viagem_hora_parada'
-    
+
     # === IDENTIFICAÇÃO ===
     id = db.Column(db.Integer, primary_key=True)
-    viagem_id = db.Column(db.Integer, db.ForeignKey('viagem.id'), nullable=False, unique=True)
-    
+    viagem_id = db.Column(db.Integer, db.ForeignKey(
+        'viagem.id'), nullable=False, unique=True)
+
     # === CÁLCULO DO ATRASO ===
-    tipo_corrida = db.Column(db.String(20), nullable=False)  # 'entrada', 'saida', 'desligamento'
-    horario_agendado = db.Column(db.DateTime, nullable=False)  # Horário que deveria iniciar
-    horario_real_inicio = db.Column(db.DateTime, nullable=False)  # Horário que realmente iniciou (data_inicio da viagem)
-    minutos_atraso = db.Column(db.Integer, nullable=False)  # Diferença em minutos
-    periodos_30min = db.Column(db.Integer, nullable=False)  # Quantos períodos de 30min cobrar
-    
+    # 'entrada', 'saida', 'desligamento'
+    tipo_corrida = db.Column(db.String(20), nullable=False)
+    # Horário que deveria iniciar
+    horario_agendado = db.Column(db.DateTime, nullable=False)
+    # Horário que realmente iniciou (data_inicio da viagem)
+    horario_real_inicio = db.Column(db.DateTime, nullable=False)
+    minutos_atraso = db.Column(
+        db.Integer, nullable=False)  # Diferença em minutos
+    # Quantos períodos de 30min cobrar
+    periodos_30min = db.Column(db.Integer, nullable=False)
+
     # === VALORES FINANCEIROS ===
-    valor_adicional = db.Column(db.Numeric(10, 2), nullable=False)  # Valor adicional na viagem (ex: 71,02 x períodos)
-    repasse_adicional = db.Column(db.Numeric(10, 2), nullable=False)  # Repasse adicional ao motorista (ex: 29,00 x períodos)
-    
+    # Valor adicional na viagem (ex: 71,02 x períodos)
+    valor_adicional = db.Column(db.Numeric(10, 2), nullable=False)
+    # Repasse adicional ao motorista (ex: 29,00 x períodos)
+    repasse_adicional = db.Column(db.Numeric(10, 2), nullable=False)
+
     # === AUDITORIA ===
     observacoes = db.Column(db.Text, nullable=True)
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    created_by_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    
+    created_at = db.Column(db.DateTime, nullable=False,
+                           default=datetime.utcnow)
+    created_by_user_id = db.Column(
+        db.Integer, db.ForeignKey('user.id'), nullable=True)
+
     # === RELACIONAMENTOS ===
-    viagem = db.relationship('Viagem', backref=db.backref('hora_parada', uselist=False, cascade="all, delete-orphan"))
+    viagem = db.relationship('Viagem', backref=db.backref(
+        'hora_parada', uselist=False, cascade="all, delete-orphan"))
     created_by = db.relationship('User', backref='horas_paradas_criadas')
-    
+
     def __repr__(self):
         return f'<ViagemHoraParada Viagem#{self.viagem_id} - {self.periodos_30min}x30min - R$ {self.valor_adicional}>'
-    
+
     def to_dict(self):
         """Converte o registro para dicionário."""
         return {
@@ -1478,21 +1613,21 @@ class ViagemHoraParada(db.Model):
             'created_by_user_id': self.created_by_user_id,
             'created_by_name': self.created_by.username if self.created_by else None
         }
-    
+
     @staticmethod
     def calcular_periodos(minutos_atraso):
         """
         Calcula quantos períodos de 30min devem ser cobrados.
-        
+
         Regra: A cada 30 minutos de atraso, cobra 1 período.
         - 1 a 30 minutos = 1 período
         - 31 a 60 minutos = 2 períodos
         - 61 a 90 minutos = 3 períodos
         - etc.
-        
+
         Args:
             minutos_atraso (int): Minutos de atraso
-            
+
         Returns:
             int: Número de períodos de 30min a cobrar
         """
@@ -1500,37 +1635,39 @@ class ViagemHoraParada(db.Model):
         if minutos_atraso <= 0:
             return 0
         return math.ceil(minutos_atraso / 30)
-    
+
     @staticmethod
     def obter_valores_configurados():
         """
         Obtém os valores configurados de hora parada.
-        
+
         Returns:
             tuple: (valor_periodo, repasse_periodo)
         """
         from app.models import Configuracao
-        
+
         # Valores padrão
         valor_periodo = 71.02
         repasse_periodo = 29.00
-        
+
         # Busca valores configurados
-        config_valor = Configuracao.query.filter_by(chave='hora_parada_valor_periodo').first()
-        config_repasse = Configuracao.query.filter_by(chave='hora_parada_repasse_periodo').first()
-        
+        config_valor = Configuracao.query.filter_by(
+            chave='hora_parada_valor_periodo').first()
+        config_repasse = Configuracao.query.filter_by(
+            chave='hora_parada_repasse_periodo').first()
+
         if config_valor:
             try:
                 valor_periodo = float(config_valor.valor)
             except ValueError:
                 pass
-        
+
         if config_repasse:
             try:
                 repasse_periodo = float(config_repasse.valor)
             except ValueError:
                 pass
-        
+
         return (valor_periodo, repasse_periodo)
 
 # ===========================================================================================

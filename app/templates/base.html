@@ -560,9 +560,9 @@
                                 </a>
                                 <div class="collapse submenu" id="relatoriosSubmenu">
                                     <ul class="nav flex-column">
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.listagem_solicitacoes') }}">Listagem de Solicitações</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_viagens') }}">Conferência de Viagens</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_motoristas') }}">Conferência de Motoristas</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.listagem_solicitacoes') }}"><i class="bi bi-list-check"></i> Listagem de Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_viagens') }}"><i class="bi bi-clipboard-check"></i> Conferência de Viagens</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_motoristas') }}"><i class="bi bi-person-check"></i> Conferência de Motoristas</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -574,8 +574,8 @@
                                 </a>
                                 <div class="collapse submenu" id="financeiroSubmenu">
                                     <ul class="nav flex-column">
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('financeiro.contas_receber') }}">Contas a Receber</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('financeiro.contas_pagar') }}">Contas a Pagar</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('financeiro.contas_receber') }}"><i class="bi bi-cash-coin"></i> Contas a Receber</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('financeiro.contas_pagar') }}"><i class="bi bi-wallet2"></i> Contas a Pagar</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -602,6 +602,8 @@
                                 <div class="collapse submenu" id="gerenteProcessosSubmenu">
                                     <ul class="nav flex-column">
                                         <li class="nav-item"><a class="nav-link" href="{{ url_for('gerente.solicitacoes') }}"><i class="bi bi-clipboard-check"></i> Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.agrupamento') }}"><i class="bi bi-collection"></i> Agrupamento</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.viagens') }}"><i class="bi bi-car-front"></i> Viagens</a></li>
                                         <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.fretados') }}"><i class="bi bi-bus-front"></i> Fretados</a></li>
                                     </ul>
                                 </div>
@@ -613,8 +615,8 @@
                                 </a>
                                 <div class="collapse submenu" id="gerenteRelatoriosSubmenu">
                                     <ul class="nav flex-column">
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.listagem_solicitacoes') }}">Listagem de Solicitações</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_viagens') }}">Conferência de Viagens</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.listagem_solicitacoes') }}"><i class="bi bi-list-check"></i> Listagem de Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_viagens') }}"><i class="bi bi-clipboard-check"></i> Conferência de Viagens</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -640,7 +642,6 @@
                                 <div class="collapse submenu" id="supervisorProcessosSubmenu">
                                     <ul class="nav flex-column">
                                         <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.solicitacoes') }}"><i class="bi bi-clipboard-check"></i> Solicitações</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.agrupamento') }}"><i class="bi bi-collection"></i> Agrupamento</a></li>
                                         <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.viagens') }}"><i class="bi bi-car-front"></i> Viagens</a></li>
                                         <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.fretados') }}"><i class="bi bi-bus-front"></i> Fretados</a></li>
                                     </ul>
@@ -653,8 +654,8 @@
                                 </a>
                                 <div class="collapse submenu" id="supervisorRelatoriosSubmenu">
                                     <ul class="nav flex-column">
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.listagem_solicitacoes') }}">Listagem de Solicitações</a></li>
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_viagens') }}">Conferência de Viagens</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.listagem_solicitacoes') }}"><i class="bi bi-list-check"></i> Listagem de Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_viagens') }}"><i class="bi bi-clipboard-check"></i> Conferência de Viagens</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -679,7 +680,7 @@
                                 </a>
                                 <div class="collapse submenu" id="motoristaRelatoriosSubmenu">
                                     <ul class="nav flex-column">
-                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_motoristas') }}">Conferência de Motoristas</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_motoristas') }}"><i class="bi bi-person-check"></i> Conferência de Motoristas</a></li>
                                     </ul>
                                 </div>
                             </li>
@@ -696,11 +697,11 @@
                             <div class="collapse submenu" id="configuracoesSubmenu">
                                 <ul class="nav flex-column">
                                     {% if current_user.role == 'admin' %}
-                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.configuracoes') }}">Parâmetros Gerais</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.pagina_importacoes') }}">Importações</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.configuracoes') }}"><i class="bi bi-gear"></i> Parâmetros Gerais</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.pagina_importacoes') }}"><i class="bi bi-file-earmark-arrow-up"></i> Importações</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('audit.logs_gerais') }}"><i class="bi bi-clipboard-data"></i> Logs de Auditoria</a></li>
                                     {% endif %}
-                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.editar_perfil') }}">Editar Meu Perfil</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.editar_perfil') }}"><i class="bi bi-person-circle"></i> Editar Meu Perfil</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('instalar') }}"><i class="bi bi-phone-fill"></i> Como Instalar o App</a></li>
                                 </ul>
                             </div>
@@ -947,6 +948,85 @@
         }
     });
     </script>
+    
+    <!-- ===== TIMEOUT AUTOMÁTICO ===== -->
+    <script>
+    {% if current_user.is_authenticated %}
+    (function() {
+        // Obtém o timeout configurado (em minutos)
+        const timeoutMinutos = {{ timeout_config|default(30) }};
+        const timeoutMs = timeoutMinutos * 60 * 1000;
+        const avisoMs = timeoutMs - (2 * 60 * 1000);  // Aviso 2 minutos antes
+        
+        let timeoutId;
+        let avisoId;
+        let avisoExibido = false;
+        
+        // Função para resetar o timeout
+        function resetarTimeout() {
+            clearTimeout(timeoutId);
+            clearTimeout(avisoId);
+            avisoExibido = false;
+            
+            // Aviso 2 minutos antes do logout
+            avisoId = setTimeout(function() {
+                if (!avisoExibido) {
+                    avisoExibido = true;
+                    const continuar = confirm(
+                        'Sua sessão vai expirar em 2 minutos por inatividade.\\n\\n' +
+                        'Deseja continuar conectado?'
+                    );
+                    
+                    if (continuar) {
+                        // Renova a sessão
+                        fetch('/renovar_sessao', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                resetarTimeout();
+                                console.log('Sessão renovada com sucesso');
+                            }
+                        })
+                        .catch(error => console.error('Erro ao renovar sessão:', error));
+                    }
+                }
+            }, avisoMs);
+            
+            // Logout automático
+            timeoutId = setTimeout(function() {
+                alert('Sua sessão expirou por inatividade. Você será redirecionado para a tela de login.');
+                window.location.href = '/logout?motivo=timeout';
+            }, timeoutMs);
+        }
+        
+        // Eventos que indicam atividade do usuário
+        const eventosAtividade = [
+            'mousedown',
+            'mousemove',
+            'keypress',
+            'scroll',
+            'touchstart',
+            'click'
+        ];
+        
+        // Adiciona listeners para todos os eventos
+        eventosAtividade.forEach(function(evento) {
+            document.addEventListener(evento, resetarTimeout, true);
+        });
+        
+        // Inicia o timeout quando a página carrega
+        resetarTimeout();
+        
+        console.log('Sistema de timeout ativo: ' + timeoutMinutos + ' minutos');
+    })();
+    {% endif %}
+    </script>
+    <!-- ===== FIM TIMEOUT AUTOMÁTICO ===== -->
 
     <!-- Scripts Customizados -->
     {% block scripts %}{% endblock %}

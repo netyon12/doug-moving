@@ -61,7 +61,9 @@ def admin_dashboard():
 
         query = Colaborador.query
         if current_user.role == 'gerente':
-            query = query.filter(Colaborador.planta_id == current_user.gerente.planta_id)
+            plantas_ids = [p.id for p in current_user.gerente.plantas.all()]
+            if plantas_ids:
+                query = query.filter(Colaborador.planta_id.in_(plantas_ids))
         elif current_user.role == 'supervisor':
             # Supervisor vê colaboradores das suas plantas
             plantas_ids = [p.id for p in current_user.supervisor.plantas]

@@ -164,8 +164,7 @@ def log_audit(
             module=request.blueprint if request else None,
             changes=changes_json,
             reason=reason,
-            # Limita a 100 caracteres
-            error_message=error_message[:100] if error_message else None,
+            error_message=error_message,
             session_id=session_id,
             duration_ms=duration_ms,
             severity=severity
