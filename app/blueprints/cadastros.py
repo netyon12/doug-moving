@@ -776,7 +776,7 @@ def cadastrar_gerente():
     } for p in plantas])
 
     return render_template(
-        'form_gerente.html',
+        'gerente/form_gerente.html',
         aba_ativa='gerentes',
         empresas=empresas,
         plantas=plantas,
@@ -881,7 +881,7 @@ def editar_gerente(gerente_id):
     gerente_plantas_ids = [p.id for p in gerente.plantas.all()]
 
     return render_template(
-        'form_gerente.html',
+        'gerente/form_gerente.html',
         aba_ativa='gerentes',
         gerente=gerente,
         empresas=empresas,

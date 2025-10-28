@@ -288,7 +288,7 @@ def aceitar_viagem(viagem_id):
 
         # ========== INTEGRAÇÃO WHATSAPP - INÍCIO ==========
         # Envia notificação WhatsApp para colaboradores (exceto Desligamento)
-        if viagem.tipo_corrida != 'Desligamento':
+        if viagem.tipo_corrida != 'desligamento':
             try:
                 enviadas = whatsapp_service.send_notification_viagem_aceita(
                     viagem)
@@ -395,17 +395,18 @@ def cancelar_viagem(viagem_id):
 
         db.session.commit()
 
-        # Notifica colaboradores sobre cancelamento
-        try:
-            enviadas = notification_service.notificar_viagem_cancelada_por_motorista(
-                viagem, motivo)
-            if enviadas > 0:
-                current_app.logger.info(
-                    f"Viagem #{viagem.id} cancelada: {enviadas} colaboradores notificados")
-        except Exception as e:
-            current_app.logger.error(
-                f"Erro ao notificar colaboradores sobre cancelamento da viagem #{viagem.id}: {e}")
-            # Não interrompe o processo se notificação falhar
+        # Notifica colaboradores sobre cancelamento (exceto Desligamento)
+        if viagem.tipo_corrida != 'desligamento':
+            try:
+                enviadas = notification_service.notificar_viagem_cancelada_por_motorista(
+                    viagem, motivo)
+                if enviadas > 0:
+                    current_app.logger.info(
+                        f"Viagem #{viagem.id} cancelada: {enviadas} colaboradores notificados")
+            except Exception as e:
+                current_app.logger.error(
+                    f"Erro ao notificar colaboradores sobre cancelamento da viagem #{viagem.id}: {e}")
+                # Não interrompe o processo se notificação falhar
 
         # Registra no log de auditoria com o motivo
         log_viagem_audit(

@@ -307,7 +307,7 @@ def associar_motorista(viagem_id):
 
         # ========== INTEGRAÇÃO WHATSAPP - INÍCIO ==========
         # Envia notificação WhatsApp para colaboradores (exceto Desligamento)
-        if viagem.tipo_corrida != 'Desligamento':
+        if viagem.tipo_corrida != 'desligamento':
             try:
                 resultados_whatsapp = whatsapp_service.send_notification_viagem_aceita(
                     viagem)
