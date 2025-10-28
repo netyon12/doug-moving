@@ -670,6 +670,10 @@ def api_buscar_colaboradores():
     if len(query_str) < 2:
         return jsonify([])
 
+    # VALIDAÇÃO: Admin deve selecionar planta antes de buscar
+    if current_user.role == 'admin' and not planta_id:
+        return jsonify({'error': 'Selecione uma planta antes de buscar colaboradores'}), 400
+
     # Monta a query base
     query = Colaborador.query.filter(Colaborador.status == 'Ativo')
 

@@ -4,6 +4,7 @@
 {% block content %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
     <h1 class="h2">Gerenciar Solicitações de Viagem</h1>
+    <a href="{{ url_for('admin.nova_solicitacao') }}" class="btn btn-primary shadow-sm">+ Nova Solicitação</a>
 </div>
 
 <!-- Formulário de Filtros - NOVO LAYOUT EM 2 LINHAS -->
@@ -210,4 +211,3 @@ function confirmarExclusao(solicitacaoId) {
 }
 </script>
 {% endblock %}
-

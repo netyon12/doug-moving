@@ -68,7 +68,7 @@
         </div>
         
         <div class="col-md-2">
-            <label for="supervisor_id" class="form-label">Supervisor</label>
+            <label for="supervisor_id" class="form-label">Solicitante</label>
             <select class="form-select" id="supervisor_id" name="supervisor_id">
                 <option value="">Todos</option>
                 {% for supervisor in todos_supervisores %}
@@ -120,7 +120,7 @@
                 <th>Tipo</th>
                 <th>Data da Viagem</th>
                 <th>Bloco</th>
-                <th>Supervisor</th>
+                <th>Solicitante</th>
                 <th>Status</th>
                 {% if current_user.role in ['supervisor', 'admin'] %}
                 <th class="text-center">Ações</th>
@@ -165,7 +165,7 @@
                     {% endif %}
                 </td>
                 <td>{{ solicitacao.colaborador.bloco.codigo_bloco if solicitacao.colaborador and solicitacao.colaborador.bloco else 'N/A' }}</td>
-                <td>{{ solicitacao.supervisor.nome if solicitacao.supervisor else 'N/A' }}</td>
+                <td>{{ solicitacao.get_criador_nome() }}</td>
                 <td>
                     {% if solicitacao.status == 'Pendente' %}
                         <span class="badge bg-warning text-dark">{{ solicitacao.status }}</span>

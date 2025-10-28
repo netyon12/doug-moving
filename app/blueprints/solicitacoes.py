@@ -184,8 +184,8 @@ def solicitacoes():
 
 @admin_bp.route('/nova_solicitacao', methods=['GET', 'POST'])
 @login_required
-# Permissão atualizada para incluir 'admin'
-@permission_required(['supervisor', 'admin'])
+# Permissão atualizada para incluir 'admin' e 'gerente'
+@permission_required(['supervisor', 'admin', 'gerente'])
 def nova_solicitacao():
 
     if request.method == 'POST':
@@ -273,6 +273,34 @@ def nova_solicitacao():
                     flash('Nenhum supervisor encontrado para esta planta.', 'danger')
                     return redirect(url_for('admin.nova_solicitacao'))
                 supervisor_id = supervisor.id
+            elif current_user.role == 'gerente':
+                # Gerente funciona similar ao supervisor
+                planta_id = request.form.get('planta_id')
+
+                if not planta_id:
+                    flash('Planta deve ser especificada.', 'danger')
+                    return redirect(url_for('admin.nova_solicitacao'))
+
+                # Busca a planta para obter empresa_id
+                planta = Planta.query.get(planta_id)
+                if not planta:
+                    flash('Planta inválida.', 'danger')
+                    return redirect(url_for('admin.nova_solicitacao'))
+
+                empresa_id = planta.empresa_id
+
+                # Busca supervisor da planta que pertence ao gerente
+                supervisor = Supervisor.query.join(
+                    Supervisor.plantas).filter(
+                        Planta.id == planta_id,
+                        Supervisor.gerente_id == current_user.gerente.id
+                ).first()
+
+                if not supervisor:
+                    flash('Nenhum supervisor encontrado para esta planta.', 'danger')
+                    return redirect(url_for('admin.nova_solicitacao'))
+
+                supervisor_id = supervisor.id
             else:
                 flash('Permissão negada.', 'danger')
                 return redirect(url_for('home'))
@@ -312,7 +340,9 @@ def nova_solicitacao():
                 if not colaborador:
                     continue
 
-                # Prepara os dados da solicitação
+                # Obtém o ID do usuário logado
+                user_id = current_user.id if current_user.is_authenticated else None
+
                 dados_solicitacao = {
                     'colaborador_id': colab_id,
                     'supervisor_id': supervisor_id,
@@ -321,7 +351,8 @@ def nova_solicitacao():
                     'bloco_id': colaborador.bloco_id,
                     'tipo_linha': 'EXTRA',  # Por enquanto sempre EXTRA
                     'tipo_corrida': tipo_corrida,
-                    'status': 'Pendente'
+                    'status': 'Pendente',
+                    'created_by_user_id': user_id  # Quem criou a solicitação
                 }
 
                 # Adiciona horários e turnos baseado no tipo de corrida
@@ -507,14 +538,6 @@ def nova_solicitacao():
 
             db.session.commit()
 
-            # ✅ LOG RESUMIDO (MELHOR)
-            current_app.logger.info(
-                f"✅ SOLICITAÇÕES CRIADAS: Total={solicitacoes_criadas}, "
-                f"IDs={solicitacoes_ids_criadas}, "
-                f"Supervisor={current_user.supervisor.nome}, "
-                f"Tipo={tipo_corrida}"
-            )
-
             # AUDITORIA: Registra criação de solicitações
             for sol_id in solicitacoes_ids_criadas:
                 log_audit(
@@ -575,6 +598,33 @@ def nova_solicitacao():
 
         # Passa as plantas para o template
         return render_template('nova_solicitacao.html', plantas_supervisor=plantas_supervisor)
+
+    # Se for gerente, filtra plantas dos supervisores associados
+    elif current_user.role == 'gerente':
+        if not current_user.gerente:
+            flash('Perfil de gerente não encontrado.', 'danger')
+            return redirect(url_for('home'))
+
+        # Busca todos os supervisores do gerente
+        supervisores = Supervisor.query.filter_by(
+            gerente_id=current_user.gerente.id).all()
+
+        # Busca todas as plantas dos supervisores
+        plantas_gerente = []
+        for supervisor in supervisores:
+            plantas_gerente.extend(supervisor.plantas)
+
+        # Remove duplicatas (caso mesma planta tenha múltiplos supervisores)
+        plantas_gerente = list(set(plantas_gerente))
+
+        # Se não tiver plantas, mostra aviso
+        if not plantas_gerente:
+            flash(
+                'Nenhuma planta encontrada para seus supervisores. Entre em contato com o administrador.', 'warning')
+            return redirect(url_for('home'))
+
+        # Passa as plantas para o template (usando mesmo nome que supervisor)
+        return render_template('nova_solicitacao.html', plantas_supervisor=plantas_gerente)
 
 
 # =================================================================================================
@@ -847,8 +897,3 @@ def detalhes_solicitacao(solicitacao_id):
 
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
-
-
-# =================================================================================================
-# ROTA DA PARAMETRIZAÇÃO PARAMETRIZAÇÃO
-# ================================================================================================

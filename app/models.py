@@ -1041,6 +1041,21 @@ class Solicitacao(db.Model):
     created_by = db.relationship(
         'User', foreign_keys=[created_by_user_id], backref='solicitacoes_criadas')
 
+    def get_criador_nome(self):
+        """Retorna o nome de quem criou a solicitação."""
+        if not self.created_by:
+            return 'N/A'
+
+        user = self.created_by
+        if user.role == 'supervisor' and user.supervisor:
+            return user.supervisor.nome
+        elif user.role == 'gerente' and user.gerente:
+            return user.gerente.nome
+        elif user.role == 'admin':
+            return 'Administrador'
+        else:
+            return user.email
+
     def __repr__(self):
         return f'<Solicitacao {self.id} - {self.colaborador.nome} - {self.tipo_corrida}>'
 

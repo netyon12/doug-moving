@@ -19,13 +19,11 @@ supervisor_bp = Blueprint('supervisor', __name__, url_prefix='/supervisor')
 # =============================================================================
 # =============================================================================
 # =============================================================================
-# ROTAS DO SUPERVISOR 
+# ROTAS DO SUPERVISOR
 # =============================================================================
 # =============================================================================
 # =============================================================================
 # =============================================================================
-
-
 
 
 @supervisor_bp.route('/dashboard')
@@ -36,7 +34,7 @@ def dashboard_supervisor():
     if not supervisor_profile:
         flash('Perfil de supervisor não encontrado.', 'danger')
         return redirect(url_for('auth.logout'))
-    
+
     # KPI 1: Solicitações Pendentes
     solicitacoes_pendentes = Solicitacao.query.filter(
         Solicitacao.supervisor_id == supervisor_profile.id,
@@ -55,7 +53,7 @@ def dashboard_supervisor():
         Solicitacao.viagem_id.isnot(None)
     ).distinct().all()
     viagens_ids = [v[0] for v in viagens_ids]
-    
+
     viagens_andamento = Viagem.query.filter(
         Viagem.id.in_(viagens_ids),
         Viagem.status == 'Em Andamento'
@@ -64,8 +62,10 @@ def dashboard_supervisor():
     # KPI 4: Taxa de Ocupação Média (calculada com base nas viagens)
     # KPI 4: Taxa de Ocupação Média (calculada com base nas viagens FINALIZADAS)
     # Busca capacidade dos parâmetros gerais
-    config_capacidade = Configuracao.query.filter_by(chave='capacidade_veiculo').first()
-    capacidade_veiculo = int(config_capacidade.valor) if config_capacidade and config_capacidade.valor else 3
+    config_capacidade = Configuracao.query.filter_by(
+        chave='capacidade_veiculo').first()
+    capacidade_veiculo = int(
+        config_capacidade.valor) if config_capacidade and config_capacidade.valor else 3
 
     if viagens_ids:
         # Filtra apenas viagens FINALIZADAS
@@ -73,14 +73,16 @@ def dashboard_supervisor():
             Viagem.id.in_(viagens_ids),
             Viagem.status == 'Finalizada'
         ).all()
-        
+
         if viagens_finalizadas:
             # Soma total de passageiros transportados
-            total_passageiros = sum(viagem.quantidade_passageiros or 0 for viagem in viagens_finalizadas)
+            total_passageiros = sum(
+                viagem.quantidade_passageiros or 0 for viagem in viagens_finalizadas)
             total_viagens = len(viagens_finalizadas)
-            
+
             # Fórmula: (Total Passageiros) / (Total Viagens × Capacidade) × 100
-            taxa_ocupacao_media = (total_passageiros / (total_viagens * capacidade_veiculo)) * 100 if total_viagens > 0 else 0
+            taxa_ocupacao_media = (
+                total_passageiros / (total_viagens * capacidade_veiculo)) * 100 if total_viagens > 0 else 0
         else:
             taxa_ocupacao_media = 0
     else:
@@ -110,7 +112,7 @@ def dashboard_supervisor():
     ).count()
 
     return render_template(
-        'dashboard_supervisor.html',
+        'supervisor/dashboard_supervisor.html',
         solicitacoes_pendentes=solicitacoes_pendentes,
         solicitacoes_agendadas=solicitacoes_agendadas,
         viagens_andamento=viagens_andamento,
@@ -120,13 +122,6 @@ def dashboard_supervisor():
         total_supervisores=total_supervisores,
         total_colaboradores=total_colaboradores
     )
-
-
-
-
-
-
-
 
 
 @supervisor_bp.route('/cancelar_solicitacao/<int:solicitacao_id>', methods=['POST'])
@@ -141,15 +136,19 @@ def cancelar_solicitacao(solicitacao_id):
     # Se a solicitação já foi agendada (tem uma viagem)
     if solicitacao.status == 'Agendada' and solicitacao.viagem:
         # Busca a configuração do tempo de cortesia no banco
-        config_cortesia = Configuracao.query.filter_by(chave='TEMPO_CORTESIA_MINUTOS').first()
-        minutos_cortesia = int(config_cortesia.valor) if config_cortesia else 3 # Padrão de 3 min
+        config_cortesia = Configuracao.query.filter_by(
+            chave='TEMPO_CORTESIA_MINUTOS').first()
+        minutos_cortesia = int(
+            config_cortesia.valor) if config_cortesia else 3  # Padrão de 3 min
 
         # Calcula o tempo limite para o cancelamento
-        limite_cancelamento = solicitacao.viagem.data_inicio + timedelta(minutes=minutos_cortesia)
+        limite_cancelamento = solicitacao.viagem.data_inicio + \
+            timedelta(minutes=minutos_cortesia)
 
         # Verifica se o tempo atual já passou do limite
         if datetime.utcnow() > limite_cancelamento:
-            flash(f'O tempo de cortesia de {minutos_cortesia} minutos para cancelar expirou. Contate o administrador.', 'danger')
+            flash(
+                f'O tempo de cortesia de {minutos_cortesia} minutos para cancelar expirou. Contate o administrador.', 'danger')
             return redirect(url_for('supervisor.dashboard_supervisor'))
 
     # Se a solicitação ainda está pendente, ou se está agendada mas dentro da janela, permite o cancelamento.
@@ -167,6 +166,6 @@ def cancelar_solicitacao(solicitacao_id):
     solicitacao.status = 'Cancelada'
     db.session.commit()
 
-    flash(f'A solicitação para o colaborador "{solicitacao.colaborador.nome}" foi cancelada com sucesso.', 'success')
+    flash(
+        f'A solicitação para o colaborador "{solicitacao.colaborador.nome}" foi cancelada com sucesso.', 'success')
     return redirect(url_for('supervisor.dashboard_supervisor'))
-

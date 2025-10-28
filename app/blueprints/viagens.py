@@ -306,17 +306,18 @@ def associar_motorista(viagem_id):
         db.session.commit()
 
         # ========== INTEGRAÇÃO WHATSAPP - INÍCIO ==========
-        # Envia notificação WhatsApp para colaboradores
-        try:
-            resultados_whatsapp = whatsapp_service.send_notification_viagem_aceita(
-                viagem)
-            from flask import current_app
-            current_app.logger.info(
-                f"WhatsApp enviado para {len(resultados_whatsapp)} colaboradores (associação admin)")
-        except Exception as e:
-            # Não interrompe o fluxo se o WhatsApp falhar
-            from flask import current_app
-            current_app.logger.error(f"Erro ao enviar WhatsApp: {str(e)}")
+        # Envia notificação WhatsApp para colaboradores (exceto Desligamento)
+        if viagem.tipo_corrida != 'Desligamento':
+            try:
+                resultados_whatsapp = whatsapp_service.send_notification_viagem_aceita(
+                    viagem)
+                from flask import current_app
+                current_app.logger.info(
+                    f"WhatsApp enviado para {len(resultados_whatsapp)} colaboradores (associação admin)")
+            except Exception as e:
+                # Não interrompe o fluxo se o WhatsApp falhar
+                from flask import current_app
+                current_app.logger.error(f"Erro ao enviar WhatsApp: {str(e)}")
 
         # ========== INTEGRAÇÃO WHATSAPP - FIM ==========
 

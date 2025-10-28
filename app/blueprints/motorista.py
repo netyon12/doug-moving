@@ -287,14 +287,18 @@ def aceitar_viagem(viagem_id):
         )
 
         # ========== INTEGRAÇÃO WHATSAPP - INÍCIO ==========
-        # Envia notificação WhatsApp para colaboradores
-        try:
-            enviadas = whatsapp_service.send_notification_viagem_aceita(viagem)
-            if enviadas > 0:
-                flash(
-                    f'Viagem aceita! {enviadas} notificações enviadas.', 'success')
-        except Exception as e:
-            current_app.logger.error(f'Erro WhatsApp: {e}')
+        # Envia notificação WhatsApp para colaboradores (exceto Desligamento)
+        if viagem.tipo_corrida != 'Desligamento':
+            try:
+                enviadas = whatsapp_service.send_notification_viagem_aceita(
+                    viagem)
+                if enviadas > 0:
+                    flash(
+                        f'Viagem aceita! {enviadas} notificações enviadas.', 'success')
+            except Exception as e:
+                current_app.logger.error(f'Erro WhatsApp: {e}')
+                flash('Viagem aceita com sucesso!', 'success')
+        else:
             flash('Viagem aceita com sucesso!', 'success')
 
         # ========== INTEGRAÇÃO WHATSAPP - FIM ==========

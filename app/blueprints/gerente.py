@@ -98,7 +98,7 @@ def dashboard_gerente():
         total_colaboradores = 0
 
     return render_template(
-        'dashboard_gerente.html',
+        'gerente/dashboard_gerente.html',
         solicitacoes_pendentes=solicitacoes_pendentes,
         solicitacoes_agendadas=solicitacoes_agendadas,
         viagens_andamento=viagens_andamento,
@@ -193,7 +193,7 @@ def solicitacoes():
     todos_blocos = Bloco.query.order_by(Bloco.codigo_bloco).all()
 
     return render_template(
-        'solicitacoes_gerente.html',
+        'gerente/solicitacoes_gerente.html',
         solicitacoes=solicitacoes,
         todos_supervisores=todos_supervisores,
         todos_blocos=todos_blocos,
@@ -221,4 +221,4 @@ def visualizar_solicitacao(id):
         flash('Você não tem permissão para visualizar esta solicitação.', 'danger')
         return redirect(url_for('gerente.solicitacoes'))
 
-    return render_template('visualizar_solicitacao_gerente.html', solicitacao=solicitacao)
+    return render_template('gerente/visualizar_solicitacao_gerente.html', solicitacao=solicitacao)
