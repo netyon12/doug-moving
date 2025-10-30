@@ -141,6 +141,7 @@ def dados_listagem_solicitacoes():
         tipo_corrida = request.form.get('tipo_corrida')
         tipo_linha = request.form.get('tipo_linha')
         supervisor_id = request.form.get('supervisor_id')
+        horario_filtro = request.form.get('horario')  # NOVO: Filtro de horário
 
         # Construir query
         query = Solicitacao.query
@@ -202,6 +203,18 @@ def dados_listagem_solicitacoes():
         if tipo_linha:
             query = query.filter_by(tipo_linha=tipo_linha)
 
+        # NOVO: Filtro de horário específico
+        if horario_filtro:
+            from sqlalchemy import or_, func, cast, Time
+            horario_time = datetime.strptime(horario_filtro, '%H:%M').time()
+            query = query.filter(
+                or_(
+                    cast(Solicitacao.horario_entrada, Time) == horario_time,
+                    cast(Solicitacao.horario_saida, Time) == horario_time,
+                    cast(Solicitacao.horario_desligamento, Time) == horario_time
+                )
+            )
+
         # Executar query
         solicitacoes = query.order_by(Solicitacao.data_criacao.desc()).all()
 
@@ -233,8 +246,7 @@ def dados_listagem_solicitacoes():
                 'solicitante': supervisor.nome if supervisor else 'N/A',
                 'horario_entrada': sol.horario_entrada.strftime('%H:%M') if sol.horario_entrada else '',
                 'horario_saida': sol.horario_saida.strftime('%H:%M') if sol.horario_saida else '',
-                'valor': float(sol.valor) if sol.valor else 0.0,
-                'valor_repasse': float(sol.valor_repasse) if sol.valor_repasse else 0.0
+                'horario_desligamento': sol.horario_desligamento.strftime('%H:%M') if sol.horario_desligamento else ''
             })
 
         return jsonify({
@@ -459,8 +471,8 @@ def dados_conferencia_viagens():
                 'qtd_passageiros': viagem.quantidade_passageiros or 0,
                 'valor': valor_viagem,
                 'horario_entrada': viagem.horario_entrada.strftime('%H:%M') if viagem.horario_entrada else '',
-                'horario_saida': viagem.horario_saida.strftime('%H:%M') if viagem.horario_saida else ''
-                # REMOVIDO: valor_repasse (conforme solicitado)
+                'horario_saida': viagem.horario_saida.strftime('%H:%M') if viagem.horario_saida else '',
+                'horario_desligamento': viagem.horario_desligamento.strftime('%H:%M') if viagem.horario_desligamento else ''
             })
 
         return jsonify({
@@ -575,8 +587,9 @@ def dados_conferencia_motoristas():
             planta = Planta.query.get(
                 viagem.planta_id) if viagem.planta_id else None
 
-            # Buscar colaboradores da viagem
+            # Buscar colaboradores e bairros da viagem
             colaboradores = []
+            bairros = []
             if viagem.colaboradores_ids:
                 try:
                     col_ids = json.loads(viagem.colaboradores_ids)
@@ -584,6 +597,11 @@ def dados_conferencia_motoristas():
                         col = Colaborador.query.get(col_id)
                         if col:
                             colaboradores.append(col.nome)
+                            # Buscar bairro diretamente do colaborador
+                            if col.bairro:
+                                bairros.append(col.bairro)
+                            else:
+                                bairros.append('N/A')
                 except:
                     pass
 
@@ -615,8 +633,8 @@ def dados_conferencia_motoristas():
                 'status': viagem.status or 'N/A',
                 'placa': viagem.placa_veiculo or 'N/A',
                 'qtd_passageiros': viagem.quantidade_passageiros or 0,
-                # ADICIONADO
-                'colaboradores': ', '.join(colaboradores) if colaboradores else 'N/A',
+                'colaboradores': '\n'.join(colaboradores) if colaboradores else 'N/A',
+                'bairros': '\n'.join(bairros) if bairros else 'N/A',
                 'valor_repasse': valor_repasse
             })
 
@@ -677,21 +695,19 @@ def exportar_excel(tipo):
         # Definir colunas baseado no tipo
         if tipo == 'solicitacoes':
             ws.title = "Listagem de Solicitações"
-            colunas = ['ID', 'Data', 'Colaborador', 'Empresa', 'Planta', 'Bloco',
-                       'Tipo Linha', 'Tipo Corrida', 'Status', 'Solicitante',
-                       'Entrada', 'Saída', 'Valor']
+            colunas = ['ID', 'Data Solicitação', 'Colaborador', 'Empresa', 'Planta', 'Bloco',
+                       'Tipo Linha', 'Tipo Corrida', 'Horário', 'Solicitante', 'Status']
             campos = ['id', 'data_criacao', 'colaborador', 'empresa', 'planta', 'bloco',
-                      'tipo_linha', 'tipo_corrida', 'status', 'solicitante',
-                      'horario_entrada', 'horario_saida', 'valor']
+                      'tipo_linha', 'tipo_corrida', 'horario', 'solicitante', 'status']
 
         elif tipo == 'viagens':
             ws.title = "Conferência de Viagens"
-            colunas = ['ID', 'Data', 'Empresa', 'Planta', 'Bloco', 'Tipo Linha',
-                       'Tipo Corrida', 'Status', 'Motorista', 'Placa', 'Colaboradores',
-                       'Passageiros', 'Valor']
-            campos = ['id', 'data_viagem', 'empresa', 'planta', 'bloco', 'tipo_linha',
-                      'tipo_corrida', 'status', 'motorista', 'placa', 'colaboradores',
-                      'qtd_passageiros', 'valor']
+            colunas = ['ID', 'Data', 'Horário', 'Empresa', 'Planta', 'Bloco', 'Tipo Linha',
+                       'Tipo Corrida', 'Motorista', 'Passageiros', 'Colaboradores',
+                       'Valor', 'Status']
+            campos = ['id', 'data_viagem', 'horario', 'empresa', 'planta', 'bloco', 'tipo_linha',
+                      'tipo_corrida', 'motorista', 'qtd_passageiros', 'colaboradores',
+                      'valor', 'status']
 
         elif tipo == 'motoristas':
             ws.title = "Conferência de Motoristas"
@@ -712,9 +728,21 @@ def exportar_excel(tipo):
         # Escrever dados
         for row_num, item in enumerate(dados, 2):
             for col_num, campo in enumerate(campos, 1):
-                valor = item.get(campo, '')
-                if isinstance(valor, float):
-                    valor = f"R$ {valor:.2f}"
+                # Para solicitações e viagens, calcular horário unificado
+                if campo == 'horario' and tipo in ['solicitacoes', 'viagens']:
+                    tipo_corrida = item.get('tipo_corrida', '')
+                    if tipo_corrida == 'entrada':
+                        valor = item.get('horario_entrada', '')
+                    elif tipo_corrida == 'saida':
+                        valor = item.get('horario_saida', '')
+                    elif tipo_corrida == 'desligamento':
+                        valor = item.get('horario_desligamento', '')
+                    else:
+                        valor = ''
+                else:
+                    valor = item.get(campo, '')
+                    if isinstance(valor, float):
+                        valor = f"R$ {valor:.2f}"
                 ws.cell(row=row_num, column=col_num, value=valor)
 
         # Ajustar largura das colunas
@@ -775,47 +803,74 @@ def exportar_pdf(tipo):
         if tipo == 'solicitacoes':
             titulo = "Listagem de Solicitações"
             colunas = ['ID', 'Data', 'Colaborador', 'Empresa', 'Planta', 'Bloco',
-                       'Tipo Linha', 'Tipo Corrida', 'Status', 'Solicitante', 'Valor']
+                       'Tipo Linha', 'Tipo Corrida', 'Horário', 'Solicitante', 'Status']
             campos = ['id', 'data_criacao', 'colaborador', 'empresa', 'planta', 'bloco',
-                      'tipo_linha', 'tipo_corrida', 'status', 'solicitante', 'valor']
-            col_widths = [0.4*inch, 1*inch, 1.2*inch, 1*inch, 1*inch, 0.8*inch,
-                          0.8*inch, 0.8*inch, 0.8*inch, 1*inch, 0.8*inch]
+                      'tipo_linha', 'tipo_corrida', 'horario', 'solicitante', 'status']
+            # Larguras ajustadas para A4 landscape (11 polegadas disponíveis)
+            col_widths = [0.35*inch, 1*inch, 1.8*inch, 0.9*inch, 0.9*inch, 0.65*inch,
+                          0.7*inch, 0.85*inch, 0.6*inch, 1.1*inch, 0.85*inch]
 
         elif tipo == 'viagens':
             titulo = "Conferência de Viagens"
-            colunas = ['ID', 'Data', 'Empresa', 'Planta', 'Tipo Linha', 'Tipo Corrida',
-                       'Status', 'Motorista', 'Placa', 'Passag.', 'Valor']
-            campos = ['id', 'data_viagem', 'empresa', 'planta', 'tipo_linha', 'tipo_corrida',
-                      'status', 'motorista', 'placa', 'qtd_passageiros', 'valor']
-            col_widths = [0.4*inch, 0.8*inch, 1.2*inch, 1*inch, 0.8*inch, 0.8*inch,
-                          0.8*inch, 1.2*inch, 0.8*inch, 0.6*inch, 0.8*inch]
+            colunas = ['ID', 'Data', 'Hor.', 'Empresa', 'Planta', 'Bloco', 'Tipo Linha',
+                       'Tipo Corrida', 'Motorista', 'Pass.', 'Colaboradores', 'Valor', 'Status']
+            campos = ['id', 'data_viagem', 'horario', 'empresa', 'planta', 'bloco', 'tipo_linha',
+                      'tipo_corrida', 'motorista', 'qtd_passageiros', 'colaboradores', 'valor', 'status']
+            # Larguras ajustadas para A4 landscape (13 colunas, SEM Placa)
+            col_widths = [0.3*inch, 0.8*inch, 0.5*inch, 0.9*inch, 0.9*inch, 0.6*inch, 0.65*inch,
+                          0.8*inch, 1.3*inch, 0.4*inch, 1.8*inch, 0.85*inch, 0.75*inch]
 
         elif tipo == 'motoristas':
             titulo = "Conferência de Motoristas"
-            colunas = ['ID', 'Data', 'Motorista', 'Empresa', 'Planta', 'Tipo Corrida',
-                       'Status', 'Passag.', 'Valor Repasse']
-            campos = ['id', 'data_viagem', 'motorista', 'empresa', 'planta', 'tipo_corrida',
-                      'status', 'qtd_passageiros', 'valor_repasse']
-            col_widths = [0.4*inch, 0.8*inch, 1.5*inch, 1.2*inch, 1*inch, 0.8*inch,
-                          0.8*inch, 0.6*inch, 1*inch]
+            colunas = ['ID', 'Data', 'Hor.', 'Motorista', 'Empresa', 'Planta', 'Tipo Corrida',
+                       'Status', 'Placa', 'Pass.', 'Colaboradores', 'Bairros', 'Valor Repasse']
+            campos = ['id', 'data_viagem', 'horario', 'motorista', 'empresa', 'planta', 'tipo_corrida',
+                      'status', 'placa', 'qtd_passageiros', 'colaboradores', 'bairros', 'valor_repasse']
+            col_widths = [0.3*inch, 0.65*inch, 0.45*inch, 1.1*inch, 0.85*inch, 0.75*inch, 0.7*inch,
+                          0.65*inch, 0.6*inch, 0.35*inch, 1.5*inch, 1.2*inch, 0.75*inch]
 
         # Adicionar título
         elements.append(Paragraph(titulo, title_style))
         elements.append(Paragraph("<br/>", styles['Normal']))
 
-        # Preparar dados da tabela
+        # Preparar dados da tabela com Paragraphs para quebra de linha
         table_data = [colunas]
         for item in dados:
             row = []
             for campo in campos:
-                valor = item.get(campo, '')
-                if isinstance(valor, float):
-                    valor = f"R$ {valor:.2f}"
-                row.append(str(valor))
+                # Para solicitações e viagens, calcular horário unificado
+                if campo == 'horario' and tipo in ['solicitacoes', 'viagens']:
+                    tipo_corrida = item.get('tipo_corrida', '')
+                    if tipo_corrida == 'entrada':
+                        valor = item.get('horario_entrada', '')
+                    elif tipo_corrida == 'saida':
+                        valor = item.get('horario_saida', '')
+                    elif tipo_corrida == 'desligamento':
+                        valor = item.get('horario_desligamento', '')
+                    else:
+                        valor = ''
+                else:
+                    valor = item.get(campo, '')
+                    if isinstance(valor, float):
+                        valor = f"R$ {valor:.2f}"
+
+                # Usar Paragraph para campos de texto longo (quebra automática)
+                if campo in ['colaborador', 'solicitante', 'colaboradores', 'bairros', 'motorista']:
+                    cell_style = styles['Normal']
+                    cell_style.fontSize = 6
+                    cell_style.leading = 7
+                    cell_style.alignment = 0  # Esquerda
+                    row.append(Paragraph(str(valor), cell_style))
+                # Campos numéricos: sem quebra de linha
+                elif campo in ['valor', 'valor_repasse']:
+                    row.append(str(valor))
+                else:
+                    row.append(str(valor))
             table_data.append(row)
 
-        # Criar tabela
-        table = Table(table_data, colWidths=col_widths, repeatRows=1)
+        # Criar tabela com altura de linha automática
+        table = Table(table_data, colWidths=col_widths,
+                      repeatRows=1, rowHeights=None)
 
         # Estilo da tabela
         table.setStyle(TableStyle([
@@ -826,13 +881,42 @@ def exportar_pdf(tipo):
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
             ('FONTSIZE', (0, 0), (-1, 0), 8),
             ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+            ('TOPPADDING', (0, 0), (-1, 0), 8),
             # Dados
             ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
             ('FONTSIZE', (0, 1), (-1, -1), 7),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.grey),
             ('ROWBACKGROUNDS', (0, 1), (-1, -1),
-             [colors.white, colors.HexColor('#F2F2F2')])
+             [colors.white, colors.HexColor('#F2F2F2')]),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('TOPPADDING', (0, 1), (-1, -1), 4),
+            ('BOTTOMPADDING', (0, 1), (-1, -1), 4),
+            ('LEFTPADDING', (0, 0), (-1, -1), 3),
+            ('RIGHTPADDING', (0, 0), (-1, -1), 3),
         ]))
+
+        # Alinhamento específico por tipo de relatório
+        if tipo == 'solicitacoes':
+            # Colaborador (col 2) e Solicitante (col 9) à esquerda
+            table.setStyle(TableStyle([
+                ('ALIGN', (2, 1), (2, -1), 'LEFT'),
+                ('ALIGN', (9, 1), (9, -1), 'LEFT'),
+            ]))
+        elif tipo == 'viagens':
+            # Motorista (col 8) e Colaboradores (col 10) à esquerda, Valor (col 11) à direita
+            table.setStyle(TableStyle([
+                ('ALIGN', (8, 1), (8, -1), 'LEFT'),
+                ('ALIGN', (10, 1), (10, -1), 'LEFT'),
+                ('ALIGN', (11, 1), (11, -1), 'RIGHT'),
+            ]))
+        elif tipo == 'motoristas':
+            # Motorista (col 3), Colaboradores (col 10) e Bairros (col 11) à esquerda, Valor Repasse (col 12) à direita
+            table.setStyle(TableStyle([
+                ('ALIGN', (3, 1), (3, -1), 'LEFT'),
+                ('ALIGN', (10, 1), (10, -1), 'LEFT'),
+                ('ALIGN', (11, 1), (11, -1), 'LEFT'),
+                ('ALIGN', (12, 1), (12, -1), 'RIGHT'),
+            ]))
 
         elements.append(table)
 

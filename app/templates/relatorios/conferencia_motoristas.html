@@ -101,11 +101,11 @@
                                 <th>Empresa</th>
                                 <th>Planta</th>
                                 <th>Tipo Corrida</th>
-                                <th>Status</th>
-                                <th>Placa</th>
                                 <th>Passageiros</th>
-                                <th>Colaboradores</th> <!-- NOVA COLUNA -->
+                                <th>Colaboradores</th>
+                                <th>Bairros</th>
                                 <th>Valor Repasse</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody id="corpoTabela">
@@ -217,17 +217,17 @@ function exibirResultados(dados, total, valorTotalRepasse) {
     dados.forEach(function(item) {
         const tr = $('<tr>');
         tr.append(`<td>${item.id}</td>`);
-        tr.append(`<td>${item.data_viagem}</td>`); // CORRIGIDO: usar data_viagem
+        tr.append(`<td>${item.data_viagem}</td>`);
         tr.append(`<td>${item.horario}</td>`);
         tr.append(`<td>${item.motorista}</td>`);
         tr.append(`<td>${item.empresa}</td>`);
         tr.append(`<td>${item.planta}</td>`);
         tr.append(`<td>${item.tipo_corrida}</td>`);
-        tr.append(`<td>${getStatusBadge(item.status)}</td>`);
-        tr.append(`<td>${item.placa}</td>`);
         tr.append(`<td>${item.qtd_passageiros}</td>`);
-        tr.append(`<td>${item.colaboradores}</td>`); // NOVA COLUNA
+        tr.append(`<td>${item.colaboradores}</td>`);
+        tr.append(`<td>${item.bairros || 'N/A'}</td>`);
         tr.append(`<td>R$ ${item.valor_repasse.toFixed(2)}</td>`);
+        tr.append(`<td>${getStatusBadge(item.status)}</td>`);
         tbody.append(tr);
     });
     
@@ -302,5 +302,4 @@ function exportarPDF() {
     form.remove();
 }
 </script>
-{% endblock %}
-
+{% endblock %}  

@@ -159,18 +159,17 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Data</th>
+                                <th>Horário</th>
                                 <th>Empresa</th>
                                 <th>Planta</th>
                                 <th>Bloco</th>
                                 <th>Tipo Linha</th>
                                 <th>Tipo Corrida</th>
-                                <th>Status</th>
                                 <th>Motorista</th>
-                                <th>Placa</th>
-                                <th>Colaboradores</th>
                                 <th>Passageiros</th>
+                                <th>Colaboradores</th>
                                 <th>Valor</th>
-                                <!-- REMOVIDO: Valor Repasse -->
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody id="corpoTabela">
@@ -283,21 +282,30 @@ function exibirResultados(dados, total, valorTotal) {
     }
     
     dados.forEach(function(item) {
+        // Determinar horário baseado no tipo de corrida
+        let horario = '-';
+        if (item.tipo_corrida === 'entrada' && item.horario_entrada) {
+            horario = item.horario_entrada;
+        } else if (item.tipo_corrida === 'saida' && item.horario_saida) {
+            horario = item.horario_saida;
+        } else if (item.tipo_corrida === 'desligamento' && item.horario_desligamento) {
+            horario = item.horario_desligamento;
+        }
+        
         const tr = $('<tr>');
         tr.append(`<td>${item.id}</td>`);
-        tr.append(`<td>${item.data_viagem}</td>`); // CORRIGIDO: usar data_viagem
+        tr.append(`<td>${item.data_viagem}</td>`);
+        tr.append(`<td>${horario}</td>`);
         tr.append(`<td>${item.empresa}</td>`);
         tr.append(`<td>${item.planta}</td>`);
         tr.append(`<td>${item.bloco}</td>`);
         tr.append(`<td>${item.tipo_linha}</td>`);
         tr.append(`<td>${item.tipo_corrida}</td>`);
-        tr.append(`<td>${getStatusBadge(item.status)}</td>`);
         tr.append(`<td>${item.motorista}</td>`);
-        tr.append(`<td>${item.placa}</td>`);
-        tr.append(`<td>${item.colaboradores}</td>`);
         tr.append(`<td>${item.qtd_passageiros}</td>`);
+        tr.append(`<td>${item.colaboradores}</td>`);
         tr.append(`<td>R$ ${item.valor.toFixed(2)}</td>`);
-        // REMOVIDO: valor_repasse
+        tr.append(`<td>${getStatusBadge(item.status)}</td>`);
         tbody.append(tr);
     });
     
@@ -373,4 +381,3 @@ function exportarPDF() {
 }
 </script>
 {% endblock %}
-

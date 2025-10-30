@@ -95,6 +95,11 @@
                             <option value="EXTRA">Extra</option>
                         </select>
                     </div>
+                    <div class="col-md-2">
+                        <label>Horário</label>
+                        <input type="time" name="horario" id="horario" class="form-control">
+                        <small class="text-muted">Opcional</small>
+                    </div>
                     <!-- NOVO: Filtro de Supervisor (apenas para admin) -->
                     {% if user_role == 'admin' %}
                     <div class="col-md-3">
@@ -147,18 +152,16 @@
                         <thead class="thead-dark">
                             <tr>
                                 <th>ID</th>
-                                <th>Data</th>
+                                <th>Data Solicitação</th>
                                 <th>Colaborador</th>
                                 <th>Empresa</th>
                                 <th>Planta</th>
                                 <th>Bloco</th>
                                 <th>Tipo Linha</th>
                                 <th>Tipo Corrida</th>
+                                <th>Horário</th>
+                                <th>Solicitante</th>
                                 <th>Status</th>
-                                <th>Solicitante</th> <!-- NOVA COLUNA -->
-                                <th>Entrada</th>
-                                <th>Saída</th>
-                                <th>Valor</th>
                             </tr>
                         </thead>
                         <tbody id="corpoTabela">
@@ -274,12 +277,22 @@ function exibirResultados(dados, total) {
     tbody.empty();
     
     if (dados.length === 0) {
-        tbody.append('<tr><td colspan="13" class="text-center">Nenhuma solicitação encontrada</td></tr>');
+        tbody.append('<tr><td colspan="11" class="text-center">Nenhuma solicitação encontrada</td></tr>');
         $('#areaResultados').show();
         return;
     }
     
     dados.forEach(function(item) {
+        // Determinar horário baseado no tipo de corrida
+        let horario = '-';
+        if (item.tipo_corrida === 'entrada' && item.horario_entrada) {
+            horario = item.horario_entrada;
+        } else if (item.tipo_corrida === 'saida' && item.horario_saida) {
+            horario = item.horario_saida;
+        } else if (item.tipo_corrida === 'desligamento' && item.horario_desligamento) {
+            horario = item.horario_desligamento;
+        }
+        
         const tr = $('<tr>');
         tr.append(`<td>${item.id}</td>`);
         tr.append(`<td>${item.data_criacao}</td>`);
@@ -289,11 +302,9 @@ function exibirResultados(dados, total) {
         tr.append(`<td>${item.bloco}</td>`);
         tr.append(`<td>${item.tipo_linha}</td>`);
         tr.append(`<td>${item.tipo_corrida}</td>`);
+        tr.append(`<td>${horario}</td>`);
+        tr.append(`<td>${item.solicitante}</td>`);
         tr.append(`<td>${getStatusBadge(item.status)}</td>`);
-        tr.append(`<td>${item.solicitante}</td>`); // NOVA COLUNA
-        tr.append(`<td>${item.horario_entrada}</td>`);
-        tr.append(`<td>${item.horario_saida}</td>`);
-        tr.append(`<td>R$ ${item.valor.toFixed(2)}</td>`);
         tbody.append(tr);
     });
     
@@ -368,4 +379,3 @@ function exportarPDF() {
 }
 </script>
 {% endblock %}
-
