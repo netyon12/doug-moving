@@ -1003,7 +1003,7 @@ def cadastrar_supervisor():
     gerentes = Gerente.query.all()
     turnos = Turno.query.all()
     centros_custo = CentroCusto.query.all()
-    return render_template('form_supervisor.html', aba_ativa='supervisores', empresas=empresas, plantas=plantas, gerentes=gerentes, turnos=turnos, centros_custo=centros_custo)
+    return render_template('supervisor/form_supervisor.html', aba_ativa='supervisores', empresas=empresas, plantas=plantas, gerentes=gerentes, turnos=turnos, centros_custo=centros_custo)
 
 
 @admin_bp.route('/supervisores/editar/<int:supervisor_id>', methods=['GET', 'POST'])
@@ -1085,7 +1085,7 @@ def editar_supervisor(supervisor_id):
     gerentes = Gerente.query.all()
     turnos = Turno.query.all()
     centros_custo = CentroCusto.query.all()
-    return render_template('form_supervisor.html', aba_ativa='supervisores', supervisor=supervisor, empresas=empresas, plantas=plantas, gerentes=gerentes, turnos=turnos, centros_custo=centros_custo)
+    return render_template('supervisor/form_supervisor.html', aba_ativa='supervisores', supervisor=supervisor, empresas=empresas, plantas=plantas, gerentes=gerentes, turnos=turnos, centros_custo=centros_custo)
 
 
 @admin_bp.route('/supervisores/excluir/<int:supervisor_id>', methods=['POST'])
