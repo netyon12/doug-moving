@@ -1288,9 +1288,9 @@ def excluir_supervisor(supervisor_id):
     db.session.delete(user_para_excluir)
     db.session.commit()
 
-#    flash(
-#        f'Supervisor "{nome_supervisor}" e seu usuário de acesso foram excluídos.', 'success')
-#    return redirect(url_for('admin.admin_dashboard', aba='supervisores'))
+    flash(
+        f'Supervisor "{nome_supervisor}" e seu usuário de acesso foram excluídos.', 'success')
+    return redirect(url_for('admin.admin_dashboard', aba='supervisores'))
 
 
 # Em app/blueprints/admin.py
