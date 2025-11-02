@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Título a Pagar{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-pencil-square"></i> Editar Título a Pagar</h2>
+            <p class="text-muted">Título: <strong>{{ titulo.numero_titulo }}</strong></p>
+        </div>
+    </div>
+
+    <!-- Informações do Título -->
+    <div class="card mb-4">
+        <div class="card-header" style="background-color: #f8b84e;">
+            <strong>Informações do Título</strong>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Número do Título</label>
+                        <input type="text" class="form-control" value="{{ titulo.numero_titulo }}" disabled>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label">Motorista</label>
+                        <input type="text" class="form-control" value="{{ titulo.motorista.nome if titulo.motorista else 'N/A' }}" disabled>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label">Valor Total</label>
+                        <input type="text" class="form-control" value="R$ {{ '%.2f'|format(titulo.valor_total) }}" disabled>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label">Data de Emissão</label>
+                        <input type="text" class="form-control" value="{{ titulo.data_emissao.strftime('%d/%m/%Y') if titulo.data_emissao else 'N/A' }}" disabled>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="data_vencimento" class="form-label">Data de Vencimento *</label>
+                        <input type="date" class="form-control" id="data_vencimento" name="data_vencimento" 
+                               value="{{ titulo.data_vencimento.strftime('%Y-%m-%d') if titulo.data_vencimento else '' }}" required>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="forma_pagamento" class="form-label">Forma de Pagamento</label>
+                        <select class="form-select" id="forma_pagamento" name="forma_pagamento">
+                            <option value="">Selecione...</option>
+                            <option value="PIX" {% if titulo.forma_pagamento == 'PIX' %}selected{% endif %}>PIX</option>
+                            <option value="Transferência" {% if titulo.forma_pagamento == 'Transferência' %}selected{% endif %}>Transferência</option>
+                            <option value="Dinheiro" {% if titulo.forma_pagamento == 'Dinheiro' %}selected{% endif %}>Dinheiro</option>
+                            <option value="Cheque" {% if titulo.forma_pagamento == 'Cheque' %}selected{% endif %}>Cheque</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-12">
+                        <label for="observacoes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3">{{ titulo.observacoes if titulo.observacoes else '' }}</textarea>
+                    </div>
+                    
+                    {% if titulo.status == 'Aberto' %}
+                    <div class="col-md-12">
+                        <hr>
+                        <h5>Marcar como Pago</h5>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status" onchange="toggleDataPagamento()">
+                            <option value="Aberto">Aberto</option>
+                            <option value="Pago">Pago</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-4" id="divDataPagamento" style="display: none;">
+                        <label for="data_pagamento" class="form-label">Data de Pagamento *</label>
+                        <input type="date" class="form-control" id="data_pagamento" name="data_pagamento">
+                    </div>
+                    {% else %}
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <input type="text" class="form-control" value="{{ titulo.status }}" disabled>
+                    </div>
+                    
+                    {% if titulo.data_pagamento %}
+                    <div class="col-md-4">
+                        <label class="form-label">Data de Pagamento</label>
+                        <input type="text" class="form-control" value="{{ titulo.data_pagamento.strftime('%d/%m/%Y') }}" disabled>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                    
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle"></i> Salvar Alterações
+                        </button>
+                        <a href="{{ url_for('financeiro.contas_pagar') }}" class="btn btn-secondary btn-lg">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Viagens Vinculadas -->
+    <div class="card">
+        <div class="card-header" style="background-color: #f8b84e;">
+            <strong>Viagens Vinculadas ({{ viagens_vinculadas|length }})</strong>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>ID Viagem</th>
+                            <th>Data/Hora</th>
+                            <th>Tipo</th>
+                            <th>Passageiros</th>
+                            <th>Bloco</th>
+                            <th>Valor Repasse</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for viagem, vinculo in viagens_vinculadas %}
+                        <tr>
+                            <td>#{{ viagem.id }}</td>
+                            <td>{{ viagem.data_criacao.strftime('%d/%m/%Y %H:%M') if viagem.data_criacao else 'N/A' }}</td>
+                            <td>{{ viagem.tipo_corrida }}</td>
+                            <td>{{ viagem.quantidade_passageiros }}</td>
+                            <td>{{ viagem.bloco.codigo_bloco if viagem.bloco else 'N/A' }}</td>
+                            <td>R$ {{ '%.2f'|format(vinculo.valor_repasse) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleDataPagamento() {
+    const status = document.getElementById('status').value;
+    const divData = document.getElementById('divDataPagamento');
+    const inputData = document.getElementById('data_pagamento');
+    
+    if (status === 'Pago') {
+        divData.style.display = 'block';
+        inputData.required = true;
+        inputData.value = new Date().toISOString().split('T')[0]; // Data atual
+    } else {
+        divData.style.display = 'none';
+        inputData.required = false;
+        inputData.value = '';
+    }
+}
+</script>
+{% endblock %}
+

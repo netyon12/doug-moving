@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Contas a Pagar{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-cash-stack"></i> Contas a Pagar</h2>
+            <p class="text-muted">Gerenciamento de pagamentos aos motoristas</p>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-hourglass-split"></i> Em Aberto</h5>
+                    <h3>R$ {{ "%.2f"|format(total_aberto) }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-check-circle"></i> Pago</h5>
+                    <h3>R$ {{ "%.2f"|format(total_pago) }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="bi bi-exclamation-triangle"></i> Vencido</h5>
+                    <h3>R$ {{ "%.2f"|format(total_vencido) }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <a href="{{ url_for('financeiro.gerar_pagamento') }}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-plus-circle"></i> Gerar Pagamento
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4" style="background-color: #f8b84e;">
+        <div class="card-header" style="background-color: #f8b84e; border: none;">
+            <strong style="color: #333;">Filtros</strong>
+        </div>
+        <div class="card-body" style="background-color: #fff;">
+            <form method="GET" action="{{ url_for('financeiro.contas_pagar') }}">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">Todos</option>
+                            <option value="Aberto" {% if filtro_status == 'Aberto' %}selected{% endif %}>Aberto</option>
+                            <option value="Pago" {% if filtro_status == 'Pago' %}selected{% endif %}>Pago</option>
+                            <option value="Vencido" {% if filtro_status == 'Vencido' %}selected{% endif %}>Vencido</option>
+                            <option value="Cancelado" {% if filtro_status == 'Cancelado' %}selected{% endif %}>Cancelado</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label for="motorista_id" class="form-label">Motorista</label>
+                        <select class="form-select" id="motorista_id" name="motorista_id">
+                            <option value="">Todos</option>
+                            {% for motorista in motoristas %}
+                            <option value="{{ motorista.id }}" {% if filtro_motorista_id|int == motorista.id %}selected{% endif %}>
+                                {{ motorista.nome }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="data_inicio" class="form-label">Data Início</label>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
+                               value="{{ filtro_data_inicio }}">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="data_fim" class="form-label">Data Fim</label>
+                        <input type="date" class="form-control" id="data_fim" name="data_fim" 
+                               value="{{ filtro_data_fim }}">
+                    </div>
+                    
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-warning me-2" style="background-color: #f8b84e; border-color: #f8b84e;">
+                            <i class="bi bi-search"></i> Filtrar
+                        </button>
+                        <a href="{{ url_for('financeiro.contas_pagar') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Limpar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabela de Títulos -->
+    <div class="card">
+        <div class="card-header" style="background-color: #f8b84e;">
+            <strong style="color: #333;">Títulos a Pagar: {{ titulos|length }}</strong>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Número</th>
+                            <th>Motorista</th>
+                            <th>Valor</th>
+                            <th>Emissão</th>
+                            <th>Vencimento</th>
+                            <th>Pagamento</th>
+                            <th>Status</th>
+                            <th>Forma Pgto</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if titulos %}
+                            {% for titulo in titulos %}
+                            <tr>
+                                <td><strong>{{ titulo.numero_titulo }}</strong></td>
+                                <td>{{ titulo.motorista.nome if titulo.motorista else 'N/A' }}</td>
+                                <td><strong>R$ {{ "%.2f"|format(titulo.valor_total) }}</strong></td>
+                                <td>{{ titulo.data_emissao.strftime('%d/%m/%Y') if titulo.data_emissao else 'N/A' }}</td>
+                                <td>{{ titulo.data_vencimento.strftime('%d/%m/%Y') if titulo.data_vencimento else 'N/A' }}</td>
+                                <td>{{ titulo.data_pagamento.strftime('%d/%m/%Y') if titulo.data_pagamento else '-' }}</td>
+                                <td>
+                                    {% if titulo.status == 'Aberto' %}
+                                        <span class="badge bg-warning text-dark">Aberto</span>
+                                    {% elif titulo.status == 'Pago' %}
+                                        <span class="badge bg-success">Pago</span>
+                                    {% elif titulo.status == 'Vencido' %}
+                                        <span class="badge bg-danger">Vencido</span>
+                                    {% elif titulo.status == 'Cancelado' %}
+                                        <span class="badge bg-secondary">Cancelado</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ titulo.forma_pagamento if titulo.forma_pagamento else '-' }}</td>
+                                <td>
+                                    <a href="{{ url_for('financeiro.editar_pagar', titulo_id=titulo.id) }}" 
+                                       class="btn btn-sm btn-info" title="Editar">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    {% if titulo.status != 'Pago' %}
+                                    <form method="POST" action="{{ url_for('financeiro.excluir_pagar', titulo_id=titulo.id) }}" 
+                                          style="display:inline;" 
+                                          onsubmit="return confirm('Tem certeza que deseja excluir este título?');">
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Excluir">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="9" class="text-center text-muted">Nenhum título encontrado</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

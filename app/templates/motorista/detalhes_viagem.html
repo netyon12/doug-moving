@@ -1,0 +1,322 @@
+<!-- Template para exibir detalhes da viagem no modal -->
+<!-- Arquivo: app/templates/motorista/detalhes_viagem.html -->
+
+<div class="container-fluid">
+    
+    <!-- INFORMAÇÕES GERAIS DA VIAGEM -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-info-circle"></i> Informações da Viagem</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>ID da Viagem:</strong> 
+                                <span class="badge bg-primary">#{{ viagem.id }}</span>
+                            </p>
+                            <p class="mb-2">
+                                <strong>Status:</strong>
+                                {% if viagem.status == 'Pendente' %}
+                                    <span class="badge bg-warning text-dark">{{ viagem.status }}</span>
+                                {% elif viagem.status == 'Agendada' %}
+                                    <span class="badge bg-info">{{ viagem.status }}</span>
+                                {% elif viagem.status == 'Em Andamento' %}
+                                    <span class="badge bg-success">{{ viagem.status }}</span>
+                                {% elif viagem.status == 'Finalizada' %}
+                                    <span class="badge bg-secondary">{{ viagem.status }}</span>
+                                {% else %}
+                                    <span class="badge bg-danger">{{ viagem.status }}</span>
+                                {% endif %}
+                            </p>
+                            <p class="mb-2">
+                                <strong>Tipo de Corrida:</strong> 
+                                <span class="badge bg-secondary">{{ viagem.tipo_corrida|upper }}</span>
+                            </p>
+                            <p class="mb-2">
+                                <strong>Tipo de Linha:</strong> 
+                                {{ viagem.tipo_linha }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>Quantidade de Passageiros:</strong> 
+                                <i class="fas fa-users"></i> {{ viagem.quantidade_passageiros }}
+                            </p>
+                            <p class="mb-2">
+                                <strong>Empresa:</strong> 
+                                {{ viagem.empresa.nome if viagem.empresa else 'N/A' }}
+                            </p>
+                            <p class="mb-2">
+                                <strong>Planta:</strong> 
+                                {{ viagem.planta.nome if viagem.planta else 'N/A' }}
+                            </p>
+                            <p class="mb-2">
+                                <strong>Bloco:</strong> 
+                                {{ viagem.bloco.codigo_bloco if viagem.bloco else 'N/A' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HORÁRIOS -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-clock"></i> Horários</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% if viagem.horario_entrada %}
+                        <div class="col-md-4">
+                            <p class="mb-2">
+                                <i class="fas fa-arrow-right text-success"></i> 
+                                <strong>Entrada:</strong><br>
+                                {{ viagem.horario_entrada.strftime('%d/%m/%Y às %H:%M') }}
+                            </p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if viagem.horario_saida %}
+                        <div class="col-md-4">
+                            <p class="mb-2">
+                                <i class="fas fa-arrow-left text-danger"></i> 
+                                <strong>Saída:</strong><br>
+                                {{ viagem.horario_saida.strftime('%d/%m/%Y às %H:%M') }}
+                            </p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if viagem.horario_desligamento %}
+                        <div class="col-md-4">
+                            <p class="mb-2">
+                                <i class="fas fa-user-times text-warning"></i> 
+                                <strong>Desligamento:</strong><br>
+                                {{ viagem.horario_desligamento.strftime('%d/%m/%Y às %H:%M') }}
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- VALOR DO REPASSE (APENAS) -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h6 class="mb-0"><i class="fas fa-dollar-sign"></i> Seu Repasse</h6>
+                </div>
+                <div class="card-body text-center">
+                    <h2 class="text-success mb-0">R$ {{ "%.2f"|format(viagem.valor_repasse or 0) }}</h2>
+                    <small class="text-muted">Valor que você receberá por esta viagem</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LISTA DE PASSAGEIROS COM ENDEREÇOS -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-users"></i> Passageiros e Endereços</h6>
+                </div>
+                <div class="card-body p-0">
+                    {% if colaboradores %}
+                    
+                    <!-- VERSÃO DESKTOP (Tabela) - Visível apenas em telas >= 768px -->
+                    <div class="table-responsive d-none d-md-block">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 5%">#</th>
+                                    <th style="width: 25%">Nome</th>
+                                    <th style="width: 50%">Endereço Completo</th>
+                                    <th style="width: 20%">Telefone</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for colaborador in colaboradores %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>
+                                        <strong>{{ colaborador.nome }}</strong>
+                                    </td>
+                                    <td>
+                                        <i class="fas fa-map-marker-alt text-danger"></i>
+                                        {% if colaborador.endereco %}
+                                            {{ colaborador.endereco }}
+                                            {% if colaborador.nro %}, {{ colaborador.nro }}{% endif %}
+                                            <br>
+                                            <small class="text-muted">
+                                                {{ colaborador.bairro }}
+                                                {% if colaborador.cidade %} - {{ colaborador.cidade }}{% endif %}
+                                                {% if colaborador.uf %}/{{ colaborador.uf }}{% endif %}
+                                            </small>
+                                        {% else %}
+                                            <span class="text-muted">Endereço não cadastrado</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if colaborador.telefone %}
+                                            <i class="fas fa-phone text-success"></i>
+                                            <a href="tel:{{ colaborador.telefone }}">
+                                                {{ colaborador.telefone }}
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- VERSÃO MOBILE (Cards) - Visível apenas em telas < 768px -->
+                    <div class="d-block d-md-none" style="padding: 12px;">
+                        {% for colaborador in colaboradores %}
+                        <div class="card mb-3" style="border-left: 4px solid #0dcaf0;">
+                            <div class="card-body" style="padding: 12px;">
+                                <!-- Número e Nome -->
+                                <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                                    <div style="background: #0dcaf0; color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 12px;">
+                                        {{ loop.index }}
+                                    </div>
+                                    <div style="flex: 1;">
+                                        <strong style="font-size: 1.1rem; color: #212529;">{{ colaborador.nome }}</strong>
+                                    </div>
+                                </div>
+                                
+                                <!-- Endereço -->
+                                <div style="margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                                    <div style="display: flex; align-items: start; margin-bottom: 4px;">
+                                        <i class="fas fa-map-marker-alt text-danger" style="margin-right: 8px; margin-top: 3px;"></i>
+                                        <div style="flex: 1;">
+                                            {% if colaborador.endereco %}
+                                                <strong>{{ colaborador.endereco }}</strong>
+                                                {% if colaborador.nro %}, {{ colaborador.nro }}{% endif %}
+                                                <br>
+                                                <small style="color: #6c757d;">
+                                                    {{ colaborador.bairro }}
+                                                    {% if colaborador.cidade %} - {{ colaborador.cidade }}{% endif %}
+                                                    {% if colaborador.uf %}/{{ colaborador.uf }}{% endif %}
+                                                </small>
+                                            {% else %}
+                                                <span style="color: #6c757d;">Endereço não cadastrado</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Telefone -->
+                                <div style="display: flex; align-items: center;">
+                                    <i class="fas fa-phone text-success" style="margin-right: 8px;"></i>
+                                    {% if colaborador.telefone %}
+                                        <a href="tel:{{ colaborador.telefone }}" style="font-size: 1.05rem; font-weight: 500; text-decoration: none;">
+                                            {{ colaborador.telefone }}
+                                        </a>
+                                    {% else %}
+                                        <span style="color: #6c757d;">Telefone não cadastrado</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    {% else %}
+                    <div class="alert alert-info mb-0">
+                        <i class="fas fa-info-circle"></i> Nenhum passageiro associado a esta viagem.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- INFORMAÇÕES DO MOTORISTA (se já estiver associado) -->
+    {% if viagem.motorista_id %}
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-user-tie"></i> Motorista</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>Nome:</strong> {{ viagem.nome_motorista }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>Veículo:</strong> 
+                                {{ viagem.placa_veiculo if viagem.placa_veiculo else 'N/A' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- DATAS DE CONTROLE -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-calendar-alt"></i> Histórico</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-2">
+                                <strong>Criada em:</strong><br>
+                                <small>{{ viagem.data_criacao.strftime('%d/%m/%Y às %H:%M') if viagem.data_criacao else 'N/A' }}</small>
+                            </p>
+                            {% if viagem.data_inicio %}
+                            <p class="mb-2">
+                                <strong>Iniciada em:</strong><br>
+                                <small>{{ viagem.data_inicio.strftime('%d/%m/%Y às %H:%M') }}</small>
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {% if viagem.data_finalizacao %}
+                            <p class="mb-2">
+                                <strong>Finalizada em:</strong><br>
+                                <small>{{ viagem.data_finalizacao.strftime('%d/%m/%Y às %H:%M') }}</small>
+                            </p>
+                            {% endif %}
+                            {% if viagem.data_cancelamento %}
+                            <p class="mb-2">
+                                <strong>Cancelada em:</strong><br>
+                                <small>{{ viagem.data_cancelamento.strftime('%d/%m/%Y às %H:%M') }}</small>
+                            </p>
+                            {% if viagem.motivo_cancelamento %}
+                            <p class="mb-2">
+                                <strong>Motivo:</strong><br>
+                                <small class="text-danger">{{ viagem.motivo_cancelamento }}</small>
+                            </p>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

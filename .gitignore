@@ -1,0 +1,49 @@
+# Arquivos de Banco de Dados
+*.db
+*.sqlite3
+
+# Arquivos do Google Drive
+*.gdoc
+*.gsheet
+*.gslides
+
+# Cache e arquivos gerados pelo Python
+__pycache__/
+*.pyc
+
+# Arquivos de ambiente virtual
+.flaskenv
+venv/
+venv/*
+.venv/
+env/
+.env
+.env.local
+.env.staging
+.env.production
+.env*
+
+
+# Arquivos de configuração do editor
+.vscode/
+.idea/
+
+
+*.xlsx
+
+# Arquivos de sistema do macOS
+.DS_Store
+
+
+# Arquivos do Windows
+desktop.ini
+*.ini
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
+*.pyo

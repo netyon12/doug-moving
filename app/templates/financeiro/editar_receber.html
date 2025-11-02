@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Título a Receber{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-pencil-square"></i> Editar Título a Receber</h2>
+            <p class="text-muted">Título: <strong>{{ titulo.numero_titulo }}</strong></p>
+        </div>
+    </div>
+
+    <!-- Informações do Título -->
+    <div class="card mb-4">
+        <div class="card-header" style="background-color: #f8b84e;">
+            <strong>Informações do Título</strong>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Número do Título</label>
+                        <input type="text" class="form-control" value="{{ titulo.numero_titulo }}" disabled>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label">Empresa</label>
+                        <input type="text" class="form-control" value="{{ titulo.empresa.nome if titulo.empresa else 'N/A' }}" disabled>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label">Valor Total</label>
+                        <input type="text" class="form-control" value="R$ {{ '%.2f'|format(titulo.valor_total) }}" disabled>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label class="form-label">Data de Emissão</label>
+                        <input type="text" class="form-control" value="{{ titulo.data_emissao.strftime('%d/%m/%Y') if titulo.data_emissao else 'N/A' }}" disabled>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="data_vencimento" class="form-label">Data de Vencimento *</label>
+                        <input type="date" class="form-control" id="data_vencimento" name="data_vencimento" 
+                               value="{{ titulo.data_vencimento.strftime('%Y-%m-%d') if titulo.data_vencimento else '' }}" required>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="numero_nota_fiscal" class="form-label">Número da Nota Fiscal</label>
+                        <input type="text" class="form-control" id="numero_nota_fiscal" name="numero_nota_fiscal" 
+                               value="{{ titulo.numero_nota_fiscal if titulo.numero_nota_fiscal else '' }}">
+                    </div>
+                    
+                    <div class="col-md-12">
+                        <label for="observacoes" class="form-label">Observações</label>
+                        <textarea class="form-control" id="observacoes" name="observacoes" rows="3">{{ titulo.observacoes if titulo.observacoes else '' }}</textarea>
+                    </div>
+                    
+                    {% if titulo.status == 'Aberto' %}
+                    <div class="col-md-12">
+                        <hr>
+                        <h5>Marcar como Recebido</h5>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status" onchange="toggleDataRecebimento()">
+                            <option value="Aberto">Aberto</option>
+                            <option value="Recebido">Recebido</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-4" id="divDataRecebimento" style="display: none;">
+                        <label for="data_recebimento" class="form-label">Data de Recebimento *</label>
+                        <input type="date" class="form-control" id="data_recebimento" name="data_recebimento">
+                    </div>
+                    {% else %}
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <input type="text" class="form-control" value="{{ titulo.status }}" disabled>
+                    </div>
+                    
+                    {% if titulo.data_recebimento %}
+                    <div class="col-md-4">
+                        <label class="form-label">Data de Recebimento</label>
+                        <input type="text" class="form-control" value="{{ titulo.data_recebimento.strftime('%d/%m/%Y') }}" disabled>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+                    
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-success btn-lg">
+                            <i class="bi bi-check-circle"></i> Salvar Alterações
+                        </button>
+                        <a href="{{ url_for('financeiro.contas_receber') }}" class="btn btn-secondary btn-lg">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Viagens Vinculadas -->
+    <div class="card">
+        <div class="card-header" style="background-color: #f8b84e;">
+            <strong>Viagens Vinculadas ({{ viagens_vinculadas|length }})</strong>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>ID Viagem</th>
+                            <th>Data/Hora</th>
+                            <th>Tipo</th>
+                            <th>Passageiros</th>
+                            <th>Bloco</th>
+                            <th>Motorista</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for viagem, vinculo in viagens_vinculadas %}
+                        <tr>
+                            <td>#{{ viagem.id }}</td>
+                            <td>{{ viagem.data_criacao.strftime('%d/%m/%Y %H:%M') if viagem.data_criacao else 'N/A' }}</td>
+                            <td>{{ viagem.tipo_corrida }}</td>
+                            <td>{{ viagem.quantidade_passageiros }}</td>
+                            <td>{{ viagem.bloco.codigo_bloco if viagem.bloco else 'N/A' }}</td>
+                            <td>{{ viagem.motorista.nome if viagem.motorista else 'Não atribuído' }}</td>
+                            <td>R$ {{ '%.2f'|format(vinculo.valor_viagem) }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleDataRecebimento() {
+    const status = document.getElementById('status').value;
+    const divData = document.getElementById('divDataRecebimento');
+    const inputData = document.getElementById('data_recebimento');
+    
+    if (status === 'Recebido') {
+        divData.style.display = 'block';
+        inputData.required = true;
+        inputData.value = new Date().toISOString().split('T')[0]; // Data atual
+    } else {
+        divData.style.display = 'none';
+        inputData.required = false;
+        inputData.value = '';
+    }
+}
+</script>
+{% endblock %}
+

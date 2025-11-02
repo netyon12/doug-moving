@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar' if turno else 'Cadastrar' }} Turno{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h3>{{ 'Editar Turno' if turno else 'Cadastrar Novo Turno' }}</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.editar_turno', turno_id=turno.id) if turno else url_for('admin.cadastrar_turno') }}">
+                        
+                        <div class="row">
+                            <!-- Campo Empresa -->
+                            <div class="col-md-6 mb-3">
+                                <label for="empresa_id" class="form-label">Empresa*</label>
+                                <select class="form-select" id="empresa_id" name="empresa_id" required>
+                                    <option value="" disabled selected>Selecione uma empresa...</option>
+                                    {% for empresa in empresas %}
+                                        <option value="{{ empresa.id }}" {% if turno and turno.empresa_id == empresa.id %}selected{% endif %}>
+                                            {{ empresa.nome }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Campo Planta -->
+                            <div class="col-md-6 mb-3">
+                                <label for="planta_id" class="form-label">Planta*</label>
+                                <select class="form-select" id="planta_id" name="planta_id" required>
+                                    <option value="" disabled selected>Selecione uma planta...</option>
+                                    {% for planta in plantas %}
+                                        <option value="{{ planta.id }}" {% if turno and turno.planta_id == planta.id %}selected{% endif %}>
+                                            {{ planta.nome }} ({{ planta.empresa.nome }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Campo Nome do Turno -->
+                        <div class="mb-3">
+                            <label for="nome" class="form-label">Nome do Turno*</label>
+                            <select class="form-select" id="nome" name="nome" required>
+                                <option value="" disabled {% if not turno %}selected{% endif %}>Selecione o tipo de turno...</option>
+                                {% for turno_valido in turnos_validos %}
+                                    <option value="{{ turno_valido }}" {% if turno and turno.nome == turno_valido %}selected{% endif %}>
+                                        {{ turno_valido }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <small class="form-text text-muted">
+                                Apenas os 4 tipos de turno fixos são permitidos.
+                            </small>
+                        </div>
+
+                        <div class="row">
+                            <!-- Campo Horário de Início -->
+                            <div class="col-md-6 mb-3">
+                                <label for="horario_inicio" class="form-label">Horário de Início*</label>
+                                <input type="time" class="form-control" id="horario_inicio" name="horario_inicio" value="{{ turno.horario_inicio.strftime('%H:%M') if turno and turno.horario_inicio else '' }}" required>
+                            </div>
+
+                            <!-- Campo Horário de Fim -->
+                            <div class="col-md-6 mb-3">
+                                <label for="horario_fim" class="form-label">Horário de Fim*</label>
+                                <input type="time" class="form-control" id="horario_fim" name="horario_fim" value="{{ turno.horario_fim.strftime('%H:%M') if turno and turno.horario_fim else '' }}" required>
+                            </div>
+                        </div>
+
+                        <hr>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('admin.admin_dashboard', aba='turnos') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

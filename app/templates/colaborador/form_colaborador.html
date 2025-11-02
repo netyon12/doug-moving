@@ -1,0 +1,276 @@
+{% extends "base.html" %} <!-- Ou "base_admin.html" se você não consolidou -->
+
+{% block title %}{{ 'Editar' if colaborador else 'Cadastrar' }} Colaborador{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h3>{{ 'Editar Colaborador' if colaborador else 'Cadastrar Novo Colaborador' }}</h3>
+                </div>
+                <div class="card-body">
+                    <form id="formColaborador" method="POST" action="{{ url_for('admin.editar_colaborador', colaborador_id=colaborador.id) if colaborador else url_for('admin.cadastrar_colaborador') }}">
+                        
+                        <h5 class="mb-3 border-bottom pb-2">Informações Pessoais e de Trabalho</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nome" class="form-label">Nome Completo*</label>
+                                <input type="text" class="form-control" id="nome" name="nome" value="{{ colaborador.nome if colaborador else '' }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="matricula" class="form-label">Matrícula*</label>
+                                <input type="text" class="form-control" id="matricula" name="matricula" value="{{ colaborador.matricula if colaborador else '' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="empresa_id" class="form-label">Empresa*</label>
+                                <!-- Lógica para bloquear o campo para o supervisor -->
+                                <select class="form-select" name="empresa_id" required {% if current_user.role == 'supervisor' %}disabled{% endif %}>
+                                    {% for empresa in empresas %}
+                                        <option value="{{ empresa.id }}" 
+                                                {% if (colaborador and colaborador.empresa_id == empresa.id) or (current_user.role == 'supervisor' and current_user.empresa.id == empresa.id) %}selected{% endif %}>
+                                            {{ empresa.nome }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <!-- Campo oculto para enviar o valor quando o select está desabilitado -->
+                                {% if current_user.role == 'supervisor' %}
+                                    <input type="hidden" name="empresa_id" value="{{ current_user.empresa.id }}">
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="planta_id" class="form-label">Planta*</label>
+                                <select class="form-select" name="planta_id" required {% if current_user.role == 'supervisor' %}disabled{% endif %}>
+                                    {% for planta in plantas %}
+                                        <option value="{{ planta.id }}" 
+                                                {% if (colaborador and colaborador.planta_id == planta.id) or (current_user.role == 'supervisor' and current_user.planta.id == planta.id) %}selected{% endif %}>
+                                            {{ planta.nome }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if current_user.role == 'supervisor' %}
+                                    <input type="hidden" name="planta_id" value="{{ current_user.planta.id }}">
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <h5 class="mt-4 mb-3 border-bottom pb-2">Endereço e Contato</h5>
+                        <div class="row">
+                            <div class="col-md-8 mb-3"><label for="endereco" class="form-label">Endereço</label><input type="text" class="form-control" id="endereco" name="endereco" value="{{ colaborador.endereco if colaborador else '' }}"></div>
+                            <div class="col-md-4 mb-3"><label for="nro" class="form-label">Nº</label><input type="text" class="form-control" id="nro" name="nro" value="{{ colaborador.nro if colaborador else '' }}"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3"><label for="bairro" class="form-label">Bairro</label><input type="text" class="form-control" id="bairro" name="bairro" value="{{ colaborador.bairro if colaborador else '' }}"></div>
+                            <div class="col-md-4 mb-3">
+                                <label for="bloco_id" class="form-label">Bloco</label>
+                                <select class="form-select" id="bloco_id" name="bloco_id">
+                                    <option value="">Nenhum</option>
+                                    {% for bloco in blocos %}
+                                        <option value="{{ bloco.id }}" {% if colaborador and colaborador.bloco_id == bloco.id %}selected{% endif %}>
+                                            {{ bloco.codigo_bloco }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3"><label for="cidade" class="form-label">Cidade</label><input type="text" class="form-control" id="cidade" name="cidade" value="{{ colaborador.cidade if colaborador else '' }}"></div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 mb-3"><label for="uf" class="form-label">UF</label><input type="text" class="form-control" id="uf" name="uf" value="{{ colaborador.uf if colaborador else '' }}" maxlength="2"></div>
+                            <div class="col-md-5 mb-3">
+                                <label for="telefone" class="form-label">Telefone</label>
+                                <input type="tel" class="form-control" id="telefone" name="telefone" 
+                                       value="{{ colaborador.telefone if colaborador else '' }}" 
+                                       placeholder="(DD) 98877-6655" 
+                                       maxlength="15"
+                                       style="color: #b6b4b4; opacity: 0.4 !important;"
+                                       onfocus="this.style.color='#000'"
+                                       onblur="if(this.value=='') this.style.color='#000'">
+                                <small class="form-text text-muted">Formato: (DD) 98877-6655</small>
+                            </div>
+                            <div class="col-md-5 mb-3"><label for="email" class="form-label">E-mail</label><input type="email" class="form-control" id="email" name="email" value="{{ colaborador.email if colaborador else '' }}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status*</label>
+                            <select class="form-select" id="status" name="status" required>
+                                {% if status_opcoes %}
+                                    {% for status in status_opcoes %}
+                                        <option value="{{ status }}" 
+                                            {% if colaborador and colaborador.status == status %}selected{% endif %}>
+                                            {{ status }}
+                                        </option>
+                                    {% endfor %}
+                                {% else %}
+                                    <!-- Fallback caso status_opcoes não seja passado -->
+                                    <option value="Ativo" {% if colaborador and colaborador.status == 'Ativo' %}selected{% endif %}>Ativo</option>
+                                    <option value="Inativo" {% if colaborador and colaborador.status == 'Inativo' %}selected{% endif %}>Inativo</option>
+                                    <option value="Desligado" {% if colaborador and colaborador.status == 'Desligado' %}selected{% endif %}>Desligado</option>
+                                    <option value="Ausente" {% if colaborador and colaborador.status == 'Ausente' %}selected{% endif %}>Ausente</option>
+                                {% endif %}
+                            </select>
+                        </div>
+
+                        <hr>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Script para preenchimento automático do Bloco baseado no Bairro
+document.addEventListener('DOMContentLoaded', function() {
+    const campoBairro = document.getElementById('bairro');
+    const campoBloco = document.getElementById('bloco_id');
+    
+    if (!campoBairro || !campoBloco) {
+        console.error('Campos de bairro ou bloco não encontrados');
+        return;
+    }
+    
+    // Debounce para evitar muitas requisições
+    let timeoutId = null;
+    
+    campoBairro.addEventListener('input', function() {
+        // Limpa o timeout anterior
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        
+        const nomeBairro = campoBairro.value.trim();
+        
+        // Se o campo estiver vazio, reseta o bloco
+        if (!nomeBairro) {
+            campoBloco.value = '';
+            return;
+        }
+        
+        // Aguarda 500ms após o usuário parar de digitar
+        timeoutId = setTimeout(function() {
+            buscarBlocoPorBairro(nomeBairro);
+        }, 500);
+    });
+    
+    // Também busca quando o campo perde o foco
+    campoBairro.addEventListener('blur', function() {
+        const nomeBairro = campoBairro.value.trim();
+        if (nomeBairro) {
+            buscarBlocoPorBairro(nomeBairro);
+        }
+    });
+    
+    // Máscara de telefone
+    const campoTelefone = document.getElementById('telefone');
+    if (campoTelefone) {
+        // Aplica máscara ao digitar
+        campoTelefone.addEventListener('input', function(e) {
+            let valor = e.target.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            
+            // Limita a 11 dígitos
+            if (valor.length > 11) {
+                valor = valor.substring(0, 11);
+            }
+            
+            // Aplica a máscara
+            if (valor.length <= 11) {
+                valor = valor.replace(/^(\d{2})(\d)/g, '($1) $2'); // Adiciona parênteses no DDD
+                valor = valor.replace(/(\d{5})(\d)/, '$1-$2'); // Adiciona hífen
+            }
+            
+            e.target.value = valor;
+        });
+        
+        // Ao carregar a página, formata o telefone se já existir
+        if (campoTelefone.value) {
+            let valorInicial = campoTelefone.value.replace(/\D/g, '');
+            if (valorInicial.length === 11) {
+                valorInicial = valorInicial.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+                campoTelefone.value = valorInicial;
+            }
+        }
+    }
+    
+    function buscarBlocoPorBairro(nomeBairro) {
+        // Mostra feedback visual
+        campoBloco.style.opacity = '0.5';
+        
+        // Faz a requisição para a API
+        fetch(`/admin/api/buscar-bloco-por-bairro?bairro=${encodeURIComponent(nomeBairro)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Bloco não encontrado');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.bloco_id) {
+                    // Seleciona o bloco no dropdown
+                    campoBloco.value = data.bloco_id;
+                    
+                    // Feedback visual de sucesso
+                    campoBloco.style.backgroundColor = '#d4edda';
+                    setTimeout(() => {
+                        campoBloco.style.backgroundColor = '';
+                    }, 1000);
+                    
+                    console.log(`Bloco encontrado: ${data.bloco_codigo}`);
+                } else {
+                    // Bloco não encontrado
+                    campoBloco.value = '';
+                    console.log('Nenhum bloco associado a este bairro');
+                }
+            })
+            .catch(error => {
+                // Erro na busca
+                campoBloco.value = '';
+                console.log('Erro ao buscar bloco:', error.message);
+            })
+            .finally(() => {
+                // Restaura a opacidade
+                campoBloco.style.opacity = '1';
+            });
+    }
+});
+</script>
+
+<script>
+$(document).ready(function() {
+    // Interceptar submit do formulário
+    $('#formColaborador').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Mostrar loading
+        showFormLoading('formColaborador', 'Salvando colaborador...');
+        
+        // Enviar via AJAX
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                // Processar resposta
+                handleFormResponse(
+                    response, 
+                    'Colaborador salvo com sucesso!',
+                    '{{ url_for("admin.admin_dashboard", aba="colaboradores") }}'
+                );
+            },
+            error: function(xhr) {
+                // Processar erro
+                handleFormError(xhr);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

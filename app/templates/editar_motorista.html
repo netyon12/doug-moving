@@ -1,0 +1,153 @@
+<!-- app/templates/editar_motorista.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Editar Motorista</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.editar_motorista', motorista_id=motorista.id) }}">
+                        <div class="row">
+                            <!-- Coluna 1: Informações Pessoais e de Login -->
+                            <div class="col-md-4">
+                                <h5>Dados Pessoais</h5>
+                                <hr>
+                                <div class="mb-3">
+                                    <label for="nome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="nome" name="nome" value="{{ motorista.nome }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">E-mail (Login) <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ motorista.user.email }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="senha" class="form-label">Nova Senha</label>
+                                    <input type="password" class="form-control" id="senha" name="senha" placeholder="Deixe em branco para não alterar">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telefone" class="form-label">Telefone</label>
+                                    <input type="text" class="form-control" id="telefone" name="telefone" value="{{ motorista.telefone or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="pix" class="form-label">Chave PIX</label>
+                                    <input type="text" class="form-control" id="pix" name="pix" value="{{ motorista.pix or '' }}">
+                                </div>
+                            </div>
+
+                            <!-- Coluna 2: Informações do Veículo -->
+                            <div class="col-md-4">
+                                <h5>Dados do Veículo</h5>
+                                <hr>
+                                <div class="mb-3">
+                                    <label for="placa_veiculo" class="form-label">Placa <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="placa_veiculo" name="placa_veiculo" value="{{ motorista.placa_veiculo }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="veiculo" class="form-label">Modelo do Veículo</label>
+                                    <input type="text" class="form-control" id="veiculo" name="veiculo" value="{{ motorista.veiculo or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cor_veiculo" class="form-label">Cor</label>
+                                    <input type="text" class="form-control" id="cor_veiculo" name="cor_veiculo" value="{{ motorista.cor_veiculo or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="ano_veiculo" class="form-label">Ano</label>
+                                    <input type="number" class="form-control" id="ano_veiculo" name="ano_veiculo" value="{{ motorista.ano_veiculo or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="km_veiculo" class="form-label">KM</label>
+                                    <input type="number" step="0.1" class="form-control" id="km_veiculo" name="km_veiculo" value="{{ motorista.km_veiculo or '' }}">
+                                </div>
+                            </div>
+
+                            <!-- Coluna 3: Endereço e Outros -->
+                            <div class="col-md-4">
+                                <h5>Endereço e Outros</h5>
+                                <hr>
+                                <div class="mb-3">
+                                    <label for="planta" class="form-label">Planta</label>
+                                    <input type="text" class="form-control" id="planta" name="planta" value="{{ motorista.planta or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="endereco" class="form-label">Endereço</label>
+                                    <input type="text" class="form-control" id="endereco" name="endereco" value="{{ motorista.endereco or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nro" class="form-label">Nº</label>
+                                    <input type="text" class="form-control" id="nro" name="nro" value="{{ motorista.nro or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bairro" class="form-label">Bairro</label>
+                                    <input type="text" class="form-control" id="bairro" name="bairro" value="{{ motorista.bairro or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cidade" class="form-label">Cidade</label>
+                                    <input type="text" class="form-control" id="cidade" name="cidade" value="{{ motorista.cidade or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="uf" class="form-label">UF</label>
+                                    <input type="text" class="form-control" id="uf" name="uf" value="{{ motorista.uf or '' }}" maxlength="2">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="mb-3">
+                                    <label for="observacoes_gerais" class="form-label">Observações Gerais</label>
+                                    <textarea class="form-control" id="observacoes_gerais" name="observacoes_gerais" rows="3">{{ motorista.observacoes_gerais or '' }}</textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('admin.admin_dashboard', aba='motoristas') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Interceptar submit do formulário
+    $('form[method="POST"]').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Mostrar loading
+        showLoading('Salvando motorista...');
+        
+        // Enviar via AJAX
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                hideLoading();
+                if (response.success) {
+                    showSuccess('Motorista atualizado com sucesso!', 2000).then(() => {
+                        if (response.redirect) {
+                            window.location.href = response.redirect;
+                        } else {
+                            window.history.back();
+                        }
+                    });
+                } else {
+                    showError(response.message || 'Erro ao salvar');
+                }
+            },
+            error: function(xhr) {
+                handleFormError(xhr);
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

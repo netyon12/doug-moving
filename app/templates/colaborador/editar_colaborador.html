@@ -1,0 +1,198 @@
+<!-- app/templates/editar_colaborador.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Editar Colaborador</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.editar_colaborador', colaborador_id=colaborador.id) }}">
+                        <div class="row">
+                            <!-- Coluna da Esquerda -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nome" class="form-label">Nome Completo <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="nome" name="nome" value="{{ colaborador.nome }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="planta" class="form-label">Planta <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="planta" name="planta" value="{{ colaborador.planta }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bloco_id" class="form-label">Bloco <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="bloco_id" name="bloco_id" required>
+                                        <option value="" disabled>Selecione um bloco...</option>
+                                        {% for bloco in blocos %}
+                                            <option value="{{ bloco.id }}" {% if colaborador.bloco_id == bloco.id %}selected{% endif %}>
+                                                {{ bloco.codigo_bloco }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">E-mail</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ colaborador.email or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telefone" class="form-label">Telefone</label>
+                                    <input type="text" class="form-control" id="telefone" name="telefone" value="{{ colaborador.telefone or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="turno" class="form-label">Turno</label>
+                                    <input type="text" class="form-control" id="turno" name="turno" value="{{ colaborador.turno or '' }}">
+                                </div>
+                            </div>
+                            <!-- Coluna da Direita -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="endereco" class="form-label">Endereço</label>
+                                    <input type="text" class="form-control" id="endereco" name="endereco" value="{{ colaborador.endereco or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nro" class="form-label">Nº</label>
+                                    <input type="text" class="form-control" id="nro" name="nro" value="{{ colaborador.nro or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bairro" class="form-label">Bairro</label>
+                                    <input type="text" class="form-control" id="bairro" name="bairro" 
+                                        value="{{ colaborador.bairro or '' }}" 
+                                        list="bairros-list" 
+                                        autocomplete="off">
+                                    <datalist id="bairros-list"></datalist>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cidade" class="form-label">Cidade</label>
+                                    <input type="text" class="form-control" id="cidade" name="cidade" value="{{ colaborador.cidade or '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="uf" class="form-label">UF</label>
+                                    <input type="text" class="form-control" id="uf" name="uf" value="{{ colaborador.uf or '' }}" maxlength="2">
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== AUTOCOMPLETE DE BAIRROS =====
+document.addEventListener('DOMContentLoaded', function() {
+    const bairroInput = document.getElementById('bairro');
+    const bairrosList = document.getElementById('bairros-list');
+    const blocoSelect = document.getElementById('bloco');
+    
+    // Armazena os dados dos bairros para preencher o bloco
+    let bairrosData = {};
+    
+    // Evento de digitação no campo Bairro
+    bairroInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        // Só busca se tiver pelo menos 2 caracteres
+        if (query.length < 2) {
+            bairrosList.innerHTML = '';
+            return;
+        }
+        
+        // Faz requisição para a API
+        fetch(`/admin/api/bairros/buscar?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                // Limpa a lista anterior
+                bairrosList.innerHTML = '';
+                bairrosData = {};
+                
+                // Adiciona as opções na datalist
+                data.forEach(bairro => {
+                    const option = document.createElement('option');
+                    option.value = bairro.nome;
+                    
+                    // Adiciona informação do bloco como label
+                    if (bairro.bloco_codigo) {
+                        option.setAttribute('data-bloco-id', bairro.bloco_id);
+                        option.label = `${bairro.nome} (Bloco: ${bairro.bloco_codigo})`;
+                    }
+                    
+                    bairrosList.appendChild(option);
+                    
+                    // Armazena os dados para uso posterior
+                    bairrosData[bairro.nome] = {
+                        bloco_id: bairro.bloco_id,
+                        bloco_codigo: bairro.bloco_codigo
+                    };
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao buscar bairros:', error);
+            });
+    });
+    
+    // Evento de mudança no campo Bairro (quando seleciona da lista)
+    bairroInput.addEventListener('change', function() {
+        const bairroNome = this.value.trim();
+        
+        // Se o bairro selecionado existe nos dados, preenche o bloco
+        if (bairrosData[bairroNome] && bairrosData[bairroNome].bloco_id) {
+            blocoSelect.value = bairrosData[bairroNome].bloco_id;
+            
+            // Feedback visual
+            blocoSelect.style.backgroundColor = '#d4edda';
+            setTimeout(() => {
+                blocoSelect.style.backgroundColor = '';
+            }, 1000);
+        }
+    });
+});
+// ===== FIM DO AUTOCOMPLETE =====
+</script>
+
+
+<script>
+$(document).ready(function() {
+    // Interceptar submit do formulário
+    $('form[method="POST"]').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Mostrar loading
+        showLoading('Salvando colaborador...');
+        
+        // Enviar via AJAX
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                hideLoading();
+                if (response.success) {
+                    showSuccess('Colaborador atualizado com sucesso!', 2000).then(() => {
+                        if (response.redirect) {
+                            window.location.href = response.redirect;
+                        } else {
+                            window.history.back();
+                        }
+                    });
+                } else {
+                    showError(response.message || 'Erro ao salvar');
+                }
+            },
+            error: function(xhr) {
+                handleFormError(xhr);
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

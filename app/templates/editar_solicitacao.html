@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}Editar Solicitação{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning text-white">
+            <h3>Editar Solicitação #{{ solicitacao.id }}</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admin.editar_solicitacao', id=solicitacao.id) }}">
+                
+                <!-- DADOS GERAIS (NÃO EDITÁVEIS) -->
+                <div class="row p-3 mb-4 bg-light rounded border">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Colaborador</label>
+                        <input type="text" class="form-control" value="{{ solicitacao.colaborador.nome }}" readonly>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Bloco</label>
+                        <input type="text" class="form-control" value="{{ solicitacao.colaborador.bloco.codigo_bloco }}" readonly>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Empresa</label>
+                        <input type="text" class="form-control" value="{{ solicitacao.empresa.nome }}" readonly>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Planta</label>
+                        <input type="text" class="form-control" value="{{ solicitacao.planta.nome }}" readonly>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Tipo de Linha</label>
+                        <input type="text" class="form-control" value="{{ solicitacao.tipo_linha }}" readonly>
+                    </div>
+                </div>
+
+                <!-- TIPO DE CORRIDA -->
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold">Tipo de Corrida</label>
+                        <input type="text" class="form-control" value="{{ solicitacao.tipo_corrida|replace('_', ' ')|title }}" readonly>
+                    </div>
+                </div>
+
+                <!-- HORÁRIOS EDITÁVEIS -->
+                <div class="row mb-4">
+                    {% if solicitacao.tipo_corrida in ['entrada', 'entrada_saida'] %}
+                    <div class="col-md-4">
+                        <label for="horario_entrada" class="form-label fw-bold">Horário de Entrada*</label>
+                        <input type="datetime-local" class="form-control" id="horario_entrada" name="horario_entrada" 
+                               value="{{ solicitacao.horario_entrada.strftime('%Y-%m-%dT%H:%M') if solicitacao.horario_entrada else '' }}" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Turno Entrada</label>
+                        <input type="text" class="form-control" name="turno_entrada" 
+                               value="{{ solicitacao.turno_entrada.nome if solicitacao.turno_entrada else 'Não definido' }}" readonly>
+                    </div>
+                    {% endif %}
+
+                    {% if solicitacao.tipo_corrida in ['saida', 'entrada_saida'] %}
+                    <div class="col-md-4">
+                        <label for="horario_saida" class="form-label fw-bold">Horário de Saída*</label>
+                        <input type="datetime-local" class="form-control" id="horario_saida" name="horario_saida" 
+                               value="{{ solicitacao.horario_saida.strftime('%Y-%m-%dT%H:%M') if solicitacao.horario_saida else '' }}" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Turno Saída</label>
+                        <input type="text" class="form-control" name="turno_saida" 
+                               value="{{ solicitacao.turno_saida.nome if solicitacao.turno_saida else 'Não definido' }}" readonly>
+                    </div>
+                    {% endif %}
+
+                    {% if solicitacao.tipo_corrida == 'desligamento' %}
+                    <div class="col-md-4">
+                        <label for="horario_desligamento" class="form-label fw-bold">Horário de Desligamento*</label>
+                        <input type="datetime-local" class="form-control" id="horario_desligamento" name="horario_desligamento" 
+                               value="{{ solicitacao.horario_desligamento.strftime('%Y-%m-%dT%H:%M') if solicitacao.horario_desligamento else '' }}" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Turno Desligamento</label>
+                        <input type="text" class="form-control" name="turno_desligamento" 
+                               value="{{ solicitacao.turno_desligamento.nome if solicitacao.turno_desligamento else 'Não definido' }}" readonly>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- VALORES (INFORMATIVO) - REMOVIDO VALOR REPASSE -->
+                <div class="row p-3 mb-4 bg-info bg-opacity-10 rounded border border-info">
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold">Valor da Corrida</label>
+                        <input type="text" class="form-control" value="{{ 'R$ %.2f'|format(solicitacao.valor) if solicitacao.valor else '-' }}" readonly>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="d-flex justify-content-end">
+                    <a href="{{ url_for('admin.solicitacoes') }}" class="btn btn-secondary me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-warning">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+// Carrega turnos da planta
+const plantaId = parseInt('{{ solicitacao.planta_id }}');
+let turnosPlanta = [];
+
+// Busca turnos
+fetch('/admin/api/plantas/' + plantaId + '/turnos')
+    .then(response => response.json())
+    .then(turnos => {
+        turnosPlanta = turnos;
+        console.log('Turnos carregados:', turnosPlanta);
+    })
+    .catch(error => console.error('Erro ao buscar turnos:', error));
+
+// Função para calcular turno
+function calcularTurno(horarioEntrada) {
+    if (!horarioEntrada || turnosPlanta.length === 0) {
+        return 'Não definido';
+    }
+    
+    const horaEntrada = horarioEntrada.substring(11, 16);
+    
+    for (const turno of turnosPlanta) {
+        const inicio = turno.horario_inicio;
+        const fim = turno.horario_fim;
+        
+        if (inicio < fim) {
+            if (horaEntrada >= inicio && horaEntrada <= fim) {
+                return turno.nome;
+            }
+        } else {
+            if (horaEntrada >= inicio || horaEntrada <= fim) {
+                return turno.nome;
+            }
+        }
+    }
+    
+    return 'Não definido';
+}
+
+// Event listeners para recalcular turnos
+const inputEntrada = document.getElementById('horario_entrada');
+const inputSaida = document.getElementById('horario_saida');
+const inputDesligamento = document.getElementById('horario_desligamento');
+
+if (inputEntrada) {
+    inputEntrada.addEventListener('change', function() {
+        const turnoField = document.querySelector('input[name="turno_entrada"]');
+        if (turnoField) {
+            turnoField.value = calcularTurno(this.value);
+        }
+    });
+}
+
+if (inputSaida) {
+    inputSaida.addEventListener('change', function() {
+        const turnoField = document.querySelector('input[name="turno_saida"]');
+        if (turnoField) {
+            turnoField.value = calcularTurno(this.value);
+        }
+    });
+}
+
+if (inputDesligamento) {
+    inputDesligamento.addEventListener('change', function() {
+        const turnoField = document.querySelector('input[name="turno_desligamento"]');
+        if (turnoField) {
+            turnoField.value = calcularTurno(this.value);
+        }
+    });
+}
+</script>
+{% endblock %}
+

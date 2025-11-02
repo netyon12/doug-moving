@@ -1,0 +1,860 @@
+{% extends "base.html" %}
+
+{% block title %}Sugestões de Agrupamento{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">
+            <i class="bi bi-lightbulb"></i> Sugestões de Agrupamento - {{ data_filtro }}
+        </h1>
+        <div>
+            <a href="{{ url_for('admin.agrupamento') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+            </a>
+            <button type="button" class="btn btn-success" id="btn-confirmar-agrupamento">
+                <i class="bi bi-check-circle"></i> Confirmar Agrupamento
+            </button>
+        </div>
+    </div>
+
+    <!-- Estatísticas Gerais -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center border-danger">
+                <div class="card-body">
+                    <h3 class="text-danger mb-0" id="stat-total-fretados">
+                        {% set total_fretados = 0 %}
+                        {% for grupo_bloco, dados in fretados.items() %}
+                            {% set total_fretados = total_fretados + dados.sugestoes|length %}
+                        {% endfor %}
+                        {{ total_fretados }}
+                    </h3>
+                    <p class="text-muted mb-0">Fretados</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-primary">
+                <div class="card-body">
+                    <h3 class="text-primary mb-0" id="stat-total-veiculos">
+                        {% set total_veiculos = 0 %}
+                        {% for grupo_bloco, grupos in veiculos.items() %}
+                            {% set total_veiculos = total_veiculos + grupos|length %}
+                        {% endfor %}
+                        {{ total_veiculos }}
+                    </h3>
+                    <p class="text-muted mb-0">Veículos</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-info">
+                <div class="card-body">
+                    <h3 class="text-info mb-0" id="stat-total-passageiros">
+                        {{ resumo.total_solicitacoes|default(0) }}
+                    </h3>
+                    <p class="text-muted mb-0">Total de Passageiros</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center border-success">
+                <div class="card-body">
+                    <h3 class="text-success mb-0" id="stat-grupos-selecionados">
+                        {{ total_fretados + total_veiculos }}
+                    </h3>
+                    <p class="text-muted mb-0">Grupos Sugeridos</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alerta informativo -->
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        <strong>Edição de Grupos:</strong> Você pode mover colaboradores entre veículos e fretados usando os botões <i class="bi bi-arrow-left-right"></i> ao lado de cada colaborador.
+    </div>
+
+    <!-- Abas: Veículos e Fretados -->
+    <ul class="nav nav-tabs" id="agrupamentoTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="veiculos-tab" data-bs-toggle="tab" data-bs-target="#tab-veiculos" type="button" role="tab">
+                <i class="bi bi-car-front"></i> Veículos 
+                <span class="badge bg-primary" id="badge-total-veiculos">{{ total_veiculos }}</span>
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="fretados-tab" data-bs-toggle="tab" data-bs-target="#tab-fretados" type="button" role="tab">
+                <i class="bi bi-bus-front"></i> Fretados 
+                <span class="badge bg-danger" id="badge-total-fretados">{{ total_fretados }}</span>
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="agrupamentoTabContent">
+        <!-- ABA VEÍCULOS -->
+        <div class="tab-pane fade show active" id="tab-veiculos" role="tabpanel">
+            <div class="card shadow-sm mt-3">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-car-front"></i> Veículos Sugeridos</h5>
+                    <small>Grupos com até 9 colaboradores</small>
+                </div>
+                <div class="card-body">
+                    {% if veiculos %}
+                        <div class="row" id="veiculos-container">
+                            {% set ns = namespace(veiculo_index=0) %}
+                            {% for grupo_bloco, grupos in veiculos.items() %}
+                                <div class="mb-4">
+                                    <h6 class="text-primary"><i class="bi bi-geo-alt"></i> Grupo de Blocos: {{ grupo_bloco }}</h6>
+                                    <div class="row">
+                                        {% for grupo in grupos %}
+                                        <div class="col-md-6 mb-3 veiculo-card" data-grupo-id="veiculo-{{ ns.veiculo_index }}" data-tipo="veiculo">
+                                            <div class="card border-primary">
+                                                <div class="card-header bg-light">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h6 class="mb-0">
+                                                            <i class="bi bi-car-front-fill"></i> Veículo {{ ns.veiculo_index + 1 }}
+                                                            <span class="badge bg-primary grupo-count">{{ grupo|length }} passageiros</span>
+                                                        </h6>
+                                                        <div>
+                                                            <input type="checkbox" class="form-check-input grupo-checkbox" 
+                                                                   data-grupo-index="{{ ns.veiculo_index }}" checked>
+                                                            <label class="form-check-label ms-1">Incluir</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body p-0">
+                                                    <table class="table table-sm table-hover mb-0 grupo-table">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th width="50">ID</th>
+                                                                <th>Colaborador</th>
+                                                                <th width="80">Bloco</th>
+                                                                <th width="100">Tipo</th>
+                                                                <th width="80">Horário</th>
+                                                                <th width="60">Ações</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {% for solicitacao in grupo %}
+                                                            <tr data-solicitacao-id="{{ solicitacao.id }}">
+                                                                <td><strong>#{{ solicitacao.id }}</strong></td>
+                                                                <td>{{ solicitacao.colaborador_nome }}</td>
+                                                                <td>
+                                                                    <span class="badge bg-info">
+                                                                        {{ solicitacao.bloco_codigo }}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="badge bg-warning text-dark">{{ solicitacao.tipo_corrida }}</span>
+                                                                </td>
+                                                                <td>
+                                                                    {% set tipo_lower = solicitacao.tipo_corrida|lower if solicitacao.tipo_corrida else '' %}
+                                                                    {% if tipo_lower == 'entrada' %}
+                                                                        {{ solicitacao.horario_entrada if solicitacao.horario_entrada else 'N/A' }}
+                                                                    {% elif tipo_lower == 'saida' %}
+                                                                        {{ solicitacao.horario_saida if solicitacao.horario_saida else 'N/A' }}
+                                                                    {% elif tipo_lower == 'desligamento' %}
+                                                                        {{ solicitacao.horario_desligamento if solicitacao.horario_desligamento else 'N/A' }}
+                                                                    {% else %}
+                                                                        N/A
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td>
+                                                                    <button class="btn btn-sm btn-primary btn-mover" 
+                                                                            data-solicitacao-id="{{ solicitacao.id }}"
+                                                                            data-grupo-atual="veiculo-{{ ns.veiculo_index }}"
+                                                                            title="Mover para outro grupo">
+                                                                        <i class="bi bi-arrow-left-right"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% set ns.veiculo_index = ns.veiculo_index + 1 %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Nenhum veículo foi sugerido para esta data.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA FRETADOS -->
+        <div class="tab-pane fade" id="tab-fretados" role="tabpanel">
+            <div class="card shadow-sm mt-3">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0"><i class="bi bi-bus-front"></i> Fretados Sugeridos</h5>
+                    <small>Grupos com 10 ou mais colaboradores do mesmo grupo de bloco</small>
+                </div>
+                <div class="card-body">
+                    {% if fretados %}
+                        <div class="row" id="fretados-container">
+                            {% set ns_fretado = namespace(fretado_index=0) %}
+                            {% for grupo_bloco, dados in fretados.items() %}
+                                <div class="mb-4">
+                                    <h6 class="text-danger"><i class="bi bi-geo-alt"></i> Grupo de Blocos: {{ grupo_bloco }}</h6>
+                                    <div class="row">
+                                        {% for sugestao in dados.sugestoes %}
+                                        <div class="col-md-6 mb-3 fretado-card" data-grupo-id="fretado-{{ ns_fretado.fretado_index }}" data-tipo="fretado">
+                                            <div class="card border-danger">
+                                                <div class="card-header bg-light">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <h6 class="mb-0">
+                                                            <i class="bi bi-bus-front-fill"></i> {{ sugestao.nome }}
+                                                            <span class="badge bg-danger grupo-count">{{ sugestao.solicitacoes|length }} passageiros</span>
+                                                        </h6>
+                                                        <div>
+                                                            <input type="checkbox" class="form-check-input grupo-checkbox" 
+                                                                   data-grupo-index="{{ ns_fretado.fretado_index }}" checked>
+                                                            <label class="form-check-label ms-1">Incluir</label>
+                                                        </div>
+                                                    </div>
+                                                    <small class="text-muted">
+                                                        Tipo Linha: {{ sugestao.tipo_linha }} | Tipo Corrida: {{ sugestao.tipo_corrida }}
+                                                    </small>
+                                                </div>
+                                                <div class="card-body p-0">
+                                                    <table class="table table-sm table-hover mb-0 grupo-table">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th width="50">ID</th>
+                                                                <th>Colaborador</th>
+                                                                <th width="80">Bloco</th>
+                                                                <th width="100">Tipo</th>
+                                                                <th width="80">Horário</th>
+                                                                <th width="60">Ações</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {% for solicitacao in sugestao.solicitacoes %}
+                                                            <tr data-solicitacao-id="{{ solicitacao.id }}">
+                                                                <td><strong>#{{ solicitacao.id }}</strong></td>
+                                                                <td>{{ solicitacao.colaborador_nome }}</td>
+                                                                <td>
+                                                                    <span class="badge bg-info">
+                                                                        {{ solicitacao.bloco_codigo }}
+                                                                    </span>
+                                                                </td>
+                                                                <td>
+                                                                    <span class="badge bg-warning text-dark">{{ solicitacao.tipo_corrida }}</span>
+                                                                </td>
+                                                                <td>
+                                                                    {% set tipo_lower = solicitacao.tipo_corrida|lower if solicitacao.tipo_corrida else '' %}
+                                                                    {% if tipo_lower == 'entrada' %}
+                                                                        {{ solicitacao.horario_entrada if solicitacao.horario_entrada else 'N/A' }}
+                                                                    {% elif tipo_lower == 'saida' %}
+                                                                        {{ solicitacao.horario_saida if solicitacao.horario_saida else 'N/A' }}
+                                                                    {% elif tipo_lower == 'desligamento' %}
+                                                                        {{ solicitacao.horario_desligamento if solicitacao.horario_desligamento else 'N/A' }}
+                                                                    {% else %}
+                                                                        N/A
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td>
+                                                                    <button class="btn btn-sm btn-danger btn-mover" 
+                                                                            data-solicitacao-id="{{ solicitacao.id }}"
+                                                                            data-grupo-atual="fretado-{{ ns_fretado.fretado_index }}"
+                                                                            title="Mover para outro grupo">
+                                                                        <i class="bi bi-arrow-left-right"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% set ns_fretado.fretado_index = ns_fretado.fretado_index + 1 %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            Nenhum fretado foi sugerido para esta data.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Mover Colaborador -->
+<div class="modal fade" id="modalMover" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Mover Colaborador</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Selecione o grupo de destino:</p>
+                <div class="mb-3">
+                    <label class="form-label"><strong>Tipo de Grupo:</strong></label>
+                    <select class="form-select" id="select-tipo-destino">
+                        <option value="veiculo">Veículo</option>
+                        <option value="fretado">Fretado</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label"><strong>Grupo de Destino:</strong></label>
+                    <select class="form-select" id="select-grupo-destino">
+                        <!-- Opções preenchidas dinamicamente -->
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn-confirmar-mover">Mover</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação Final -->
+<div class="modal fade" id="modalConfirmacao" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="bi bi-check-circle"></i> Confirmar Agrupamento</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Você está prestes a confirmar o agrupamento:</p>
+                <ul>
+                    <li><strong id="modal-total-fretados">0</strong> Fretado(s)</li>
+                    <li><strong id="modal-total-veiculos">0</strong> Veículo(s)</li>
+                    <li><strong id="modal-total-solicitacoes">0</strong> Solicitação(ões) agrupada(s)</li>
+                </ul>
+                <p class="text-warning"><i class="bi bi-exclamation-triangle"></i> Esta ação criará as viagens no sistema.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success" id="btn-confirmar-final">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Progresso -->
+<div class="modal fade" id="modalProgresso" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-hourglass-split"></i> Processando Agrupamento</h5>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <h4 id="progresso-status">Iniciando...</h4>
+                    <p class="text-muted" id="progresso-detalhes">Preparando dados...</p>
+                </div>
+                
+                <!-- Barra de Progresso -->
+                <div class="progress mb-3" style="height: 30px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+                         role="progressbar" 
+                         id="barra-progresso"
+                         style="width: 0%" 
+                         aria-valuenow="0" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                        <strong id="progresso-percentual">0%</strong>
+                    </div>
+                </div>
+                
+                <!-- Estatísticas do Progresso -->
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="card bg-light">
+                            <div class="card-body p-2">
+                                <h5 class="mb-0 text-primary" id="progresso-grupos">0</h5>
+                                <small class="text-muted">Grupos</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card bg-light">
+                            <div class="card-body p-2">
+                                <h5 class="mb-0 text-success" id="progresso-viagens">0</h5>
+                                <small class="text-muted">Viagens</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="card bg-light">
+                            <div class="card-body p-2">
+                                <h5 class="mb-0 text-danger" id="progresso-fretados">0</h5>
+                                <small class="text-muted">Fretados</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botão de Concluído (inicialmente oculto) -->
+                <div class="text-center mt-3" id="progresso-concluido" style="display: none;">
+                    <button type="button" class="btn btn-success btn-lg" id="btn-progresso-ok">
+                        <i class="bi bi-check-circle"></i> Concluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+let modalMover;
+let modalConfirmacao;
+let solicitacaoParaMover = null;
+let grupoAtual = null;
+
+// Inicializar modais e event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    modalMover = new bootstrap.Modal(document.getElementById('modalMover'));
+    modalConfirmacao = new bootstrap.Modal(document.getElementById('modalConfirmacao'));
+    
+    // Event listeners para botões de mover
+    document.querySelectorAll('.btn-mover').forEach(btn => {
+        btn.addEventListener('click', function() {
+            solicitacaoParaMover = parseInt(this.dataset.solicitacaoId);
+            grupoAtual = this.dataset.grupoAtual;
+            mostrarModalMover();
+        });
+    });
+    
+    // Event listener para mudança de tipo de destino
+    document.getElementById('select-tipo-destino').addEventListener('change', function() {
+        atualizarGruposDestino();
+    });
+    
+    // Event listener para confirmar movimentação
+    document.getElementById('btn-confirmar-mover').addEventListener('click', function() {
+        confirmarMover();
+    });
+    
+    // Event listener para confirmar agrupamento
+    document.getElementById('btn-confirmar-agrupamento').addEventListener('click', function() {
+        mostrarModalConfirmacao();
+    });
+    
+    // Event listener para confirmação final
+    document.getElementById('btn-confirmar-final').addEventListener('click', function() {
+        finalizarAgrupamento();
+    });
+    
+    // Event listeners para checkboxes de grupos
+    document.querySelectorAll('.grupo-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            atualizarEstatisticas();
+        });
+    });
+    
+    // Atualiza as estatísticas no carregamento inicial
+    atualizarEstatisticas();
+});
+
+function mostrarModalMover() {
+    // Preenche o select de tipo com o tipo atual selecionado
+    const tipoAtual = grupoAtual.startsWith('veiculo') ? 'veiculo' : 'fretado';
+    document.getElementById('select-tipo-destino').value = tipoAtual;
+    
+    // Atualiza os grupos disponíveis
+    atualizarGruposDestino();
+    
+    // Mostra o modal
+    modalMover.show();
+}
+
+function atualizarGruposDestino() {
+    const tipoDestino = document.getElementById('select-tipo-destino').value;
+    const selectGrupo = document.getElementById('select-grupo-destino');
+    
+    // Limpa as opções
+    selectGrupo.innerHTML = '';
+    
+    // Busca todos os grupos do tipo selecionado
+    const seletor = tipoDestino === 'veiculo' ? '.veiculo-card' : '.fretado-card';
+    const grupos = document.querySelectorAll(seletor);
+    
+    grupos.forEach((grupo, index) => {
+        const grupoId = grupo.dataset.grupoId;
+        
+        // Não inclui o grupo atual
+        if (grupoId !== grupoAtual) {
+            const count = grupo.querySelector('.grupo-count').textContent;
+            
+            // Extrai o nome do grupo sem o badge
+            const h6Element = grupo.querySelector('h6');
+            const h6Clone = h6Element.cloneNode(true);
+            const badge = h6Clone.querySelector('.grupo-count');
+            if (badge) badge.remove();
+            const nome = h6Clone.textContent.trim();
+            
+            const option = document.createElement('option');
+            option.value = grupoId;
+            option.textContent = `${nome} (${count})`;
+            selectGrupo.appendChild(option);
+        }
+    });
+    
+    // Adiciona opção para criar novo grupo
+    const optionNovo = document.createElement('option');
+    optionNovo.value = 'novo';
+    optionNovo.textContent = `➕ Criar novo ${tipoDestino}`;
+    selectGrupo.appendChild(optionNovo);
+}
+
+function confirmarMover() {
+    const grupoDestino = document.getElementById('select-grupo-destino').value;
+    
+    if (!grupoDestino) {
+        alert('Selecione um grupo de destino');
+        return;
+    }
+    
+    // Busca a linha da solicitação
+    const linha = document.querySelector(`tr[data-solicitacao-id="${solicitacaoParaMover}"]`);
+    
+    if (!linha) {
+        alert('Erro: Solicitação não encontrada');
+        return;
+    }
+    
+    if (grupoDestino === 'novo') {
+        // Cria um novo grupo
+        criarNovoGrupo(linha);
+    } else {
+        // Move para grupo existente
+        moverParaGrupo(linha, grupoDestino);
+    }
+    
+    // Atualiza as estatísticas
+    atualizarEstatisticas();
+    
+    // Fecha o modal
+    modalMover.hide();
+}
+
+function moverParaGrupo(linha, grupoDestinoId) {
+    // Busca o grupo de destino
+    const grupoDestino = document.querySelector(`[data-grupo-id="${grupoDestinoId}"]`);
+    
+    if (!grupoDestino) {
+        alert('Erro: Grupo de destino não encontrado');
+        return;
+    }
+    
+    // Busca a tabela do grupo de destino
+    const tabelaDestino = grupoDestino.querySelector('.grupo-table tbody');
+    
+    // Atualiza o botão de mover com o novo grupo
+    const btnMover = linha.querySelector('.btn-mover');
+    btnMover.dataset.grupoAtual = grupoDestinoId;
+    
+    // Atualiza a cor do botão baseado no tipo
+    const tipoDestino = grupoDestinoId.startsWith('veiculo') ? 'primary' : 'danger';
+    btnMover.className = `btn btn-sm btn-${tipoDestino} btn-mover`;
+    
+    // Move a linha para o grupo de destino
+    tabelaDestino.appendChild(linha);
+    
+    // Atualiza os contadores
+    atualizarContadores();
+}
+
+function criarNovoGrupo(linha) {
+    const tipoDestino = document.getElementById('select-tipo-destino').value;
+    const container = tipoDestino === 'veiculo' ? 
+        document.getElementById('veiculos-container') : 
+        document.getElementById('fretados-container');
+    
+    // Conta quantos grupos já existem deste tipo
+    const seletor = tipoDestino === 'veiculo' ? '.veiculo-card' : '.fretado-card';
+    const gruposExistentes = document.querySelectorAll(seletor).length;
+    const novoIndex = gruposExistentes;
+    const novoGrupoId = `${tipoDestino}-${novoIndex}`;
+    
+    // Cria o HTML do novo grupo
+    const corBorda = tipoDestino === 'veiculo' ? 'primary' : 'danger';
+    const icone = tipoDestino === 'veiculo' ? 'car-front-fill' : 'bus-front-fill';
+    const titulo = tipoDestino === 'veiculo' ? `Veículo ${novoIndex + 1}` : `Fretado ${novoIndex + 1}`;
+    
+    const novoGrupoHTML = `
+        <div class="col-md-6 mb-3 ${tipoDestino}-card" data-grupo-id="${novoGrupoId}" data-tipo="${tipoDestino}">
+            <div class="card border-${corBorda}">
+                <div class="card-header bg-light">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0">
+                            <i class="bi bi-${icone}"></i> ${titulo}
+                            <span class="badge bg-${corBorda} grupo-count">1 passageiros</span>
+                        </h6>
+                        <div>
+                            <input type="checkbox" class="form-check-input grupo-checkbox" 
+                                   data-grupo-index="${novoIndex}" checked>
+                            <label class="form-check-label ms-1">Incluir</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-sm table-hover mb-0 grupo-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="50">ID</th>
+                                <th>Colaborador</th>
+                                <th width="80">Bloco</th>
+                                <th width="100">Tipo</th>
+                                <th width="80">Horário</th>
+                                <th width="60">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Adiciona o novo grupo ao container
+    const divTemp = document.createElement('div');
+    divTemp.innerHTML = novoGrupoHTML;
+    const novoGrupo = divTemp.firstElementChild;
+    container.appendChild(novoGrupo);
+    
+    // Move a linha para o novo grupo
+    moverParaGrupo(linha, novoGrupoId);
+    
+    // Adiciona event listener ao novo checkbox
+    novoGrupo.querySelector('.grupo-checkbox').addEventListener('change', function() {
+        atualizarEstatisticas();
+    });
+}
+
+function atualizarContadores() {
+    // Atualiza o contador de cada grupo
+    document.querySelectorAll('.veiculo-card, .fretado-card').forEach(grupo => {
+        const tbody = grupo.querySelector('.grupo-table tbody');
+        const count = tbody.querySelectorAll('tr').length;
+        const badge = grupo.querySelector('.grupo-count');
+        badge.textContent = `${count} passageiros`;
+        
+        // Remove grupos vazios (exceto se for o único)
+        if (count === 0) {
+            const tipo = grupo.dataset.tipo;
+            const seletor = tipo === 'veiculo' ? '.veiculo-card' : '.fretado-card';
+            const totalGrupos = document.querySelectorAll(seletor).length;
+            
+            if (totalGrupos > 1) {
+                grupo.remove();
+            }
+        }
+    });
+}
+
+function atualizarEstatisticas() {
+    // Conta grupos selecionados
+    let totalFretados = 0;
+    let totalVeiculos = 0;
+    let totalPassageiros = 0;
+    
+    document.querySelectorAll('.grupo-checkbox:checked').forEach(checkbox => {
+        const grupoCard = checkbox.closest('.veiculo-card, .fretado-card');
+        const tipo = grupoCard.dataset.tipo;
+        const count = grupoCard.querySelectorAll('.grupo-table tbody tr').length;
+        
+        if (tipo === 'veiculo') {
+            totalVeiculos++;
+        } else {
+            totalFretados++;
+        }
+        
+        totalPassageiros += count;
+    });
+    
+    // Atualiza os cards de estatísticas
+    document.getElementById('stat-total-fretados').textContent = totalFretados;
+    document.getElementById('stat-total-veiculos').textContent = totalVeiculos;
+    document.getElementById('stat-total-passageiros').textContent = totalPassageiros;
+    document.getElementById('stat-grupos-selecionados').textContent = totalFretados + totalVeiculos;
+    
+    // Atualiza os badges das abas
+    document.getElementById('badge-total-veiculos').textContent = totalVeiculos;
+    document.getElementById('badge-total-fretados').textContent = totalFretados;
+}
+
+function mostrarModalConfirmacao() {
+    // Conta grupos selecionados
+    let totalFretados = 0;
+    let totalVeiculos = 0;
+    let totalSolicitacoes = 0;
+    
+    document.querySelectorAll('.grupo-checkbox:checked').forEach(checkbox => {
+        const grupoCard = checkbox.closest('.veiculo-card, .fretado-card');
+        const tipo = grupoCard.dataset.tipo;
+        const count = grupoCard.querySelectorAll('.grupo-table tbody tr').length;
+        
+        if (tipo === 'veiculo') {
+            totalVeiculos++;
+        } else {
+            totalFretados++;
+        }
+        
+        totalSolicitacoes += count;
+    });
+    
+    if (totalSolicitacoes === 0) {
+        alert('Selecione pelo menos um grupo para confirmar');
+        return;
+    }
+    
+    // Atualiza o modal
+    document.getElementById('modal-total-fretados').textContent = totalFretados;
+    document.getElementById('modal-total-veiculos').textContent = totalVeiculos;
+    document.getElementById('modal-total-solicitacoes').textContent = totalSolicitacoes;
+    
+    // Mostra o modal
+    modalConfirmacao.show();
+}
+
+function finalizarAgrupamento() {
+    // Coleta os dados dos grupos selecionados
+    const grupos = [];
+    
+    document.querySelectorAll('.grupo-checkbox:checked').forEach(checkbox => {
+        const grupoCard = checkbox.closest('.veiculo-card, .fretado-card');
+        const tipo = grupoCard.dataset.tipo;
+        const solicitacoes = [];
+        
+        grupoCard.querySelectorAll('.grupo-table tbody tr').forEach(linha => {
+            solicitacoes.push(parseInt(linha.dataset.solicitacaoId));
+        });
+        
+        if (solicitacoes.length > 0) {
+            grupos.push({
+                tipo: tipo,
+                solicitacoes: solicitacoes
+            });
+        }
+    });
+    
+    if (grupos.length === 0) {
+        alert('Nenhum grupo selecionado');
+        return;
+    }
+    
+    // ✅ Fecha o modal de confirmação
+    modalConfirmacao.hide();
+    
+    // ✅ Abre o modal de progresso
+    const modalProgresso = new bootstrap.Modal(document.getElementById('modalProgresso'));
+    modalProgresso.show();
+    
+    // ✅ Simula progresso enquanto processa
+    const totalGrupos = grupos.length;
+    let gruposProcessados = 0;
+    let viagensCriadas = 0;
+    let fretadosCriados = 0;
+    
+    // Atualiza a interface de progresso
+    function atualizarProgresso(percentual, status, detalhes) {
+        document.getElementById('barra-progresso').style.width = percentual + '%';
+        document.getElementById('barra-progresso').setAttribute('aria-valuenow', percentual);
+        document.getElementById('progresso-percentual').textContent = Math.round(percentual) + '%';
+        document.getElementById('progresso-status').textContent = status;
+        document.getElementById('progresso-detalhes').textContent = detalhes;
+        document.getElementById('progresso-grupos').textContent = gruposProcessados + '/' + totalGrupos;
+        document.getElementById('progresso-viagens').textContent = viagensCriadas;
+        document.getElementById('progresso-fretados').textContent = fretadosCriados;
+    }
+    
+    // Inicia o progresso
+    atualizarProgresso(10, 'Enviando dados...', 'Preparando ' + totalGrupos + ' grupo(s) para processamento');
+    
+    // Envia para o backend
+    fetch('{{ url_for("admin.finalizar_agrupamento") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            grupos: grupos
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // ✅ Atualiza com os dados reais do backend
+            gruposProcessados = totalGrupos;
+            viagensCriadas = data.viagens_criadas || 0;
+            fretadosCriados = data.fretados_criados || 0;
+            
+            atualizarProgresso(100, '✅ Concluído com Sucesso!', data.message || 'Agrupamento finalizado');
+            
+            // Remove a animação da barra
+            document.getElementById('barra-progresso').classList.remove('progress-bar-animated');
+            
+            // Mostra o botão de concluir
+            document.getElementById('progresso-concluido').style.display = 'block';
+            
+            // Event listener para o botão de concluir
+            document.getElementById('btn-progresso-ok').onclick = function() {
+                window.location.href = '{{ url_for("admin.agrupamento") }}';
+            };
+        } else {
+            // ❌ Erro no processamento
+            atualizarProgresso(100, '❌ Erro no Processamento', data.message || 'Erro ao confirmar agrupamento');
+            document.getElementById('barra-progresso').classList.remove('bg-success');
+            document.getElementById('barra-progresso').classList.add('bg-danger');
+            document.getElementById('barra-progresso').classList.remove('progress-bar-animated');
+            
+            // Mostra botão para fechar
+            document.getElementById('progresso-concluido').style.display = 'block';
+            document.getElementById('btn-progresso-ok').innerHTML = '<i class="bi bi-x-circle"></i> Fechar';
+            document.getElementById('btn-progresso-ok').classList.remove('btn-success');
+            document.getElementById('btn-progresso-ok').classList.add('btn-danger');
+            document.getElementById('btn-progresso-ok').onclick = function() {
+                modalProgresso.hide();
+                location.reload();
+            };
+        }
+    })
+    .catch(error => {
+        console.error('Erro:', error);
+        atualizarProgresso(100, '❌ Erro de Conexão', 'Erro ao processar agrupamento: ' + error.message);
+        document.getElementById('barra-progresso').classList.remove('bg-success');
+        document.getElementById('barra-progresso').classList.add('bg-danger');
+        document.getElementById('barra-progresso').classList.remove('progress-bar-animated');
+        
+        // Mostra botão para fechar
+        document.getElementById('progresso-concluido').style.display = 'block';
+        document.getElementById('btn-progresso-ok').innerHTML = '<i class="bi bi-x-circle"></i> Fechar';
+        document.getElementById('btn-progresso-ok').classList.remove('btn-success');
+        document.getElementById('btn-progresso-ok').classList.add('btn-danger');
+        document.getElementById('btn-progresso-ok').onclick = function() {
+            modalProgresso.hide();
+            location.reload();
+        };
+    });
+}
+</script>
+{% endblock %}

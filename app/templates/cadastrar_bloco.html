@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Cadastrar Novo Bloco</h3>
+                </div>
+                <div class="card-body">
+                    <p class="card-text text-muted">Preencha os dados abaixo para registrar um novo bloco de valor para as corridas.</p>
+                    
+                    <form method="POST" action="{{ url_for('admin.cadastrar_bloco') }}">
+                        
+                        <!-- Campo Código do Bloco -->
+                        <div class="mb-3">
+                            <label for="codigo_bloco" class="form-label">Código do Bloco</label>
+                            <input type="text" class="form-control" id="codigo_bloco" name="codigo_bloco" placeholder="Ex: B-01, ZS-05" required>
+                            <small class="form-text text-muted">Um identificador único para o bloco.</small>
+                        </div>
+
+                        <!-- Campo Valor -->
+                        <div class="mb-3">
+                            <label for="valor" class="form-label">Valor (R$)</label>
+                            <input type="number" step="0.01" class="form-control" id="valor" name="valor" placeholder="Ex: 50.00" required>
+                            <small class="form-text text-muted">O valor total cobrado pela corrida neste bloco.</small>
+                        </div>
+
+                        <!-- Campo Valor do Repasse -->
+                        <div class="mb-3">
+                            <label for="valor_repasse" class="form-label">Valor do Repasse (R$)</label>
+                            <input type="number" step="0.01" class="form-control" id="valor_repasse" name="valor_repasse" placeholder="Ex: 45.50" required>
+                            <small class="form-text text-muted">O valor que será repassado ao motorista.</small>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('admin.admin_dashboard', aba='blocos') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-primary">Salvar Bloco</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

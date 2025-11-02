@@ -1,0 +1,138 @@
+<!-- app/templates/cadastrar_supervisor.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info">
+                    <h3 class="mb-0">Cadastrar Novo Supervisor</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.cadastrar_supervisor') }}">
+                        
+                        <h5 class="mb-3">Dados de Acesso</h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">E-mail de Acesso*</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="senha" class="form-label">Senha*</label>
+                                <input type="password" class="form-control" id="senha" name="senha" required>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        <h5 class="mb-3">Dados Pessoais e de Trabalho</h5>
+                        <div class="row">
+                            <!-- Coluna da Esquerda -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nome" class="form-label">Nome Completo*</label>
+                                    <input type="text" class="form-control" id="nome" name="nome" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="planta" class="form-label">Planta*</label>
+                                    <input type="text" class="form-control" id="planta" name="planta" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="endereco" class="form-label">Endereço</label>
+                                    <input type="text" class="form-control" id="endereco" name="endereco">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nro" class="form-label">Nº</label>
+                                    <input type="text" class="form-control" id="nro" name="nro">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bairro" class="form-label">Bairro</label>
+                                    <input type="text" class="form-control" id="bairro" name="bairro">
+                                </div>
+                            </div>
+                            <!-- Coluna da Direita -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="cidade" class="form-label">Cidade</label>
+                                    <input type="text" class="form-control" id="cidade" name="cidade">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="uf" class="form-label">UF</label>
+                                    <input type="text" class="form-control" id="uf" name="uf" maxlength="2">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telefone" class="form-label">Telefone</label>
+                                    <input type="tel" class="form-control" id="telefone" name="telefone">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="turno" class="form-label">Turno</label>
+                                    <input type="text" class="form-control" id="turno" name="turno">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="gerente_responsavel" class="form-label">Gerente Responsável</label>
+                                    <input type="text" class="form-control" id="gerente_responsavel" name="gerente_responsavel">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Campo de Seleção para o Bloco -->
+                        <div class="mb-3">
+                            <label for="bloco_id" class="form-label">Bloco</label>
+                            <select class="form-select" id="bloco_id" name="bloco_id">
+                                <option value="" selected>Nenhum (Opcional)</option>
+                                {% for bloco in blocos %}
+                                    <option value="{{ bloco.id }}">{{ bloco.codigo_bloco }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <hr>
+                        <p class="text-muted"><small>* Campos obrigatórios</small></p>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('admin.admin_dashboard', aba='supervisores') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-info">Salvar Supervisor</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Interceptar submit do formulário
+    $('form[method="POST"]').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Mostrar loading
+        showLoading('Salvando supervisor...');
+        
+        // Enviar via AJAX
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                hideLoading();
+                if (response.success) {
+                    showSuccess('Supervisor cadastrado com sucesso!', 2000).then(() => {
+                        if (response.redirect) {
+                            window.location.href = response.redirect;
+                        } else {
+                            window.history.back();
+                        }
+                    });
+                } else {
+                    showError(response.message || 'Erro ao salvar');
+                }
+            },
+            error: function(xhr) {
+                handleFormError(xhr);
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

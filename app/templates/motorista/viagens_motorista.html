@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Minhas Viagens{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2><i class="bi bi-route"></i> Minhas Viagens</h2>
+            <p class="text-muted">Histórico completo das suas viagens realizadas</p>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="bi bi-funnel"></i> Filtros
+        </div>
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('motorista.minhas_viagens') }}">
+                <div class="row">
+                    <div class="col-md-2">
+                        <label for="viagem_id">ID Viagem</label>
+                        <input type="number" class="form-control" id="viagem_id" name="viagem_id" 
+                               value="{{ filtro_viagem_id }}" placeholder="Ex: 123">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="status">Status</label>
+                        <select class="form-control" id="status" name="status">
+                            <option value="">Todos</option>
+                            {% for s in status_opcoes %}
+                            <option value="{{ s }}" {% if filtro_status == s %}selected{% endif %}>{{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="data_inicio">Data Início</label>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio" 
+                               value="{{ filtro_data_inicio }}">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="data_fim">Data Fim</label>
+                        <input type="date" class="form-control" id="data_fim" name="data_fim" 
+                               value="{{ filtro_data_fim }}">
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="empresa_id">Empresa</label>
+                        <select class="form-control" id="empresa_id" name="empresa_id">
+                            <option value="">Todas</option>
+                            {% for e in empresas %}
+                            <option value="{{ e.id }}" {% if filtro_empresa_id == e.id|string %}selected{% endif %}>
+                                {{ e.nome }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2">
+                        <label for="planta_id">Planta</label>
+                        <select class="form-control" id="planta_id" name="planta_id">
+                            <option value="">Todas</option>
+                            {% for p in plantas %}
+                            <option value="{{ p.id }}" {% if filtro_planta_id == p.id|string %}selected{% endif %}>
+                                {{ p.nome }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row mt-3">
+                    <div class="col-md-2">
+                        <label for="bloco_id">Bloco</label>
+                        <select class="form-control" id="bloco_id" name="bloco_id">
+                            <option value="">Todos</option>
+                            {% for b in blocos %}
+                            <option value="{{ b.id }}" {% if filtro_bloco_id == b.id|string %}selected{% endif %}>
+                                {{ b.codigo_bloco }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="bi bi-search"></i> Filtrar
+                        </button>
+                        <a href="{{ url_for('motorista.minhas_viagens') }}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Limpar
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de Viagens -->
+    <div class="card">
+        <div class="card-header">
+            <i class="bi bi-list-ul"></i> Viagens Encontradas: <strong>{{ viagens.total }}</strong>
+        </div>
+        <div class="card-body p-0">
+            {% if viagens.items %}
+            <div class="table-responsive">
+                <table class="table table-hover table-striped align-middle mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Empresa</th>
+                            <th>Planta</th>
+                            <th>Status</th>
+                            <th>Data/Horário</th>
+                            <th>Tipo</th>
+                            <th>Passageiros</th>
+                            <th>Bloco</th>
+                            <th class="text-end">Valor Repasse</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for viagem in viagens.items %}
+                        <tr>
+                            <td><strong>#{{ viagem.id }}</strong></td>
+                            <td>{{ viagem.empresa.nome if viagem.empresa else 'N/A' }}</td>
+                            <td>{{ viagem.planta.nome if viagem.planta else 'N/A' }}</td>
+                            <td>
+                                {% if viagem.status == 'Pendente' %}
+                                <span class="badge bg-warning text-dark">{{ viagem.status }}</span>
+                                {% elif viagem.status == 'Agendada' %}
+                                <span class="badge bg-info">{{ viagem.status }}</span>
+                                {% elif viagem.status == 'Em Andamento' %}
+                                <span class="badge bg-primary">{{ viagem.status }}</span>
+                                {% elif viagem.status == 'Finalizada' %}
+                                <span class="badge bg-success">{{ viagem.status }}</span>
+                                {% elif viagem.status == 'Cancelada' %}
+                                <span class="badge bg-danger">{{ viagem.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if viagem.horario_entrada %}
+                                    <i class="bi bi-arrow-right text-success"></i> {{ viagem.horario_entrada.strftime('%d/%m/%Y %H:%M') }}
+                                {% elif viagem.horario_saida %}
+                                    <i class="bi bi-arrow-left text-danger"></i> {{ viagem.horario_saida.strftime('%d/%m/%Y %H:%M') }}
+                                {% elif viagem.horario_desligamento %}
+                                    <i class="bi bi-power text-warning"></i> {{ viagem.horario_desligamento.strftime('%d/%m/%Y %H:%M') }}
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if viagem.tipo_corrida == 'entrada' %}
+                                <span class="badge bg-success">ENTRADA</span>
+                                {% elif viagem.tipo_corrida == 'saida' %}
+                                <span class="badge bg-warning text-dark">SAÍDA</span>
+                                {% else %}
+                                <span class="badge bg-danger">DESLIGAMENTO</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <i class="bi bi-people-fill"></i> {{ viagem.quantidade_passageiros }}
+                            </td>
+                            <td>
+                                {% if viagem.bloco %}
+                                <span class="badge bg-light text-dark">{{ viagem.bloco.codigo_bloco }}</span>
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <strong class="text-success">
+                                    R$ {{ "%.2f"|format(viagem.valor_repasse or 0) }}
+                                </strong>
+                            </td>
+                            <td class="text-center">
+                                <button type="button" class="btn btn-sm btn-info" 
+                                        onclick="verDetalhesViagem({{ viagem.id }})"
+                                        title="Visualizar Detalhes">
+                                    <i class="bi bi-eye"></i> Ver Detalhes
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info m-3">
+                <i class="bi bi-info-circle"></i> Nenhuma viagem encontrada com os filtros aplicados.
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Rodapé com Total de Repasse -->
+        {% if viagens.items %}
+        <div class="card-footer bg-light">
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>Total de Viagens:</strong> {{ viagens.total }}
+                </div>
+                <div class="col-md-6 text-end">
+                    <strong>Total de Repasse:</strong> 
+                    <span class="text-success fs-5">
+                        <i class="bi bi-currency-dollar"></i> R$ {{ "%.2f"|format(total_repasse) }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal de Detalhes da Viagem -->
+<div class="modal fade" id="modalDetalhesViagem" tabindex="-1" aria-labelledby="modalDetalhesViagemLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="modalDetalhesViagemLabel">
+                    <i class="bi bi-info-circle"></i> Detalhes da Viagem
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body" id="conteudoDetalhesViagem">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Função para ver detalhes da viagem
+    function verDetalhesViagem(viagemId) {
+        // Abre o modal
+        const modal = new bootstrap.Modal(document.getElementById('modalDetalhesViagem'));
+        modal.show();
+        
+        // Carrega os detalhes via AJAX
+        fetch(`/motorista/viagens/${viagemId}`)
+            .then(response => response.text())
+            .then(html => {
+                document.getElementById('conteudoDetalhesViagem').innerHTML = html;
+            })
+            .catch(error => {
+                document.getElementById('conteudoDetalhesViagem').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-triangle"></i> Erro ao carregar detalhes da viagem.
+                    </div>
+                `;
+                console.error('Erro:', error);
+            });
+    }
+</script>
+{% endblock %}
+

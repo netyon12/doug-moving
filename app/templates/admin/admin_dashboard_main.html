@@ -1,0 +1,423 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Administrativo - Go Mobi{% endblock %}
+
+{% block content %}
+<!-- CSS específico do Dashboard Administrativo -->
+<link rel="stylesheet" href="{{ url_for('static', filename='admin_dashboard.css') }}">
+
+<!-- Cabeçalho do Dashboard -->
+<div class="dashboard-header">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="h2 mb-2">
+                    <i class="bi bi-speedometer2"></i> Dashboard Administrativo
+                </h1>
+                <p class="mb-0 opacity-75">Visão geral completa do sistema Go Mobi</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <small class="d-block opacity-75">Última atualização</small>
+                <strong id="data-hora-atual"></strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros: Empresa e Período -->
+<div class="company-filter mb-4">
+    <form method="GET" action="{{ url_for('admin.admin_dashboard') }}" id="form_filtros">
+        <div class="row align-items-end g-3">
+            <!-- Filtro de Empresa -->
+            <div class="col-md-4">
+                <label for="empresa_select" class="form-label fw-bold">
+                    <i class="bi bi-building"></i> Empresa
+                </label>
+                <select id="empresa_select" name="empresa_id" class="form-select form-select-lg" onchange="this.form.submit()">
+                    {% for empresa in empresas %}
+                    <option value="{{ empresa.id }}" {% if empresa_selecionada and empresa.id == empresa_selecionada.id %}selected{% endif %}>
+                        {{ empresa.nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Filtro de Data Início -->
+            <div class="col-md-3">
+                <label for="data_inicio" class="form-label fw-bold">
+                    <i class="bi bi-calendar3"></i> Data Início
+                </label>
+                <input type="date" id="data_inicio" name="data_inicio" class="form-control form-control-lg" value="{{ data_inicio }}">
+            </div>
+            
+            <!-- Filtro de Data Fim -->
+            <div class="col-md-3">
+                <label for="data_fim" class="form-label fw-bold">
+                    <i class="bi bi-calendar3"></i> Data Fim
+                </label>
+                <input type="date" id="data_fim" name="data_fim" class="form-control form-control-lg" value="{{ data_fim }}">
+            </div>
+            
+            <!-- Botões de Ação -->
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-funnel"></i> Filtrar
+                </button>
+            </div>
+        </div>
+        
+        <!-- Atalhos de Período -->
+        <div class="row mt-2">
+            <div class="col-12">
+                <small class="text-muted">Atalhos:</small>
+                <button type="button" class="btn btn-sm btn-outline-secondary ms-2" onclick="setarPeriodo('hoje')">Hoje</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary ms-1" onclick="setarPeriodo('semana')">Esta Semana</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary ms-1" onclick="setarPeriodo('mes')">Este Mês</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary ms-1" onclick="setarPeriodo('trimestre')">Trimestre</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Estatísticas Gerais -->
+<div class="stats-grid mb-4">
+    <div class="stat-item">
+        <div class="stat-value">{{ kpis_gerais.total_empresas }}</div>
+        <div class="stat-label">Total de Empresas</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value">{{ kpis_gerais.total_plantas }}</div>
+        <div class="stat-label">Plantas Cadastradas</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value">{{ kpis_gerais.total_motoristas }}</div>
+        <div class="stat-label">Motoristas Ativos</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value">{{ kpis_gerais.total_colaboradores }}</div>
+        <div class="stat-label">Colaboradores</div>
+    </div>
+</div>
+
+<!-- KPIs de Solicitações -->
+<div class="mb-4">
+    <h3 class="section-title">
+        <i class="bi bi-clipboard-check"></i> KPIs de Solicitações
+    </h3>
+    <div class="row g-3">
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-solicitacoes-pendentes">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_solicitacoes.pendentes }}</div>
+                    <div class="kpi-label">Pendentes</div>
+                    <i class="bi bi-hourglass-split kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-solicitacoes-agrupadas">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_solicitacoes.agrupadas }}</div>
+                    <div class="kpi-label">Agrupadas</div>
+                    <i class="bi bi-collection kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-solicitacoes-finalizadas">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_solicitacoes.finalizadas }}</div>
+                    <div class="kpi-label">Finalizadas</div>
+                    <i class="bi bi-check-circle kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-solicitacoes-canceladas">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_solicitacoes.canceladas }}</div>
+                    <div class="kpi-label">Canceladas</div>
+                    <i class="bi bi-x-circle kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KPIs de Viagens -->
+<div class="mb-4">
+    <h3 class="section-title">
+        <i class="bi bi-car-front"></i> KPIs de Viagens
+    </h3>
+    <div class="row g-3">
+        <div class="col-md-3 col-sm-6 col-6">
+            <div class="card kpi-card kpi-viagens-pendentes">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_viagens.pendentes }}</div>
+                    <div class="kpi-label">Pendentes</div>
+                    <i class="bi bi-hourglass-split kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-6">
+            <div class="card kpi-card kpi-viagens-agendadas">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_viagens.agendadas }}</div>
+                    <div class="kpi-label">Agendadas</div>
+                    <i class="bi bi-calendar-event kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-6">
+            <div class="card kpi-card kpi-viagens-andamento">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_viagens.em_andamento }}</div>
+                    <div class="kpi-label">Em Andamento</div>
+                    <i class="bi bi-arrow-clockwise kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-6">
+            <div class="card kpi-card kpi-viagens-finalizadas">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_viagens.finalizadas }}</div>
+                    <div class="kpi-label">Finalizadas</div>
+                    <i class="bi bi-check-circle kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-6">
+            <div class="card kpi-card kpi-viagens-canceladas">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_viagens.canceladas }}</div>
+                    <div class="kpi-label">Canceladas</div>
+                    <i class="bi bi-x-circle kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- KPIs de Motoristas -->
+<div class="mb-4">
+    <h3 class="section-title">
+        <i class="bi bi-person-badge"></i> KPIs de Motoristas
+    </h3>
+    <div class="row g-3">
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-motoristas-disponiveis">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_motoristas.disponiveis }}</div>
+                    <div class="kpi-label">Disponíveis</div>
+                    <i class="bi bi-check-circle kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-motoristas-agendados">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_motoristas.agendados }}</div>
+                    <div class="kpi-label">Agendados</div>
+                    <i class="bi bi-calendar-event kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-motoristas-ocupados">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_motoristas.ocupados }}</div>
+                    <div class="kpi-label">Ocupados</div>
+                    <i class="bi bi-arrow-repeat kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-motoristas-offline">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_motoristas.offline }}</div>
+                    <div class="kpi-label">Offline</div>
+                    <i class="bi bi-power kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Métricas de Performance (COM FILTRO DE PERÍODO) -->
+<div class="mb-4">
+    <h3 class="section-title">
+        <i class="bi bi-graph-up"></i> Métricas de Performance
+        <small class="text-muted fs-6">(Período: {{ data_inicio }} a {{ data_fim }})</small>
+    </h3>
+    
+    <!-- Linha 1: Financeiro -->
+    <div class="row g-3 mb-3">
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-receita">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">R$ {{ "%.2f"|format(kpis_performance.receita_total) }}</div>
+                    <div class="kpi-label">Receita Total</div>
+                    <i class="bi bi-currency-dollar kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-repasse">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">R$ {{ "%.2f"|format(kpis_performance.custo_repasse) }}</div>
+                    <div class="kpi-label">Custo de Repasse</div>
+                    <i class="bi bi-cash-stack kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-margem">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">R$ {{ "%.2f"|format(kpis_performance.margem_liquida) }}</div>
+                    <div class="kpi-label">Margem Líquida</div>
+                    <i class="bi bi-graph-up-arrow kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-ticket">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">R$ {{ "%.2f"|format(kpis_performance.ticket_medio) }}</div>
+                    <div class="kpi-label">Ticket Médio</div>
+                    <i class="bi bi-receipt kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Linha 2: Operacional -->
+    <div class="row g-3">
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-ocupacao">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_performance.taxa_ocupacao }}%</div>
+                    <div class="kpi-label">Taxa de Ocupação</div>
+                    <small class="text-muted d-block mt-1" style="font-size: 0.7rem;">
+                        {{ kpis_performance.total_passageiros }} passageiros / (viagens × {{ kpis_performance.capacidade_veiculo }})
+                    </small>
+                    <i class="bi bi-percent kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-tempo">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_performance.tempo_medio_viagem }} min</div>
+                    <div class="kpi-label">Tempo Médio de Viagem</div>
+                    <i class="bi bi-stopwatch kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-viagens-motorista">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_performance.viagens_por_motorista }}</div>
+                    <div class="kpi-label">Viagens por Motorista</div>
+                    <i class="bi bi-person-check kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card kpi-card kpi-cancelamento">
+                <div class="card-body position-relative">
+                    <div class="kpi-value">{{ kpis_performance.taxa_cancelamento }}%</div>
+                    <div class="kpi-label">Taxa de Cancelamento</div>
+                    <i class="bi bi-x-octagon kpi-icon"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acesso Rápido -->
+<div class="mb-4">
+    <h3 class="section-title">
+        <i class="bi bi-lightning"></i> Acesso Rápido
+    </h3>
+    <div class="row g-3">
+        <div class="col-md-3 col-sm-6">
+            <a href="{{ url_for('admin.solicitacoes') }}" class="card quick-access-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-clipboard-check display-4 mb-2"></i>
+                    <h5 class="card-title">Solicitações</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <a href="{{ url_for('admin.agrupamento') }}" class="card quick-access-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-collection display-4 mb-2"></i>
+                    <h5 class="card-title">Agrupamento</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <a href="{{ url_for('admin.viagens') }}" class="card quick-access-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-car-front display-4 mb-2"></i>
+                    <h5 class="card-title">Viagens</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <a href="{{ url_for('admin.admin_dashboard', aba='motoristas') }}" class="card quick-access-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-badge display-4 mb-2"></i>
+                    <h5 class="card-title">Motoristas</h5>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Atualiza data/hora
+function atualizarDataHora() {
+    const agora = new Date();
+    const opcoes = { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit' 
+    };
+    document.getElementById('data-hora-atual').textContent = agora.toLocaleString('pt-BR', opcoes);
+}
+atualizarDataHora();
+setInterval(atualizarDataHora, 1000);
+
+// Função para setar períodos pré-definidos
+function setarPeriodo(tipo) {
+    const hoje = new Date();
+    let dataInicio, dataFim;
+    
+    if (tipo === 'hoje') {
+        dataInicio = dataFim = hoje;
+    } else if (tipo === 'semana') {
+        const diaSemana = hoje.getDay();
+        dataInicio = new Date(hoje);
+        dataInicio.setDate(hoje.getDate() - diaSemana);
+        dataFim = hoje;
+    } else if (tipo === 'mes') {
+        dataInicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+        dataFim = hoje;
+    } else if (tipo === 'trimestre') {
+        const mesAtual = hoje.getMonth();
+        const mesInicioTrimestre = Math.floor(mesAtual / 3) * 3;
+        dataInicio = new Date(hoje.getFullYear(), mesInicioTrimestre, 1);
+        dataFim = hoje;
+    }
+    
+    document.getElementById('data_inicio').value = dataInicio.toISOString().split('T')[0];
+    document.getElementById('data_fim').value = dataFim.toISOString().split('T')[0];
+    document.getElementById('form_filtros').submit();
+}
+</script>
+
+{% endblock %}
