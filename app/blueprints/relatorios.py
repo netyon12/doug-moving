@@ -26,7 +26,7 @@ from app.models import db, Solicitacao, Viagem, Motorista, Colaborador, Empresa,
 from app import cache
 from sqlalchemy.orm import joinedload
 import locale
-locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+# locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
 # Criar blueprint
 relatorios_bp = Blueprint('relatorios', __name__, url_prefix='/relatorios')
