@@ -1,0 +1,165 @@
+<!-- app/templates/cadastrar_colaborador.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning">
+                    <h3 class="mb-0">Cadastrar Novo Colaborador</h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('admin.cadastrar_colaborador') }}">
+                        <div class="row">
+                            <!-- Coluna da Esquerda -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="nome" class="form-label">Nome Completo*</label>
+                                    <input type="text" class="form-control" id="nome" name="nome" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="planta" class="form-label">Planta*</label>
+                                    <input type="text" class="form-control" id="planta" name="planta" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="endereco" class="form-label">Endereço</label>
+                                    <input type="text" class="form-control" id="endereco" name="endereco">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nro" class="form-label">Nº</label>
+                                    <input type="text" class="form-control" id="nro" name="nro">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="bairro" class="form-label">Bairro</label>
+                                    <input type="text" class="form-control" id="bairro" name="bairro" 
+                                        list="bairros-list" 
+                                        autocomplete="off">
+                                    <datalist id="bairros-list"></datalist>
+                                </div>
+                            </div>
+                            <!-- Coluna da Direita -->
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="cidade" class="form-label">Cidade</label>
+                                    <input type="text" class="form-control" id="cidade" name="cidade">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="uf" class="form-label">UF</label>
+                                    <input type="text" class="form-control" id="uf" name="uf" maxlength="2">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="telefone" class="form-label">Telefone</label>
+                                    <input type="tel" class="form-control" id="telefone" name="telefone">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">E-mail</label>
+                                    <input type="email" class="form-control" id="email" name="email">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="turno" class="form-label">Turno</label>
+                                    <input type="text" class="form-control" id="turno" name="turno">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Campo de Seleção para o Bloco -->
+                        <div class="mb-3">
+                            <label for="bloco_id" class="form-label">Bloco*</label>
+                            <select class="form-select" id="bloco_id" name="bloco_id" required>
+                                <option value="" disabled selected>Selecione um bloco...</option>
+                                {% for bloco in blocos %}
+                                    <option value="{{ bloco.id }}">{{ bloco.codigo_bloco }}</option>
+                                {% endfor %}
+                            </select>
+                            <small class="form-text text-muted">
+                                Se o bloco não estiver na lista, <a href="{{ url_for('admin.cadastrar_bloco') }}">cadastre-o primeiro</a>.
+                            </small>
+                        </div>
+
+                        <hr>
+                        <p class="text-muted"><small>* Campos obrigatórios</small></p>
+                        <div class="d-flex justify-content-end">
+                            <a href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-warning">Salvar Colaborador</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ===== AUTOCOMPLETE DE BAIRROS =====
+document.addEventListener('DOMContentLoaded', function() {
+    const bairroInput = document.getElementById('bairro');
+    const bairrosList = document.getElementById('bairros-list');
+    const blocoSelect = document.getElementById('bloco');
+    
+    // Armazena os dados dos bairros para preencher o bloco
+    let bairrosData = {};
+    
+    // Evento de digitação no campo Bairro
+    bairroInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        // Só busca se tiver pelo menos 2 caracteres
+        if (query.length < 2) {
+            bairrosList.innerHTML = '';
+            return;
+        }
+        
+        // Faz requisição para a API
+        fetch(`/admin/api/bairros/buscar?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                // Limpa a lista anterior
+                bairrosList.innerHTML = '';
+                bairrosData = {};
+                
+                // Adiciona as opções na datalist
+                data.forEach(bairro => {
+                    const option = document.createElement('option');
+                    option.value = bairro.nome;
+                    
+                    // Adiciona informação do bloco como label
+                    if (bairro.bloco_codigo) {
+                        option.setAttribute('data-bloco-id', bairro.bloco_id);
+                        option.label = `${bairro.nome} (Bloco: ${bairro.bloco_codigo})`;
+                    }
+                    
+                    bairrosList.appendChild(option);
+                    
+                    // Armazena os dados para uso posterior
+                    bairrosData[bairro.nome] = {
+                        bloco_id: bairro.bloco_id,
+                        bloco_codigo: bairro.bloco_codigo
+                    };
+                });
+            })
+            .catch(error => {
+                console.error('Erro ao buscar bairros:', error);
+            });
+    });
+    
+    // Evento de mudança no campo Bairro (quando seleciona da lista)
+    bairroInput.addEventListener('change', function() {
+        const bairroNome = this.value.trim();
+        
+        // Se o bairro selecionado existe nos dados, preenche o bloco
+        if (bairrosData[bairroNome] && bairrosData[bairroNome].bloco_id) {
+            blocoSelect.value = bairrosData[bairroNome].bloco_id;
+            
+            // Feedback visual
+            blocoSelect.style.backgroundColor = '#d4edda';
+            setTimeout(() => {
+                blocoSelect.style.backgroundColor = '';
+            }, 1000);
+        }
+    });
+});
+// ===== FIM DO AUTOCOMPLETE =====
+</script>
+
+{% endblock %}
