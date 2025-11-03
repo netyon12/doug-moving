@@ -120,7 +120,7 @@ def listagem_solicitacoes():
 
 @relatorios_bp.route('/solicitacoes/dados', methods=['POST'])
 @login_required
-@cache.cached(timeout=30, query_string=True)
+# @cache.cached(timeout=30, query_string=True)
 def dados_listagem_solicitacoes():
     """Retorna os dados do relatório de solicitações em JSON"""
 
@@ -565,7 +565,7 @@ def conferencia_motoristas():
 
 @relatorios_bp.route('/conferencia-motoristas/dados', methods=['POST'])
 @login_required
-@cache.cached(timeout=30, query_string=True)
+# @cache.cached(timeout=30, query_string=True)
 def dados_conferencia_motoristas():
     """Retorna os dados do relatório de conferência de motoristas em JSON"""
 
