@@ -321,7 +321,7 @@ def conferencia_viagens():
 
 @relatorios_bp.route('/conferencia-viagens/dados', methods=['POST'])
 @login_required
-@cache.cached(timeout=30, query_string=True)
+# @cache.cached(timeout=30, query_string=True) - Removido a opção de guardar no cache por 30 segundos.
 def dados_conferencia_viagens():
     """Retorna os dados do relatório de conferência de viagens em JSON"""
 

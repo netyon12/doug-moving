@@ -239,6 +239,9 @@ $('#empresa_id').change(function() {
 $('#formFiltros').on('submit', function(e) {
     e.preventDefault();
     
+    // CORREÇÃO: Resetar página ao mudar filtros
+    paginaAtual = 1;
+    
     $('#loading').show();
     $('#areaResultados').hide();
     
