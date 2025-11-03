@@ -166,6 +166,7 @@
                                 <th>Tipo Linha</th>
                                 <th>Tipo Corrida</th>
                                 <th>Motorista</th>
+                                <th>Veículo</th>
                                 <th>Passageiros</th>
                                 <th>Colaboradores</th>
                                 <th>Valor</th>
@@ -299,7 +300,7 @@ function exibirResultados(dados, total, valorTotal) {
     tbody.empty();
     
     if (dados.length === 0) {
-        tbody.append('<tr><td colspan="13" class="text-center">Nenhuma viagem encontrada</td></tr>');
+        tbody.append('<tr><td colspan="14" class="text-center">Nenhuma viagem encontrada</td></tr>');
         $('#areaResultados').show();
         return;
     }
@@ -325,15 +326,16 @@ function exibirResultados(dados, total, valorTotal) {
         tr.append(`<td>${item.tipo_linha}</td>`);
         tr.append(`<td>${item.tipo_corrida}</td>`);
         tr.append(`<td>${item.motorista}</td>`);
+        tr.append(`<td>${item.veiculo || 'N/A'}</td>`);
         tr.append(`<td>${item.qtd_passageiros}</td>`);
         tr.append(`<td>${item.colaboradores}</td>`);
-        tr.append(`<td>R$ ${item.valor.toFixed(2)}</td>`);
+       tr.append(`<td style="white-space: nowrap;">R$ ${item.valor.toFixed(2)}</td>`);
         tr.append(`<td>${getStatusBadge(item.status)}</td>`);
         tbody.append(tr);
     });
     
     $('#totalRegistros').text(total);
-    $('#valorTotal').text('R$ ' + valorTotal.toFixed(2));
+    $('#valorTotal').text('R$ ' + valorTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
     $('#areaResultados').show();
 }
 

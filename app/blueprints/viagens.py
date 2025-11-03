@@ -14,6 +14,7 @@ from sqlalchemy import func, or_
 from io import StringIO
 import io
 import csv
+import json
 
 from .. import db
 from ..models import (
@@ -170,9 +171,6 @@ def viagem_detalhes(viagem_id):
     try:
         viagem = Viagem.query.get_or_404(viagem_id)
 
-        # Busca solicitações associadas
-        solicitacoes = Solicitacao.query.filter_by(viagem_id=viagem_id).all()
-
         # Monta dados do motorista com tratamento seguro
         motorista_info = None
         if viagem.motorista_id and viagem.motorista:
@@ -184,19 +182,34 @@ def viagem_detalhes(viagem_id):
                 'veiculo_placa': viagem.motorista.veiculo_placa or 'N/A'
             }
 
-        # Monta lista de colaboradores com detalhes
+        # ✅ NOVA LÓGICA: Busca colaboradores do campo viagem.colaboradores_ids
         colaboradores_lista = []
-        for s in solicitacoes:
-            if s.colaborador:
-                colaboradores_lista.append({
-                    'id': s.id,
-                    'colaborador_nome': s.colaborador.nome,
-                    'colaborador_matricula': s.colaborador.matricula if hasattr(s.colaborador, 'matricula') else 'N/A',
-                    'colaborador_telefone': s.colaborador.telefone if hasattr(s.colaborador, 'telefone') else 'N/A',
-                    'endereco': s.colaborador.endereco or 'N/A',
-                    'bairro': s.colaborador.bairro or 'N/A',
-                    'status': s.status or 'N/A'
-                })
+
+        if viagem.colaboradores_ids:
+            try:
+                # Parse do JSON: "[461, 648, 649]" → [461, 648, 649]
+                colaboradores_ids = json.loads(viagem.colaboradores_ids)
+
+                # Busca todos os colaboradores de uma vez (mais eficiente)
+                colaboradores = Colaborador.query.filter(
+                    Colaborador.id.in_(colaboradores_ids)
+                ).all()
+
+                # Monta lista de colaboradores com detalhes
+                for colaborador in colaboradores:
+                    colaboradores_lista.append({
+                        'id': colaborador.id,
+                        'colaborador_nome': colaborador.nome,
+                        'colaborador_matricula': colaborador.matricula if hasattr(colaborador, 'matricula') else 'N/A',
+                        'colaborador_telefone': colaborador.telefone if hasattr(colaborador, 'telefone') else 'N/A',
+                        'endereco': colaborador.endereco or 'N/A',
+                        'bairro': colaborador.bairro or 'N/A',
+                        'status': 'N/A'
+                    })
+
+            except (json.JSONDecodeError, TypeError) as e:
+                print(
+                    f"Erro ao parsear colaboradores_ids da viagem {viagem_id}: {e}")
 
         # Monta dados completos da viagem
         dados_viagem = {

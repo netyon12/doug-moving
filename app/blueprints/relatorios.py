@@ -334,8 +334,8 @@ def dados_conferencia_viagens():
         status = request.form.get('status')
         tipo_corrida = request.form.get('tipo_corrida')
         tipo_linha = request.form.get('tipo_linha')
-        motorista_id = request.form.get('motorista_id')  # NOVO FILTRO
-        colaborador_id = request.form.get('colaborador_id')  # NOVO FILTRO
+        motorista_id = request.form.get('motorista_id')
+        colaborador_id = request.form.get('colaborador_id')
 
         # Paginação
         pagina = request.form.get('pagina', 1, type=int)
@@ -496,15 +496,15 @@ def dados_conferencia_viagens():
 
             dados.append({
                 'id': viagem.id,
-                # CORRIGIDO
                 'data_viagem': data_viagem.strftime('%d/%m/%Y') if data_viagem else 'N/A',
                 'empresa': empresa.nome if empresa else 'N/A',
                 'planta': planta.nome if planta else 'N/A',
-                'bloco': bloco.codigo_bloco if bloco else 'N/A',  # CORRIGIDO: usar codigo_bloco
+                'bloco': bloco.codigo_bloco if bloco else 'N/A',
                 'tipo_linha': viagem.tipo_linha or 'N/A',
                 'tipo_corrida': viagem.tipo_corrida or 'N/A',
                 'status': viagem.status or 'N/A',
                 'motorista': motorista.nome if motorista else viagem.nome_motorista or 'N/A',
+                'veiculo': motorista.veiculo_nome if motorista and motorista.veiculo_nome else 'N/A',
                 'placa': viagem.placa_veiculo or 'N/A',
                 'colaboradores': ', '.join(colaboradores) if colaboradores else 'N/A',
                 'qtd_passageiros': viagem.quantidade_passageiros or 0,
@@ -787,10 +787,10 @@ def exportar_excel(tipo):
         elif tipo == 'viagens':
             ws.title = "Conferência de Viagens"
             colunas = ['ID', 'Data', 'Horário', 'Empresa', 'Planta', 'Bloco', 'Tipo Linha',
-                       'Tipo Corrida', 'Motorista', 'Passageiros', 'Colaboradores',
+                       'Tipo Corrida', 'Motorista', 'Veículo', 'Passageiros', 'Colaboradores',
                        'Valor', 'Status']
             campos = ['id', 'data_viagem', 'horario', 'empresa', 'planta', 'bloco', 'tipo_linha',
-                      'tipo_corrida', 'motorista', 'qtd_passageiros', 'colaboradores',
+                      'tipo_corrida', 'motorista', 'veiculo', 'qtd_passageiros', 'colaboradores',
                       'valor', 'status']
 
         elif tipo == 'motoristas':
@@ -897,12 +897,13 @@ def exportar_pdf(tipo):
         elif tipo == 'viagens':
             titulo = "Conferência de Viagens"
             colunas = ['ID', 'Data', 'Hor.', 'Empresa', 'Planta', 'Bloco', 'Tipo Linha',
-                       'Tipo Corrida', 'Motorista', 'Pass.', 'Colaboradores', 'Valor', 'Status']
+                       'Tipo Corrida', 'Motorista', 'Veículo', 'Pass.', 'Colaboradores', 'Valor', 'Status']
             campos = ['id', 'data_viagem', 'horario', 'empresa', 'planta', 'bloco', 'tipo_linha',
-                      'tipo_corrida', 'motorista', 'qtd_passageiros', 'colaboradores', 'valor', 'status']
+                      'tipo_corrida', 'motorista', 'veiculo', 'qtd_passageiros', 'colaboradores',
+                      'valor', 'status']
             # Larguras ajustadas para A4 landscape (13 colunas, SEM Placa)
-            col_widths = [0.3*inch, 0.8*inch, 0.5*inch, 0.9*inch, 0.9*inch, 0.6*inch, 0.65*inch,
-                          0.8*inch, 1.3*inch, 0.4*inch, 1.8*inch, 0.85*inch, 0.75*inch]
+            col_widths = [0.3*inch, 0.7*inch, 0.45*inch, 0.7*inch, 0.7*inch, 0.5*inch, 0.6*inch,
+                          0.7*inch, 1.2*inch, 0.6*inch, 0.45*inch, 1.8*inch, 0.7*inch, 0.7*inch]
 
         elif tipo == 'motoristas':
             titulo = "Conferência de Motoristas"
@@ -987,11 +988,11 @@ def exportar_pdf(tipo):
                 ('ALIGN', (9, 1), (9, -1), 'LEFT'),
             ]))
         elif tipo == 'viagens':
-            # Motorista (col 8) e Colaboradores (col 10) à esquerda, Valor (col 11) à direita
             table.setStyle(TableStyle([
-                ('ALIGN', (8, 1), (8, -1), 'LEFT'),
-                ('ALIGN', (10, 1), (10, -1), 'LEFT'),
-                ('ALIGN', (11, 1), (11, -1), 'RIGHT'),
+                ('ALIGN', (8, 1), (8, -1), 'LEFT'),   # Motorista
+                ('ALIGN', (9, 1), (9, -1), 'LEFT'),   # Veículo
+                ('ALIGN', (11, 1), (11, -1), 'LEFT'),  # Colaboradores
+                ('ALIGN', (12, 1), (12, -1), 'RIGHT'),  # Valor
             ]))
         elif tipo == 'motoristas':
             # Motorista (col 3), Colaboradores (col 10) e Bairros (col 11) à esquerda, Valor Repasse (col 12) à direita
