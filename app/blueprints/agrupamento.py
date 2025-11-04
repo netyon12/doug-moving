@@ -767,42 +767,25 @@ def finalizar_agrupamento():
                     Session = scoped_session(session_factory)
                     session_local = Session()  # Retorna Session
 
-                    total_enviadas = 0
-                    total_erros = 0
-
                     try:
-                        for viagem_id in viagens_ids_para_notificar:
-                            try:
-                                # Recarrega a viagem usando a nova sessão
-                                viagem = session_local.query(
-                                    Viagem).get(viagem_id)
+                        # ✅ OTIMIZAÇÃO: Envia 1 mensagem única por motorista (em lote)
+                        # Ao invés de enviar 1 mensagem para cada viagem criada
+                        quantidade_viagens = len(viagens_ids_para_notificar)
 
-                                if not viagem:
-                                    logger.warning(
-                                        f"⚠️  Viagem #{viagem_id} não encontrada")
-                                    continue
+                        enviadas = notification_service.notificar_novas_viagens_em_lote(
+                            quantidade_viagens=quantidade_viagens
+                        )
 
-                                enviadas = notification_service.notificar_viagem_disponivel(
-                                    viagem)
-                                if enviadas > 0:
-                                    logger.info(
-                                        f"✅ Viagem #{viagem.id}: {enviadas} motorista(s) notificado(s)")
-                                    total_enviadas += enviadas
-                                else:
-                                    logger.warning(
-                                        f"⚠️  Viagem #{viagem.id}: Nenhum motorista notificado")
-                            except Exception as e:
-                                logger.error(
-                                    f"❌ Erro ao notificar motoristas sobre viagem #{viagem_id}: {e}")
-                                total_erros += 1
-
-                        # Log final
-                        if total_enviadas > 0:
+                        if enviadas > 0:
                             logger.info(
-                                f"🎉 Total: {total_enviadas} notificação(ões) enviada(s) com sucesso")
-                        if total_erros > 0:
-                            logger.error(
-                                f"⚠️  Total: {total_erros} erro(s) ao enviar notificações")
+                                f"✅ {enviadas} motorista(s) notificado(s) sobre {quantidade_viagens} nova(s) viagem(ns)")
+                        else:
+                            logger.warning(
+                                f"⚠️  Nenhum motorista notificado sobre as {quantidade_viagens} viagem(ns) criadas")
+
+                    except Exception as e:
+                        logger.error(
+                            f"❌ Erro ao enviar notificações em lote: {e}")
 
                     finally:
                         # Fecha a sessão da thread
