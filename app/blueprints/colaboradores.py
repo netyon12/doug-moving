@@ -283,10 +283,10 @@ def excluir_colaborador(colaborador_id):
 
     colaborador = Colaborador.query.get_or_404(colaborador_id)
 
-    # Verificação de segurança (opcional, mas recomendada): impede a exclusão se tiver solicitações associadas
-    # if Solicitacao.query.filter_by(colaborador_id=colaborador.id).first():
-    #     flash(f'Não é possível excluir o colaborador "{colaborador.nome}", pois ele possui solicitações de transporte associadas.', 'danger')
-    #     return redirect(url_for('admin.admin_dashboard', aba='colaboradores'))
+    #Verificação de segurança (opcional, mas recomendada): impede a exclusão se tiver solicitações associadas
+    if Solicitacao.query.filter_by(colaborador_id=colaborador.id).first():
+         flash(f'Não é possível excluir o colaborador "{colaborador.nome}", pois ele possui solicitações de transporte associadas.', 'danger')
+         return redirect(url_for('admin.admin_dashboard', aba='colaboradores'))
 
     nome_colaborador = colaborador.nome
     db.session.delete(colaborador)
@@ -302,7 +302,7 @@ def excluir_colaborador(colaborador_id):
 
 @admin_bp.route('/api/buscar-bloco-por-bairro')
 @login_required
-@cache.cached(timeout=3600, query_string=True)
+# @cache.cached(timeout=3600, query_string=True) Cache que guarda por 1 hora (3600 segundos) os bairros.
 def buscar_bloco_por_bairro():
     import unicodedata
 

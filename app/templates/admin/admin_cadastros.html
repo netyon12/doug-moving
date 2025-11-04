@@ -71,7 +71,7 @@
 
 
 
-<!-- Mensagens Flash -->
+<!-- Mensagens Flash -- Já mostra esse alerta no base.html - se ficar aqui, vai mostrar duas vezes os alertas na tela.
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         {% for category, message in messages %}
@@ -81,7 +81,7 @@
             </div>
         {% endfor %}
     {% endif %}
-{% endwith %}
+{% endwith %} -->
 
 <div class="table-responsive">
     <table class="table table-striped table-hover">
