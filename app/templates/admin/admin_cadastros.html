@@ -403,6 +403,7 @@
                     <th>Telefone</th>
                     <th>Placa</th>
                     <th>Status</th>
+                    <th>Situação</th>
                     <th class="text-center">Ações</th>
                 </tr>
             </thead>
@@ -411,10 +412,15 @@
                 <tr>
                     <td>{{ item.nome }}</td>
                     <td>{{ item.telefone }}</td>
-                    <td>{{ item.placa }}</td>
+                    <td>{{ item.veiculo_placa }}</td>
                     <td>
                         <span class="badge bg-{{ 'success' if item.status == 'Ativo' else 'secondary' }}">
                             {{ item.status }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge bg-{{ 'success' if item.status_disponibilidade == 'online' else 'danger' }}">
+                            {{ 'Online' if item.status_disponibilidade == 'online' else 'Offline' }}
                         </span>
                     </td>
                     <td class="text-center">
@@ -426,7 +432,7 @@
                 </tr>
                 {% else %}
                 <tr>
-                    <td colspan="5" class="text-center">Nenhum motorista cadastrado.</td>
+                    <td colspan="6" class="text-center">Nenhum motorista cadastrado.</td>
                 </tr>
                 {% endfor %}
             </tbody>
