@@ -171,22 +171,52 @@ def admin_dashboard():
             capacidade_veiculo = int(
                 config_capacidade.valor) if config_capacidade else 4  # Padrão: 4
 
-            # ===== KPIs DE SOLICITAÇÕES (SEM FILTRO DE DATA) =====
+            # ===== KPIs DE SOLICITAÇÕES =====
+            # Status em tempo real (sem filtro de data)
             kpis_solicitacoes = {
                 'pendentes': Solicitacao.query.filter_by(empresa_id=empresa_id, status='Pendente').count(),
                 'agrupadas': Solicitacao.query.filter_by(empresa_id=empresa_id, status='Agrupada').count(),
                 'finalizadas': Solicitacao.query.filter_by(empresa_id=empresa_id, status='Finalizada').count(),
-                'canceladas': Solicitacao.query.filter_by(empresa_id=empresa_id, status='Cancelada').count()
+                'canceladas': Solicitacao.query.filter_by(empresa_id=empresa_id, status='Cancelada').count(),
+                # Finalizadas e Canceladas do período (filtradas por data_atualizacao)
+                'finalizadas_periodo': Solicitacao.query.filter(
+                    Solicitacao.empresa_id == empresa_id,
+                    Solicitacao.status == 'Finalizada',
+                    Solicitacao.data_atualizacao >= data_inicio,
+                    Solicitacao.data_atualizacao <= data_fim
+                ).count(),
+                'canceladas_periodo': Solicitacao.query.filter(
+                    Solicitacao.empresa_id == empresa_id,
+                    Solicitacao.status == 'Cancelada',
+                    Solicitacao.data_atualizacao >= data_inicio,
+                    Solicitacao.data_atualizacao <= data_fim
+                ).count()
             }
 
-            # ===== KPIs DE VIAGENS (SEM FILTRO DE DATA) =====
+            # ===== KPIs DE VIAGENS =====
+            # Status em tempo real (sem filtro de data)
             kpis_viagens = {
                 'pendentes': Viagem.query.filter_by(empresa_id=empresa_id, status='Pendente').count(),
                 'agendadas': Viagem.query.filter_by(empresa_id=empresa_id, status='Agendada').count(),
                 'em_andamento': Viagem.query.filter_by(empresa_id=empresa_id, status='Em Andamento').count(),
-                'finalizadas': Viagem.query.filter_by(empresa_id=empresa_id, status='Finalizada').count(),
-                'canceladas': Viagem.query.filter_by(empresa_id=empresa_id, status='Cancelada').count()
+                'finalizadas_total': Viagem.query.filter_by(empresa_id=empresa_id, status='Finalizada').count(),
+                'canceladas_total': Viagem.query.filter_by(empresa_id=empresa_id, status='Cancelada').count()
             }
+
+            # Viagens finalizadas e canceladas DO PERÍODO (para aba executivo)
+            kpis_viagens['finalizadas_periodo'] = Viagem.query.filter(
+                Viagem.empresa_id == empresa_id,
+                Viagem.status == 'Finalizada',
+                Viagem.data_finalizacao >= data_inicio,
+                Viagem.data_finalizacao <= data_fim
+            ).count()
+
+            kpis_viagens['canceladas_periodo'] = Viagem.query.filter(
+                Viagem.empresa_id == empresa_id,
+                Viagem.status == 'Cancelada',
+                Viagem.data_criacao >= data_inicio,
+                Viagem.data_criacao <= data_fim
+            ).count()
 
             # ===== KPIs DE MOTORISTAS (SEM FILTRO DE DATA) =====
             # Busca TODOS os motoristas ativos (independente de terem viagens)
@@ -293,6 +323,32 @@ def admin_dashboard():
             taxa_cancelamento = (viagens_canceladas_periodo /
                                  total_viagens_periodo * 100) if total_viagens_periodo > 0 else 0
 
+            # ===== COMPARAÇÃO COM PERÍODO ANTERIOR =====
+            dias_periodo = (data_fim - data_inicio).days + 1
+            data_inicio_anterior = data_inicio - timedelta(days=dias_periodo)
+            data_fim_anterior = data_inicio - timedelta(days=1)
+
+            viagens_anterior = Viagem.query.filter(
+                Viagem.empresa_id == empresa_id,
+                Viagem.status == 'Finalizada',
+                Viagem.data_finalizacao >= data_inicio_anterior,
+                Viagem.data_finalizacao <= data_fim_anterior
+            ).all()
+
+            receita_anterior = sum(
+                [v.valor for v in viagens_anterior if v.valor]) or 0
+            margem_anterior = sum(
+                [(v.valor or 0) - (v.valor_repasse or 0) for v in viagens_anterior]) or 0
+            num_viagens_anterior = len(viagens_anterior)
+
+            # Calcular variações percentuais
+            variacao_receita = ((receita_total - receita_anterior) /
+                                receita_anterior * 100) if receita_anterior > 0 else 0
+            variacao_margem = ((margem_liquida - margem_anterior) /
+                               margem_anterior * 100) if margem_anterior > 0 else 0
+            variacao_viagens = ((num_viagens_finalizadas - num_viagens_anterior) /
+                                num_viagens_anterior * 100) if num_viagens_anterior > 0 else 0
+
             kpis_performance = {
                 'receita_total': float(receita_total),
                 'custo_repasse': float(custo_repasse),
@@ -303,7 +359,12 @@ def admin_dashboard():
                 'viagens_por_motorista': round(viagens_por_motorista, 1),
                 'taxa_cancelamento': round(taxa_cancelamento, 1),
                 'total_passageiros': total_passageiros,
-                'capacidade_veiculo': capacidade_veiculo
+                'capacidade_veiculo': capacidade_veiculo,
+                'num_viagens_finalizadas': num_viagens_finalizadas,
+                # Comparações
+                'variacao_receita': round(variacao_receita, 1),
+                'variacao_margem': round(variacao_margem, 1),
+                'variacao_viagens': round(variacao_viagens, 1)
             }
 
             # ===== DADOS GERAIS =====
@@ -312,6 +373,41 @@ def admin_dashboard():
                 'total_plantas': Planta.query.filter_by(empresa_id=empresa_id).count(),
                 'total_motoristas': len(motoristas_empresa),
                 'total_colaboradores': Colaborador.query.join(Planta).filter(Planta.empresa_id == empresa_id).count()
+            }
+
+            # ===== DADOS PARA GRÁFICOS =====
+            # Gráfico 1: Receita Diária do Período
+            receita_diaria = []
+            labels_dias = []
+            data_atual = data_inicio
+            while data_atual <= data_fim:
+                data_fim_dia = data_atual.replace(
+                    hour=23, minute=59, second=59)
+                receita_dia = db.session.query(func.sum(Viagem.valor)).filter(
+                    Viagem.empresa_id == empresa_id,
+                    Viagem.status == 'Finalizada',
+                    Viagem.data_finalizacao >= data_atual,
+                    Viagem.data_finalizacao <= data_fim_dia
+                ).scalar() or 0
+
+                receita_diaria.append(float(receita_dia))
+                labels_dias.append(data_atual.strftime('%d/%m'))
+                data_atual += timedelta(days=1)
+
+            # Gráfico 2: Distribuição de Viagens por Status (usar KPIs já calculados)
+            dados_graficos = {
+                'receita_diaria': receita_diaria,
+                'labels_dias': labels_dias,
+                'viagens_por_status': {
+                    'labels': ['Pendentes', 'Agendadas', 'Em Andamento', 'Finalizadas', 'Canceladas'],
+                    'valores': [
+                        kpis_viagens['pendentes'],
+                        kpis_viagens['agendadas'],
+                        kpis_viagens['em_andamento'],
+                        kpis_viagens['finalizadas_periodo'],
+                        kpis_viagens['canceladas_periodo']
+                    ]
+                }
             }
 
             return render_template(
@@ -324,6 +420,7 @@ def admin_dashboard():
                 kpis_motoristas=kpis_motoristas,
                 kpis_performance=kpis_performance,
                 kpis_gerais=kpis_gerais,
+                dados_graficos=dados_graficos,
                 data_inicio=data_inicio_str,
                 data_fim=data_fim_str
             )

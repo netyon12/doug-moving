@@ -628,12 +628,18 @@ def dados_conferencia_motoristas():
         total_registros = query.count()
 
         # Aplicar paginação e executar query com eager loading (otimização N+1)
-        viagens = query.options(
+        query_final = query.options(
             joinedload(Viagem.motorista),
             joinedload(Viagem.empresa),
             joinedload(Viagem.planta),
             joinedload(Viagem.hora_parada)
-        ).order_by(Viagem.id.desc()).limit(por_pagina).offset((pagina - 1) * por_pagina).all()
+        ).order_by(Viagem.id.desc())
+
+        if pagina > 0:
+            query_final = query_final.limit(
+                por_pagina).offset((pagina - 1) * por_pagina)
+
+        viagens = query_final.all()
 
         # Buscar todos os colaboradores de uma vez (otimização N+1)
         todos_col_ids = set()

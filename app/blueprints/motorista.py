@@ -157,6 +157,33 @@ def dashboard_motorista():
     )
 
 
+@motorista_bp.route('/api/verificar-atualizacoes')
+@login_required
+@role_required('motorista')
+def verificar_atualizacoes():
+    """API para verificar se há novas viagens disponíveis (polling)"""
+
+    try:
+        # Contar viagens disponíveis
+        total_disponiveis = Viagem.query.filter_by(
+            status='Pendente',
+            motorista_id=None
+        ).count()
+
+        # Retornar JSON
+        return jsonify({
+            'sucesso': True,
+            'total_disponiveis': total_disponiveis,
+            'timestamp': datetime.now().isoformat()
+        })
+
+    except Exception as e:
+        return jsonify({
+            'sucesso': False,
+            'mensagem': str(e)
+        }), 500
+
+
 @motorista_bp.route('/viagens/disponiveis')
 @login_required
 @role_required('motorista')

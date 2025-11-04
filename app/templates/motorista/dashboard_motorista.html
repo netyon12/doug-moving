@@ -784,6 +784,125 @@ function toggleDisponibilidade() {
         alert('Erro ao alterar disponibilidade: ' + error);
     });
 }
+
+// ========== POLLING AUTOMÁTICO (15 SEGUNDOS) ==========
+let viagensDisponiveisAtual = {{ viagens_disponiveis|length }};
+let pollingInterval = null;
+
+function verificarAtualizacoes() {
+    fetch('/motorista/api/verificar-atualizacoes')
+        .then(response => response.json())
+        .then(data => {
+            if (data.sucesso) {
+                const novoTotal = data.total_disponiveis;
+                
+                // Se houver mudança, atualizar
+                if (novoTotal !== viagensDisponiveisAtual) {
+                    // Atualizar contador nos cards de estatísticas
+                    document.querySelectorAll('.stat-disponiveis .stat-value').forEach(el => {
+                        el.textContent = novoTotal;
+                    });
+                    
+                    // Atualizar badge na seção de viagens
+                    document.querySelectorAll('.secao-titulo-mobile .badge, .secao-titulo .badge').forEach(el => {
+                        el.textContent = novoTotal;
+                    });
+                    
+                    // Se aumentou, mostrar notificação visual
+                    if (novoTotal > viagensDisponiveisAtual) {
+                        mostrarNotificacaoNovaViagem(novoTotal - viagensDisponiveisAtual);
+                    }
+                    
+                    // Atualizar valor atual
+                    viagensDisponiveisAtual = novoTotal;
+                    
+                    // Recarregar página após 2 segundos para mostrar as viagens
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Erro ao verificar atualizações:', error);
+        });
+}
+
+function mostrarNotificacaoNovaViagem(quantidade) {
+    // Criar notificação visual
+    const notificacao = document.createElement('div');
+    notificacao.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #28a745;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 9999;
+        font-weight: 600;
+        animation: slideIn 0.3s ease-out;
+    `;
+    
+    notificacao.innerHTML = `
+        <i class="bi bi-bell-fill"></i> 
+        ${quantidade} nova${quantidade > 1 ? 's' : ''} viagem${quantidade > 1 ? 'ns' : ''} disponível${quantidade > 1 ? 'eis' : ''}!
+    `;
+    
+    document.body.appendChild(notificacao);
+    
+    // Remover após 3 segundos
+    setTimeout(() => {
+        notificacao.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => notificacao.remove(), 300);
+    }, 3000);
+    
+    // Vibrar (se disponível no dispositivo)
+    if ('vibrate' in navigator) {
+        navigator.vibrate([200, 100, 200]);
+    }
+}
+
+// Iniciar polling quando a página carregar
+document.addEventListener('DOMContentLoaded', function() {
+    // Verificar a cada 15 segundos
+    pollingInterval = setInterval(verificarAtualizacoes, 15000);
+    
+    // Limpar intervalo quando sair da página
+    window.addEventListener('beforeunload', function() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+        }
+    });
+});
+
+// Adicionar animações CSS
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
 </script>
 
 {% endblock %}

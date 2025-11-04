@@ -6,6 +6,123 @@
 <!-- CSS específico do Dashboard Administrativo -->
 <link rel="stylesheet" href="{{ url_for('static', filename='admin_dashboard.css') }}">
 
+<!-- Chart.js para gráficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<style>
+/* Estilos para as abas */
+.dashboard-tabs {
+    background: white;
+    border-radius: 12px;
+    padding: 8px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dashboard-tabs .nav-tabs {
+    border: none;
+}
+
+.dashboard-tabs .nav-link {
+    border: none;
+    color: #6b7280;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.dashboard-tabs .nav-link:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.dashboard-tabs .nav-link.active {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+/* Cards com comparação */
+.kpi-card-executivo {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+}
+
+.kpi-card-executivo:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 12px rgba(0,0,0,0.15);
+}
+
+.kpi-header {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.kpi-value-large {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.kpi-comparison {
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    display: inline-block;
+}
+
+.kpi-comparison.positive {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.kpi-comparison.negative {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.kpi-comparison.neutral {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+/* Alertas */
+.alert-card {
+    border-left: 4px solid;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.alert-card.alert-danger {
+    border-left-color: #ef4444;
+    background: #fee2e2;
+}
+
+.alert-card.alert-warning {
+    border-left-color: #f59e0b;
+    background: #fef3c7;
+}
+
+.alert-card.alert-success {
+    border-left-color: #10b981;
+    background: #d1fae5;
+}
+
+/* Gráfico */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin-top: 16px;
+}
+</style>
+
 <!-- Cabeçalho do Dashboard -->
 <div class="dashboard-header">
     <div class="container-fluid">
@@ -27,6 +144,7 @@
 <!-- Filtros: Empresa e Período -->
 <div class="company-filter mb-4">
     <form method="GET" action="{{ url_for('admin.admin_dashboard') }}" id="form_filtros">
+        <input type="hidden" name="aba" id="aba_input" value="{{ request.args.get('aba', 'operacional') }}">
         <div class="row align-items-end g-3">
             <!-- Filtro de Empresa -->
             <div class="col-md-4">
@@ -79,262 +197,405 @@
     </form>
 </div>
 
-<!-- Estatísticas Gerais -->
-<div class="stats-grid mb-4">
-    <div class="stat-item">
-        <div class="stat-value">{{ kpis_gerais.total_empresas }}</div>
-        <div class="stat-label">Total de Empresas</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-value">{{ kpis_gerais.total_plantas }}</div>
-        <div class="stat-label">Plantas Cadastradas</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-value">{{ kpis_gerais.total_motoristas }}</div>
-        <div class="stat-label">Motoristas Ativos</div>
-    </div>
-    <div class="stat-item">
-        <div class="stat-value">{{ kpis_gerais.total_colaboradores }}</div>
-        <div class="stat-label">Colaboradores</div>
-    </div>
+<!-- Abas do Dashboard -->
+<div class="dashboard-tabs">
+    <ul class="nav nav-tabs" id="dashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if request.args.get('aba', 'operacional') == 'operacional' %}active{% endif %}" 
+                    id="operacional-tab" 
+                    data-bs-toggle="tab" 
+                    data-bs-target="#operacional" 
+                    type="button" 
+                    role="tab"
+                    onclick="mudarAba('operacional')">
+                <i class="bi bi-speedometer2"></i> Operacional
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if request.args.get('aba') == 'executivo' %}active{% endif %}" 
+                    id="executivo-tab" 
+                    data-bs-toggle="tab" 
+                    data-bs-target="#executivo" 
+                    type="button" 
+                    role="tab"
+                    onclick="mudarAba('executivo')">
+                <i class="bi bi-graph-up-arrow"></i> Executivo
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link {% if request.args.get('aba') == 'graficos' %}active{% endif %}" 
+                    id="graficos-tab" 
+                    data-bs-toggle="tab" 
+                    data-bs-target="#graficos" 
+                    type="button" 
+                    role="tab"
+                    onclick="mudarAba('graficos')">
+                <i class="bi bi-bar-chart-line"></i> Gráficos
+            </button>
+        </li>
+    </ul>
 </div>
 
-<!-- KPIs de Solicitações -->
-<div class="mb-4">
-    <h3 class="section-title">
-        <i class="bi bi-clipboard-check"></i> KPIs de Solicitações
-    </h3>
-    <div class="row g-3">
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-solicitacoes-pendentes">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_solicitacoes.pendentes }}</div>
-                    <div class="kpi-label">Pendentes</div>
-                    <i class="bi bi-hourglass-split kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-solicitacoes-agrupadas">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_solicitacoes.agrupadas }}</div>
-                    <div class="kpi-label">Agrupadas</div>
-                    <i class="bi bi-collection kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-solicitacoes-finalizadas">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_solicitacoes.finalizadas }}</div>
-                    <div class="kpi-label">Finalizadas</div>
-                    <i class="bi bi-check-circle kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-solicitacoes-canceladas">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_solicitacoes.canceladas }}</div>
-                    <div class="kpi-label">Canceladas</div>
-                    <i class="bi bi-x-circle kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- KPIs de Viagens -->
-<div class="mb-4">
-    <h3 class="section-title">
-        <i class="bi bi-car-front"></i> KPIs de Viagens
-    </h3>
-    <div class="row g-3">
-        <div class="col-md-3 col-sm-6 col-6">
-            <div class="card kpi-card kpi-viagens-pendentes">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_viagens.pendentes }}</div>
-                    <div class="kpi-label">Pendentes</div>
-                    <i class="bi bi-hourglass-split kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-6">
-            <div class="card kpi-card kpi-viagens-agendadas">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_viagens.agendadas }}</div>
-                    <div class="kpi-label">Agendadas</div>
-                    <i class="bi bi-calendar-event kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-6">
-            <div class="card kpi-card kpi-viagens-andamento">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_viagens.em_andamento }}</div>
-                    <div class="kpi-label">Em Andamento</div>
-                    <i class="bi bi-arrow-clockwise kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-6">
-            <div class="card kpi-card kpi-viagens-finalizadas">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_viagens.finalizadas }}</div>
-                    <div class="kpi-label">Finalizadas</div>
-                    <i class="bi bi-check-circle kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-6">
-            <div class="card kpi-card kpi-viagens-canceladas">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_viagens.canceladas }}</div>
-                    <div class="kpi-label">Canceladas</div>
-                    <i class="bi bi-x-circle kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- KPIs de Motoristas -->
-<div class="mb-4">
-    <h3 class="section-title">
-        <i class="bi bi-person-badge"></i> KPIs de Motoristas
-    </h3>
-    <div class="row g-3">
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-motoristas-disponiveis">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_motoristas.disponiveis }}</div>
-                    <div class="kpi-label">Disponíveis</div>
-                    <i class="bi bi-check-circle kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-motoristas-agendados">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_motoristas.agendados }}</div>
-                    <div class="kpi-label">Agendados</div>
-                    <i class="bi bi-calendar-event kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-motoristas-ocupados">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_motoristas.ocupados }}</div>
-                    <div class="kpi-label">Ocupados</div>
-                    <i class="bi bi-arrow-repeat kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-motoristas-offline">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_motoristas.offline }}</div>
-                    <div class="kpi-label">Offline</div>
-                    <i class="bi bi-power kpi-icon"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Métricas de Performance (COM FILTRO DE PERÍODO) -->
-<div class="mb-4">
-    <h3 class="section-title">
-        <i class="bi bi-graph-up"></i> Métricas de Performance
-        <small class="text-muted fs-6">(Período: {{ data_inicio }} a {{ data_fim }})</small>
-    </h3>
+<div class="tab-content" id="dashboardTabsContent">
     
-    <!-- Linha 1: Financeiro -->
-    <div class="row g-3 mb-3">
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-receita">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">R$ {{ "%.2f"|format(kpis_performance.receita_total) }}</div>
-                    <div class="kpi-label">Receita Total</div>
-                    <i class="bi bi-currency-dollar kpi-icon"></i>
+    <!-- ========== ABA OPERACIONAL ========== -->
+    <div class="tab-pane fade {% if request.args.get('aba', 'operacional') == 'operacional' %}show active{% endif %}" 
+         id="operacional" 
+         role="tabpanel">
+        
+        <!-- Estatísticas Gerais -->
+        <div class="stats-grid mb-4">
+            <div class="stat-item">
+                <div class="stat-value">{{ kpis_gerais.total_empresas }}</div>
+                <div class="stat-label">Total de Empresas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ kpis_gerais.total_plantas }}</div>
+                <div class="stat-label">Plantas Cadastradas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ kpis_gerais.total_motoristas }}</div>
+                <div class="stat-label">Motoristas Ativos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ kpis_gerais.total_colaboradores }}</div>
+                <div class="stat-label">Colaboradores</div>
+            </div>
+        </div>
+        
+        <!-- KPIs de Solicitações -->
+        <div class="mb-4">
+            <h3 class="section-title">
+                <i class="bi bi-clipboard-check"></i> KPIs de Solicitações
+                <small class="text-muted fs-6">(Período: {{ data_inicio }} a {{ data_fim }})</small>
+            </h3>
+            <div class="row g-3">
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-solicitacoes-pendentes">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_solicitacoes.pendentes }}</div>
+                            <div class="kpi-label">Pendentes</div>
+                            <i class="bi bi-hourglass-split kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-solicitacoes-agrupadas">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_solicitacoes.agrupadas }}</div>
+                            <div class="kpi-label">Agrupadas</div>
+                            <i class="bi bi-collection kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-solicitacoes-finalizadas">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_solicitacoes.finalizadas_periodo }}</div>
+                            <div class="kpi-label">Finalizadas do Período</div>
+                            <i class="bi bi-check-circle kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-solicitacoes-canceladas">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_solicitacoes.canceladas_periodo }}</div>
+                            <div class="kpi-label">Canceladas do Período</div>
+                            <i class="bi bi-x-circle kpi-icon"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-repasse">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">R$ {{ "%.2f"|format(kpis_performance.custo_repasse) }}</div>
-                    <div class="kpi-label">Custo de Repasse</div>
-                    <i class="bi bi-cash-stack kpi-icon"></i>
+        
+        <!-- KPIs de Viagens -->
+        <div class="mb-4">
+            <h3 class="section-title">
+                <i class="bi bi-car-front"></i> KPIs de Viagens
+                <small class="text-muted fs-6">(Período: {{ data_inicio }} a {{ data_fim }})</small>
+            </h3>
+            <div class="row g-3">
+                <div class="col-md-3 col-sm-6 col-6">
+                    <div class="card kpi-card kpi-viagens-pendentes">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_viagens.pendentes }}</div>
+                            <div class="kpi-label">Pendentes</div>
+                            <i class="bi bi-hourglass-split kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 col-6">
+                    <div class="card kpi-card kpi-viagens-agendadas">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_viagens.agendadas }}</div>
+                            <div class="kpi-label">Agendadas</div>
+                            <i class="bi bi-calendar-event kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 col-6">
+                    <div class="card kpi-card kpi-viagens-andamento">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_viagens.em_andamento }}</div>
+                            <div class="kpi-label">Em Andamento</div>
+                            <i class="bi bi-arrow-clockwise kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 col-6">
+                    <div class="card kpi-card kpi-viagens-finalizadas">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_viagens.finalizadas_periodo }}</div>
+                            <div class="kpi-label">Finalizadas do Período</div>
+                            <i class="bi bi-check-circle kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 col-6">
+                    <div class="card kpi-card kpi-viagens-canceladas">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_viagens.canceladas_periodo }}</div>
+                            <div class="kpi-label">Canceladas do Período</div>
+                            <i class="bi bi-x-circle kpi-icon"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-margem">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">R$ {{ "%.2f"|format(kpis_performance.margem_liquida) }}</div>
-                    <div class="kpi-label">Margem Líquida</div>
-                    <i class="bi bi-graph-up-arrow kpi-icon"></i>
+        
+        <!-- KPIs de Motoristas -->
+        <div class="mb-4">
+            <h3 class="section-title">
+                <i class="bi bi-person-badge"></i> KPIs de Motoristas
+            </h3>
+            <div class="row g-3">
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-motoristas-disponiveis">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_motoristas.disponiveis }}</div>
+                            <div class="kpi-label">Disponíveis</div>
+                            <i class="bi bi-check-circle kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-motoristas-agendados">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_motoristas.agendados }}</div>
+                            <div class="kpi-label">Agendados</div>
+                            <i class="bi bi-calendar-event kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-motoristas-ocupados">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_motoristas.ocupados }}</div>
+                            <div class="kpi-label">Ocupados</div>
+                            <i class="bi bi-arrow-repeat kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-motoristas-offline">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_motoristas.offline }}</div>
+                            <div class="kpi-label">Offline</div>
+                            <i class="bi bi-power kpi-icon"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-ticket">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">R$ {{ "%.2f"|format(kpis_performance.ticket_medio) }}</div>
-                    <div class="kpi-label">Ticket Médio</div>
-                    <i class="bi bi-receipt kpi-icon"></i>
-                </div>
-            </div>
-        </div>
+        
     </div>
     
-    <!-- Linha 2: Operacional -->
-    <div class="row g-3">
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-ocupacao">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_performance.taxa_ocupacao }}%</div>
-                    <div class="kpi-label">Taxa de Ocupação</div>
-                    <small class="text-muted d-block mt-1" style="font-size: 0.7rem;">
-                        {{ kpis_performance.total_passageiros }} passageiros / (viagens × {{ kpis_performance.capacidade_veiculo }})
-                    </small>
-                    <i class="bi bi-percent kpi-icon"></i>
+    <!-- ========== ABA EXECUTIVO ========== -->
+    <div class="tab-pane fade {% if request.args.get('aba') == 'executivo' %}show active{% endif %}" 
+         id="executivo" 
+         role="tabpanel">
+        
+        <!-- Resumo Executivo (3 cards grandes) -->
+        <div class="mb-4">
+            <h3 class="section-title">
+                <i class="bi bi-star-fill"></i> Resumo Executivo
+                <small class="text-muted fs-6">(Período: {{ data_inicio }} a {{ data_fim }})</small>
+            </h3>
+            <div class="row g-3">
+                <!-- Receita -->
+                <div class="col-md-4">
+                    <div class="card kpi-card-executivo" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
+                        <div class="card-body">
+                            <div class="kpi-header" style="color: rgba(255,255,255,0.9);">Receita do Período</div>
+                            <div class="kpi-value-large">R$ {{ "{:,.2f}".format(kpis_performance.receita_total).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
+                            <div class="kpi-comparison {% if kpis_performance.variacao_receita > 0 %}positive{% elif kpis_performance.variacao_receita < 0 %}negative{% else %}neutral{% endif %}" style="background: rgba(255,255,255,0.2); color: white;">
+                                {% if kpis_performance.variacao_receita > 0 %}↑{% elif kpis_performance.variacao_receita < 0 %}↓{% else %}→{% endif %}
+                                {{ kpis_performance.variacao_receita|abs }}% vs período anterior
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Margem Líquida -->
+                <div class="col-md-4">
+                    <div class="card kpi-card-executivo" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;">
+                        <div class="card-body">
+                            <div class="kpi-header" style="color: rgba(255,255,255,0.9);">Margem Líquida</div>
+                            <div class="kpi-value-large">R$ {{ "{:,.2f}".format(kpis_performance.margem_liquida).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
+                            <div class="kpi-comparison {% if kpis_performance.variacao_margem > 0 %}positive{% elif kpis_performance.variacao_margem < 0 %}negative{% else %}neutral{% endif %}" style="background: rgba(255,255,255,0.2); color: white;">
+                                {% if kpis_performance.variacao_margem > 0 %}↑{% elif kpis_performance.variacao_margem < 0 %}↓{% else %}→{% endif %}
+                                {{ kpis_performance.variacao_margem|abs }}% vs período anterior
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Viagens Finalizadas -->
+                <div class="col-md-4">
+                    <div class="card kpi-card-executivo" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white;">
+                        <div class="card-body">
+                            <div class="kpi-header" style="color: rgba(255,255,255,0.9);">Viagens Finalizadas</div>
+                            <div class="kpi-value-large">{{ kpis_viagens.finalizadas_periodo }}</div>
+                            <div class="kpi-comparison {% if kpis_performance.variacao_viagens > 0 %}positive{% elif kpis_performance.variacao_viagens < 0 %}negative{% else %}neutral{% endif %}" style="background: rgba(255,255,255,0.2); color: white;">
+                                {% if kpis_performance.variacao_viagens > 0 %}↑{% elif kpis_performance.variacao_viagens < 0 %}↓{% else %}→{% endif %}
+                                {{ kpis_performance.variacao_viagens|abs }}% vs período anterior
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-tempo">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_performance.tempo_medio_viagem }} min</div>
-                    <div class="kpi-label">Tempo Médio de Viagem</div>
-                    <i class="bi bi-stopwatch kpi-icon"></i>
+        
+        <!-- KPIs Financeiros -->
+        <div class="mb-4">
+            <h3 class="section-title">
+                <i class="bi bi-currency-dollar"></i> KPIs Financeiros
+            </h3>
+            <div class="row g-3">
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-receita">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">R$ {{ "{:,.2f}".format(kpis_performance.receita_total).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
+                            <div class="kpi-label">Receita Total</div>
+                            <i class="bi bi-currency-dollar kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-repasse">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">R$ {{ "{:,.2f}".format(kpis_performance.custo_repasse).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
+                            <div class="kpi-label">Custo de Repasse</div>
+                            <i class="bi bi-cash-stack kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-margem">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">R$ {{ "{:,.2f}".format(kpis_performance.margem_liquida).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
+                            <div class="kpi-label">Margem Líquida</div>
+                            <i class="bi bi-graph-up-arrow kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-ticket">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">R$ {{ "{:,.2f}".format(kpis_performance.ticket_medio).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
+                            <div class="kpi-label">Ticket Médio</div>
+                            <i class="bi bi-receipt kpi-icon"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-viagens-motorista">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_performance.viagens_por_motorista }}</div>
-                    <div class="kpi-label">Viagens por Motorista</div>
-                    <i class="bi bi-person-check kpi-icon"></i>
+        
+        <!-- KPIs Operacionais -->
+        <div class="mb-4">
+            <h3 class="section-title">
+                <i class="bi bi-gear"></i> KPIs Operacionais
+            </h3>
+            <div class="row g-3">
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-ocupacao">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_performance.taxa_ocupacao }}%</div>
+                            <div class="kpi-label">Taxa de Ocupação</div>
+                            <i class="bi bi-percent kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-tempo">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_performance.tempo_medio_viagem }} min</div>
+                            <div class="kpi-label">Tempo Médio de Viagem</div>
+                            <i class="bi bi-stopwatch kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-viagens-motorista">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_performance.viagens_por_motorista }}</div>
+                            <div class="kpi-label">Viagens por Motorista</div>
+                            <i class="bi bi-person-check kpi-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card kpi-card kpi-cancelamento">
+                        <div class="card-body position-relative">
+                            <div class="kpi-value">{{ kpis_performance.taxa_cancelamento }}%</div>
+                            <div class="kpi-label">Taxa de Cancelamento</div>
+                            <i class="bi bi-x-octagon kpi-icon"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card kpi-card kpi-cancelamento">
-                <div class="card-body position-relative">
-                    <div class="kpi-value">{{ kpis_performance.taxa_cancelamento }}%</div>
-                    <div class="kpi-label">Taxa de Cancelamento</div>
-                    <i class="bi bi-x-octagon kpi-icon"></i>
-                </div>
+        
+        <!-- Alertas e Insights -->
+        <div class="mb-4">
+            <h3 class="section-title">
+                <i class="bi bi-exclamation-triangle"></i> Alertas e Insights
+            </h3>
+            
+            {% if kpis_performance.taxa_cancelamento > 5 %}
+            <div class="alert-card alert-danger">
+                <strong><i class="bi bi-exclamation-circle"></i> ALERTA:</strong> 
+                Taxa de cancelamento acima de 5% (atual: {{ kpis_performance.taxa_cancelamento }}%)
             </div>
+            {% endif %}
+            
+            {% if kpis_performance.taxa_ocupacao < 60 %}
+            <div class="alert-card alert-warning">
+                <strong><i class="bi bi-exclamation-triangle"></i> ATENÇÃO:</strong> 
+                Taxa de ocupação abaixo de 60% (atual: {{ kpis_performance.taxa_ocupacao }}%)
+            </div>
+            {% endif %}
+            
+            {% if kpis_performance.variacao_margem > 10 %}
+            <div class="alert-card alert-success">
+                <strong><i class="bi bi-check-circle"></i> POSITIVO:</strong> 
+                Margem líquida cresceu {{ kpis_performance.variacao_margem }}% vs período anterior
+            </div>
+            {% endif %}
+            
+            {% if kpis_performance.taxa_cancelamento <= 5 and kpis_performance.taxa_ocupacao >= 60 and kpis_performance.variacao_margem <= 10 %}
+            <div class="alert-card alert-success">
+                <strong><i class="bi bi-check-circle"></i> TUDO OK:</strong> 
+                Nenhum alerta no momento. Operação dentro dos parâmetros esperados.
+            </div>
+            {% endif %}
         </div>
+        
     </div>
 </div>
 
-<!-- Acesso Rápido -->
+<!-- Acesso Rápido (em ambas as abas) -->
 <div class="mb-4">
     <h3 class="section-title">
         <i class="bi bi-lightning"></i> Acesso Rápido
@@ -349,14 +610,6 @@
             </a>
         </div>
         <div class="col-md-3 col-sm-6">
-            <a href="{{ url_for('admin.agrupamento') }}" class="card quick-access-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-collection display-4 mb-2"></i>
-                    <h5 class="card-title">Agrupamento</h5>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3 col-sm-6">
             <a href="{{ url_for('admin.viagens') }}" class="card quick-access-card">
                 <div class="card-body text-center">
                     <i class="bi bi-car-front display-4 mb-2"></i>
@@ -365,24 +618,171 @@
             </a>
         </div>
         <div class="col-md-3 col-sm-6">
-            <a href="{{ url_for('admin.admin_dashboard', aba='motoristas') }}" class="card quick-access-card">
+            <a href="{{ url_for('admin.agrupamento') }}" class="card quick-access-card">
                 <div class="card-body text-center">
-                    <i class="bi bi-person-badge display-4 mb-2"></i>
-                    <h5 class="card-title">Motoristas</h5>
+                    <i class="bi bi-collection display-4 mb-2"></i>
+                    <h5 class="card-title">Agrupamento</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <a href="{{ url_for('relatorios.conferencia_viagens') }}" class="card quick-access-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-earmark-text display-4 mb-2"></i>
+                    <h5 class="card-title">Relatórios</h5>
                 </div>
             </a>
         </div>
     </div>
+    
+    <!-- ========== ABA GRÁFICOS ========== -->
+    <div class="tab-pane fade {% if request.args.get('aba') == 'graficos' %}show active{% endif %}" 
+         id="graficos" 
+         role="tabpanel" 
+         aria-labelledby="graficos-tab">
+        
+        <h2 class="mb-4"><i class="bi bi-bar-chart-line"></i> Gráficos e Análises</h2>
+        
+        <!-- Gráfico 1: Receita Diária -->
+        <div class="mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-graph-up"></i> Receita Diária do Período</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="graficoReceitaDiaria" style="max-height: 400px;"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Gráfico 2: Distribuição de Viagens -->
+        <div class="mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Distribuição de Viagens por Status</h5>
+                </div>
+                <div class="card-body">
+                    <div style="max-width: 500px; margin: 0 auto;">
+                        <canvas id="graficoViagensStatus"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mensagem: Mais gráficos em breve -->
+        <div class="alert alert-info text-center" role="alert">
+            <i class="bi bi-info-circle"></i> <strong>Mais gráficos em breve...</strong>
+            <p class="mb-0 mt-2">Estamos trabalhando para adicionar mais visualizações e análises ao dashboard!</p>
+        </div>
+        
+    </div>
+    
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-// Atualiza data/hora
+// ========== INICIALIZAR GRÁFICOS ==========
+
+// Gráfico 1: Receita Diária
+const ctxReceita = document.getElementById('graficoReceitaDiaria');
+if (ctxReceita) {
+    new Chart(ctxReceita, {
+        type: 'line',
+        data: {
+            labels: {{ dados_graficos.labels_dias | tojson }},
+            datasets: [{
+                label: 'Receita (R$)',
+                data: {{ dados_graficos.receita_diaria | tojson }},
+                borderColor: 'rgb(34, 197, 94)',
+                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Receita: R$ ' + context.parsed.y.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Gráfico 2: Viagens por Status
+const ctxViagens = document.getElementById('graficoViagensStatus');
+if (ctxViagens) {
+    new Chart(ctxViagens, {
+        type: 'doughnut',
+        data: {
+            labels: {{ dados_graficos.viagens_por_status.labels | tojson }},
+            datasets: [{
+                data: {{ dados_graficos.viagens_por_status.valores | tojson }},
+                backgroundColor: [
+                    'rgb(249, 115, 22)',  // Pendentes - Laranja
+                    'rgb(168, 85, 247)',  // Agendadas - Roxo
+                    'rgb(6, 182, 212)',   // Em Andamento - Ciano
+                    'rgb(34, 197, 94)',   // Finalizadas - Verde
+                    'rgb(239, 68, 68)'    // Canceladas - Vermelho
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return label + ': ' + value + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+</script>
+
+<script>
+// Atualizar data/hora atual
 function atualizarDataHora() {
     const agora = new Date();
     const opcoes = { 
-        day: '2-digit', 
-        month: '2-digit', 
         year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit', 
         hour: '2-digit', 
         minute: '2-digit', 
         second: '2-digit' 
@@ -392,7 +792,7 @@ function atualizarDataHora() {
 atualizarDataHora();
 setInterval(atualizarDataHora, 1000);
 
-// Função para setar períodos pré-definidos
+// Função para setar período
 function setarPeriodo(tipo) {
     const hoje = new Date();
     let dataInicio, dataFim;
@@ -409,14 +809,19 @@ function setarPeriodo(tipo) {
         dataFim = hoje;
     } else if (tipo === 'trimestre') {
         const mesAtual = hoje.getMonth();
-        const mesInicioTrimestre = Math.floor(mesAtual / 3) * 3;
-        dataInicio = new Date(hoje.getFullYear(), mesInicioTrimestre, 1);
+        const inicioTrimestre = Math.floor(mesAtual / 3) * 3;
+        dataInicio = new Date(hoje.getFullYear(), inicioTrimestre, 1);
         dataFim = hoje;
     }
     
     document.getElementById('data_inicio').value = dataInicio.toISOString().split('T')[0];
     document.getElementById('data_fim').value = dataFim.toISOString().split('T')[0];
     document.getElementById('form_filtros').submit();
+}
+
+// Função para mudar aba
+function mudarAba(aba) {
+    document.getElementById('aba_input').value = aba;
 }
 </script>
 

@@ -2,9 +2,194 @@
 
 {% block title %}Conferência de Motoristas - Go Mobi{% endblock %}
 
+{% block extra_css %}
+<style>
+/* ========== CSS MOBILE PARA CONFERÊNCIA DE MOTORISTAS ========== */
+@media (max-width: 767px) {
+    .desktop-only { display: none !important; }
+    .mobile-only { display: block !important; }
+    .container-fluid { padding-left: 8px !important; padding-right: 8px !important; }
+    
+    .mobile-header-relatorio {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white; padding: 16px; margin: -16px -8px 16px -8px;
+        border-radius: 0 0 16px 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .mobile-header-relatorio h4 { font-size: 1.1rem; font-weight: 700; margin: 0; }
+    
+    .filtros-mobile {
+        background: white; padding: 16px; border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 16px;
+    }
+    .filtros-mobile .form-group { margin-bottom: 12px; }
+    .filtros-mobile label {
+        font-size: 0.875rem; font-weight: 600; color: #374151;
+        margin-bottom: 4px; display: block;
+    }
+    .filtros-mobile input, .filtros-mobile select {
+        width: 100%; padding: 10px; border: 1px solid #d1d5db;
+        border-radius: 8px; font-size: 0.9rem;
+    }
+    .filtros-mobile .btn-group-mobile { display: flex; gap: 8px; margin-top: 12px; }
+    .filtros-mobile .btn-mobile {
+        flex: 1; padding: 12px; border: none; border-radius: 8px;
+        font-weight: 600; font-size: 0.9rem; cursor: pointer;
+    }
+    .btn-mobile-primary { background: #3b82f6; color: white; }
+    .btn-mobile-secondary { background: #6b7280; color: white; }
+    
+    .totalizador-mobile {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white; padding: 16px; border-radius: 12px; margin-bottom: 16px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .totalizador-mobile .total-item {
+        display: flex; justify-content: space-between; align-items: center; padding: 8px 0;
+    }
+    .totalizador-mobile .total-item:not(:last-child) {
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+    .totalizador-mobile .total-label { font-size: 0.875rem; opacity: 0.9; }
+    .totalizador-mobile .total-value { font-size: 1.25rem; font-weight: 700; }
+    
+    .viagem-card-relatorio {
+        background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid #3b82f6;
+    }
+    .viagem-card-header-relatorio {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #e5e7eb;
+    }
+    .viagem-id-relatorio { font-size: 0.875rem; font-weight: 700; color: #6b7280; }
+    .viagem-status-badge {
+        padding: 4px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;
+    }
+    .status-finalizada { background: #d1fae5; color: #065f46; }
+    .status-agendada { background: #dbeafe; color: #1e40af; }
+    .status-andamento { background: #fef3c7; color: #92400e; }
+    .status-em-andamento { background: #fef3c7; color: #92400e; }
+    .status-cancelada { background: #fee2e2; color: #991b1b; }
+    .status-pendente { background: #e5e7eb; color: #374151; }
+    
+    .viagem-valor-destaque {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white; padding: 12px; border-radius: 8px; text-align: center; margin-bottom: 12px;
+    }
+    .viagem-valor-destaque .valor-label { font-size: 0.75rem; opacity: 0.9; margin-bottom: 4px; }
+    .viagem-valor-destaque .valor-amount { font-size: 1.5rem; font-weight: 700; }
+    
+    .viagem-info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 12px; }
+    .viagem-info-item { display: flex; flex-direction: column; }
+    .viagem-info-label { font-size: 0.75rem; color: #6b7280; margin-bottom: 2px; }
+    .viagem-info-value { font-size: 0.875rem; font-weight: 600; color: #111827; }
+    
+    .viagem-tipo-badge {
+        display: inline-block; padding: 4px 8px; border-radius: 6px;
+        font-size: 0.75rem; font-weight: 600;
+    }
+    .tipo-entrada { background: #dbeafe; color: #1e40af; }
+    .tipo-saida { background: #fef3c7; color: #92400e; }
+    .tipo-saída { background: #fef3c7; color: #92400e; }
+    .tipo-desligamento { background: #fee2e2; color: #991b1b; }
+    
+    .loading-mobile { text-align: center; padding: 40px 20px; }
+    .loading-mobile .spinner {
+        width: 40px; height: 40px; border: 4px solid #e5e7eb;
+        border-top-color: #3b82f6; border-radius: 50%; animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .empty-state-mobile { text-align: center; padding: 40px 20px; color: #6b7280; }
+    .empty-state-mobile i { font-size: 3rem; margin-bottom: 16px; opacity: 0.5; }
+}
+
+@media (min-width: 768px) {
+    .mobile-only { display: none !important; }
+    .desktop-only { display: block !important; }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid mt-4">
-    <div class="card">
+    
+    <!-- ========== VERSÃO MOBILE (< 768px) ========== -->
+    <div class="mobile-only" style="display: none;">
+        <div class="mobile-header-relatorio">
+            <h4><i class="fas fa-user-tie"></i> Conferência de Motoristas</h4>
+        </div>
+        
+        <div class="filtros-mobile">
+            <form id="formFiltrosMobile">
+                <div class="form-group">
+                    <label>Data Início *</label>
+                    <input type="date" name="data_inicio" id="data_inicio_mobile" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Data Fim *</label>
+                    <input type="date" name="data_fim" id="data_fim_mobile" class="form-control" required>
+                </div>
+                {% if user_role != 'motorista' %}
+                <div class="form-group">
+                    <label>Motorista *</label>
+                    <select name="motorista_id" id="motorista_id_mobile" class="form-control" required>
+                        <option value="">Selecione...</option>
+                        {% for motorista in motoristas %}
+                        <option value="{{ motorista.id }}">{{ motorista.nome }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% else %}
+                <input type="hidden" name="motorista_id" value="{{ motorista_id_usuario }}">
+                {% endif %}
+                <div class="form-group">
+                    <label>Status</label>
+                    <select name="status" id="status_mobile" class="form-control">
+                        <option value="">Todos</option>
+                        <option value="Pendente">Pendente</option>
+                        <option value="Agendada">Agendada</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Finalizada">Finalizada</option>
+                        <option value="Cancelada">Cancelada</option>
+                    </select>
+                </div>
+                <div class="btn-group-mobile">
+                    <button type="submit" class="btn-mobile btn-mobile-primary">
+                        <i class="fas fa-search"></i> Filtrar
+                    </button>
+                    <button type="button" class="btn-mobile btn-mobile-secondary" onclick="limparFiltrosMobile()">
+                        <i class="fas fa-eraser"></i> Limpar
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div id="loadingMobile" class="loading-mobile" style="display: none;">
+            <div class="spinner"></div>
+            <p style="margin-top: 16px; color: #6b7280;">Carregando...</p>
+        </div>
+        
+        <div id="totalizadorMobile" class="totalizador-mobile" style="display: none;">
+            <div class="total-item">
+                <span class="total-label">Total de Viagens</span>
+                <span class="total-value" id="totalViagensMobile">0</span>
+            </div>
+            <div class="total-item">
+                <span class="total-label">Total Repasse</span>
+                <span class="total-value" id="totalRepasseMobile">R$ 0,00</span>
+            </div>
+        </div>
+        
+        <div id="viagensMobile"></div>
+        
+        <div id="emptyStateMobile" class="empty-state-mobile" style="display: none;">
+            <i class="fas fa-inbox"></i>
+            <p>Nenhuma viagem encontrada</p>
+        </div>
+    </div>
+    
+    <!-- ========== VERSÃO DESKTOP (>= 768px) ========== -->
+    <div class="card desktop-only">
         <div class="card-header bg-warning text-white">
             <h4 class="mb-0"><i class="fas fa-user-tie"></i> Conferência de Motoristas</h4>
         </div>
@@ -354,6 +539,111 @@ function exportarPDF() {
         },
         error: function() { paginaAtual = paginaAtualBackup; Swal.fire('Erro', 'Erro ao buscar dados', 'error'); }
     });
+}
+
+// ========== JAVASCRIPT MOBILE ==========
+$(document).ready(function() {
+    const hoje = new Date();
+    const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    $('#data_inicio_mobile').val(primeiroDia.toISOString().split('T')[0]);
+    $('#data_fim_mobile').val(hoje.toISOString().split('T')[0]);
+});
+
+$('#formFiltrosMobile').on('submit', function(e) {
+    e.preventDefault();
+    $('#loadingMobile').show();
+    $('#totalizadorMobile').hide();
+    $('#viagensMobile').empty();
+    $('#emptyStateMobile').hide();
+    
+    $.ajax({
+        url: '{{ url_for("relatorios.dados_conferencia_motoristas") }}',
+        type: 'POST',
+        data: $(this).serialize() + '&pagina=0',
+        success: function(response) {
+            $('#loadingMobile').hide();
+            if (response.success && response.dados.length > 0) {
+                $('#totalizadorMobile').show();
+                $('#totalViagensMobile').text(response.total);
+                $('#totalRepasseMobile').text('R$ ' + response.valor_total_repasse.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                renderizarViagensMobile(response.dados);
+            } else {
+                $('#emptyStateMobile').show();
+            }
+        },
+        error: function(xhr) {
+            $('#loadingMobile').hide();
+            alert('Erro ao carregar dados');
+        }
+    });
+});
+
+function renderizarViagensMobile(viagens) {
+    const container = $('#viagensMobile');
+    container.empty();
+    viagens.forEach(viagem => {
+        const statusClass = viagem.status.toLowerCase().replace(/ /g, '-');
+        const tipoClass = viagem.tipo_corrida.toLowerCase();
+        const card = `
+            <div class="viagem-card-relatorio">
+                <div class="viagem-card-header-relatorio">
+                    <div class="viagem-id-relatorio">#${viagem.id}</div>
+                    <div class="viagem-status-badge status-${statusClass}">${viagem.status}</div>
+                </div>
+                <div class="viagem-valor-destaque">
+                    <div class="valor-label">Valor Repasse</div>
+                    <div class="valor-amount">R$ ${parseFloat(viagem.valor_repasse || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                </div>
+                <div class="viagem-info-grid">
+                    <div class="viagem-info-item">
+                        <div class="viagem-info-label">Data</div>
+                        <div class="viagem-info-value">${viagem.data_viagem}</div>
+                    </div>
+                    <div class="viagem-info-item">
+                        <div class="viagem-info-label">Horário</div>
+                        <div class="viagem-info-value">${viagem.horario}</div>
+                    </div>
+                    <div class="viagem-info-item">
+                        <div class="viagem-info-label">Tipo</div>
+                        <div class="viagem-info-value">
+                            <span class="viagem-tipo-badge tipo-${tipoClass}">${viagem.tipo_corrida}</span>
+                        </div>
+                    </div>
+                    <div class="viagem-info-item">
+                        <div class="viagem-info-label">Passageiros</div>
+                        <div class="viagem-info-value">${viagem.passageiros}</div>
+                    </div>
+                    <div class="viagem-info-item" style="grid-column: 1 / -1;">
+                        <div class="viagem-info-label">Empresa - Planta</div>
+                        <div class="viagem-info-value">${viagem.empresa} - ${viagem.planta}</div>
+                    </div>
+                    <div class="viagem-info-item" style="grid-column: 1 / -1;">
+                        <div class="viagem-info-label">Colaboradores</div>
+                        <div class="viagem-info-value" style="font-size: 0.8rem;">${viagem.colaboradores || 'N/A'}</div>
+                    </div>
+                    ${viagem.bairros ? `
+                    <div class="viagem-info-item" style="grid-column: 1 / -1;">
+                        <div class="viagem-info-label">Bairros</div>
+                        <div class="viagem-info-value" style="font-size: 0.8rem;">${viagem.bairros}</div>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+        container.append(card);
+    });
+}
+
+function limparFiltrosMobile() {
+    const hoje = new Date();
+    const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+    $('#data_inicio_mobile').val(primeiroDia.toISOString().split('T')[0]);
+    $('#data_fim_mobile').val(hoje.toISOString().split('T')[0]);
+    $('#status_mobile').val('');
+    if ($('#motorista_id_mobile').length) { $('#motorista_id_mobile').val(''); }
+    $('#totalizadorMobile').hide();
+    $('#viagensMobile').empty();
+    $('#emptyStateMobile').hide();
 }
 </script>
 {% endblock %}  
