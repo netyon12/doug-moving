@@ -501,6 +501,12 @@ def finalizar_agrupamento():
         solicitacoes_agrupadas = 0
         viagens_ids_para_notificar = []  # ✅ NOVA: Lista para armazenar IDs das viagens
 
+        # 🔧 CORREÇÃO: Força reload de todos os objetos da sessão para evitar objetos desatualizados
+        import logging
+        logger = logging.getLogger(__name__)
+        db.session.expire_all()
+        logger.info("🔄 Sessão do banco de dados limpa antes do agrupamento")
+
         for grupo in grupos:
             if not grupo or not isinstance(grupo, dict):
                 continue
@@ -512,13 +518,20 @@ def finalizar_agrupamento():
                 continue
 
             # Busca as solicitações do grupo
+            # 🔧 NOTA: NÃO usamos with_for_update() porque é incompatível com joinedload() (LEFT OUTER JOIN)
+            # Proteção contra duplicação é feita via: expire_all() + validação de status + flush()
             solicitacoes = Solicitacao.query.options(
                 joinedload(Solicitacao.colaborador).joinedload(
                     Colaborador.bloco)
             ).filter(Solicitacao.id.in_(grupo_ids)).all()
 
             if not solicitacoes:
+                logger.warning(
+                    f"⚠️  Nenhuma solicitação encontrada para IDs: {grupo_ids}")
                 continue
+
+            logger.info(
+                f"📋 Processando {len(solicitacoes)} solicitação(ões): IDs {grupo_ids}")
 
             # Pega dados da primeira solicitação (todas do grupo têm os mesmos dados base)
             primeira = solicitacoes[0]
@@ -594,86 +607,106 @@ def finalizar_agrupamento():
                 logger.info(
                     f"✅ CRIANDO FRETADO: {len(solicitacoes)} passageiros do grupo {grupos_blocos_unicos[0]}")
                 # Cria 1 registro de FRETADO para CADA colaborador
-                for solicitacao in solicitacoes:
-                    colaborador = solicitacao.colaborador
+                try:
+                    for solicitacao in solicitacoes:
+                        colaborador = solicitacao.colaborador
 
-                    # Pega dados do colaborador
-                    nome_colaborador = colaborador.nome if colaborador else 'Sem nome'
-                    matricula = colaborador.matricula if colaborador else None
-                    telefone = colaborador.telefone if colaborador else None
-                    endereco = colaborador.endereco if colaborador else None
-                    bairro = colaborador.bairro if colaborador else None
-                    cidade = colaborador.cidade if colaborador else None
+                        # Pega dados do colaborador
+                        nome_colaborador = colaborador.nome if colaborador else 'Sem nome'
+                        matricula = colaborador.matricula if colaborador else None
+                        telefone = colaborador.telefone if colaborador else None
+                        endereco = colaborador.endereco if colaborador else None
+                        bairro = colaborador.bairro if colaborador else None
+                        cidade = colaborador.cidade if colaborador else None
 
-                    # Determina horários baseado no tipo de corrida
-                    tipo_normalizado = solicitacao.tipo_corrida.lower().strip()
-                    tipo_normalizado = tipo_normalizado.replace(
-                        'ã', 'a').replace('á', 'a').replace('í', 'i')
+                        # Determina horários baseado no tipo de corrida
+                        tipo_normalizado = solicitacao.tipo_corrida.lower().strip()
+                        tipo_normalizado = tipo_normalizado.replace(
+                            'ã', 'a').replace('á', 'a').replace('í', 'i')
 
-                    if 'entrada' in tipo_normalizado and 'saida' not in tipo_normalizado:
-                        horario_entrada = solicitacao.horario_entrada
-                        horario_saida = None
-                        horario_desligamento = None
-                    elif 'saida' in tipo_normalizado and 'entrada' not in tipo_normalizado:
-                        horario_entrada = None
-                        horario_saida = solicitacao.horario_saida
-                        horario_desligamento = None
-                    elif 'desligamento' in tipo_normalizado:
-                        horario_entrada = None
-                        horario_saida = None
-                        horario_desligamento = solicitacao.horario_desligamento
-                    else:
-                        horario_entrada = solicitacao.horario_entrada
-                        horario_saida = solicitacao.horario_saida
-                        horario_desligamento = None
+                        if 'entrada' in tipo_normalizado and 'saida' not in tipo_normalizado:
+                            horario_entrada = solicitacao.horario_entrada
+                            horario_saida = None
+                            horario_desligamento = None
+                        elif 'saida' in tipo_normalizado and 'entrada' not in tipo_normalizado:
+                            horario_entrada = None
+                            horario_saida = solicitacao.horario_saida
+                            horario_desligamento = None
+                        elif 'desligamento' in tipo_normalizado:
+                            horario_entrada = None
+                            horario_saida = None
+                            horario_desligamento = solicitacao.horario_desligamento
+                        else:
+                            horario_entrada = solicitacao.horario_entrada
+                            horario_saida = solicitacao.horario_saida
+                            horario_desligamento = None
 
-                    # Cria o registro de fretado para este colaborador
-                    novo_fretado = Fretado(
-                        # Referências
-                        solicitacao_id=solicitacao.id,
-                        colaborador_id=solicitacao.colaborador_id,
+                        # Cria o registro de fretado para este colaborador
+                        novo_fretado = Fretado(
+                            # Referências
+                            solicitacao_id=solicitacao.id,
+                            colaborador_id=solicitacao.colaborador_id,
 
-                        # Dados do colaborador
-                        nome_colaborador=nome_colaborador,
-                        matricula=matricula,
-                        telefone=telefone,
+                            # Dados do colaborador
+                            nome_colaborador=nome_colaborador,
+                            matricula=matricula,
+                            telefone=telefone,
 
-                        # Endereço do colaborador
-                        endereco=endereco,
-                        bairro=bairro,
-                        cidade=cidade,
+                            # Endereço do colaborador
+                            endereco=endereco,
+                            bairro=bairro,
+                            cidade=cidade,
 
-                        # Localização e contexto
-                        empresa_id=solicitacao.empresa_id,
-                        planta_id=solicitacao.planta_id,
-                        bloco_id=solicitacao.colaborador.bloco_id if colaborador else None,
-                        grupo_bloco=grupos_blocos_unicos[0] if grupos_blocos_unicos else None,
+                            # Localização e contexto
+                            empresa_id=solicitacao.empresa_id,
+                            planta_id=solicitacao.planta_id,
+                            bloco_id=solicitacao.colaborador.bloco_id if colaborador else None,
+                            grupo_bloco=grupos_blocos_unicos[0] if grupos_blocos_unicos else None,
 
-                        # Tipo de viagem
-                        tipo_linha='FIXA',
-                        tipo_corrida=solicitacao.tipo_corrida,
+                            # Tipo de viagem
+                            tipo_linha='FIXA',
+                            tipo_corrida=solicitacao.tipo_corrida,
 
-                        # Horários
-                        horario_entrada=horario_entrada,
-                        horario_saida=horario_saida,
-                        horario_desligamento=horario_desligamento,
+                            # Horários
+                            horario_entrada=horario_entrada,
+                            horario_saida=horario_saida,
+                            horario_desligamento=horario_desligamento,
 
-                        # Status e controle
-                        status='Fretado',
-                        observacoes=f'Fretado criado automaticamente via agrupamento',
+                            # Status e controle
+                            status='Fretado',
+                            observacoes=f'Fretado criado automaticamente via agrupamento',
 
-                        # Auditoria
-                        created_by_user_id=current_user.id,
-                        data_criacao=datetime.utcnow(),
-                        data_atualizacao=datetime.utcnow()
-                    )
+                            # Auditoria
+                            created_by_user_id=current_user.id,
+                            data_criacao=datetime.utcnow(),
+                            data_atualizacao=datetime.utcnow()
+                        )
 
-                    db.session.add(novo_fretado)
-                    db.session.flush()  # Para obter o ID
+                        db.session.add(novo_fretado)
+                        db.session.flush()  # Para obter o ID
 
-                    # Atualiza status da solicitação
-                    solicitacao.status = 'Fretado'
-                    solicitacoes_agrupadas += 1
+                        # 🔧 CORREÇÃO: Verifica se já está fretada
+                        if solicitacao.status == 'Fretado':
+                            logger.warning(
+                                f"⚠️  Solicitação #{solicitacao.id} já estava com status Fretado")
+                            continue
+
+                        # Atualiza status da solicitação
+                        solicitacao.status = 'Fretado'
+                        solicitacoes_agrupadas += 1
+
+                        logger.info(
+                            f"✅ Solicitação #{solicitacao.id} atualizada: status='Fretado'")
+
+                    # 🔧 CORREÇÃO: Força flush para garantir persistência
+                    db.session.flush()
+                    logger.info(
+                        f"💾 Flush executado para fretado do grupo {grupos_blocos_unicos[0]}")
+
+                except Exception as e:
+                    logger.error(
+                        f"❌ ERRO ao criar fretado para grupo {grupos_blocos_unicos[0]}: {e}")
+                    raise  # Re-lança exceção para forçar rollback
 
                 fretados_criados += 1  # Conta como 1 grupo de fretado criado
                 logger.info(
@@ -732,17 +765,41 @@ def finalizar_agrupamento():
                 db.session.add(nova_viagem)
                 db.session.flush()
 
-                # Associa as solicitações à viagem
-                for solicitacao in solicitacoes:
-                    solicitacao.viagem_id = nova_viagem.id
-                    solicitacao.status = 'Agrupada'
-                    solicitacoes_agrupadas += 1
+                # 🔧 CORREÇÃO: Associa as solicitações à viagem com tratamento de erro
+                try:
+                    for solicitacao in solicitacoes:
+                        # Verifica se já está agrupada (evita duplicação)
+                        if solicitacao.status == 'Agrupada' and solicitacao.viagem_id:
+                            logger.warning(
+                                f"⚠️  Solicitação #{solicitacao.id} já estava agrupada na viagem #{solicitacao.viagem_id}")
+                            continue
+
+                        # Atualiza viagem e status
+                        solicitacao.viagem_id = nova_viagem.id
+                        solicitacao.status = 'Agrupada'
+                        solicitacoes_agrupadas += 1
+
+                        logger.info(
+                            f"✅ Solicitação #{solicitacao.id} atualizada: viagem_id={nova_viagem.id}, status='Agrupada'")
+
+                    # 🔧 CORREÇÃO: Força flush para garantir persistência imediata
+                    db.session.flush()
+                    logger.info(
+                        f"💾 Flush executado para viagem #{nova_viagem.id}")
+
+                except Exception as e:
+                    logger.error(
+                        f"❌ ERRO ao atualizar solicitações da viagem #{nova_viagem.id}: {e}")
+                    raise  # Re-lança exceção para forçar rollback
 
                 viagens_criadas += 1
                 # ✅ NOVA: Armazena ID para notificar depois
                 viagens_ids_para_notificar.append(nova_viagem.id)
 
+        # 🔧 CORREÇÃO: Commit final com log de confirmação
         db.session.commit()
+        logger.info(
+            f"✅ COMMIT REALIZADO: {viagens_criadas} viagem(ns), {fretados_criados} fretado(s), {solicitacoes_agrupadas} solicitação(ões) agrupada(s)")
 
         # ✅ NOVA: Envia notificações WhatsApp em background (assíncrono)
         if viagens_ids_para_notificar:
@@ -796,7 +853,7 @@ def finalizar_agrupamento():
             thread = threading.Thread(target=enviar_notificacoes, daemon=True)
             thread.start()
             logger.info(
-                f"📤 Iniciando envio assíncrono de notificações para {len(viagens_ids_para_notificar)} viagem(ns)...")
+                f"📤 Iniciando envio de notificação em lote sobre {len(viagens_ids_para_notificar)} viagem(ns) criada(s)...")
 
         # Limpa a sessão
         from flask import session
