@@ -217,13 +217,21 @@ def dados_listagem_solicitacoes():
         total_registros = query.count()
 
         # Aplicar paginação e executar query com eager loading (otimização N+1)
-        solicitacoes = query.options(
+        query_final = query.options(
             joinedload(Solicitacao.colaborador),
             joinedload(Solicitacao.empresa),
             joinedload(Solicitacao.planta),
             joinedload(Solicitacao.bloco),
             joinedload(Solicitacao.supervisor)
-        ).order_by(Solicitacao.data_criacao.desc()).limit(por_pagina).offset((pagina - 1) * por_pagina).all()
+        ).order_by(Solicitacao.data_criacao.desc())
+
+        # 🔧 CORREÇÃO: Só aplicar limit/offset se pagina > 0 (para exportação)
+        if pagina > 0:
+            solicitacoes = query_final.limit(por_pagina).offset(
+                (pagina - 1) * por_pagina).all()
+        else:
+            # pagina <= 0: buscar TODOS os registros (para exportação)
+            solicitacoes = query_final.all()
 
         # Formatar dados para JSON
         dados = []
@@ -430,14 +438,36 @@ def dados_conferencia_viagens():
         # Contar total de registros (antes da paginação)
         total_registros = query.count()
 
+        # 🔧 CORREÇÃO: Calcular valor total GLOBAL (todas as viagens do filtro)
+        valor_total_global = 0.0
+        if total_registros > 0:
+            # Buscar todas as viagens apenas para calcular valor total
+            viagens_para_total = query.options(
+                joinedload(Viagem.hora_parada)
+            ).all()
+
+            for viagem in viagens_para_total:
+                valor_viagem = float(viagem.valor) if viagem.valor else 0.0
+                if viagem.hora_parada:
+                    valor_viagem += float(viagem.hora_parada.valor_adicional)
+                valor_total_global += valor_viagem
+
         # Aplicar paginação e executar query com eager loading (otimização N+1)
-        viagens = query.options(
+        query_final = query.options(
             joinedload(Viagem.empresa),
             joinedload(Viagem.planta),
             joinedload(Viagem.bloco),
             joinedload(Viagem.motorista),
             joinedload(Viagem.hora_parada)
-        ).order_by(Viagem.id.desc()).limit(por_pagina).offset((pagina - 1) * por_pagina).all()
+        ).order_by(Viagem.id.desc())
+
+        # 🔧 CORREÇÃO: Só aplicar limit/offset se pagina > 0 (para exportação)
+        if pagina > 0:
+            viagens = query_final.limit(por_pagina).offset(
+                (pagina - 1) * por_pagina).all()
+        else:
+            # pagina <= 0: buscar TODOS os registros (para exportação)
+            viagens = query_final.all()
 
         # Buscar todos os colaboradores de uma vez (otimização N+1)
         todos_col_ids = set()
@@ -526,7 +556,7 @@ def dados_conferencia_viagens():
             'pagina_atual': pagina,
             'total_paginas': total_paginas,
             'por_pagina': por_pagina,
-            'valor_total': valor_total
+            'valor_total': valor_total_global  # 🔧 CORREÇÃO: Usar valor total global
         })
 
     except Exception as e:
@@ -627,7 +657,23 @@ def dados_conferencia_motoristas():
         # Contar total de registros (antes da paginação)
         total_registros = query.count()
 
+        # 🔧 CORREÇÃO: Calcular valor total repasse GLOBAL (todas as viagens do filtro)
+        valor_total_repasse_global = 0.0
+        if total_registros > 0:
+            # Buscar todas as viagens apenas para calcular valor total
+            viagens_para_total = query.options(
+                joinedload(Viagem.hora_parada)
+            ).all()
+
+            for viagem in viagens_para_total:
+                valor_repasse = float(
+                    viagem.valor_repasse) if viagem.valor_repasse else 0.0
+                if viagem.hora_parada:
+                    valor_repasse += float(viagem.hora_parada.repasse_adicional)
+                valor_total_repasse_global += valor_repasse
+
         # Aplicar paginação e executar query com eager loading (otimização N+1)
+        # CORREÇÃO: Se pagina=0, não aplicar limit/offset (mobile)
         query_final = query.options(
             joinedload(Viagem.motorista),
             joinedload(Viagem.empresa),
@@ -731,7 +777,8 @@ def dados_conferencia_motoristas():
             'pagina_atual': pagina,
             'total_paginas': total_paginas,
             'por_pagina': por_pagina,
-            'valor_total_repasse': valor_total_repasse
+            # 🔧 CORREÇÃO: Usar valor total global
+            'valor_total_repasse': valor_total_repasse_global
         })
 
     except Exception as e:

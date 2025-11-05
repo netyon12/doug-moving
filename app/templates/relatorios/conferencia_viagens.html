@@ -128,6 +128,8 @@
                         </button>
                     </div>
                 </div>
+                <!-- Campo hidden para paginação -->
+                <input type="hidden" name="pagina" id="inputPagina" value="1">
             </form>
 
             <!-- Loading -->
@@ -181,7 +183,7 @@
                 
                 <!-- Controles de Paginação -->
                 <div class="d-flex justify-content-between align-items-center mt-3" id="controlesPaginacao" style="display:none !important;">
-                    <button id="btnAnterior" class="btn btn-secondary" onclick="navegarPagina(-1)" disabled>
+                    <button type="button" id="btnAnterior" class="btn btn-secondary" onclick="navegarPagina(-1)" disabled>
                         <i class="fas fa-arrow-left"></i> Anterior
                     </button>
                     
@@ -189,7 +191,7 @@
                         Página 1 de 1 (0 registros)
                     </span>
                     
-                    <button id="btnProxima" class="btn btn-secondary" onclick="navegarPagina(1)" disabled>
+                    <button type="button" id="btnProxima" class="btn btn-secondary" onclick="navegarPagina(1)" disabled>
                         Próxima <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
@@ -239,8 +241,8 @@ $('#empresa_id').change(function() {
 $('#formFiltros').on('submit', function(e) {
     e.preventDefault();
     
-    // CORREÇÃO: Resetar página ao mudar filtros
-    paginaAtual = 1;
+    // 🔧 CORREÇÃO: Atualizar campo hidden antes de enviar
+    $('#inputPagina').val(paginaAtual);
     
     $('#loading').show();
     $('#areaResultados').hide();
@@ -248,8 +250,11 @@ $('#formFiltros').on('submit', function(e) {
     $.ajax({
         url: '{{ url_for("relatorios.dados_conferencia_viagens") }}',
         type: 'POST',
-        data: $(this).serialize() + '&pagina=' + paginaAtual,
+        data: $(this).serialize(),
         success: function(response) {
+            console.log('📊 Response recebido:', response);
+            console.log('📝 Página atual antes:', paginaAtual);
+            
             $('#loading').hide();
             
             if (response.success) {
@@ -258,9 +263,14 @@ $('#formFiltros').on('submit', function(e) {
                 totalPaginas = response.total_paginas || 1;
                 totalRegistrosGlobal = response.total_registros || response.total;
                 
+                console.log('✅ Dados recebidos:', response.dados.length, 'registros');
+                console.log('📝 Página atual depois:', paginaAtual, 'de', totalPaginas);
+                console.log('📝 Total registros:', totalRegistrosGlobal);
+                
                 exibirResultados(response.dados, response.total, response.valor_total);
                 atualizarControlesPaginacao();
             } else {
+                console.error('❌ Erro no response:', response.message);
                 Swal.fire({
                     icon: 'error',
                     title: 'Erro',
@@ -268,14 +278,17 @@ $('#formFiltros').on('submit', function(e) {
                 });
             }
         },
-        error: function(xhr) {
+        error: function(xhr, status, error) {
+            console.error('❌ Erro na requisição AJAX:', status, error);
+            console.error('❌ XHR:', xhr);
+            console.error('❌ Response Text:', xhr.responseText);
+            
             $('#loading').hide();
             let errorMsg = 'Erro ao gerar relatório. Tente novamente.';
             if (xhr.responseJSON && xhr.responseJSON.message) {
                 errorMsg = xhr.responseJSON.message;
             }
 
-            console.error('Erro:', xhr);
             Swal.fire({
                 icon: 'error',
                 title: 'Erro',
@@ -344,8 +357,73 @@ function exibirResultados(dados, total, valorTotal) {
 
 // Navegar entre páginas
 function navegarPagina(direcao) {
+    console.log('👉 Navegando:', direcao > 0 ? 'Próxima' : 'Anterior');
+    console.log('📝 Página antes:', paginaAtual);
+    
     paginaAtual += direcao;
-    $('#formFiltros').submit();
+    
+    console.log('📝 Página depois:', paginaAtual);
+    console.log('📝 Atualizando campo hidden para:', paginaAtual);
+    
+    // 🔧 CORREÇÃO: Atualizar campo hidden
+    $('#inputPagina').val(paginaAtual);
+    
+    console.log('📝 Valor do campo hidden:', $('#inputPagina').val());
+    console.log('📤 Fazendo requisição AJAX...');
+    
+    // 🔧 CORREÇÃO: Fazer requisição AJAX diretamente ao invés de submit()
+    $('#loading').show();
+    $('#areaResultados').hide();
+    
+    $.ajax({
+        url: '{{ url_for("relatorios.dados_conferencia_viagens") }}',
+        type: 'POST',
+        data: $('#formFiltros').serialize(),
+        success: function(response) {
+            console.log('📊 Response recebido:', response);
+            console.log('📝 Página atual antes:', paginaAtual);
+            
+            $('#loading').hide();
+            
+            if (response.success) {
+                dadosRelatorio = response.dados;
+                paginaAtual = response.pagina_atual || 1;
+                totalPaginas = response.total_paginas || 1;
+                totalRegistrosGlobal = response.total_registros || response.total;
+                
+                console.log('✅ Dados recebidos:', response.dados.length, 'registros');
+                console.log('📝 Página atual depois:', paginaAtual, 'de', totalPaginas);
+                console.log('📝 Total registros:', totalRegistrosGlobal);
+                
+                exibirResultados(response.dados, response.total, response.valor_total);
+                atualizarControlesPaginacao();
+            } else {
+                console.error('❌ Erro no response:', response.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: response.message || 'Erro ao gerar relatório'
+                });
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('❌ Erro na requisição AJAX:', status, error);
+            console.error('❌ XHR:', xhr);
+            console.error('❌ Response Text:', xhr.responseText);
+            
+            $('#loading').hide();
+            let errorMsg = 'Erro ao gerar relatório. Tente novamente.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMsg = xhr.responseJSON.message;
+            }
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: errorMsg
+            });
+        }
+    });
 }
 
 // Atualizar controles
@@ -363,6 +441,8 @@ function atualizarControlesPaginacao() {
 // Limpar filtros
 function limparFiltros() {
     paginaAtual = 1;
+    // 🔧 CORREÇÃO: Resetar campo hidden
+    $('#inputPagina').val(1);
     $('#formFiltros')[0].reset();
     $('#areaResultados').hide();
     
@@ -387,10 +467,12 @@ function exportarExcel() {
     Swal.fire({title: 'Exportando...', text: 'Buscando todos os registros...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
     var paginaAtualBackup = paginaAtual;
     paginaAtual = 0;
+    // 🔧 CORREÇÃO: Atualizar campo hidden para exportação
+    $('#inputPagina').val(0);
     $.ajax({
         url: '{{ url_for("relatorios.dados_conferencia_viagens") }}',
         type: 'POST',
-        data: $('#formFiltros').serialize() + '&pagina=0',
+        data: $('#formFiltros').serialize(),
         success: function(response) {
             paginaAtual = paginaAtualBackup;
             Swal.close();
@@ -420,10 +502,12 @@ function exportarPDF() {
     Swal.fire({title: 'Exportando...', text: 'Buscando todos os registros...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
     var paginaAtualBackup = paginaAtual;
     paginaAtual = 0;
+    // 🔧 CORREÇÃO: Atualizar campo hidden para exportação
+    $('#inputPagina').val(0);
     $.ajax({
         url: '{{ url_for("relatorios.dados_conferencia_viagens") }}',
         type: 'POST',
-        data: $('#formFiltros').serialize() + '&pagina=0',
+        data: $('#formFiltros').serialize(),
         success: function(response) {
             paginaAtual = paginaAtualBackup;
             Swal.close();
