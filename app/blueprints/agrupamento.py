@@ -765,22 +765,32 @@ def finalizar_agrupamento():
                 db.session.add(nova_viagem)
                 db.session.flush()
 
-                # 🔧 CORREÇÃO: Associa as solicitações à viagem com tratamento de erro
+                # 🔧 CORREÇÃO DEFINITIVA: Usa UPDATE em massa ao invés de atualizar objeto por objeto
+                # Isso evita problemas com expire_all() e garante que o status seja atualizado corretamente
                 try:
+                    # Coleta IDs das solicitações que ainda não estão agrupadas
+                    solicitacoes_ids_para_agrupar = []
                     for solicitacao in solicitacoes:
                         # Verifica se já está agrupada (evita duplicação)
                         if solicitacao.status == 'Agrupada' and solicitacao.viagem_id:
                             logger.warning(
                                 f"⚠️  Solicitação #{solicitacao.id} já estava agrupada na viagem #{solicitacao.viagem_id}")
                             continue
+                        solicitacoes_ids_para_agrupar.append(solicitacao.id)
 
-                        # Atualiza viagem e status
-                        solicitacao.viagem_id = nova_viagem.id
-                        solicitacao.status = 'Agrupada'
-                        solicitacoes_agrupadas += 1
+                    # ✅ CORREÇÃO: Atualiza em massa usando UPDATE (mais confiável)
+                    if solicitacoes_ids_para_agrupar:
+                        quantidade_atualizada = Solicitacao.query.filter(
+                            Solicitacao.id.in_(solicitacoes_ids_para_agrupar)
+                        ).update({
+                            'viagem_id': nova_viagem.id,
+                            'status': 'Agrupada'
+                        }, synchronize_session='fetch')
+
+                        solicitacoes_agrupadas += quantidade_atualizada
 
                         logger.info(
-                            f"✅ Solicitação #{solicitacao.id} atualizada: viagem_id={nova_viagem.id}, status='Agrupada'")
+                            f"✅ {quantidade_atualizada} solicitação(ões) atualizada(s) em massa: viagem_id={nova_viagem.id}, status='Agrupada'")
 
                     # 🔧 CORREÇÃO: Força flush para garantir persistência imediata
                     db.session.flush()
