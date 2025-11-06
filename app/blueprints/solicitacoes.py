@@ -555,24 +555,50 @@ def nova_solicitacao():
                 )
 
             # Mensagens de feedback
-            if solicitacoes_criadas > 0:
-                flash(
-                    f'{solicitacoes_criadas} solicitação(ões) criada(s) com sucesso!', 'success')
-
+            mensagem_sucesso = f'{solicitacoes_criadas} solicitação(ões) criada(s) com sucesso!'
+            mensagem_duplicadas = ''
+            
             if solicitacoes_duplicadas:
                 nomes_duplicados = ', '.join(solicitacoes_duplicadas)
-                flash(
-                    f'Solicitações duplicadas ignoradas para: {nomes_duplicados}', 'warning')
-
-            return redirect(url_for('admin.solicitacoes'))
+                mensagem_duplicadas = f'Solicitações duplicadas ignoradas para: {nomes_duplicados}'
+            
+            # Verifica se é requisição AJAX
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json or 'application/json' in request.headers.get('Accept', ''):
+                # Retorna JSON para AJAX
+                return jsonify({
+                    'success': True,
+                    'message': mensagem_sucesso,
+                    'solicitacoes_criadas': solicitacoes_criadas,
+                    'solicitacoes_duplicadas': len(solicitacoes_duplicadas),
+                    'mensagem_duplicadas': mensagem_duplicadas
+                })
+            else:
+                # Retorna redirect tradicional
+                if solicitacoes_criadas > 0:
+                    flash(mensagem_sucesso, 'success')
+                if mensagem_duplicadas:
+                    flash(mensagem_duplicadas, 'warning')
+                return redirect(url_for('admin.solicitacoes'))
 
         except Exception as e:
             db.session.rollback()
-            current_app.logger.error(f"❌ ERRO ao criar solicitação: {str(e)}")
-            flash(f'Erro ao criar solicitações: {str(e)}', 'danger')
-            import traceback
-            print(traceback.format_exc())  # Log detalhado no console
-            return redirect(url_for('admin.nova_solicitacao'))
+            logger.error(f"[ERRO] Erro ao criar solicitação: {str(e)}")
+            logger.exception("Traceback completo:")
+            
+            mensagem_erro = f'Erro ao criar solicitações: {str(e)}'
+            
+            # Verifica se é requisição AJAX
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json or 'application/json' in request.headers.get('Accept', ''):
+                # Retorna JSON para AJAX
+                return jsonify({
+                    'success': False,
+                    'message': mensagem_erro,
+                    'solicitacoes_criadas': 0
+                }), 500
+            else:
+                # Retorna redirect tradicional
+                flash(mensagem_erro, 'danger')
+                return redirect(url_for('admin.nova_solicitacao'))
 
     # --- LÓGICA DO GET (INTELIGENTE) ---
 
