@@ -1,0 +1,370 @@
+[2025-11-06 17:38:20] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:119]: ======================================================================
+[2025-11-06 17:38:20] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:129]: ======================================================================
+[2025-11-06 17:38:36] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-11-06 18:00:08] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:119]: ======================================================================
+[2025-11-06 18:00:08] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:129]: ======================================================================
+[2025-11-06 18:00:23] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-11-06 18:22:29] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-11-06 18:22:29] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-11-06 18:22:29] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-11-06 18:22:29] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-11-06 18:22:29] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-11-06 18:22:45] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-11-06 18:25:15] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:510]: [RETRY] Sessão do banco de dados limpa antes do agrupamento
+[2025-11-06 18:25:15] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [177]
+[2025-11-06 18:25:15] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['TTE3'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:15] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [177]
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [178]
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['TTE3'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [178]
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [103]
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['TTE6'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:16] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [103]
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [154]
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC3'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [154]
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [169]
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC3'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:17] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [169]
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [142]
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC3'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [142]
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [149]
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC3'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [149]
+[2025-11-06 18:25:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [118]
+[2025-11-06 18:25:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['CPV4'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [118]
+[2025-11-06 18:25:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [182]
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['CPV4'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [182]
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [117]
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['CPV4'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [117]
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [180]
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC2'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [180]
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [115]
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC2'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [115]
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:21] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [179]
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC2'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [179]
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [141]
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC1'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [141]
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:22] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 2 solicitação(ões): IDs [150, 151]
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=2, grupos_blocos_unicos=['SJC1'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=2, mesmo_grupo=True
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 2 solicitações: [150, 151]
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 2 registro(s)
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 2 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 2 solicitação(ões): IDs [113, 114]
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=2, grupos_blocos_unicos=['SJC1'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=2, mesmo_grupo=True
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 2 solicitações: [113, 114]
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 2 registro(s)
+[2025-11-06 18:25:23] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 2 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 3 solicitação(ões): IDs [167, 168, 170]
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=3, grupos_blocos_unicos=['SJC1'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=3, mesmo_grupo=True
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 3 solicitações: [167, 168, 170]
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 3 registro(s)
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 3 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [112]
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC4'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [112]
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:24] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:25] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:25] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [158]
+[2025-11-06 18:25:25] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['TTE2'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:25] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:25] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [158]
+[2025-11-06 18:25:25] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:25] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:25] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:25] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [153]
+[2025-11-06 18:25:25] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['TTE2'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:25] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 18:25:25] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [153]
+[2025-11-06 18:25:26] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 18:25:26] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 18:25:26] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 18:25:26] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 11 solicitação(ões): IDs [132, 119, 120, 131, 99, 100, 101, 102, 104, 157, 156]
+[2025-11-06 18:25:26] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=11, grupos_blocos_unicos=['TTE1'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:26] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:607]: [OK] CRIANDO FRETADO: 11 passageiros do grupo TTE1
+[2025-11-06 18:25:27] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:698]: [>>>] Atualizando 11 solicitações para Fretado
+[2025-11-06 18:25:27] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:707]: [...] UPDATE fretado retornou: 11 registro(s)
+[2025-11-06 18:25:27] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:711]: [SAVE] Flush executado para fretado
+[2025-11-06 18:25:27] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:734]: [OK] 11 solicitações atualizadas para Fretado
+[2025-11-06 18:25:27] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:742]: [SUCCESS] FRETADO CRIADO: 11 registros na tabela fretado para o grupo TTE1
+[2025-11-06 18:25:28] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 17 solicitação(ões): IDs [137, 133, 155, 138, 140, 146, 147, 139, 163, 111, 166, 159, 152, 164, 165, 171, 172]
+[2025-11-06 18:25:28] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=17, grupos_blocos_unicos=['CPV5'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:28] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:607]: [OK] CRIANDO FRETADO: 17 passageiros do grupo CPV5
+[2025-11-06 18:25:30] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:698]: [>>>] Atualizando 17 solicitações para Fretado
+[2025-11-06 18:25:30] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:707]: [...] UPDATE fretado retornou: 17 registro(s)
+[2025-11-06 18:25:30] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:711]: [SAVE] Flush executado para fretado
+[2025-11-06 18:25:30] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:734]: [OK] 17 solicitações atualizadas para Fretado
+[2025-11-06 18:25:30] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:742]: [SUCCESS] FRETADO CRIADO: 17 registros na tabela fretado para o grupo CPV5
+[2025-11-06 18:25:30] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 32 solicitação(ões): IDs [134, 135, 136, 181, 123, 121, 125, 127, 129, 183, 126, 128, 130, 122, 124, 116, 107, 148, 160, 161, 162, 108, 105, 106, 109, 173, 174, 175, 143, 144, 145, 176]
+[2025-11-06 18:25:30] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=32, grupos_blocos_unicos=['CPV2'], mesmo_grupo_bloco=True
+[2025-11-06 18:25:30] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:607]: [OK] CRIANDO FRETADO: 32 passageiros do grupo CPV2
+[2025-11-06 18:25:34] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:698]: [>>>] Atualizando 32 solicitações para Fretado
+[2025-11-06 18:25:34] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:707]: [...] UPDATE fretado retornou: 32 registro(s)
+[2025-11-06 18:25:34] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:711]: [SAVE] Flush executado para fretado
+[2025-11-06 18:25:34] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:734]: [OK] 32 solicitações atualizadas para Fretado
+[2025-11-06 18:25:34] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:742]: [SUCCESS] FRETADO CRIADO: 32 registros na tabela fretado para o grupo CPV2
+[2025-11-06 18:25:35] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:886]: [OK] COMMIT REALIZADO: 20 viagem(ns), 3 fretado(s), 84 solicitação(ões) agrupada(s)
+[2025-11-06 18:25:35] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:938]: [>>>] Iniciando envio de notificação em lote sobre 20 viagem(ns) criada(s)...
+[2025-11-06 18:25:38] WARNING in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:923]: [AVISO]  Nenhum motorista notificado sobre as 20 viagem(ns) criadas
+[2025-11-06 18:51:29] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-11-06 18:51:29] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-11-06 18:51:29] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-11-06 18:51:29] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-11-06 18:51:29] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-11-06 18:51:29] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:35]: Módulo solicitacoes carregado
+[2025-11-06 18:51:45] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-11-06 18:56:40] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:192]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '2'), ('planta_id', '1'), ('tipo_corrida', 'saida'), ('colaborador_id[]', '699'), ('colaborador_id[]', '25'), ('colaborador_id[]', '73'), ('colaborador_id[]', '100'), ('colaborador_id[]', '47'), ('colaborador_id[]', '219'), ('colaborador_id[]', '153'), ('colaborador_id[]', '138'), ('colaborador_id[]', '117'), ('horario_entrada[]', ''), ('horario_entrada[]', ''), ('horario_entrada[]', ''), ('horario_entrada[]', ''), ('horario_entrada[]', ''), ('horario_entrada[]', ''), ('horario_entrada[]', ''), ('horario_entrada[]', ''), ('horario_entrada[]', ''), ('horario_saida[]', '2025-11-06T20:00'), ('horario_saida[]', '2025-11-06T20:00'), ('horario_saida[]', '2025-11-06T20:00'), ('horario_saida[]', '2025-11-06T20:00'), ('horario_saida[]', '2025-11-06T20:00'), ('horario_saida[]', '2025-11-06T20:00'), ('horario_saida[]', '2025-11-06T20:00'), ('horario_saida[]', '2025-11-06T20:00'), ('horario_saida[]', '2025-11-06T20:00'), ('horario_desligamento[]', ''), ('horario_desligamento[]', ''), ('horario_desligamento[]', ''), ('horario_desligamento[]', ''), ('horario_desligamento[]', ''), ('horario_desligamento[]', ''), ('horario_desligamento[]', ''), ('horario_desligamento[]', ''), ('horario_desligamento[]', ''), ('turno_entrada[]', ''), ('turno_entrada[]', ''), ('turno_entrada[]', ''), ('turno_entrada[]', ''), ('turno_entrada[]', ''), ('turno_entrada[]', ''), ('turno_entrada[]', ''), ('turno_entrada[]', ''), ('turno_entrada[]', ''), ('turno_saida[]', '1° Turno'), ('turno_saida[]', '1° Turno'), ('turno_saida[]', '1° Turno'), ('turno_saida[]', '1° Turno'), ('turno_saida[]', '1° Turno'), ('turno_saida[]', '1° Turno'), ('turno_saida[]', '1° Turno'), ('turno_saida[]', '1° Turno'), ('turno_saida[]', '1° Turno'), ('turno_desligamento[]', ''), ('turno_desligamento[]', ''), ('turno_desligamento[]', ''), ('turno_desligamento[]', ''), ('turno_desligamento[]', ''), ('turno_desligamento[]', ''), ('turno_desligamento[]', ''), ('turno_desligamento[]', ''), ('turno_desligamento[]', '')])
+[2025-11-06 19:01:35] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-11-06 19:01:35] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-11-06 19:01:35] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-11-06 19:01:35] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-11-06 19:01:35] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-11-06 19:01:35] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:35]: Módulo solicitacoes carregado
+[2025-11-06 19:01:52] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-11-06 19:03:57] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:192]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '2'), ('planta_id', '1'), ('tipo_corrida', 'saida'), ('colaborador_id[]', '226'), ('horario_entrada[]', ''), ('horario_saida[]', '2025-11-06T20:01'), ('horario_desligamento[]', ''), ('turno_entrada[]', ''), ('turno_saida[]', '1° Turno'), ('turno_desligamento[]', '')])
+[2025-11-06 19:11:21] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-11-06 19:11:21] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-11-06 19:11:21] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-11-06 19:11:21] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-11-06 19:11:21] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-11-06 19:11:21] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:35]: Módulo solicitacoes carregado
+[2025-11-06 19:11:36] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-11-06 19:16:10] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:192]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '2'), ('planta_id', '1'), ('tipo_corrida', 'saida'), ('colaborador_id[]', '329'), ('horario_entrada[]', ''), ('horario_saida[]', '2025-11-06T20:02'), ('horario_desligamento[]', ''), ('turno_entrada[]', ''), ('turno_saida[]', '1° Turno'), ('turno_desligamento[]', '')])
+[2025-11-06 19:24:08] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-11-06 19:24:08] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-11-06 19:24:08] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-11-06 19:24:08] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-11-06 19:24:08] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-11-06 19:24:08] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:35]: Módulo solicitacoes carregado
+[2025-11-06 19:24:23] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-11-06 19:25:56] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:192]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '2'), ('planta_id', '1'), ('tipo_corrida', 'saida'), ('colaborador_id[]', '226'), ('horario_entrada[]', ''), ('horario_saida[]', '2025-11-06T20:03'), ('horario_desligamento[]', ''), ('turno_entrada[]', ''), ('turno_saida[]', '1° Turno'), ('turno_desligamento[]', '')])
+[2025-11-06 19:33:39] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:510]: [RETRY] Sessão do banco de dados limpa antes do agrupamento
+[2025-11-06 19:33:39] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 3 solicitação(ões): IDs [240, 221, 235]
+[2025-11-06 19:33:39] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=3, grupos_blocos_unicos=['TTE1'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:39] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=3, mesmo_grupo=True
+[2025-11-06 19:33:39] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 3 solicitações: [221, 235, 240]
+[2025-11-06 19:33:39] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 3 registro(s)
+[2025-11-06 19:33:39] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:39] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 3 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [256]
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['TTE1'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [256]
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [188]
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['TTE1'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [188]
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:40] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [186]
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC1'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [186]
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [189]
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC1'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [189]
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:41] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [205]
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['GM'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [205]
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [267]
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC1'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [267]
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:42] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 2 solicitação(ões): IDs [196, 197]
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=2, grupos_blocos_unicos=['SJC1'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=2, mesmo_grupo=True
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 2 solicitações: [196, 197]
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 2 registro(s)
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 2 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [195]
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC1'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [195]
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:43] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [206]
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['GM'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [206]
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [187]
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['TTE3'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [187]
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:44] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [193]
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['JAC'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [193]
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 3 solicitação(ões): IDs [222, 226, 224]
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=3, grupos_blocos_unicos=['CPV4'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=3, mesmo_grupo=True
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 3 solicitações: [222, 226, 224]
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 3 registro(s)
+[2025-11-06 19:33:45] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 3 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 3 solicitação(ões): IDs [238, 242, 249]
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=3, grupos_blocos_unicos=['CPV4'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=3, mesmo_grupo=True
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 3 solicitações: [238, 242, 249]
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 3 registro(s)
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 3 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [254]
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['CPV4'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [254]
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [209]
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['CPV4'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [209]
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [258]
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['CPV4'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [258]
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [201]
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC4'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [201]
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [213]
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['TTE6'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [213]
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:48] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [241]
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['TTE6'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [241]
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [191]
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['AMB'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [191]
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:49] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:50] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:535]: [INFO] Processando 1 solicitação(ões): IDs [266]
+[2025-11-06 19:33:50] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:601]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['AMB'], mesmo_grupo_bloco=True
+[2025-11-06 19:33:50] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:745]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-11-06 19:33:50] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:813]: [>>>] Tentando atualizar 1 solicitações: [266]
+[2025-11-06 19:33:50] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:823]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-11-06 19:33:50] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:827]: [SAVE] Flush executado
+[2025-11-06 19:33:50] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:871]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-11-06 19:33:50] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:886]: [OK] COMMIT REALIZADO: 22 viagem(ns), 0 fretado(s), 29 solicitação(ões) agrupada(s)
+[2025-11-06 19:33:50] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:938]: [>>>] Iniciando envio de notificação em lote sobre 22 viagem(ns) criada(s)...
+[2025-11-06 19:33:56] WARNING in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:923]: [AVISO]  Nenhum motorista notificado sobre as 22 viagem(ns) criadas

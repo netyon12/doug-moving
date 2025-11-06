@@ -15,6 +15,10 @@ from sqlalchemy.orm import joinedload
 from io import StringIO
 import io
 import csv
+import logging
+
+# Configurar logger para este módulo
+logger = logging.getLogger(__name__)
 
 from .. import db
 from ..models import (
@@ -340,8 +344,8 @@ def agrupar_automatico():
 
         # Monta mensagem detalhada
         mensagem = (
-            f"✅ Agrupamento concluído com sucesso!\n\n"
-            f"📊 Estatísticas:\n"
+            f"[OK] Agrupamento concluído com sucesso!\n\n"
+            f"[STATS] Estatísticas:\n"
             f"• {resultado['fretados_criados']} fretado(s) criado(s)\n"
             f"• {resultado['viagens_criadas']} viagem(ns) criada(s)\n"
             f"• {resultado['solicitacoes_agrupadas']} solicitação(ões) agrupada(s)"
@@ -499,13 +503,11 @@ def finalizar_agrupamento():
         viagens_criadas = 0
         fretados_criados = 0
         solicitacoes_agrupadas = 0
-        viagens_ids_para_notificar = []  # ✅ NOVA: Lista para armazenar IDs das viagens
+        viagens_ids_para_notificar = []  # [OK] NOVA: Lista para armazenar IDs das viagens
 
-        # 🔧 CORREÇÃO: Força reload de todos os objetos da sessão para evitar objetos desatualizados
-        import logging
-        logger = logging.getLogger(__name__)
+        # [FIX] CORREÇÃO: Força reload de todos os objetos da sessão para evitar objetos desatualizados
         db.session.expire_all()
-        logger.info("🔄 Sessão do banco de dados limpa antes do agrupamento")
+        logger.info("[RETRY] Sessão do banco de dados limpa antes do agrupamento")
 
         for grupo in grupos:
             if not grupo or not isinstance(grupo, dict):
@@ -518,7 +520,7 @@ def finalizar_agrupamento():
                 continue
 
             # Busca as solicitações do grupo
-            # 🔧 NOTA: NÃO usamos with_for_update() porque é incompatível com joinedload() (LEFT OUTER JOIN)
+            # [FIX] NOTA: NÃO usamos with_for_update() porque é incompatível com joinedload() (LEFT OUTER JOIN)
             # Proteção contra duplicação é feita via: expire_all() + validação de status + flush()
             solicitacoes = Solicitacao.query.options(
                 joinedload(Solicitacao.colaborador).joinedload(
@@ -527,11 +529,11 @@ def finalizar_agrupamento():
 
             if not solicitacoes:
                 logger.warning(
-                    f"⚠️  Nenhuma solicitação encontrada para IDs: {grupo_ids}")
+                    f"[AVISO]  Nenhuma solicitação encontrada para IDs: {grupo_ids}")
                 continue
 
             logger.info(
-                f"📋 Processando {len(solicitacoes)} solicitação(ões): IDs {grupo_ids}")
+                f"[INFO] Processando {len(solicitacoes)} solicitação(ões): IDs {grupo_ids}")
 
             # Pega dados da primeira solicitação (todas do grupo têm os mesmos dados base)
             primeira = solicitacoes[0]
@@ -548,7 +550,7 @@ def finalizar_agrupamento():
             blocos_ids_str = ','.join(
                 map(str, blocos_unicos_ids)) if blocos_unicos_ids else None
 
-            # ✅ CORREÇÃO: Coleta GRUPOS de blocos únicos (prefixo antes do ponto)
+            # [OK] CORREÇÃO: Coleta GRUPOS de blocos únicos (prefixo antes do ponto)
             # Exemplo: CPV2.1 e CPV2.5 → ambos são do grupo "CPV2"
             grupos_blocos_unicos = set()
             for sol in solicitacoes:
@@ -595,17 +597,15 @@ def finalizar_agrupamento():
                 horario_saida = primeira.horario_saida
                 horario_desligamento = primeira.horario_desligamento
 
-            # 🔍 DEBUG: Log para diagnóstico
-            import logging
-            logger = logging.getLogger(__name__)
+            # [DEBUG] DEBUG: Log para diagnóstico
             logger.info(
-                f"🔍 DEBUG FRETADO: len(solicitacoes)={len(solicitacoes)}, grupos_blocos_unicos={grupos_blocos_unicos}, mesmo_grupo_bloco={mesmo_grupo_bloco}")
+                f"[DEBUG] DEBUG FRETADO: len(solicitacoes)={len(solicitacoes)}, grupos_blocos_unicos={grupos_blocos_unicos}, mesmo_grupo_bloco={mesmo_grupo_bloco}")
 
             # REGRA: Se 10+ passageiros do mesmo GRUPO DE BLOCO, cria FRETADO; senão, cria VIAGEM
             # Exemplo: CPV2.1 + CPV2.5 = mesmo grupo (CPV2) → pode criar fretado
             if len(solicitacoes) >= 10 and mesmo_grupo_bloco:
                 logger.info(
-                    f"✅ CRIANDO FRETADO: {len(solicitacoes)} passageiros do grupo {grupos_blocos_unicos[0]}")
+                    f"[OK] CRIANDO FRETADO: {len(solicitacoes)} passageiros do grupo {grupos_blocos_unicos[0]}")
                 # Cria 1 registro de FRETADO para CADA colaborador
                 try:
                     for solicitacao in solicitacoes:
@@ -685,35 +685,65 @@ def finalizar_agrupamento():
                         db.session.add(novo_fretado)
                         db.session.flush()  # Para obter o ID
 
-                        # 🔧 CORREÇÃO: Verifica se já está fretada
+                    # [OK] CORREÇÃO V3: Atualiza fretados com VALIDAÇÃO
+                    solicitacoes_ids_fretado = []
+                    for solicitacao in solicitacoes:
                         if solicitacao.status == 'Fretado':
                             logger.warning(
-                                f"⚠️  Solicitação #{solicitacao.id} já estava com status Fretado")
+                                f"[AVISO]  Solicitação #{solicitacao.id} já estava com status Fretado")
                             continue
-
-                        # Atualiza status da solicitação
-                        solicitacao.status = 'Fretado'
-                        solicitacoes_agrupadas += 1
-
-                        logger.info(
-                            f"✅ Solicitação #{solicitacao.id} atualizada: status='Fretado'")
-
-                    # 🔧 CORREÇÃO: Força flush para garantir persistência
-                    db.session.flush()
-                    logger.info(
-                        f"💾 Flush executado para fretado do grupo {grupos_blocos_unicos[0]}")
+                        solicitacoes_ids_fretado.append(solicitacao.id)
+                    
+                    if solicitacoes_ids_fretado:
+                        logger.info(f"[>>>] Atualizando {len(solicitacoes_ids_fretado)} solicitações para Fretado")
+                        
+                        # UPDATE em massa
+                        quantidade_fretado = Solicitacao.query.filter(
+                            Solicitacao.id.in_(solicitacoes_ids_fretado)
+                        ).update({
+                            'status': 'Fretado'
+                        }, synchronize_session='fetch')
+                        
+                        logger.info(f"[...] UPDATE fretado retornou: {quantidade_fretado} registro(s)")
+                        
+                        # Flush
+                        db.session.flush()
+                        logger.info(f"[SAVE] Flush executado para fretado")
+                        
+                        # VALIDAÇÃO
+                        solicitacoes_verif_fretado = Solicitacao.query.filter(
+                            Solicitacao.id.in_(solicitacoes_ids_fretado)
+                        ).all()
+                        
+                        nao_fretadas = []
+                        for sol in solicitacoes_verif_fretado:
+                            if sol.status != 'Fretado':
+                                nao_fretadas.append(sol.id)
+                        
+                        # RETRY se necessário
+                        if nao_fretadas:
+                            logger.warning(f"[AVISO]  {len(nao_fretadas)} solicitações não foram fretadas, tentando retry...")
+                            for sol_id in nao_fretadas:
+                                sol = Solicitacao.query.get(sol_id)
+                                if sol:
+                                    sol.status = 'Fretado'
+                                    logger.info(f"[OK] Solicitação #{sol_id} fretada manualmente")
+                            db.session.flush()
+                        
+                        solicitacoes_agrupadas += len(solicitacoes_ids_fretado)
+                        logger.info(f"[OK] {len(solicitacoes_ids_fretado)} solicitações atualizadas para Fretado")
 
                 except Exception as e:
                     logger.error(
-                        f"❌ ERRO ao criar fretado para grupo {grupos_blocos_unicos[0]}: {e}")
+                        f"[ERRO] ERRO ao criar fretado para grupo {grupos_blocos_unicos[0]}: {e}")
                     raise  # Re-lança exceção para forçar rollback
 
                 fretados_criados += 1  # Conta como 1 grupo de fretado criado
                 logger.info(
-                    f"🎉 FRETADO CRIADO: {len(solicitacoes)} registros na tabela fretado para o grupo {grupos_blocos_unicos[0] if grupos_blocos_unicos else 'N/A'}")
+                    f"[SUCCESS] FRETADO CRIADO: {len(solicitacoes)} registros na tabela fretado para o grupo {grupos_blocos_unicos[0] if grupos_blocos_unicos else 'N/A'}")
             else:
                 logger.info(
-                    f"⚠️ CRIANDO VIAGEM: len={len(solicitacoes)}, mesmo_grupo={mesmo_grupo_bloco}")
+                    f"[AVISO] CRIANDO VIAGEM: len={len(solicitacoes)}, mesmo_grupo={mesmo_grupo_bloco}")
                 # Cria VIAGEM
                 nova_viagem = Viagem(
                     # Status
@@ -765,50 +795,103 @@ def finalizar_agrupamento():
                 db.session.add(nova_viagem)
                 db.session.flush()
 
-                # 🔧 CORREÇÃO: Associa as solicitações à viagem com tratamento de erro
+                # [FIX] CORREÇÃO DEFINITIVA: Usa UPDATE em massa ao invés de atualizar objeto por objeto
+                # Isso evita problemas com expire_all() e garante que o status seja atualizado corretamente
                 try:
+                    # Coleta IDs das solicitações que ainda não estão agrupadas
+                    solicitacoes_ids_para_agrupar = []
                     for solicitacao in solicitacoes:
                         # Verifica se já está agrupada (evita duplicação)
                         if solicitacao.status == 'Agrupada' and solicitacao.viagem_id:
                             logger.warning(
-                                f"⚠️  Solicitação #{solicitacao.id} já estava agrupada na viagem #{solicitacao.viagem_id}")
+                                f"[AVISO]  Solicitação #{solicitacao.id} já estava agrupada na viagem #{solicitacao.viagem_id}")
                             continue
+                        solicitacoes_ids_para_agrupar.append(solicitacao.id)
 
-                        # Atualiza viagem e status
-                        solicitacao.viagem_id = nova_viagem.id
-                        solicitacao.status = 'Agrupada'
-                        solicitacoes_agrupadas += 1
-
-                        logger.info(
-                            f"✅ Solicitação #{solicitacao.id} atualizada: viagem_id={nova_viagem.id}, status='Agrupada'")
-
-                    # 🔧 CORREÇÃO: Força flush para garantir persistência imediata
-                    db.session.flush()
-                    logger.info(
-                        f"💾 Flush executado para viagem #{nova_viagem.id}")
+                    # [OK] CORREÇÃO V3: Atualiza com VALIDAÇÃO e RETRY
+                    if solicitacoes_ids_para_agrupar:
+                        logger.info(f"[>>>] Tentando atualizar {len(solicitacoes_ids_para_agrupar)} solicitações: {solicitacoes_ids_para_agrupar}")
+                        
+                        # TENTATIVA 1: UPDATE em massa
+                        quantidade_atualizada = Solicitacao.query.filter(
+                            Solicitacao.id.in_(solicitacoes_ids_para_agrupar)
+                        ).update({
+                            'viagem_id': nova_viagem.id,
+                            'status': 'Agrupada'
+                        }, synchronize_session='fetch')
+                        
+                        logger.info(f"[...] UPDATE em massa retornou: {quantidade_atualizada} registro(s)")
+                        
+                        # Força flush para persistir
+                        db.session.flush()
+                        logger.info(f"[SAVE] Flush executado")
+                        
+                        # VALIDAÇÃO: Verifica se TODAS foram atualizadas
+                        solicitacoes_verificacao = Solicitacao.query.filter(
+                            Solicitacao.id.in_(solicitacoes_ids_para_agrupar)
+                        ).all()
+                        
+                        nao_atualizadas = []
+                        for sol in solicitacoes_verificacao:
+                            if sol.status != 'Agrupada' or sol.viagem_id != nova_viagem.id:
+                                nao_atualizadas.append(sol.id)
+                        
+                        # Se houver solicitações não atualizadas, RETRY objeto por objeto
+                        if nao_atualizadas:
+                            logger.warning(f"[AVISO]  UPDATE em massa falhou para {len(nao_atualizadas)} solicitações: {nao_atualizadas}")
+                            logger.info(f"[RETRY] Tentando RETRY objeto por objeto...")
+                            
+                            for sol_id in nao_atualizadas:
+                                sol = Solicitacao.query.get(sol_id)
+                                if sol:
+                                    sol.viagem_id = nova_viagem.id
+                                    sol.status = 'Agrupada'
+                                    logger.info(f"[OK] Solicitação #{sol_id} atualizada manualmente")
+                            
+                            # Flush após retry
+                            db.session.flush()
+                            logger.info(f"[SAVE] Flush executado após retry")
+                            
+                            # VALIDAÇÃO FINAL
+                            solicitacoes_final = Solicitacao.query.filter(
+                                Solicitacao.id.in_(solicitacoes_ids_para_agrupar)
+                            ).all()
+                            
+                            ainda_nao_atualizadas = []
+                            for sol in solicitacoes_final:
+                                if sol.status != 'Agrupada' or sol.viagem_id != nova_viagem.id:
+                                    ainda_nao_atualizadas.append(sol.id)
+                            
+                            if ainda_nao_atualizadas:
+                                logger.error(f"[ERRO] FALHA CRÍTICA: {len(ainda_nao_atualizadas)} solicitações AINDA não foram atualizadas: {ainda_nao_atualizadas}")
+                                raise Exception(f"Falha ao atualizar solicitações: {ainda_nao_atualizadas}")
+                            else:
+                                logger.info(f"[OK] RETRY bem-sucedido! Todas as {len(solicitacoes_ids_para_agrupar)} solicitações foram atualizadas")
+                        else:
+                            logger.info(f"[OK] SUCESSO: Todas as {len(solicitacoes_ids_para_agrupar)} solicitações foram atualizadas corretamente")
+                        
+                        solicitacoes_agrupadas += len(solicitacoes_ids_para_agrupar)
 
                 except Exception as e:
                     logger.error(
-                        f"❌ ERRO ao atualizar solicitações da viagem #{nova_viagem.id}: {e}")
+                        f"[ERRO] ERRO ao atualizar solicitações da viagem #{nova_viagem.id}: {e}")
                     raise  # Re-lança exceção para forçar rollback
 
                 viagens_criadas += 1
-                # ✅ NOVA: Armazena ID para notificar depois
+                # [OK] NOVA: Armazena ID para notificar depois
                 viagens_ids_para_notificar.append(nova_viagem.id)
 
-        # 🔧 CORREÇÃO: Commit final com log de confirmação
+        # [FIX] CORREÇÃO: Commit final com log de confirmação
         db.session.commit()
         logger.info(
-            f"✅ COMMIT REALIZADO: {viagens_criadas} viagem(ns), {fretados_criados} fretado(s), {solicitacoes_agrupadas} solicitação(ões) agrupada(s)")
+            f"[OK] COMMIT REALIZADO: {viagens_criadas} viagem(ns), {fretados_criados} fretado(s), {solicitacoes_agrupadas} solicitação(ões) agrupada(s)")
 
-        # ✅ NOVA: Envia notificações WhatsApp em background (assíncrono)
+        # [OK] NOVA: Envia notificações WhatsApp em background (assíncrono)
         if viagens_ids_para_notificar:
             import threading
-            import logging
             from flask import current_app
-            logger = logging.getLogger(__name__)
 
-            # ✅ Captura o app ANTES de criar a thread
+            # [OK] Captura o app ANTES de criar a thread
             app = current_app._get_current_object()
 
             def enviar_notificacoes():
@@ -825,7 +908,7 @@ def finalizar_agrupamento():
                     session_local = Session()  # Retorna Session
 
                     try:
-                        # ✅ OTIMIZAÇÃO: Envia 1 mensagem única por motorista (em lote)
+                        # [OK] OTIMIZAÇÃO: Envia 1 mensagem única por motorista (em lote)
                         # Ao invés de enviar 1 mensagem para cada viagem criada
                         quantidade_viagens = len(viagens_ids_para_notificar)
 
@@ -835,32 +918,32 @@ def finalizar_agrupamento():
 
                         if enviadas > 0:
                             logger.info(
-                                f"✅ {enviadas} motorista(s) notificado(s) sobre {quantidade_viagens} nova(s) viagem(ns)")
+                                f"[OK] {enviadas} motorista(s) notificado(s) sobre {quantidade_viagens} nova(s) viagem(ns)")
                         else:
                             logger.warning(
-                                f"⚠️  Nenhum motorista notificado sobre as {quantidade_viagens} viagem(ns) criadas")
+                                f"[AVISO]  Nenhum motorista notificado sobre as {quantidade_viagens} viagem(ns) criadas")
 
                     except Exception as e:
                         logger.error(
-                            f"❌ Erro ao enviar notificações em lote: {e}")
+                            f"[ERRO] Erro ao enviar notificações em lote: {e}")
 
                     finally:
                         # Fecha a sessão da thread
-                        session_local.close()   # ✅ Fecha a sessão
-                        Session.remove()        # ✅ Remove do registry do scoped_session
+                        session_local.close()   # [OK] Fecha a sessão
+                        Session.remove()        # [OK] Remove do registry do scoped_session
 
             # Inicia thread em background
             thread = threading.Thread(target=enviar_notificacoes, daemon=True)
             thread.start()
             logger.info(
-                f"📤 Iniciando envio de notificação em lote sobre {len(viagens_ids_para_notificar)} viagem(ns) criada(s)...")
+                f"[>>>] Iniciando envio de notificação em lote sobre {len(viagens_ids_para_notificar)} viagem(ns) criada(s)...")
 
         # Limpa a sessão
         from flask import session
         session.pop('grupos_sugeridos', None)
         session.pop('data_agrupamento', None)
 
-        mensagem = f'✅ Agrupamento finalizado com sucesso!'
+        mensagem = f'[OK] Agrupamento finalizado com sucesso!'
         if fretados_criados > 0:
             mensagem += f' {fretados_criados} fretado(s) criado(s).'
         if viagens_criadas > 0:

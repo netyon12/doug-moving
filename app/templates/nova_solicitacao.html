@@ -156,6 +156,55 @@
     </div>
 </div>
 
+<!-- Modal de Progresso -->
+<div class="modal fade" id="modalProgresso" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-hourglass-split"></i> Processando Solicitações</h5>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-3">
+                    <h4 id="progresso-status">Iniciando...</h4>
+                    <p class="text-muted" id="progresso-detalhes">Preparando dados...</p>
+                </div>
+                
+                <!-- Barra de Progresso -->
+                <div class="progress mb-3" style="height: 30px;">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+                         role="progressbar" 
+                         id="barra-progresso"
+                         style="width: 0%" 
+                         aria-valuenow="0" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                        <strong id="progresso-percentual">0%</strong>
+                    </div>
+                </div>
+                
+                <!-- Estatísticas do Progresso -->
+                <div class="row text-center">
+                    <div class="col-12">
+                        <div class="card bg-light">
+                            <div class="card-body p-2">
+                                <h5 class="mb-0 text-primary" id="progresso-solicitacoes">0</h5>
+                                <small class="text-muted">Solicitações Criadas</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botão de Concluído (inicialmente oculto) -->
+                <div class="text-center mt-3" id="progresso-concluido" style="display: none;">
+                    <button type="button" class="btn btn-success btn-lg" id="btn-progresso-ok">
+                        <i class="bi bi-check-circle"></i> Concluir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Template para a linha da tabela (escondido) -->
 <template id="solicitacao_row_template">
     <tr>
@@ -711,6 +760,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     
     form.addEventListener('submit', function(e) {
+        // Previne o submit padrão para fazer via AJAX
+        e.preventDefault();
+        
         // ✅ VALIDAÇÃO 1: Verifica se há datas no passado (hora atual)
         const agoraSubmit = new Date();
         let temDataPassada = false;
@@ -730,7 +782,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         if (temDataPassada) {
-            e.preventDefault();
             alert('⚠️ Atenção!\n\nNão é permitido criar solicitações com data/hora no passado.\n\nPor favor, selecione uma data/hora a partir de AGORA.');
             
             // Destaca o campo com erro
@@ -752,8 +803,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const rows = tableBody.querySelectorAll('tr');
         
         if (rows.length === 0) {
-            e.preventDefault(); // Impede o envio do formulário
-            
             // Exibe alerta para o usuário
             alert('⚠️ Atenção!\n\nÉ necessário adicionar pelo menos um colaborador à solicitação.\n\n' +
                   'Por favor:\n' +
@@ -778,9 +827,99 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // Se chegou aqui, há colaboradores na tabela
-        // Permite o envio do formulário
-        return true;
+        // Processa o formulário com barra de progresso
+        processarFormularioComProgresso();
     });
+    
+    // =========================================================================
+    // FUNÇÃO PARA PROCESSAR FORMULÁRIO COM BARRA DE PROGRESSO
+    // =========================================================================
+    function processarFormularioComProgresso() {
+        // Coleta dados do formulário
+        const formData = new FormData(form);
+        
+        // Conta quantas solicitações serão criadas
+        const totalSolicitacoes = document.querySelectorAll('#solicitacoes_table_body tr').length;
+        
+        // Abre o modal de progresso
+        const modalProgresso = new bootstrap.Modal(document.getElementById('modalProgresso'));
+        modalProgresso.show();
+        
+        // Atualiza a interface de progresso
+        function atualizarProgresso(percentual, status, detalhes, solicitacoesCriadas) {
+            document.getElementById('barra-progresso').style.width = percentual + '%';
+            document.getElementById('barra-progresso').setAttribute('aria-valuenow', percentual);
+            document.getElementById('progresso-percentual').textContent = Math.round(percentual) + '%';
+            document.getElementById('progresso-status').textContent = status;
+            document.getElementById('progresso-detalhes').textContent = detalhes;
+            document.getElementById('progresso-solicitacoes').textContent = solicitacoesCriadas + '/' + totalSolicitacoes;
+        }
+        
+        // Inicia o progresso
+        atualizarProgresso(10, 'Enviando dados...', 'Preparando ' + totalSolicitacoes + ' solicitação(ões) para processamento', 0);
+        
+        // Envia para o backend via AJAX
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // ✅ Sucesso no processamento
+                const solicitacoesCriadas = data.solicitacoes_criadas || totalSolicitacoes;
+                
+                atualizarProgresso(100, '[OK] Concluído com Sucesso!', data.message || 'Solicitações criadas com sucesso', solicitacoesCriadas);
+                
+                // Remove a animação da barra
+                document.getElementById('barra-progresso').classList.remove('progress-bar-animated');
+                
+                // Mostra o botão de concluir
+                document.getElementById('progresso-concluido').style.display = 'block';
+                
+                // Event listener para o botão de concluir
+                document.getElementById('btn-progresso-ok').onclick = function() {
+                    window.location.href = '{{ url_for("admin.solicitacoes") }}';
+                };
+            } else {
+                // ❌ Erro no processamento
+                atualizarProgresso(100, '[ERRO] Erro no Processamento', data.message || 'Erro ao criar solicitações', 0);
+                document.getElementById('barra-progresso').classList.remove('bg-success');
+                document.getElementById('barra-progresso').classList.add('bg-danger');
+                document.getElementById('barra-progresso').classList.remove('progress-bar-animated');
+                
+                // Mostra botão para fechar
+                document.getElementById('progresso-concluido').style.display = 'block';
+                document.getElementById('btn-progresso-ok').innerHTML = '<i class="bi bi-x-circle"></i> Fechar';
+                document.getElementById('btn-progresso-ok').classList.remove('btn-success');
+                document.getElementById('btn-progresso-ok').classList.add('btn-danger');
+                document.getElementById('btn-progresso-ok').onclick = function() {
+                    modalProgresso.hide();
+                    location.reload();
+                };
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            atualizarProgresso(100, '[ERRO] Erro de Conexão', 'Erro ao processar solicitações: ' + error.message, 0);
+            document.getElementById('barra-progresso').classList.remove('bg-success');
+            document.getElementById('barra-progresso').classList.add('bg-danger');
+            document.getElementById('barra-progresso').classList.remove('progress-bar-animated');
+            
+            // Mostra botão para fechar
+            document.getElementById('progresso-concluido').style.display = 'block';
+            document.getElementById('btn-progresso-ok').innerHTML = '<i class="bi bi-x-circle"></i> Fechar';
+            document.getElementById('btn-progresso-ok').classList.remove('btn-success');
+            document.getElementById('btn-progresso-ok').classList.add('btn-danger');
+            document.getElementById('btn-progresso-ok').onclick = function() {
+                modalProgresso.hide();
+                location.reload();
+            };
+        });
+    }
 });
 </script>
 {% endblock %}
