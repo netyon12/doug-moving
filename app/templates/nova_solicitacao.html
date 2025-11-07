@@ -124,7 +124,10 @@
                 </div>
 
                 <!-- SEÇÃO 5: TABELA DE SOLICITAÇÕES -->
-                <h5 class="border-bottom pb-2 mb-3">Colaboradores na Solicitação</h5>
+                <h5 class="border-bottom pb-2 mb-3">
+                    Colaboradores na Solicitação
+                    <span class="badge bg-primary ms-2" id="contador_colaboradores">0</span>
+                </h5>
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead class="table-light">
@@ -250,6 +253,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Detecta o papel do usuário e planta ID via data attributes do body
     const userRole = document.body.getAttribute('data-user-role');
     const userPlantaId = document.body.getAttribute('data-user-planta-id');
+
+    // =========================================================================
+    // FUNÇÃO PARA ATUALIZAR CONTADOR DE COLABORADORES
+    // =========================================================================
+    function atualizarContadorColaboradores() {
+        const contador = document.querySelectorAll('input[name="colaborador_id[]"]').length;
+        document.getElementById('contador_colaboradores').textContent = contador;
+    }
 
     // =========================================================================
     // LÓGICA DO TIPO DE CORRIDA
@@ -668,10 +679,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Adiciona evento de remoção
         newRow.querySelector('.remove-row-btn').addEventListener('click', function() {
             this.closest('tr').remove();
+            atualizarContadorColaboradores();
         });
 
         // Adiciona a linha à tabela
         tableBody.appendChild(newRow);
+
+        // Atualiza o contador de colaboradores
+        atualizarContadorColaboradores();
 
         // Limpa a seleção para a próxima busca
         searchInput.value = '';

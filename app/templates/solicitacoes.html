@@ -36,6 +36,7 @@
             <select class="form-select" id="status" name="status">
                 <option value="">Todos</option>
                 <option value="Pendente" {% if filtros.get('status') == 'Pendente' %}selected{% endif %}>Pendente</option>
+                <option value="Agrupada" {% if filtros.get('status') == 'Agrupada' %}selected{% endif %}>Agrupada</option>
                 <option value="Agendada" {% if filtros.get('status') == 'Agendada' %}selected{% endif %}>Agendada</option>
                 <option value="Finalizada" {% if filtros.get('status') == 'Finalizada' %}selected{% endif %}>Finalizada</option>
                 <option value="Cancelada" {% if filtros.get('status') == 'Cancelada' %}selected{% endif %}>Cancelada</option>

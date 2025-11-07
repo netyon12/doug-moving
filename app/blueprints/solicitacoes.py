@@ -11,6 +11,7 @@ from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from sqlalchemy import func, or_
+from sqlalchemy.orm import joinedload
 from io import StringIO
 import io
 import csv
@@ -156,7 +157,15 @@ def solicitacoes():
         query = query.join(Colaborador).filter(
             Colaborador.bloco_id == filtros.get('bloco_id'))
 
-    solicitacoes = query.order_by(Solicitacao.id.desc()).all()
+    # Otimização: Eager loading para evitar N+1 queries
+    solicitacoes = query.options(
+        joinedload(Solicitacao.colaborador).joinedload(Colaborador.bloco),
+        joinedload(Solicitacao.supervisor),
+        joinedload(Solicitacao.empresa),
+        joinedload(Solicitacao.planta),
+        joinedload(Solicitacao.viagem),
+        joinedload(Solicitacao.fretado)
+    ).order_by(Solicitacao.id.desc()).limit(500).all()
 
     # --- DADOS PARA OS DROPDOWNS DOS FILTROS ---
     if current_user.role == 'admin':

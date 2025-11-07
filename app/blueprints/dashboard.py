@@ -172,38 +172,70 @@ def admin_dashboard():
                 config_capacidade.valor) if config_capacidade else 4  # Padrão: 4
 
             # ===== KPIs DE SOLICITAÇÕES =====
-            # Status em tempo real (sem filtro de data)
+            # Otimização: Consolida COUNTs em 1 query usando GROUP BY
+            counts_solicitacoes = db.session.query(
+                Solicitacao.status,
+                func.count(Solicitacao.id)
+            ).filter(
+                Solicitacao.empresa_id == empresa_id
+            ).group_by(Solicitacao.status).all()
+
+            # Converte para dicionário
+            kpis_solicitacoes = {status: count for status, count in counts_solicitacoes}
+            kpis_solicitacoes.setdefault('Pendente', 0)
+            kpis_solicitacoes.setdefault('Agrupada', 0)
+            kpis_solicitacoes.setdefault('Finalizada', 0)
+            kpis_solicitacoes.setdefault('Cancelada', 0)
+
+            # Renomeia chaves para lowercase
             kpis_solicitacoes = {
-                'pendentes': Solicitacao.query.filter_by(empresa_id=empresa_id, status='Pendente').count(),
-                'agrupadas': Solicitacao.query.filter_by(empresa_id=empresa_id, status='Agrupada').count(),
-                'finalizadas': Solicitacao.query.filter_by(empresa_id=empresa_id, status='Finalizada').count(),
-                'canceladas': Solicitacao.query.filter_by(empresa_id=empresa_id, status='Cancelada').count(),
-                # Finalizadas e Canceladas do período (filtradas por data_atualizacao)
-                'finalizadas_periodo': Solicitacao.query.filter(
-                    Solicitacao.empresa_id == empresa_id,
-                    Solicitacao.status == 'Finalizada',
-                    Solicitacao.data_atualizacao >= data_inicio,
-                    Solicitacao.data_atualizacao <= data_fim
-                ).count(),
-                'canceladas_periodo': Solicitacao.query.filter(
-                    Solicitacao.empresa_id == empresa_id,
-                    Solicitacao.status == 'Cancelada',
-                    Solicitacao.data_atualizacao >= data_inicio,
-                    Solicitacao.data_atualizacao <= data_fim
-                ).count()
+                'pendentes': kpis_solicitacoes.get('Pendente', 0),
+                'agrupadas': kpis_solicitacoes.get('Agrupada', 0),
+                'finalizadas': kpis_solicitacoes.get('Finalizada', 0),
+                'canceladas': kpis_solicitacoes.get('Cancelada', 0)
             }
+
+            # Finalizadas e Canceladas do período (queries separadas necessárias)
+            kpis_solicitacoes['finalizadas_periodo'] = Solicitacao.query.filter(
+                Solicitacao.empresa_id == empresa_id,
+                Solicitacao.status == 'Finalizada',
+                Solicitacao.data_atualizacao >= data_inicio,
+                Solicitacao.data_atualizacao <= data_fim
+            ).count()
+            kpis_solicitacoes['canceladas_periodo'] = Solicitacao.query.filter(
+                Solicitacao.empresa_id == empresa_id,
+                Solicitacao.status == 'Cancelada',
+                Solicitacao.data_atualizacao >= data_inicio,
+                Solicitacao.data_atualizacao <= data_fim
+            ).count()
 
             # ===== KPIs DE VIAGENS =====
-            # Status em tempo real (sem filtro de data)
+            # Otimização: Consolida COUNTs em 1 query usando GROUP BY
+            counts_viagens = db.session.query(
+                Viagem.status,
+                func.count(Viagem.id)
+            ).filter(
+                Viagem.empresa_id == empresa_id
+            ).group_by(Viagem.status).all()
+
+            # Converte para dicionário
+            kpis_viagens = {status: count for status, count in counts_viagens}
+            kpis_viagens.setdefault('Pendente', 0)
+            kpis_viagens.setdefault('Agendada', 0)
+            kpis_viagens.setdefault('Em Andamento', 0)
+            kpis_viagens.setdefault('Finalizada', 0)
+            kpis_viagens.setdefault('Cancelada', 0)
+
+            # Renomeia chaves para lowercase
             kpis_viagens = {
-                'pendentes': Viagem.query.filter_by(empresa_id=empresa_id, status='Pendente').count(),
-                'agendadas': Viagem.query.filter_by(empresa_id=empresa_id, status='Agendada').count(),
-                'em_andamento': Viagem.query.filter_by(empresa_id=empresa_id, status='Em Andamento').count(),
-                'finalizadas_total': Viagem.query.filter_by(empresa_id=empresa_id, status='Finalizada').count(),
-                'canceladas_total': Viagem.query.filter_by(empresa_id=empresa_id, status='Cancelada').count()
+                'pendentes': kpis_viagens.get('Pendente', 0),
+                'agendadas': kpis_viagens.get('Agendada', 0),
+                'em_andamento': kpis_viagens.get('Em Andamento', 0),
+                'finalizadas_total': kpis_viagens.get('Finalizada', 0),
+                'canceladas_total': kpis_viagens.get('Cancelada', 0)
             }
 
-            # Viagens finalizadas e canceladas DO PERÍODO (para aba executivo)
+            # Viagens finalizadas e canceladas DO PERÍODO (queries separadas necessárias)
             kpis_viagens['finalizadas_periodo'] = Viagem.query.filter(
                 Viagem.empresa_id == empresa_id,
                 Viagem.status == 'Finalizada',

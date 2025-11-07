@@ -11,10 +11,16 @@ from werkzeug.security import generate_password_hash
 from werkzeug.utils import secure_filename
 from datetime import datetime, date
 from sqlalchemy import func, or_
+from sqlalchemy.orm import joinedload
 from io import StringIO
 import io
 import csv
 import json
+import logging
+import traceback
+
+# Configurar logger para este módulo
+logger = logging.getLogger(__name__)
 
 from .. import db
 from ..models import (
@@ -26,8 +32,8 @@ from app import query_filters
 
 from .admin import admin_bp
 
-# Importação do serviço de WhatsApp
-from app.services.whatsapp_service import whatsapp_service
+# Importação do serviço de notificações
+from app.services.notification_service import notification_service
 
 
 @admin_bp.route('/viagens')
@@ -131,7 +137,14 @@ def viagens():
             query = query.filter(Viagem.planta_id == int(filtro_planta_id))
 
         # Ordena por data/horário mais recente
-        viagens = query.order_by(Viagem.id.desc()).all()
+        # Otimização: Eager loading para evitar N+1 queries
+        viagens = query.options(
+            joinedload(Viagem.motorista),
+            joinedload(Viagem.bloco),
+            joinedload(Viagem.planta),
+            joinedload(Viagem.empresa),
+            joinedload(Viagem.hora_parada)
+        ).order_by(Viagem.id.desc()).limit(500).all()
 
         # Busca dados para os filtros
         motoristas = Motorista.query.order_by(Motorista.nome).all()
@@ -182,7 +195,7 @@ def viagem_detalhes(viagem_id):
                 'veiculo_placa': viagem.motorista.veiculo_placa or 'N/A'
             }
 
-        # ✅ NOVA LÓGICA: Busca colaboradores do campo viagem.colaboradores_ids
+        # [OK] NOVA LÓGICA: Busca colaboradores do campo viagem.colaboradores_ids
         colaboradores_lista = []
 
         if viagem.colaboradores_ids:
@@ -208,8 +221,8 @@ def viagem_detalhes(viagem_id):
                     })
 
             except (json.JSONDecodeError, TypeError) as e:
-                print(
-                    f"Erro ao parsear colaboradores_ids da viagem {viagem_id}: {e}")
+                logger.error(
+                    f"[ERRO] Erro ao parsear colaboradores_ids da viagem {viagem_id}: {e}")
 
         # Monta dados completos da viagem
         dados_viagem = {
@@ -249,8 +262,8 @@ def viagem_detalhes(viagem_id):
     except Exception as e:
         import traceback
         error_details = traceback.format_exc()
-        print(
-            f"Erro ao buscar detalhes da viagem {viagem_id}: {error_details}")
+        logger.error(
+            f"[ERRO] Erro ao buscar detalhes da viagem {viagem_id}: {error_details}")
         return jsonify({'success': False, 'message': f'Erro ao carregar detalhes: {str(e)}'}), 500
 
 
@@ -286,6 +299,7 @@ def motoristas_disponiveis():
 @permission_required(['admin'])
 def associar_motorista(viagem_id):
     """Associa um motorista a uma viagem"""
+    logger.info(f"[>>>] Iniciando associação de motorista para viagem {viagem_id}")
     try:
         data = request.get_json()
         motorista_id = data.get('motorista_id')
@@ -296,6 +310,8 @@ def associar_motorista(viagem_id):
         # Busca viagem e motorista
         viagem = Viagem.query.get_or_404(viagem_id)
         motorista = Motorista.query.get_or_404(motorista_id)
+        
+        logger.info(f"[...] Associando motorista {motorista.nome} (ID: {motorista_id}) à viagem {viagem_id}")
 
         # Verifica se a viagem está pendente
         if viagem.status != 'Pendente':
@@ -322,11 +338,14 @@ def associar_motorista(viagem_id):
         # Envia notificação WhatsApp para colaboradores (exceto Desligamento)
         if viagem.tipo_corrida != 'desligamento':
             try:
-                resultados_whatsapp = whatsapp_service.send_notification_viagem_aceita(
-                    viagem)
+                sucesso = notification_service.notificar_viagem_confirmada(
+                    viagem_id=viagem.id,
+                    motorista_id=motorista_id
+                )
                 from flask import current_app
-                current_app.logger.info(
-                    f"WhatsApp enviado para {len(resultados_whatsapp)} colaboradores (associação admin)")
+                if sucesso:
+                    current_app.logger.info(
+                        f"WhatsApp enviado para colaboradores da viagem {viagem.id} (associação admin)")
             except Exception as e:
                 # Não interrompe o fluxo se o WhatsApp falhar
                 from flask import current_app
@@ -345,9 +364,10 @@ def associar_motorista(viagem_id):
 
 @admin_bp.route('/viagens/<int:viagem_id>/cancelar', methods=['POST'])
 @login_required
-@permission_required(['admin', 'gerente', 'supervisor'])
+@permission_required(['admin'])
 def cancelar_viagem(viagem_id):
     """Cancela uma viagem e retorna as solicitações para status Pendente"""
+    logger.info(f"[CANCEL] Iniciando cancelamento da viagem {viagem_id}")
     try:
         data = request.get_json()
         motivo = data.get('motivo', '')
@@ -357,6 +377,8 @@ def cancelar_viagem(viagem_id):
 
         # Busca viagem
         viagem = Viagem.query.get_or_404(viagem_id)
+        
+        logger.info(f"[...] Cancelando viagem {viagem_id} - Motivo: {motivo}")
 
         # Verifica se a viagem pode ser cancelada
         if viagem.status in ['Finalizada', 'Cancelada']:
@@ -375,6 +397,29 @@ def cancelar_viagem(viagem_id):
             solicitacao.viagem_id = None
 
         db.session.commit()
+
+        # ========== INTEGRAÇÃO WHATSAPP - INÍCIO ==========
+        # Envia notificação WhatsApp para colaboradores sobre cancelamento
+        if viagem.tipo_corrida != 'desligamento':
+            try:
+                resultado = notification_service.notificar_viagem_cancelada_colaboradores(
+                    viagem_id=viagem.id,
+                    motivo_cancelamento=motivo
+                )
+
+                from flask import current_app
+                if resultado['success']:
+                    current_app.logger.info(
+                        f"[OK] WhatsApp de cancelamento enviado para {resultado['enviadas']} colaborador(es) da viagem {viagem.id}")
+                else:
+                    current_app.logger.warning(
+                        f"[AVISO] Falha ao enviar WhatsApp de cancelamento para viagem {viagem.id}")
+            except Exception as e:
+                # Não interrompe o fluxo se o WhatsApp falhar
+                from flask import current_app
+                current_app.logger.error(
+                    f"[ERRO] Erro ao enviar WhatsApp de cancelamento: {str(e)}")
+        # ========== INTEGRAÇÃO WHATSAPP - FIM ==========
 
         flash(
             f'Viagem #{viagem.id} cancelada. {len(solicitacoes)} solicitações retornaram para status Pendente.', 'warning')
