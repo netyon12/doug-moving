@@ -5,6 +5,15 @@ Módulo de Viagens
 Gestão de viagens.
 """
 
+from app.services.notification_service import notification_service
+from .admin import admin_bp
+from app import query_filters
+from ..decorators import permission_required
+from ..models import (
+    User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
+    Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao, ViagemHoraParada
+)
+from .. import db
 from flask import Blueprint, render_template, request, redirect, url_for, flash, Response, jsonify, abort
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
@@ -22,18 +31,8 @@ import traceback
 # Configurar logger para este módulo
 logger = logging.getLogger(__name__)
 
-from .. import db
-from ..models import (
-    User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
-    Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao, ViagemHoraParada
-)
-from ..decorators import permission_required
-from app import query_filters
-
-from .admin import admin_bp
 
 # Importação do serviço de notificações
-from app.services.notification_service import notification_service
 
 
 @admin_bp.route('/viagens')
@@ -299,7 +298,8 @@ def motoristas_disponiveis():
 @permission_required(['admin'])
 def associar_motorista(viagem_id):
     """Associa um motorista a uma viagem"""
-    logger.info(f"[>>>] Iniciando associação de motorista para viagem {viagem_id}")
+    logger.info(
+        f"[>>>] Iniciando associação de motorista para viagem {viagem_id}")
     try:
         data = request.get_json()
         motorista_id = data.get('motorista_id')
@@ -310,8 +310,9 @@ def associar_motorista(viagem_id):
         # Busca viagem e motorista
         viagem = Viagem.query.get_or_404(viagem_id)
         motorista = Motorista.query.get_or_404(motorista_id)
-        
-        logger.info(f"[...] Associando motorista {motorista.nome} (ID: {motorista_id}) à viagem {viagem_id}")
+
+        logger.info(
+            f"[...] Associando motorista {motorista.nome} (ID: {motorista_id}) à viagem {viagem_id}")
 
         # Verifica se a viagem está pendente
         if viagem.status != 'Pendente':
@@ -325,12 +326,14 @@ def associar_motorista(viagem_id):
                 'message': f'Veículo tem capacidade para {capacidade_veiculo} passageiros, mas a viagem tem {viagem.quantidade_passageiros}'
             }), 400
 
-        # Associa motorista
-        viagem.motorista_id = motorista.id
-        viagem.nome_motorista = motorista.nome
-        viagem.placa_veiculo = motorista.veiculo_placa
-        viagem.status = 'Agendada'
-        viagem.data_atualizacao = datetime.now()
+        # Associa motorista usando método do modelo
+        sucesso = viagem.aceitar_viagem(motorista)
+
+        if not sucesso:
+            return jsonify({
+                'success': False,
+                'message': 'Não foi possível associar motorista à viagem'
+            }), 400
 
         db.session.commit()
 
@@ -377,7 +380,7 @@ def cancelar_viagem(viagem_id):
 
         # Busca viagem
         viagem = Viagem.query.get_or_404(viagem_id)
-        
+
         logger.info(f"[...] Cancelando viagem {viagem_id} - Motivo: {motivo}")
 
         # Verifica se a viagem pode ser cancelada
