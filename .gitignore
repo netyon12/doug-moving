@@ -28,6 +28,8 @@ env/
 .vscode/
 .idea/
 
+/logs/
+*.log
 
 *.xlsx
 

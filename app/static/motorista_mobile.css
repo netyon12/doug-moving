@@ -63,63 +63,154 @@
         opacity: 0.9;
     }
     
-    /* ====================================================================
-       CARDS DE ESTATÍSTICAS MOBILE
-       ==================================================================== */
-    .stats-grid-mobile {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        margin-bottom: 20px;
+    /* Botões de Status Online/Offline */
+    .btn-status-online,
+    .btn-status-offline {
+        width: 100%;
+        padding: 14px 20px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     
-    .stat-card-mobile {
-        background: white;
-        border-radius: var(--border-radius);
-        padding: 16px;
-        box-shadow: var(--card-shadow);
-        text-align: center;
-        transition: transform 0.2s, box-shadow 0.2s;
+    .btn-status-online {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
     }
     
-    .stat-card-mobile:active {
+    .btn-status-online:active {
         transform: scale(0.98);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     
-    .stat-card-mobile .stat-icon {
-        font-size: 2rem;
-        margin-bottom: 8px;
+    .btn-status-online i {
+        font-size: 1.5rem;
     }
     
-    .stat-card-mobile .stat-value {
-        font-size: 1.75rem;
+    .btn-status-online .status-principal {
+        font-size: 1.3rem;
+        letter-spacing: 2px;
         font-weight: 700;
+    }
+    
+    .btn-status-online .status-secundario {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        font-weight: 400;
+    }
+    
+    .btn-status-online small {
+        font-size: 0.7rem;
+        opacity: 0.85;
+        font-weight: 400;
+        margin-top: 2px;
+    }
+    
+    .btn-status-offline {
+        background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        color: white;
+    }
+    
+    .btn-status-offline:active {
+        transform: scale(0.98);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .btn-status-offline i {
+        font-size: 1.5rem;
+    }
+    
+    .btn-status-offline .status-principal {
+        font-size: 1.3rem;
+        letter-spacing: 2px;
+        font-weight: 700;
+    }
+    
+    .btn-status-offline .status-secundario {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        font-weight: 400;
+    }
+    
+    .btn-status-offline small {
+        font-size: 0.7rem;
+        opacity: 0.85;
+        font-weight: 400;
+        margin-top: 2px;
+    }
+    
+    /* ====================================================================
+       KPIs HORIZONTAIS COMPACTOS
+       ==================================================================== */
+    .kpis-horizontal {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 16px;
+    }
+    
+    .kpi-mini {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 10px 6px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+    }
+    
+    .kpi-mini:active {
+        transform: scale(0.95);
+    }
+    
+    .kpi-mini i {
+        font-size: 1.1rem;
         margin-bottom: 4px;
     }
     
-    .stat-card-mobile .stat-label {
-        font-size: 0.75rem;
-        color: #6b7280;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+    .kpi-mini .kpi-numero {
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 1;
     }
     
-    /* Cores dos cards de estatísticas */
-    .stat-card-mobile.stat-agendadas { border-left: 4px solid var(--primary-color); }
-    .stat-card-mobile.stat-agendadas .stat-icon { color: var(--primary-color); }
-    .stat-card-mobile.stat-agendadas .stat-value { color: var(--primary-color); }
+    .kpi-mini .kpi-label {
+        font-size: 0.6rem;
+        margin-top: 4px;
+        opacity: 0.95;
+        font-weight: 500;
+        text-align: center;
+        line-height: 1.1;
+    }
     
-    .stat-card-mobile.stat-andamento { border-left: 4px solid var(--warning-color); }
-    .stat-card-mobile.stat-andamento .stat-icon { color: var(--warning-color); }
-    .stat-card-mobile.stat-andamento .stat-value { color: var(--warning-color); }
+    /* Cores vibrantes com fundo */
+    .kpi-agendadas {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
     
-    .stat-card-mobile.stat-finalizadas { border-left: 4px solid var(--success-color); }
-    .stat-card-mobile.stat-finalizadas .stat-icon { color: var(--success-color); }
-    .stat-card-mobile.stat-finalizadas .stat-value { color: var(--success-color); }
+    .kpi-andamento {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+    }
     
-    .stat-card-mobile.stat-disponiveis { border-left: 4px solid var(--info-color); }
-    .stat-card-mobile.stat-disponiveis .stat-icon { color: var(--info-color); }
-    .stat-card-mobile.stat-disponiveis .stat-value { color: var(--info-color); }
+    .kpi-finalizadas {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+    
+    .kpi-disponiveis {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+    }
     
     /* ====================================================================
        CARDS DE VIAGEM MOBILE
@@ -511,3 +602,329 @@
 .toast-mobile.warning {
     background: var(--warning-color);
 }
+
+    /* ====================================================================
+       MELHORIAS 2025-11-12: CARDS COMPACTOS E CORES POR STATUS
+       ==================================================================== */
+    
+    /* Cards Compactos com Cores por Status */
+    .viagem-card-compact {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 12px;
+        margin-bottom: 12px;
+        box-shadow: var(--card-shadow);
+        border-left: 4px solid #ccc;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    /* Status: Disponível (Pendente) - Verde */
+    .viagem-card-compact.status-pendente {
+        background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
+        border-left-color: #4CAF50;
+    }
+    
+    /* Status: Agendada - Azul */
+    .viagem-card-compact.status-agendada {
+        background: linear-gradient(135deg, #E3F2FD 0%, #E1F5FE 100%);
+        border-left-color: #2196F3;
+    }
+    
+    /* Status: Em Andamento - Laranja */
+    .viagem-card-compact.status-em-andamento {
+        background: linear-gradient(135deg, #FFF3E0 0%, #FFF8E1 100%);
+        border-left-color: #FF9800;
+    }
+    
+    /* Status: Finalizada - Roxo */
+    .viagem-card-compact.status-finalizada {
+        background: linear-gradient(135deg, #F3E5F5 0%, #FCE4EC 100%);
+        border-left-color: #9C27B0;
+    }
+    
+    /* Header Compacto: ID + Tipo + Horário na mesma linha */
+    .card-header-compact {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+    
+    .card-header-compact .viagem-id {
+        font-weight: 700;
+        color: #333;
+        font-size: 1rem;
+    }
+    
+    .tipo-horario {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+        flex-wrap: wrap;
+    }
+    
+    .tipo-badge {
+        background: rgba(0,0,0,0.1);
+        padding: 2px 8px;
+        border-radius: 6px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        white-space: nowrap;
+    }
+    
+    .tipo-badge.entrada {
+        background: #dcfce7;
+        color: #166534;
+    }
+    
+    .tipo-badge.saida {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+    
+    .tipo-badge.desligamento {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    
+    .separador {
+        color: #999;
+        font-weight: 700;
+    }
+    
+    .horario {
+        font-weight: 700;
+        color: #333;
+        white-space: nowrap;
+    }
+    
+    .data {
+        color: #666;
+        font-size: 0.75rem;
+        white-space: nowrap;
+    }
+    
+    /* Informações em Linha Compacta */
+    .card-info-inline {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 10px;
+        font-size: 0.85rem;
+        color: #555;
+        flex-wrap: wrap;
+    }
+    
+    .info-item {
+        white-space: nowrap;
+        font-weight: 500;
+    }
+    
+    /* Botões Compactos */
+    .card-actions-compact {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .btn-compact {
+        flex: 1;
+        padding: 10px 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+    
+    .btn-compact.btn-outline {
+        background: white;
+        border: 1.5px solid #ddd;
+        color: #555;
+    }
+    
+    .btn-compact.btn-success {
+        background: #10b981;
+        color: white;
+    }
+    
+    .btn-compact.btn-danger {
+        background: #ef4444;
+        color: white;
+    }
+    
+    .btn-compact:active {
+        transform: scale(0.98);
+    }
+    
+    /* ====================================================================
+       KPIs EXPANSÍVEIS
+       ==================================================================== */
+    
+    /* Tornar KPIs clicáveis */
+    .stat-card-mobile {
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .stat-card-mobile .stat-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+    }
+    
+    .stat-card-mobile .chevron-icon {
+        font-size: 0.875rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .stat-card-mobile.expanded .chevron-icon {
+        transform: rotate(180deg);
+    }
+    
+    /* Container de detalhes do KPI */
+    .kpi-detalhes {
+        overflow: hidden;
+        transition: max-height 0.3s ease, opacity 0.3s ease;
+        background: rgba(255,255,255,0.7);
+        border-radius: 8px;
+        margin-top: 8px;
+        padding: 0;
+        max-height: 0;
+        opacity: 0;
+    }
+    
+    .kpi-detalhes.show {
+        max-height: 500px;
+        opacity: 1;
+        padding: 8px;
+    }
+    
+    .kpi-viagem-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        background: white;
+        border-radius: 6px;
+        margin-bottom: 6px;
+    }
+    
+    .kpi-viagem-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .kpi-viagem-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+    
+    .kpi-viagem-id {
+        font-weight: 700;
+        color: #333;
+        font-size: 0.9rem;
+    }
+    
+    .kpi-viagem-detalhes {
+        font-size: 0.75rem;
+        color: #666;
+    }
+    
+    .btn-mini {
+        padding: 4px 12px;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .btn-mini:active {
+        transform: scale(0.95);
+    }
+    
+    /* ====================================================================
+       SEÇÕES COM CABEÇALHOS DESTACADOS
+       ==================================================================== */
+    
+    .secao-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 16px;
+        border-radius: var(--border-radius);
+        margin-bottom: 12px;
+        color: white;
+        font-weight: 700;
+        font-size: 1rem;
+        box-shadow: var(--card-shadow);
+    }
+    
+    .secao-header.disponivel {
+        background: linear-gradient(135deg, #4CAF50 0%, #66BB6A 100%);
+        box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+    }
+    
+    .secao-header.minhas {
+        background: linear-gradient(135deg, #2196F3 0%, #42A5F5 100%);
+        box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+    }
+    
+    .secao-header i {
+        font-size: 1.25rem;
+    }
+    
+    .badge-count {
+        margin-left: auto;
+        background: rgba(255,255,255,0.3);
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 700;
+    }
+    
+    /* ====================================================================
+       ÍCONE DE STATUS NO CARD (OVERLAY)
+       ==================================================================== */
+    
+    .status-icon-overlay {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 1.5rem;
+        opacity: 0.12;
+    }
+    
+    .status-pendente .status-icon-overlay {
+        color: #4CAF50;
+    }
+    
+    .status-agendada .status-icon-overlay {
+        color: #2196F3;
+    }
+    
+    .status-em-andamento .status-icon-overlay {
+        color: #FF9800;
+    }
+    
+    .status-finalizada .status-icon-overlay {
+        color: #9C27B0;
+    }
+}
+
+/* ========================================================================
+   FIM DAS MELHORIAS MOBILE
+   ======================================================================== */

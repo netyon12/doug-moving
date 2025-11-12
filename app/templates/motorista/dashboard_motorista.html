@@ -11,7 +11,7 @@
 <div class="container-fluid mt-4">
     
     <!-- ========================================================================
-         VERSÃO MOBILE (< 768px)
+         VERSÃO MOBILE (< 768px) - MELHORADA 2025-11-12
          ======================================================================== -->
     
     <!-- HEADER MOBILE -->
@@ -19,97 +19,84 @@
         <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
         <p>Bem-vindo, <strong>{{ motorista.nome }}</strong></p>
         
-        <!-- Botão de Status Online/Offline -->
+        <!-- Botão de Status Online/Offline com Cores Vibrantes -->
         <div style="margin-top: 16px;">
-            <button type="button" 
-                    class="btn-mobile btn-mobile-outline" 
-                    onclick="toggleDisponibilidade()"
-                    id="btnToggleStatusMobile"
-                    style="width: 100%; padding: 12px; font-weight: 600; border-radius: 12px;">
-                <span class="icon"><i class="bi bi-power" style="font-size: 1.2rem;"></i></span>
-                <span>
-                    {% if motorista.status_disponibilidade == 'online' %}
-                        Ficar Offline
-                    {% else %}
-                        Ficar Online
-                    {% endif %}
-                </span>
-            </button>
-            <div style="margin-top: 8px; text-align: center;">
-                <small style="color: #6c757d;">
-                    <i class="bi bi-info-circle"></i> 
-                    {% if motorista.status_disponibilidade == 'online' %}
-                        Você está visível para novas viagens
-                    {% else %}
-                        Você não receberá novas viagens
-                    {% endif %}
-                </small>
-            </div>
+            {% if motorista.status_disponibilidade == 'online' %}
+                <!-- ONLINE - Verde Vibrante -->
+                <button type="button" 
+                        class="btn-status-online" 
+                        onclick="toggleDisponibilidade()"
+                        id="btnToggleStatusMobile">
+                    <i class="bi bi-power"></i>
+                    <span class="status-principal">ONLINE</span>
+                    <span class="status-secundario">(Disponível)</span>
+                    <small>Toque para ficar offline</small>
+                </button>
+            {% else %}
+                <!-- OFFLINE - Cinza -->
+                <button type="button" 
+                        class="btn-status-offline" 
+                        onclick="toggleDisponibilidade()"
+                        id="btnToggleStatusMobile">
+                    <i class="bi bi-power"></i>
+                    <span class="status-principal">OFFLINE</span>
+                    <span class="status-secundario">(Indisponível)</span>
+                    <small>Toque para ficar online</small>
+                </button>
+            {% endif %}
         </div>
     </div>
     
-    <!-- CARDS DE ESTATÍSTICAS MOBILE -->
-    <div class="stats-grid-mobile show-mobile-only">
-        <div class="stat-card-mobile stat-agendadas">
-            <div class="stat-icon"><i class="bi bi-calendar-check"></i></div>
-            <div class="stat-value">{{ viagens_agendadas }}</div>
-            <div class="stat-label">Agendadas</div>
+    <!-- KPIs COMPACTOS HORIZONTAL -->
+    <div class="kpis-horizontal show-mobile-only">
+        <div class="kpi-mini kpi-agendadas">
+            <i class="bi bi-calendar-check"></i>
+            <span class="kpi-numero">{{ viagens_agendadas|length if viagens_agendadas is iterable else viagens_agendadas }}</span>
+            <span class="kpi-label">Agendadas</span>
         </div>
-        
-        <div class="stat-card-mobile stat-andamento">
-            <div class="stat-icon"><i class="bi bi-arrow-repeat"></i></div>
-            <div class="stat-value">{{ viagens_em_andamento }}</div>
-            <div class="stat-label">Em Andamento</div>
+        <div class="kpi-mini kpi-andamento">
+            <i class="bi bi-arrow-repeat"></i>
+            <span class="kpi-numero">{{ viagens_em_andamento|length if viagens_em_andamento is iterable else viagens_em_andamento }}</span>
+            <span class="kpi-label">Em Andamento</span>
         </div>
-        
-        <div class="stat-card-mobile stat-finalizadas">
-            <div class="stat-icon"><i class="bi bi-check-circle"></i></div>
-            <div class="stat-value">{{ viagens_finalizadas_mes }}</div>
-            <div class="stat-label">Finalizadas (Mês)</div>
+        <div class="kpi-mini kpi-finalizadas">
+            <i class="bi bi-check-circle"></i>
+            <span class="kpi-numero">{{ viagens_finalizadas_mes|length if viagens_finalizadas_mes is iterable else viagens_finalizadas_mes }}</span>
+            <span class="kpi-label">Finalizadas (Mês)</span>
         </div>
-        
-        <div class="stat-card-mobile stat-disponiveis">
-            <div class="stat-icon"><i class="bi bi-list-task"></i></div>
-            <div class="stat-value">{{ viagens_disponiveis|length }}</div>
-            <div class="stat-label">Disponíveis</div>
+        <div class="kpi-mini kpi-disponiveis">
+            <i class="bi bi-list-task"></i>
+            <span class="kpi-numero">{{ viagens_disponiveis|length }}</span>
+            <span class="kpi-label">Disponíveis</span>
         </div>
     </div>
     
-    <!-- VIAGENS DISPONÍVEIS - MOBILE -->
-    <div class="show-mobile-only">
-        <div class="secao-titulo-mobile">
-            <span class="icon"><i class="bi bi-clipboard-check"></i></span>
+    <!-- VIAGENS DISPONÍVEIS - MOBILE COM CARDS COMPACTOS -->
+    <div class="show-mobile-only" style="margin-top: 24px;">
+        <!-- Cabeçalho Destacado -->
+        <div class="secao-header disponivel">
+            <i class="bi bi-clipboard-check"></i>
             <span>Viagens Disponíveis</span>
-            <span class="badge">{{ viagens_disponiveis|length }}</span>
+            <span class="badge-count">{{ viagens_disponiveis|length }}</span>
         </div>
         
         {% if viagens_disponiveis %}
             {% for viagem in viagens_disponiveis %}
-            <div class="viagem-card-mobile">
-                <!-- Header do Card -->
-                <div class="viagem-card-header">
-                    <div class="viagem-id">#{{ viagem.id }}</div>
-                    <div class="viagem-tipo {{ viagem.tipo_corrida|lower }}">
-                        {{ viagem.tipo_corrida }}
-                    </div>
+            <div class="viagem-card-compact status-pendente">
+                <!-- Ícone de Status Overlay -->
+                <div class="status-icon-overlay">
+                    <i class="bi bi-clipboard-check-fill"></i>
                 </div>
                 
-                <!-- Valor em Destaque -->
-                <div class="viagem-valor">
-                    <span class="icon">💰</span>
-                    <span>R$ {{ "%.2f"|format(viagem.valor_repasse or 0) }}</span>
-                </div>
-                
-                <!-- Grid de Detalhes -->
-                <div class="viagem-detalhes-grid">
-                    <div class="viagem-detalhe-item">
-                        <span class="icon"><i class="bi bi-people-fill"></i></span>
-                        <span class="value">{{ viagem.quantidade_passageiros }} passageiros</span>
-                    </div>
-                    
-                    <div class="viagem-detalhe-item">
-                        <span class="icon"><i class="bi bi-clock-fill"></i></span>
-                        <span class="value">
+                <!-- Header Compacto: ID + Tipo + Horário -->
+                <div class="card-header-compact">
+                    <span class="viagem-id">#{{ viagem.id }}</span>
+                    <span class="tipo-horario">
+                        <span class="tipo-badge {{ viagem.tipo_corrida|lower }}">
+                            {{ viagem.tipo_corrida }}
+                        </span>
+                        <span class="separador">•</span>
+                        <span class="horario">
                             {% if viagem.horario_entrada %}
                                 {{ viagem.horario_entrada.strftime('%H:%M') }}
                             {% elif viagem.horario_saida %}
@@ -117,35 +104,41 @@
                             {% elif viagem.horario_desligamento %}
                                 {{ viagem.horario_desligamento.strftime('%H:%M') }}
                             {% else %}
-                                <span class="text-muted">N/A</span>
+                                N/A
                             {% endif %}
                         </span>
-                    </div>
-                    
-                    {% if viagem.bloco %}
-                    <div class="viagem-detalhe-item">
-                        <span class="icon"><i class="bi bi-geo-alt-fill"></i></span>
-                        <span class="value">{{ viagem.bloco.codigo_bloco }}</span>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="viagem-detalhe-item">
-                        <span class="icon"><i class="bi bi-building"></i></span>
-                        <span class="value">{{ viagem.planta.nome if viagem.planta else 'N/A' }}</span>
-                    </div>
+                        <span class="data">📅 
+                            {% if viagem.data_viagem %}
+                                {{ viagem.data_viagem.strftime('%d/%m') }}
+                            {% elif viagem.horario_entrada %}
+                                {{ viagem.horario_entrada.strftime('%d/%m') }}
+                            {% elif viagem.horario_saida %}
+                                {{ viagem.horario_saida.strftime('%d/%m') }}
+                            {% elif viagem.horario_desligamento %}
+                                {{ viagem.horario_desligamento.strftime('%d/%m') }}
+                            {% else %}
+                                Hoje
+                            {% endif %}
+                        </span>
+                    </span>
                 </div>
                 
-                <!-- Botões de Ação -->
-                <div class="viagem-acoes">
-                    <button type="button" class="btn-mobile btn-mobile-outline" 
+                <!-- Informações em Linha -->
+                <div class="card-info-inline">
+                    <span class="info-item">💰 R$ {{ "%.2f"|format(viagem.valor_repasse or 0) }}</span>
+                    <span class="info-item">👥 {{ viagem.quantidade_passageiros }}</span>
+                    <span class="info-item">📍 {{ viagem.bloco.codigo_bloco if viagem.bloco else 'N/A' }}</span>
+                </div>
+                
+                <!-- Botões Compactos -->
+                <div class="card-actions-compact">
+                    <button type="button" class="btn-compact btn-outline" 
                             onclick="verDetalhesViagem({{ viagem.id }})">
-                        <span class="icon"><i class="bi bi-eye-fill"></i></span>
-                        <span>Detalhes</span>
+                        👁️ Detalhes
                     </button>
-                    <button type="button" class="btn-mobile btn-mobile-success" 
+                    <button type="button" class="btn-compact btn-success" 
                             onclick="aceitarViagem({{ viagem.id }})">
-                        <span class="icon"><i class="bi bi-check-circle-fill"></i></span>
-                        <span>Aceitar</span>
+                        ✅ Aceitar
                     </button>
                 </div>
             </div>
@@ -159,52 +152,40 @@
         {% endif %}
     </div>
     
-    <!-- MINHAS VIAGENS - MOBILE -->
+    <!-- MINHAS VIAGENS - MOBILE COM CARDS COMPACTOS -->
     <div class="show-mobile-only" style="margin-top: 32px;">
-        <div class="secao-titulo-mobile">
-            <span class="icon"><i class="bi bi-calendar-event"></i></span>
+        <!-- Cabeçalho Destacado -->
+        <div class="secao-header minhas">
+            <i class="bi bi-calendar-event"></i>
             <span>Minhas Viagens</span>
-            <span class="badge">{{ minhas_viagens|length }}</span>
+            <span class="badge-count">{{ minhas_viagens|length }}</span>
         </div>
         
         {% if minhas_viagens %}
             {% for viagem in minhas_viagens %}
-            <div class="viagem-card-mobile">
-                <!-- Header do Card -->
-                <div class="viagem-card-header">
-                    <div class="viagem-id">#{{ viagem.id }}</div>
-                    <div class="viagem-tipo {{ viagem.tipo_corrida|lower }}">
-                        {{ viagem.tipo_corrida }}
-                    </div>
-                </div>
-                
-                <!-- Status Badge -->
-                <div class="status-badge-mobile {{ viagem.status|lower|replace(' ', '-') }}">
+            <div class="viagem-card-compact status-{{ viagem.status|lower|replace(' ', '-') }}">
+                <!-- Ícone de Status Overlay -->
+                <div class="status-icon-overlay">
                     {% if viagem.status == 'Agendada' %}
-                        <i class="bi bi-calendar-check"></i> Agendada
+                        <i class="bi bi-calendar-check-fill"></i>
                     {% elif viagem.status == 'Em Andamento' %}
-                        <i class="bi bi-arrow-repeat"></i> Em Andamento
+                        <i class="bi bi-arrow-repeat"></i>
+                    {% elif viagem.status == 'Finalizada' %}
+                        <i class="bi bi-check-circle-fill"></i>
                     {% else %}
-                        <i class="bi bi-info-circle"></i> {{ viagem.status }}
+                        <i class="bi bi-info-circle-fill"></i>
                     {% endif %}
                 </div>
                 
-                <!-- Valor em Destaque -->
-                <div class="viagem-valor">
-                    <span class="icon">💰</span>
-                    <span>R$ {{ "%.2f"|format(viagem.valor_repasse or 0) }}</span>
-                </div>
-                
-                <!-- Grid de Detalhes -->
-                <div class="viagem-detalhes-grid">
-                    <div class="viagem-detalhe-item">
-                        <span class="icon"><i class="bi bi-people-fill"></i></span>
-                        <span class="value">{{ viagem.quantidade_passageiros }} passageiros</span>
-                    </div>
-                    
-                    <div class="viagem-detalhe-item">
-                        <span class="icon"><i class="bi bi-clock-fill"></i></span>
-                        <span class="value">
+                <!-- Header Compacto: ID + Tipo + Horário -->
+                <div class="card-header-compact">
+                    <span class="viagem-id">#{{ viagem.id }}</span>
+                    <span class="tipo-horario">
+                        <span class="tipo-badge {{ viagem.tipo_corrida|lower }}">
+                            {{ viagem.tipo_corrida }}
+                        </span>
+                        <span class="separador">•</span>
+                        <span class="horario">
                             {% if viagem.horario_entrada %}
                                 {{ viagem.horario_entrada.strftime('%H:%M') }}
                             {% elif viagem.horario_saida %}
@@ -212,53 +193,71 @@
                             {% elif viagem.horario_desligamento %}
                                 {{ viagem.horario_desligamento.strftime('%H:%M') }}
                             {% else %}
-                                <span class="text-muted">N/A</span>
+                                N/A
                             {% endif %}
                         </span>
-                    </div>
-                    
-                    {% if viagem.bloco %}
-                    <div class="viagem-detalhe-item">
-                        <span class="icon"><i class="bi bi-geo-alt-fill"></i></span>
-                        <span class="value">{{ viagem.bloco.codigo_bloco }}</span>
-                    </div>
-                    {% endif %}
-                    
-                    <div class="viagem-detalhe-item">
-                        <span class="icon"><i class="bi bi-building"></i></span>
-                        <span class="value">{{ viagem.planta.nome if viagem.planta else 'N/A' }}</span>
-                    </div>
+                        <span class="data">📅 
+                            {% if viagem.data_viagem %}
+                                {{ viagem.data_viagem.strftime('%d/%m') }}
+                            {% elif viagem.horario_entrada %}
+                                {{ viagem.horario_entrada.strftime('%d/%m') }}
+                            {% elif viagem.horario_saida %}
+                                {{ viagem.horario_saida.strftime('%d/%m') }}
+                            {% elif viagem.horario_desligamento %}
+                                {{ viagem.horario_desligamento.strftime('%d/%m') }}
+                            {% else %}
+                                Hoje
+                            {% endif %}
+                        </span>
+                    </span>
                 </div>
                 
-                <!-- Botões de Ação -->
-                <div class="viagem-acoes">
+                <!-- Status Badge Pequeno -->
+                {% if viagem.status == 'Agendada' %}
+                    <div style="font-size: 0.75rem; color: #2196F3; font-weight: 600; margin-bottom: 6px;">
+                        🔵 Agendada
+                    </div>
+                {% elif viagem.status == 'Em Andamento' %}
+                    <div style="font-size: 0.75rem; color: #FF9800; font-weight: 600; margin-bottom: 6px;">
+                        🟠 Em Andamento
+                    </div>
+                {% elif viagem.status == 'Finalizada' %}
+                    <div style="font-size: 0.75rem; color: #9C27B0; font-weight: 600; margin-bottom: 6px;">
+                        🟣 Finalizada
+                    </div>
+                {% endif %}
+                
+                <!-- Informações em Linha -->
+                <div class="card-info-inline">
+                    <span class="info-item">💰 R$ {{ "%.2f"|format(viagem.valor_repasse or 0) }}</span>
+                    <span class="info-item">👥 {{ viagem.quantidade_passageiros }}</span>
+                    <span class="info-item">📍 {{ viagem.bloco.codigo_bloco if viagem.bloco else 'N/A' }}</span>
+                </div>
+                
+                <!-- Botões Compactos -->
+                <div class="card-actions-compact">
                     {% if viagem.status == 'Agendada' %}
-                        <button type="button" class="btn-mobile btn-mobile-danger" 
+                        <button type="button" class="btn-compact btn-danger" 
                                 onclick="cancelarViagem({{ viagem.id }})">
-                            <span class="icon"><i class="bi bi-x-circle-fill"></i></span>
-                            <span>Cancelar</span>
+                            ❌ Cancelar
                         </button>
-                        <button type="button" class="btn-mobile btn-mobile-success" 
+                        <button type="button" class="btn-compact btn-success" 
                                 onclick="iniciarViagem({{ viagem.id }})">
-                            <span class="icon"><i class="bi bi-play-circle-fill"></i></span>
-                            <span>Iniciar</span>
+                            ▶️ Iniciar
                         </button>
                     {% elif viagem.status == 'Em Andamento' %}
-                        <button type="button" class="btn-mobile btn-mobile-outline" 
+                        <button type="button" class="btn-compact btn-outline" 
                                 onclick="verDetalhesViagem({{ viagem.id }})">
-                            <span class="icon"><i class="bi bi-eye-fill"></i></span>
-                            <span>Detalhes</span>
+                            👁️ Detalhes
                         </button>
-                        <button type="button" class="btn-mobile btn-mobile-primary" 
+                        <button type="button" class="btn-compact btn-success" 
                                 onclick="finalizarViagem({{ viagem.id }})">
-                            <span class="icon"><i class="bi bi-check-circle-fill"></i></span>
-                            <span>Finalizar</span>
+                            ✅ Finalizar
                         </button>
                     {% else %}
-                        <button type="button" class="btn-mobile btn-mobile-outline" 
+                        <button type="button" class="btn-compact btn-outline" 
                                 onclick="verDetalhesViagem({{ viagem.id }})">
-                            <span class="icon"><i class="bi bi-eye-fill"></i></span>
-                            <span>Ver Detalhes</span>
+                            👁️ Ver Detalhes
                         </button>
                     {% endif %}
                 </div>
@@ -267,14 +266,14 @@
         {% else %}
             <div class="empty-state-mobile">
                 <div class="icon"><i class="bi bi-calendar-x"></i></div>
-                <div class="title">Nenhuma viagem agendada</div>
-                <div class="message">Você não tem viagens agendadas ou em andamento.</div>
+                <div class="title">Nenhuma viagem</div>
+                <div class="message">Você não possui viagens no momento.</div>
             </div>
         {% endif %}
     </div>
     
     <!-- ========================================================================
-         VERSÃO DESKTOP (>= 768px) - MANTÉM LAYOUT ORIGINAL
+         VERSÃO DESKTOP (>= 768px)
          ======================================================================== -->
     
     <!-- HEADER COM INFORMAÇÕES DO MOTORISTA -->
@@ -784,125 +783,5 @@ function toggleDisponibilidade() {
         alert('Erro ao alterar disponibilidade: ' + error);
     });
 }
-
-// ========== POLLING AUTOMÁTICO (15 SEGUNDOS) ==========
-let viagensDisponiveisAtual = {{ viagens_disponiveis|length }};
-let pollingInterval = null;
-
-function verificarAtualizacoes() {
-    fetch('/motorista/api/verificar-atualizacoes')
-        .then(response => response.json())
-        .then(data => {
-            if (data.sucesso) {
-                const novoTotal = data.total_disponiveis;
-                
-                // Se houver mudança, atualizar
-                if (novoTotal !== viagensDisponiveisAtual) {
-                    // Atualizar contador nos cards de estatísticas
-                    document.querySelectorAll('.stat-disponiveis .stat-value').forEach(el => {
-                        el.textContent = novoTotal;
-                    });
-                    
-                    // Atualizar badge na seção de viagens
-                    document.querySelectorAll('.secao-titulo-mobile .badge, .secao-titulo .badge').forEach(el => {
-                        el.textContent = novoTotal;
-                    });
-                    
-                    // Se aumentou, mostrar notificação visual
-                    if (novoTotal > viagensDisponiveisAtual) {
-                        mostrarNotificacaoNovaViagem(novoTotal - viagensDisponiveisAtual);
-                    }
-                    
-                    // Atualizar valor atual
-                    viagensDisponiveisAtual = novoTotal;
-                    
-                    // Recarregar página após 2 segundos para mostrar as viagens
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao verificar atualizações:', error);
-        });
-}
-
-function mostrarNotificacaoNovaViagem(quantidade) {
-    // Criar notificação visual
-    const notificacao = document.createElement('div');
-    notificacao.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #28a745;
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        z-index: 9999;
-        font-weight: 600;
-        animation: slideIn 0.3s ease-out;
-    `;
-    
-    notificacao.innerHTML = `
-        <i class="bi bi-bell-fill"></i> 
-        ${quantidade} nova${quantidade > 1 ? 's' : ''} viagem${quantidade > 1 ? 'ns' : ''} disponível${quantidade > 1 ? 'eis' : ''}!
-    `;
-    
-    document.body.appendChild(notificacao);
-    
-    // Remover após 3 segundos
-    setTimeout(() => {
-        notificacao.style.animation = 'slideOut 0.3s ease-out';
-        setTimeout(() => notificacao.remove(), 300);
-    }, 3000);
-    
-    // Vibrar (se disponível no dispositivo)
-    if ('vibrate' in navigator) {
-        navigator.vibrate([200, 100, 200]);
-    }
-}
-
-// Iniciar polling quando a página carregar
-document.addEventListener('DOMContentLoaded', function() {
-    // Verificar a cada 15 segundos
-    pollingInterval = setInterval(verificarAtualizacoes, 15000);
-    
-    // Limpar intervalo quando sair da página
-    window.addEventListener('beforeunload', function() {
-        if (pollingInterval) {
-            clearInterval(pollingInterval);
-        }
-    });
-});
-
-// Adicionar animações CSS
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-    
-    @keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(400px);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);
 </script>
-
 {% endblock %}

@@ -1,8 +1,9 @@
-<!-- Template para exibir detalhes da viagem no modal -->
-<!-- Arquivo: app/templates/motorista/detalhes_viagem.html -->
+{% extends "base.html" %}
 
-<div class="container-fluid">
-    
+{% block title %}Detalhes da Viagem #{{ viagem.id }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
     <!-- INFORMAÇÕES GERAIS DA VIAGEM -->
     <div class="row mb-3">
         <div class="col-12">
@@ -320,3 +321,4 @@
     </div>
 
 </div>
+{% endblock %}
