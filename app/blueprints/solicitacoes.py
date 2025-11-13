@@ -828,6 +828,11 @@ def excluir_solicitacao(id):
             flash('Você não tem permissão para excluir esta solicitação.', 'danger')
             return redirect(url_for('admin.solicitacoes'))
 
+    # [FIX] CORREÇÃO CRÍTICA: Verifica se tem viagem associada PRIMEIRO
+    if solicitacao.viagem_id:
+        flash('Não é possível excluir solicitação com viagem associada. Cancele a viagem primeiro.', 'danger')
+        return redirect(url_for('admin.solicitacoes'))
+    
     # Apenas solicitações pendentes podem ser excluídas
     if solicitacao.status != 'Pendente':
         flash('Apenas solicitações pendentes podem ser excluídas.', 'warning')

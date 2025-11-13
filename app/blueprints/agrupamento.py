@@ -204,18 +204,60 @@ def criar_grupo_manual():
         if len(blocos) > 1:
             return jsonify({'success': False, 'message': 'Todas as solicitações devem ser do mesmo bloco'}), 400
 
-        # Cria a viagem
+        # [FIX] CORREÇÃO CRÍTICA: Preencher todos os campos obrigatórios
+        # Pega dados da primeira solicitação como referência
+        primeira = solicitacoes[0]
+        
+        # Calcula valores (MAIOR valor, não soma)
+        import json
+        valor_grupo = max([s.valor for s in solicitacoes if s.valor]) if any(s.valor for s in solicitacoes) else None
+        repasse_grupo = max([s.valor_repasse for s in solicitacoes if s.valor_repasse]) if any(s.valor_repasse for s in solicitacoes) else None
+        
+        # Cria JSON de colaboradores
+        colaboradores_ids = [s.colaborador_id for s in solicitacoes]
+        colaboradores_json = json.dumps(colaboradores_ids)
+        
+        # Cria a viagem COM TODOS OS CAMPOS OBRIGATÓRIOS
         nova_viagem = Viagem(
+            # Status
             status='Pendente',  # Aguardando atribuição de motorista
-            data_inicio=datetime.utcnow()
+            
+            # Localização (OBRIGATÓRIO)
+            empresa_id=primeira.empresa_id,
+            planta_id=primeira.planta_id,
+            bloco_id=primeira.bloco_id,
+            
+            # Tipo (OBRIGATÓRIO)
+            tipo_linha=primeira.tipo_linha,
+            tipo_corrida=primeira.tipo_corrida,
+            
+            # Horários
+            horario_entrada=primeira.horario_entrada,
+            horario_saida=primeira.horario_saida,
+            horario_desligamento=primeira.horario_desligamento,
+            
+            # Passageiros
+            quantidade_passageiros=len(solicitacoes),
+            colaboradores_ids=colaboradores_json,
+            
+            # Valores
+            valor=valor_grupo,
+            valor_repasse=repasse_grupo,
+            
+            # Auditoria
+            created_by_user_id=current_user.id,
+            data_criacao=datetime.utcnow(),
+            data_atualizacao=datetime.utcnow()
         )
         db.session.add(nova_viagem)
         db.session.flush()  # Para obter o ID da viagem
 
-        # Associa as solicitações à viagem
+        # [FIX] CORREÇÃO: Status correto é 'Agrupada', não 'Agendada'
+        # Agendada = quando motorista aceita
+        # Agrupada = quando viagem é criada
         for solicitacao in solicitacoes:
             solicitacao.viagem_id = nova_viagem.id
-            solicitacao.status = 'Agendada'
+            solicitacao.status = 'Agrupada'  # ✅ CORRETO
 
         db.session.commit()
 
