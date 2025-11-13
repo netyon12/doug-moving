@@ -191,12 +191,23 @@ def criar_grupo_manual():
         if len(solicitacoes_ids) > 4:
             return jsonify({'success': False, 'message': 'Máximo de 4 solicitações por grupo'}), 400
 
-        # Busca as solicitações
+        # ✅ SELECT FOR UPDATE: Lock pessimista para prevenir race condition
+        # Trava as solicitações durante a transação para evitar que outro supervisor
+        # agrupe as mesmas solicitações simultaneamente
         solicitacoes = Solicitacao.query.filter(
-            Solicitacao.id.in_(solicitacoes_ids)).all()
+            Solicitacao.id.in_(solicitacoes_ids),
+            Solicitacao.status == 'Pendente',
+            Solicitacao.viagem_id.is_(None),
+            Solicitacao.fretado_id.is_(None)
+        ).with_for_update().all()
 
+        # Re-validação após lock
         if len(solicitacoes) != len(solicitacoes_ids):
-            return jsonify({'success': False, 'message': 'Algumas solicitações não foram encontradas'}), 404
+            db.session.rollback()
+            return jsonify({
+                'success': False, 
+                'message': 'Algumas solicitações já foram agrupadas por outro supervisor ou não estão disponíveis'
+            }), 409
 
         # Verifica se todas são do mesmo bloco (regra de negócio)
         blocos = set(
@@ -259,6 +270,7 @@ def criar_grupo_manual():
             solicitacao.viagem_id = nova_viagem.id
             solicitacao.status = 'Agrupada'  # ✅ CORRETO
 
+        # ✅ COMMIT dentro do try/except para capturar erros
         db.session.commit()
 
         # AUDITORIA: Registra criação de viagem manual

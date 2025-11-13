@@ -820,25 +820,34 @@ def editar_solicitacao(id):
 @login_required
 @permission_required(['supervisor', 'admin'])
 def excluir_solicitacao(id):
-    solicitacao = Solicitacao.query.get_or_404(id)
+    try:
+        # ✅ SELECT FOR UPDATE: Lock pessimista para prevenir race condition
+        # Trava a solicitação durante validação para evitar que seja agrupada
+        # enquanto estamos validando a exclusão
+        solicitacao = Solicitacao.query.filter_by(
+            id=id
+        ).with_for_update().first_or_404()
 
-    # Verifica permissão
-    if current_user.role == 'supervisor':
-        if solicitacao.supervisor_id != current_user.supervisor.id:
-            flash('Você não tem permissão para excluir esta solicitação.', 'danger')
+        # Verifica permissão
+        if current_user.role == 'supervisor':
+            if solicitacao.supervisor_id != current_user.supervisor.id:
+                db.session.rollback()  # Libera lock
+                flash('Você não tem permissão para excluir esta solicitação.', 'danger')
+                return redirect(url_for('admin.solicitacoes'))
+
+        # [FIX] CORREÇÃO CRÍTICA: Verifica se tem viagem associada
+        # Re-validação após lock (pode ter sido agrupada durante validação)
+        if solicitacao.viagem_id:
+            db.session.rollback()  # Libera lock
+            flash('Não é possível excluir solicitação com viagem associada. Cancele a viagem primeiro.', 'danger')
+            return redirect(url_for('admin.solicitacoes'))
+        
+        # Apenas solicitações pendentes podem ser excluídas
+        if solicitacao.status != 'Pendente':
+            db.session.rollback()  # Libera lock
+            flash('Apenas solicitações pendentes podem ser excluídas.', 'warning')
             return redirect(url_for('admin.solicitacoes'))
 
-    # [FIX] CORREÇÃO CRÍTICA: Verifica se tem viagem associada PRIMEIRO
-    if solicitacao.viagem_id:
-        flash('Não é possível excluir solicitação com viagem associada. Cancele a viagem primeiro.', 'danger')
-        return redirect(url_for('admin.solicitacoes'))
-    
-    # Apenas solicitações pendentes podem ser excluídas
-    if solicitacao.status != 'Pendente':
-        flash('Apenas solicitações pendentes podem ser excluídas.', 'warning')
-        return redirect(url_for('admin.solicitacoes'))
-
-    try:
         # Captura dados para auditoria ANTES de excluir
         colaborador_nome = solicitacao.colaborador.nome
         solicitacao_id = solicitacao.id
