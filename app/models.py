@@ -957,7 +957,7 @@ class Viagem(db.Model):
         self.nome_motorista = None
         self.placa_veiculo = None
 
-        # Volta status da viagem para Pendente
+        # Volta status para Pendente (apenas a VIAGEM, não as solicitações)
         self.status = 'Pendente'
         self.data_atualizacao = datetime.utcnow()
 
