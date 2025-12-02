@@ -165,7 +165,7 @@
                         -
                     {% endif %}
                 </td>
-                <td>{{ solicitacao.colaborador.bloco.codigo_bloco if solicitacao.colaborador and solicitacao.colaborador.bloco else 'N/A' }}</td>
+                <td>{{ solicitacao.bloco.codigo_bloco if solicitacao.bloco else 'N/A' }}</td>
                 <td>{{ solicitacao.get_criador_nome() }}</td>
                 <td>
                     {% if solicitacao.status == 'Pendente' %}

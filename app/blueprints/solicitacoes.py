@@ -159,7 +159,10 @@ def solicitacoes():
 
     # Otimização: Eager loading para evitar N+1 queries
     solicitacoes = query.options(
-        joinedload(Solicitacao.colaborador).joinedload(Colaborador.bloco),
+        # <-- Busca o colaborador (sem o bloco dele)
+        joinedload(Solicitacao.colaborador),
+        # <-- CORRETO: Busca o bloco salvo na SOLICITAÇÃO
+        joinedload(Solicitacao.bloco),
         joinedload(Solicitacao.supervisor),
         joinedload(Solicitacao.empresa),
         joinedload(Solicitacao.planta),
@@ -566,11 +569,11 @@ def nova_solicitacao():
             # Mensagens de feedback
             mensagem_sucesso = f'{solicitacoes_criadas} solicitação(ões) criada(s) com sucesso!'
             mensagem_duplicadas = ''
-            
+
             if solicitacoes_duplicadas:
                 nomes_duplicados = ', '.join(solicitacoes_duplicadas)
                 mensagem_duplicadas = f'Solicitações duplicadas ignoradas para: {nomes_duplicados}'
-            
+
             # Verifica se é requisição AJAX
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json or 'application/json' in request.headers.get('Accept', ''):
                 # Retorna JSON para AJAX
@@ -593,9 +596,9 @@ def nova_solicitacao():
             db.session.rollback()
             logger.error(f"[ERRO] Erro ao criar solicitação: {str(e)}")
             logger.exception("Traceback completo:")
-            
+
             mensagem_erro = f'Erro ao criar solicitações: {str(e)}'
-            
+
             # Verifica se é requisição AJAX
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json or 'application/json' in request.headers.get('Accept', ''):
                 # Retorna JSON para AJAX
@@ -839,9 +842,10 @@ def excluir_solicitacao(id):
         # Re-validação após lock (pode ter sido agrupada durante validação)
         if solicitacao.viagem_id:
             db.session.rollback()  # Libera lock
-            flash('Não é possível excluir solicitação com viagem associada. Cancele a viagem primeiro.', 'danger')
+            flash(
+                'Não é possível excluir solicitação com viagem associada. Cancele a viagem primeiro.', 'danger')
             return redirect(url_for('admin.solicitacoes'))
-        
+
         # Apenas solicitações pendentes podem ser excluídas
         if solicitacao.status != 'Pendente':
             db.session.rollback()  # Libera lock
