@@ -1,6 +1,12 @@
 from . import db
 from flask_login import UserMixin
-from datetime import datetime
+from datetime import datetime, timedelta
+
+# Função auxiliar para definir horário de Brasília (UTC-3)
+
+
+def horario_brasil():
+    return datetime.utcnow() - timedelta(hours=3)
 
 
 class Empresa(db.Model):
@@ -757,9 +763,9 @@ class Viagem(db.Model):
     created_by_user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id'), nullable=True)  # Quem criou (admin/supervisor)
     data_criacao = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow)
+        db.DateTime, nullable=False, default=horario_brasil)
     data_atualizacao = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+        db.DateTime, nullable=False, default=horario_brasil, onupdate=horario_brasil)
     # Quando motorista iniciou
     data_inicio = db.Column(db.DateTime, nullable=True)
     # Quando motorista finalizou
@@ -1021,9 +1027,9 @@ class Solicitacao(db.Model):
 
     # Timestamps
     data_criacao = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow)
+        db.DateTime, nullable=False, default=horario_brasil)
     data_atualizacao = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+        db.DateTime, nullable=False, default=horario_brasil, onupdate=horario_brasil)
 
     # Relacionamentos
     colaborador = db.relationship('Colaborador', backref='solicitacoes')
@@ -1445,9 +1451,9 @@ class Fretado(db.Model):
     created_by_user_id = db.Column(db.Integer, db.ForeignKey(
         'user.id'), nullable=True)  # Quem criou
     data_criacao = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow)
+        db.DateTime, nullable=False, default=horario_brasil)
     data_atualizacao = db.Column(
-        db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+        db.DateTime, nullable=False, default=horario_brasil, onupdate=horario_brasil)
 
     # === RELACIONAMENTOS ===
     solicitacao = db.relationship('Solicitacao', foreign_keys=[solicitacao_id])
