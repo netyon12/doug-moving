@@ -204,8 +204,9 @@ def nova_solicitacao():
         logger.debug(f"Nova solicitação recebida: {request.form}")
         try:
             # NOVA VALIDAÇÃO: Verifica se há datas no passado
-            from datetime import date
-            hoje = date.today()
+            from datetime import datetime, timedelta
+            # Subtrai 3 horas do horário do servidor para "simular" o Brasil
+            hoje = (datetime.utcnow() - timedelta(hours=3)).date()
 
             horarios_entrada = request.form.getlist('horario_entrada[]')
             horarios_saida = request.form.getlist('horario_saida[]')
