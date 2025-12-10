@@ -164,6 +164,8 @@ class WhatsAppServiceEvolution:
 # Instância global do serviço (DESATIVADO) - Ativar ou desativar integração com Whatsapp. Ativar = retirar comentário abaixo.
 # whatsapp_service = WhatsAppServiceEvolution()
 
+# Comentando daqui para baixo
+'''
 
 # Funções de integração com o sistema (TODAS DESATIVADAS)
 def notificar_nova_viagem_motorista(motorista_telefone: str, viagem_info: Dict[str, Any]) -> Dict[str, Any]:
@@ -199,3 +201,5 @@ def notificar_viagem_confirmada_colaborador(colaborador_telefone: str, viagem_in
 def notificar_viagem_cancelada_colaborador(colaborador_telefone: str, viagem_info: Dict[str, Any]) -> Dict[str, Any]:
     """Notifica colaborador sobre viagem cancelada - DESATIVADO"""
     return whatsapp_service.notificar_viagem_cancelada_colaborador(colaborador_telefone, viagem_info)
+
+    '''
