@@ -434,8 +434,13 @@ function exibirResultados(dados, total, valorTotalRepasse) {
         tr.append(`<td>${item.planta}</td>`);
         tr.append(`<td>${item.tipo_corrida}</td>`);
         tr.append(`<td>${item.qtd_passageiros}</td>`);
-        tr.append(`<td>${item.colaboradores}</td>`);
-        tr.append(`<td>${item.bairros || 'N/A'}</td>`);
+        
+        let colsFormatado = item.colaboradores ? item.colaboradores.replace(/\n/g, '<br>') : 'N/A';
+        tr.append(`<td>${colsFormatado}</td>`);
+        
+        let bairrosFormatado = item.bairros ? item.bairros.replace(/\n/g, '<br>') : 'N/A';
+        tr.append(`<td>${bairrosFormatado}</td>`);;
+        
         tr.append(`<td>R$ ${item.valor_repasse.toFixed(2)}</td>`);
         tr.append(`<td>${getStatusBadge(item.status)}</td>`);
         tbody.append(tr);
