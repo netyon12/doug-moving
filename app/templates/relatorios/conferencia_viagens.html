@@ -267,7 +267,7 @@ $('#formFiltros').on('submit', function(e) {
                 console.log('📝 Página atual depois:', paginaAtual, 'de', totalPaginas);
                 console.log('📝 Total registros:', totalRegistrosGlobal);
                 
-                exibirResultados(response.dados, response.total, response.valor_total);
+                exibirResultados(response.dados, response.total_registros, response.valor_total);
                 atualizarControlesPaginacao();
             } else {
                 console.error('❌ Erro no response:', response.message);
@@ -344,8 +344,10 @@ function exibirResultados(dados, total, valorTotal) {
         tr.append(`<td>${item.motorista}</td>`);
         tr.append(`<td>${item.veiculo || 'N/A'}</td>`);
         tr.append(`<td>${item.qtd_passageiros}</td>`);
-        tr.append(`<td>${item.colaboradores}</td>`);
-       tr.append(`<td style="white-space: nowrap;">R$ ${item.valor.toFixed(2)}</td>`);
+        
+        let colsFormatado = item.colaboradores ? item.colaboradores.replace(/, /g, ', <br>') : 'N/A';
+        tr.append(`<td>${colsFormatado}</td>`);
+        tr.append(`<td style="white-space: nowrap;">R$ ${item.valor.toFixed(2)}</td>`);
         tr.append(`<td>${getStatusBadge(item.status)}</td>`);
         tbody.append(tr);
     });
@@ -395,7 +397,7 @@ function navegarPagina(direcao) {
                 console.log('📝 Página atual depois:', paginaAtual, 'de', totalPaginas);
                 console.log('📝 Total registros:', totalRegistrosGlobal);
                 
-                exibirResultados(response.dados, response.total, response.valor_total);
+                exibirResultados(response.dados, response.total_registros, response.valor_total);
                 atualizarControlesPaginacao();
             } else {
                 console.error('❌ Erro no response:', response.message);
