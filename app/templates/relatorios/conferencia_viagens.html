@@ -165,11 +165,11 @@
                                 <th>Empresa</th>
                                 <th>Planta</th>
                                 <th>Bloco</th>
-                                <th>Tipo Linha</th>
                                 <th>Tipo Corrida</th>
                                 <th>Motorista</th>
                                 <th>Veículo</th>
-                                <th>Passageiros</th>
+                                <th>Placa</th>
+                                <th>Qtd</th>
                                 <th>Colaboradores</th>
                                 <th>Valor</th>
                                 <th>Status</th>
@@ -339,10 +339,10 @@ function exibirResultados(dados, total, valorTotal) {
         tr.append(`<td>${item.empresa}</td>`);
         tr.append(`<td>${item.planta}</td>`);
         tr.append(`<td>${item.bloco}</td>`);
-        tr.append(`<td>${item.tipo_linha}</td>`);
         tr.append(`<td>${item.tipo_corrida}</td>`);
         tr.append(`<td>${item.motorista}</td>`);
         tr.append(`<td>${item.veiculo || 'N/A'}</td>`);
+        tr.append(`<td>${item.placa || 'N/A'}</td>`);
         tr.append(`<td>${item.qtd_passageiros}</td>`);
         
         let colsFormatado = item.colaboradores ? item.colaboradores.replace(/, /g, ', <br>') : 'N/A';
