@@ -24,8 +24,8 @@
 
         html, body {
             width: 100%;
-            height: 100%;
-            overflow: hidden;
+            min-height: 100%; /* Permite que o corpo cresça */
+            overflow-x: hidden; /* Previne scroll horizontal */
         }
 
         /* ========================================== */
@@ -44,8 +44,8 @@
         .fullscreen-login-container {
             position: relative;
             width: 100vw;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh; /* Permite que o container cresça */
+            overflow-y: auto; /* Permite scroll vertical */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -301,8 +301,8 @@
         /* RODAPÉ */
         /* ========================================== */
         .login-footer {
-            position: absolute;
-            bottom: 20px;
+            position: relative; /* Tira do posicionamento absoluto */
+            padding: 20px 0; /* Adiciona espaçamento */
             text-align: center;
             color: rgba(255, 255, 255, 0.7);
             font-size: 0.9rem;
