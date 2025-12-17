@@ -19,7 +19,7 @@ import time
 import logging
 from threading import Thread
 from app import db
-from app.models import Motorista, Viagem, Solicitacao
+from ..models import Motorista, Viagem, Solicitacao
 
 logger = logging.getLogger(__name__)
 
@@ -29,15 +29,16 @@ class NotificationService:
 
     def __init__(self):
         self.api_key = os.getenv('WHATSAPP_360DIALOG_API_KEY')
-        self.base_url = os.getenv('WHATSAPP_360DIALOG_BASE_URL', 'https://waba-v2.360dialog.io')
+        self.base_url = os.getenv(
+            'WHATSAPP_360DIALOG_BASE_URL', 'https://waba-v2.360dialog.io')
         self.phone_number_id = os.getenv('WHATSAPP_PHONE_NUMBER_ID')
-        
+
         # URL completa da API de mensagens
         self.api_url = f"{self.base_url}/v1/messages"
-        
+
         if not self.api_key:
             logger.warning("⚠️  WHATSAPP_360DIALOG_API_KEY não configurada")
-        
+
         self.headers = {
             'D360-API-KEY': self.api_key,
             'Content-Type': 'application/json'
@@ -58,7 +59,7 @@ class NotificationService:
         try:
             # Formatar número (remover caracteres especiais)
             telefone_limpo = ''.join(filter(str.isdigit, telefone))
-            
+
             # Adicionar código do país se não tiver
             if not telefone_limpo.startswith('55'):
                 telefone_limpo = '55' + telefone_limpo
@@ -87,14 +88,15 @@ class NotificationService:
             }
 
             response = requests.post(
-                self.api_url, 
-                json=payload, 
-                headers=self.headers, 
+                self.api_url,
+                json=payload,
+                headers=self.headers,
                 timeout=10
             )
 
             if response.status_code == 200 or response.status_code == 201:
-                logger.info(f"✅ Mensagem '{template_name}' enviada para {telefone_limpo}")
+                logger.info(
+                    f"✅ Mensagem '{template_name}' enviada para {telefone_limpo}")
                 return True
             else:
                 logger.error(
@@ -163,7 +165,7 @@ class NotificationService:
     def notificar_viagem_confirmada(self, viagem_id: int, motorista_id: int) -> dict:
         """
         Notifica COLABORADORES sobre confirmação de viagem
-        
+
         Template: viagem_confirmada
         Parâmetros: 9
         - {{1}} Nome do Colaborador
@@ -213,16 +215,16 @@ class NotificationService:
                 '%d/%m/%Y') if viagem.data_inicio else 'A definir'
             horario_viagem = viagem.data_inicio.strftime(
                 '%H:%M') if viagem.data_inicio else 'A definir'
-            
+
             # Tipo de corrida
             tipo_corrida = viagem.tipo_corrida or 'Entrada'
-            
+
             # Tipo de linha (assumindo que é o mesmo que tipo_corrida, ajustar se necessário)
             tipo_linha = tipo_corrida
 
             # Dados do motorista
             nome_motorista = motorista.nome
-            
+
             # Dados do veículo (com tratamento de erro se não existir)
             try:
                 if motorista.veiculo:
@@ -299,12 +301,12 @@ class NotificationService:
     def notificar_viagem_cancelada_colaboradores(self, viagem_id: int, motivo_cancelamento: str = '') -> dict:
         """
         Notifica COLABORADORES sobre cancelamento de viagem
-        
+
         Template: viagem_cancelada
         Parâmetros: 2
         - {{1}} Nome do Colaborador
         - {{2}} ID da viagem
-        
+
         NOTA: O template não usa data, horário ou motivo do cancelamento
 
         Args:

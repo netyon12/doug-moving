@@ -1,6 +1,7 @@
 from typing import Dict, Any, List
 from datetime import datetime
-from app.services.evolution_api import WhatsAppServiceEvolution
+#from app.services.evolution_api import WhatsAppServiceEvolution
+from ..models import Motorista, Viagem, Solicitacao
 
 # --- Funções de serviço de notificação ---
 

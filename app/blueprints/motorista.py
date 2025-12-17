@@ -25,7 +25,7 @@ from datetime import datetime
 from sqlalchemy import and_, or_
 
 from .. import db
-from app.models import Viagem, Motorista, Solicitacao, Colaborador, User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro
+from ..models import Viagem, Motorista, Solicitacao, Colaborador, User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro
 from ..decorators import role_required
 
 # Importação condicional de notificações

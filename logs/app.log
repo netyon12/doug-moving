@@ -1564,3 +1564,10 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'consul
 [2025-12-17 09:40:58] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
 [2025-12-17 09:40:58] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
 [2025-12-17 09:41:15] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-17 10:10:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-17 10:10:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-17 10:10:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-17 10:10:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-17 10:10:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-17 10:10:31] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-17 10:10:46] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
