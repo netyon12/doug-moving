@@ -6,6 +6,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager, login_required, current_user, logout_user
 from flask_caching import Cache
 from dotenv import load_dotenv
+from app.logging_config import setup_logging
 
 # Carrega variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -56,6 +57,9 @@ def create_app():
     app.config['CACHE_TYPE'] = 'SimpleCache'  # Cache em memória
     app.config['CACHE_DEFAULT_TIMEOUT'] = 3600  # 1 hora
 
+    # ✅ ADICIONAR: Configurar logging
+    setup_logging(app)
+
     # --- INICIALIZAÇÃO DAS EXTENSÕES ---
     db.init_app(app)
     login_manager.init_app(app)
@@ -100,6 +104,10 @@ def create_app():
 
     from .blueprints.financeiro import financeiro_bp
     app.register_blueprint(financeiro_bp)
+
+    # NOVO: Consulta de Viagens
+    from .blueprints.consulta_viagens import consulta_bp
+    app.register_blueprint(consulta_bp)
 
     # --- FILTROS PERSONALIZADOS DO JINJA2 ---
 

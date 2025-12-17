@@ -28,8 +28,6 @@ from .. import db
 from app.models import Viagem, Motorista, Solicitacao, Colaborador, User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro
 from ..decorators import role_required
 
-from app.services.whatsapp_service import whatsapp_service
-
 # Importação condicional de notificações
 try:
     from ..utils.notificacoes import (  # type: ignore
@@ -48,9 +46,6 @@ from ..utils.admin_audit import (
     AuditAction,
     get_changes_dict
 )
-
-# Importação do serviço de WhatsApp
-from app.services.whatsapp_service import whatsapp_service
 
 # Importação do serviço de notificações
 from app.services.notification_service import notification_service
@@ -132,11 +127,11 @@ def dashboard_motorista():
             )
         ).count()
 
-    # Viagens disponíveis (Pendente, sem motorista)
+    # Viagens disponíveis (Pendente, sem motorista) - limit(30) - quantidade de viagens aparece na tela
     viagens_disponiveis = Viagem.query.filter_by(
         status='Pendente',
         motorista_id=None
-    ).order_by(Viagem.data_criacao.desc()).limit(10).all()
+    ).order_by(Viagem.data_criacao.desc()).limit(30).all()
 
     # Minhas próximas viagens
     minhas_viagens = Viagem.query.filter(
@@ -155,33 +150,6 @@ def dashboard_motorista():
         viagens_disponiveis=viagens_disponiveis,
         minhas_viagens=minhas_viagens
     )
-
-
-@motorista_bp.route('/api/verificar-atualizacoes')
-@login_required
-@role_required('motorista')
-def verificar_atualizacoes():
-    """API para verificar se há novas viagens disponíveis (polling)"""
-
-    try:
-        # Contar viagens disponíveis
-        total_disponiveis = Viagem.query.filter_by(
-            status='Pendente',
-            motorista_id=None
-        ).count()
-
-        # Retornar JSON
-        return jsonify({
-            'sucesso': True,
-            'total_disponiveis': total_disponiveis,
-            'timestamp': datetime.now().isoformat()
-        })
-
-    except Exception as e:
-        return jsonify({
-            'sucesso': False,
-            'mensagem': str(e)
-        }), 500
 
 
 @motorista_bp.route('/viagens/disponiveis')
@@ -317,11 +285,14 @@ def aceitar_viagem(viagem_id):
         # Envia notificação WhatsApp para colaboradores (exceto Desligamento)
         if viagem.tipo_corrida != 'desligamento':
             try:
-                enviadas = whatsapp_service.send_notification_viagem_aceita(
-                    viagem)
-                if enviadas > 0:
-                    flash(
-                        f'Viagem aceita! {enviadas} notificações enviadas.', 'success')
+                sucesso = notification_service.notificar_viagem_confirmada(
+                    viagem_id=viagem.id,
+                    motorista_id=motorista.id
+                )
+                if sucesso:
+                    flash('Viagem aceita! Notificações enviadas.', 'success')
+                else:
+                    flash('Viagem aceita com sucesso!', 'success')
             except Exception as e:
                 current_app.logger.error(f'Erro WhatsApp: {e}')
                 flash('Viagem aceita com sucesso!', 'success')
