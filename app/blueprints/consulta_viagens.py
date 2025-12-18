@@ -71,10 +71,20 @@ def consulta_viagens():
             or_(
                 # Começo da lista: [10, ...
                 Viagem.colaboradores_ids.like(f'[{colaborador_id_str},%'),
+                Viagem.colaboradores_ids.like(f'[{colaborador_id_str}]'),
+
                 # Meio da lista: ...,10,... (cobre com e sem espaço)
-                Viagem.colaboradores_ids.like(f'%,{colaborador_id_str},%'),
+                Viagem.colaboradores_ids.like(
+                    f'%, {colaborador_id_str},%'),  # COM espaço
+                Viagem.colaboradores_ids.like(
+                    f'%,{colaborador_id_str},%'),   # SEM espaço
+
                 # Fim da lista: ...,10] (cobre com e sem espaço)
-                Viagem.colaboradores_ids.like(f'%,{colaborador_id_str}]'),
+                Viagem.colaboradores_ids.like(
+                    f'%, {colaborador_id_str}]'),   # COM espaço
+                Viagem.colaboradores_ids.like(
+                    f'%,{colaborador_id_str}]'),    # SEM espaço
+
                 # Lista com um único elemento: [10]
                 Viagem.colaboradores_ids == f'[{colaborador_id_str}]'
             ),
