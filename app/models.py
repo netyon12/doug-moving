@@ -618,10 +618,12 @@ class User(UserMixin, db.Model):
     # 'email' é o login/usuário
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    # 'admin', 'gerente', 'supervisor', 'motorista'
+    # 'admin', 'gerente', 'supervisor', 'motorista', 'operador'
     role = db.Column(db.String(20), nullable=False)
     foto_perfil = db.Column(
         db.String(100), nullable=False, default='default.jpg')
+    # NOVO CAMPO: Status de Ativação
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     # --- RELACIONAMENTOS COM OS PERFIS ---
     # Cada usuário pode ser, no máximo, um destes perfis.

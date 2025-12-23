@@ -36,7 +36,7 @@ relatorios_bp = Blueprint('relatorios', __name__, url_prefix='/relatorios')
 
 def get_user_empresa_id():
     """Retorna o empresa_id do usuário logado (None se for admin)"""
-    if current_user.role == 'admin':
+    if current_user.role in ['admin', 'operador']:
         return None
     elif current_user.role == 'gerente' and current_user.gerente:
         return current_user.gerente.empresa_id
@@ -47,7 +47,7 @@ def get_user_empresa_id():
 
 def get_user_planta_id():
     """Retorna o planta_id do usuário logado (None se for admin)"""
-    if current_user.role == 'admin':
+    if current_user.role in ['admin', 'operador']:
         return None
     elif current_user.role == 'gerente' and current_user.gerente:
         # Gerente tem múltiplas plantas, retorna None
@@ -100,7 +100,7 @@ def listagem_solicitacoes():
     blocos = Bloco.query.all()
 
     # Buscar supervisores (apenas para admin)
-    if current_user.role == 'admin':
+    if current_user.role in ['admin', 'operador']:
         supervisores = Supervisor.query.all()
     else:
         supervisores = []
@@ -157,7 +157,7 @@ def dados_listagem_solicitacoes():
             if planta_id_usuario:
                 query = query.filter_by(planta_id=planta_id_usuario)
 
-        elif current_user.role == 'admin':
+        elif current_user.role in ['admin', 'operador']:
             # Admin pode filtrar por supervisor se quiser
             if supervisor_id:
                 query = query.filter_by(supervisor_id=supervisor_id)

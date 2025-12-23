@@ -686,6 +686,59 @@
                             </li>
                         {% endif %}
 
+                        <!-- MENU DO OPERADOR -->
+                        {% if current_user.role == 'operador' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="#operadorCadastroSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-pencil-square"></i> Cadastros <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="operadorCadastroSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'empresas' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='empresas') }}"><i class="bi bi-building"></i> Empresas</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'plantas' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='plantas') }}"><i class="bi bi-shop"></i> Plantas</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'centros_custo' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='centros_custo') }}"><i class="bi bi-cash-coin"></i> Centros de Custo</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'turnos' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='turnos') }}"><i class="bi bi-clock-history"></i> Turnos</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'bairros' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='bairros') }}"><i class="bi bi-house-door"></i> Bairros</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'blocos' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='blocos') }}"><i class="bi bi-geo-alt"></i> Blocos</a></li>
+                                        <hr class="bg-secondary">
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'gerentes' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='gerentes') }}"><i class="bi bi-person-badge"></i> Gerentes</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'supervisores' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='supervisores') }}"><i class="bi bi-person-check"></i> Supervisores</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'colaboradores' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='colaboradores') }}"><i class="bi bi-people"></i> Colaboradores</a></li>
+                                        <li class="nav-item"><a class="nav-link {% if aba_ativa == 'motoristas' %}active{% endif %}" href="{{ url_for('admin.admin_dashboard', aba='motoristas') }}"><i class="bi bi-person-vcard"></i> Motoristas</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <!-- Processos (Operador) -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="#operadorProcessosSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-gear-fill"></i> Processos <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="operadorProcessosSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.solicitacoes') }}"><i class="bi bi-clipboard-check"></i> Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.agrupamento') }}"><i class="bi bi-collection"></i> Agrupamento</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.viagens') }}"><i class="bi bi-car-front"></i> Viagens</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.fretados') }}"><i class="bi bi-bus-front"></i> Fretados</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            <!-- Relatórios (Operador) -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="#operadorRelatoriosSubmenu" data-bs-toggle="collapse" role="button">
+                                    <i class="bi bi-file-earmark-bar-graph-fill"></i> Relatórios <i class="bi bi-chevron-down float-end"></i>
+                                </a>
+                                <div class="collapse submenu" id="operadorRelatoriosSubmenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.listagem_solicitacoes') }}"><i class="bi bi-list-check"></i> Listagem de Solicitações</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_viagens') }}"><i class="bi bi-clipboard-check"></i> Conferência de Viagens</a></li>
+                                        <li class="nav-item"><a class="nav-link" href="{{ url_for('relatorios.conferencia_motoristas') }}"><i class="bi bi-person-check"></i> Conferência de Motoristas</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        {% endif %}
+
                     </ul>
 
                     <!-- Configurações e Sair -->
@@ -698,8 +751,11 @@
                                 <ul class="nav flex-column">
                                     {% if current_user.role == 'admin' %}
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.configuracoes') }}"><i class="bi bi-gear"></i> Parâmetros Gerais</a></li>
-                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.pagina_importacoes') }}"><i class="bi bi-file-earmark-arrow-up"></i> Importações</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('audit.logs_gerais') }}"><i class="bi bi-clipboard-data"></i> Logs de Auditoria</a></li>
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('cad_users.listar_usuarios') }}"><i class="bi bi-people"></i> Usuários</a></li>
+                                    {% endif %}
+                                    {% if current_user.role == 'admin' %}
+                                    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.pagina_importacoes') }}"><i class="bi bi-file-earmark-arrow-up"></i> Importações</a></li>
                                     {% endif %}
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.editar_perfil') }}"><i class="bi bi-person-circle"></i> Editar Meu Perfil</a></li>
                                     <li class="nav-item"><a class="nav-link" href="{{ url_for('instalar') }}"><i class="bi bi-phone-fill"></i> Como Instalar o App</a></li>

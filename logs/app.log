@@ -1571,3 +1571,1421 @@ werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'consul
 [2025-12-17 10:10:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
 [2025-12-17 10:10:31] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
 [2025-12-17 10:10:46] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:06:46] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:06:46] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:06:46] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:06:46] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:06:46] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:06:46] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:06:47] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:07:03] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:07:03] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:07:03] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:07:03] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:07:03] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:07:03] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:07:04] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:07:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:07:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:07:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:07:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:07:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:07:15] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:07:16] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:09:20] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:09:20] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:09:20] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:09:20] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:09:20] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:09:20] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:09:21] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:23:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:23:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:23:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:23:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:23:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:23:16] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:23:17] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:23:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:23:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:23:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:23:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:23:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:23:40] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:23:41] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:24:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:24:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:24:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:24:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:24:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:24:31] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:24:46] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:25:07] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /login [POST]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column user.is_active does not exist
+LINE 1: ...ser_role, "user".foto_perfil AS user_foto_perfil, "user".is_...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py", line 27, in login
+    user = User.query.filter_by(email=email).first()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2819, in first
+    return self.limit(1)._iter().first()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2903, in _iter
+    result = self.session.execute(
+        statement,
+        params,
+        execution_options={"_sa_orm_load_options": self.load_options},
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1712, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1631, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 332, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, multiparams, params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1498, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1862, in _execute_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, statement, parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2043, in _handle_dbapi_exception
+    util.raise_(
+    ~~~~~~~~~~~^
+        sqlalchemy_exception, with_traceback=exc_info[2], from_=e
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column user.is_active does not exist
+LINE 1: ...ser_role, "user".foto_perfil AS user_foto_perfil, "user".is_...
+                                                             ^
+
+[SQL: SELECT "user".id AS user_id, "user".email AS user_email, "user".password AS user_password, "user".role AS user_role, "user".foto_perfil AS user_foto_perfil, "user".is_active AS user_is_active 
+FROM "user" 
+WHERE "user".email = %(email_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'email_1': 'admin@netyonsolutions.com', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/14/f405)
+[2025-12-18 15:27:20] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:27:20] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:27:20] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:27:20] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:27:20] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:27:20] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:27:35] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:27:42] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /login [POST]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column user.is_active does not exist
+LINE 1: ...ser_role, "user".foto_perfil AS user_foto_perfil, "user".is_...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py", line 27, in login
+    user = User.query.filter_by(email=email).first()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2819, in first
+    return self.limit(1)._iter().first()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2903, in _iter
+    result = self.session.execute(
+        statement,
+        params,
+        execution_options={"_sa_orm_load_options": self.load_options},
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1712, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1631, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 332, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, multiparams, params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1498, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1862, in _execute_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, statement, parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2043, in _handle_dbapi_exception
+    util.raise_(
+    ~~~~~~~~~~~^
+        sqlalchemy_exception, with_traceback=exc_info[2], from_=e
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column user.is_active does not exist
+LINE 1: ...ser_role, "user".foto_perfil AS user_foto_perfil, "user".is_...
+                                                             ^
+
+[SQL: SELECT "user".id AS user_id, "user".email AS user_email, "user".password AS user_password, "user".role AS user_role, "user".foto_perfil AS user_foto_perfil, "user".is_active AS user_is_active 
+FROM "user" 
+WHERE "user".email = %(email_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'email_1': 'admin@netyonsolutions.com', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/14/f405)
+[2025-12-18 15:29:11] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:29:11] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:29:11] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:29:11] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:29:11] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:29:11] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:29:27] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:29:32] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /login [POST]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column user.is_active does not exist
+LINE 1: ...ser_role, "user".foto_perfil AS user_foto_perfil, "user".is_...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py", line 27, in login
+    user = User.query.filter_by(email=email).first()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2819, in first
+    return self.limit(1)._iter().first()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2903, in _iter
+    result = self.session.execute(
+        statement,
+        params,
+        execution_options={"_sa_orm_load_options": self.load_options},
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1712, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1631, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 332, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, multiparams, params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1498, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1862, in _execute_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, statement, parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2043, in _handle_dbapi_exception
+    util.raise_(
+    ~~~~~~~~~~~^
+        sqlalchemy_exception, with_traceback=exc_info[2], from_=e
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column user.is_active does not exist
+LINE 1: ...ser_role, "user".foto_perfil AS user_foto_perfil, "user".is_...
+                                                             ^
+
+[SQL: SELECT "user".id AS user_id, "user".email AS user_email, "user".password AS user_password, "user".role AS user_role, "user".foto_perfil AS user_foto_perfil, "user".is_active AS user_is_active 
+FROM "user" 
+WHERE "user".email = %(email_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'email_1': 'admin@netyonsolutions.com', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/14/f405)
+[2025-12-18 15:34:28] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:34:28] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:34:28] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:34:28] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:34:28] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:34:28] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:34:44] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:35:15] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\dashboard.py", line 445, in admin_dashboard
+    return render_template(
+        'admin/admin_dashboard_main.html',
+    ...<10 lines>...
+        data_fim=data_fim_str
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 147, in render_template
+    return _render(app, template, context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 130, in _render
+    rv = template.render(context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "H:\Meu Drive\Python_Project\doug\app\templates\admin\admin_dashboard_main.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "H:\Meu Drive\Python_Project\doug\app\templates\base.html", line 700, in top-level template code
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('admin.configuracoes') }}"><i class="bi bi-gear"></i> Parâmetros Gerais</a></li>
+    
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2031, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2020, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\werkzeug\routing\map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'admin.configuracoes'. Did you mean 'admin.solicitacoes' instead?
+[2025-12-18 15:37:52] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:37:52] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:37:52] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:37:52] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:37:52] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:37:52] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:38:09] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:39:25] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\dashboard.py", line 445, in admin_dashboard
+    return render_template(
+        'admin/admin_dashboard_main.html',
+    ...<10 lines>...
+        data_fim=data_fim_str
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 147, in render_template
+    return _render(app, template, context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 130, in _render
+    rv = template.render(context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "H:\Meu Drive\Python_Project\doug\app\templates\admin\admin_dashboard_main.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "H:\Meu Drive\Python_Project\doug\app\templates\base.html", line 700, in top-level template code
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('configuracoes.configuracoes') }}"><i class="bi bi-gear"></i> Parâmetros Gerais</a></li>
+    
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2031, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2020, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\werkzeug\routing\map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'configuracoes.configuracoes'. Did you mean 'financeiro.contas_pagar' instead?
+[2025-12-18 15:39:47] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\dashboard.py", line 445, in admin_dashboard
+    return render_template(
+        'admin/admin_dashboard_main.html',
+    ...<10 lines>...
+        data_fim=data_fim_str
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 147, in render_template
+    return _render(app, template, context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 130, in _render
+    rv = template.render(context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "H:\Meu Drive\Python_Project\doug\app\templates\admin\admin_dashboard_main.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "H:\Meu Drive\Python_Project\doug\app\templates\base.html", line 700, in top-level template code
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('configuracoes.configuracoes') }}"><i class="bi bi-gear"></i> Parâmetros Gerais</a></li>
+    
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2031, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2020, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\werkzeug\routing\map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'configuracoes.configuracoes'. Did you mean 'financeiro.contas_pagar' instead?
+[2025-12-18 15:40:09] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\dashboard.py", line 445, in admin_dashboard
+    return render_template(
+        'admin/admin_dashboard_main.html',
+    ...<10 lines>...
+        data_fim=data_fim_str
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 147, in render_template
+    return _render(app, template, context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 130, in _render
+    rv = template.render(context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "H:\Meu Drive\Python_Project\doug\app\templates\admin\admin_dashboard_main.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "H:\Meu Drive\Python_Project\doug\app\templates\base.html", line 700, in top-level template code
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('configuracoes.configuracoes') }}"><i class="bi bi-gear"></i> Parâmetros Gerais</a></li>
+    
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2031, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2020, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\werkzeug\routing\map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'configuracoes.configuracoes'. Did you mean 'financeiro.contas_pagar' instead?
+[2025-12-18 15:44:53] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:44:53] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:44:53] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:44:53] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:44:53] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:44:53] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:45:09] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:45:41] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\dashboard.py", line 445, in admin_dashboard
+    return render_template(
+        'admin/admin_dashboard_main.html',
+    ...<10 lines>...
+        data_fim=data_fim_str
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 147, in render_template
+    return _render(app, template, context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 130, in _render
+    rv = template.render(context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "H:\Meu Drive\Python_Project\doug\app\templates\admin\admin_dashboard_main.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "H:\Meu Drive\Python_Project\doug\app\templates\base.html", line 700, in top-level template code
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('configuracoes.configuracoes') }}"><i class="bi bi-gear"></i> Parâmetros Gerais</a></li>
+    
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2031, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2020, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\werkzeug\routing\map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'configuracoes.configuracoes'. Did you mean 'admin.configuracoes' instead?
+[2025-12-18 15:46:03] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\dashboard.py", line 445, in admin_dashboard
+    return render_template(
+        'admin/admin_dashboard_main.html',
+    ...<10 lines>...
+        data_fim=data_fim_str
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 147, in render_template
+    return _render(app, template, context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 130, in _render
+    rv = template.render(context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "H:\Meu Drive\Python_Project\doug\app\templates\admin\admin_dashboard_main.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "H:\Meu Drive\Python_Project\doug\app\templates\base.html", line 700, in top-level template code
+    <li class="nav-item"><a class="nav-link" href="{{ url_for('configuracoes.configuracoes') }}"><i class="bi bi-gear"></i> Parâmetros Gerais</a></li>
+    
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2031, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2020, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\werkzeug\routing\map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'configuracoes.configuracoes'. Did you mean 'admin.configuracoes' instead?
+[2025-12-18 15:47:50] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:47:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:47:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:47:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:47:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:47:51] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:48:06] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:51:54] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:51:54] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:51:54] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:51:54] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:51:54] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:51:54] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:52:10] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 15:53:05] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /configuracoes/usuarios/ [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 17, in decorated_function
+    if len(permissions) == 1 and isinstance(permissions[0], (list, tuple)):
+           ^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'permissions' where it is not associated with a value
+[2025-12-18 15:56:30] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 15:56:30] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 15:56:30] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 15:56:30] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 15:56:30] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 15:56:30] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 15:56:45] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 16:00:57] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /configuracoes/usuarios/ [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\usuarios\cad_users.py", line 28, in listar_usuarios
+    return render_template('config/cad_users.html', usuarios=usuarios, roles=ROLES_VALIDOS)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 146, in render_template
+    template = app.jinja_env.get_or_select_template(template_name_or_list)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 1087, in get_or_select_template
+    return self.get_template(template_name_or_list, parent, globals)
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "H:\Meu Drive\Python_Project\doug\app\templates\config\cad_users.html", line 239, in template
+    {% endblock %}
+jinja2.exceptions.TemplateSyntaxError: Unexpected end of template. Jinja was looking for the following tags: 'endblock'. The innermost block that needs to be closed is 'block'.
+[2025-12-18 16:28:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 16:28:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 16:28:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 16:28:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 16:28:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 16:28:40] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 16:28:56] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 16:36:09] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 16:36:09] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 16:36:09] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 16:36:09] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 16:36:09] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 16:36:09] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 16:36:24] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 17:01:13] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 17:01:13] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 17:01:13] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 17:01:13] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 17:01:13] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 17:01:13] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 17:01:28] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 17:53:47] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 17:53:47] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 17:53:47] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 17:53:47] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 17:53:47] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 17:53:48] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 17:54:05] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 17:54:08] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on / [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\__init__.py", line 167, in home
+    return redirect(url_for('operador.operador_dashboard'))
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\helpers.py", line 256, in url_for
+    return current_app.url_for(
+           ~~~~~~~~~~~~~~~~~~~^
+        endpoint,
+        ^^^^^^^^^
+    ...<4 lines>...
+        **values,
+        ^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2031, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2020, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\werkzeug\routing\map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'operador.operador_dashboard'. Did you mean 'admin.admin_dashboard' instead?
+[2025-12-18 17:55:08] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on / [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\__init__.py", line 167, in home
+    return redirect(url_for('operador.operador_dashboard'))
+                    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\helpers.py", line 256, in url_for
+    return current_app.url_for(
+           ~~~~~~~~~~~~~~~~~~~^
+        endpoint,
+        ^^^^^^^^^
+    ...<4 lines>...
+        **values,
+        ^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2031, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2020, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\werkzeug\routing\map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'operador.operador_dashboard'. Did you mean 'admin.admin_dashboard' instead?
+[2025-12-18 17:58:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 17:58:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 17:58:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 17:58:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 17:58:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 17:58:04] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 17:58:18] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 18:02:26] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 18:02:26] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 18:02:26] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 18:02:26] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 18:02:26] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 18:02:26] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 18:02:40] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 18:02:58] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /operador/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\base.py", line 1694, in _entity_namespace_key
+    return getattr(ns, key)
+AttributeError: type object 'Motorista' has no attribute 'ativo'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\operador\__init__.py", line 58, in operador_dashboard
+    'total_motoristas': Motorista.query.filter_by(ativo=True).count(),
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 1803, in filter_by
+    _entity_namespace_key(from_entity, key) == value
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\base.py", line 1696, in _entity_namespace_key
+    util.raise_(
+    ~~~~~~~~~~~^
+        exc.InvalidRequestError(
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        replace_context=err,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+sqlalchemy.exc.InvalidRequestError: Entity namespace for "motorista" has no property "ativo"
+[2025-12-18 18:02:59] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /operador/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\base.py", line 1694, in _entity_namespace_key
+    return getattr(ns, key)
+AttributeError: type object 'Motorista' has no attribute 'ativo'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\operador\__init__.py", line 58, in operador_dashboard
+    'total_motoristas': Motorista.query.filter_by(ativo=True).count(),
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 1803, in filter_by
+    _entity_namespace_key(from_entity, key) == value
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\base.py", line 1696, in _entity_namespace_key
+    util.raise_(
+    ~~~~~~~~~~~^
+        exc.InvalidRequestError(
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        replace_context=err,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+sqlalchemy.exc.InvalidRequestError: Entity namespace for "motorista" has no property "ativo"
+[2025-12-18 18:06:07] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 18:06:07] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 18:06:07] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 18:06:07] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 18:06:07] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 18:06:07] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 18:06:21] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 18:08:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 18:08:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 18:08:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 18:08:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 18:08:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 18:08:05] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 18:08:20] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 18:08:38] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 18:08:38] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 18:08:38] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 18:08:39] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 18:08:39] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 18:08:39] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 18:08:53] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 18:09:11] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /operador/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\operador\__init__.py", line 99, in operador_dashboard
+    Solicitacao.data_viagem >= data_inicio,
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'Solicitacao' has no attribute 'data_viagem'
+[2025-12-18 18:09:22] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /operador/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\operador\__init__.py", line 99, in operador_dashboard
+    Solicitacao.data_viagem >= data_inicio,
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'Solicitacao' has no attribute 'data_viagem'
+[2025-12-18 18:12:08] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 18:12:08] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 18:12:08] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 18:12:08] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 18:12:08] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 18:12:08] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 18:12:24] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 18:12:41] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /operador/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\operador\__init__.py", line 121, in operador_dashboard
+    Viagem.data_viagem >= data_inicio,
+    ^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'Viagem' has no attribute 'data_viagem'
+[2025-12-18 18:15:50] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 18:15:50] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 18:15:50] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 18:15:50] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 18:15:50] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 18:15:50] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 18:16:05] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 18:25:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 18:25:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 18:25:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 18:25:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 18:25:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 18:25:15] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 18:25:30] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-18 18:38:02] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-18 18:38:02] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-18 18:38:02] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-18 18:38:02] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-18 18:38:02] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-18 18:38:02] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-18 18:38:18] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-19 16:03:14] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-19 16:03:14] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-19 16:03:14] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-19 16:03:14] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-19 16:03:14] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-19 16:03:14] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-19 16:03:37] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-19 16:13:58] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:204]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '2'), ('planta_id', '1'), ('tipo_corrida', 'saida'), ('colaborador_id[]', '18'), ('colaborador_id[]', '8'), ('horario_entrada[]', ''), ('horario_entrada[]', ''), ('horario_saida[]', '2025-12-19T16:40'), ('horario_saida[]', '2025-12-19T16:40'), ('horario_desligamento[]', ''), ('horario_desligamento[]', ''), ('turno_entrada[]', ''), ('turno_entrada[]', ''), ('turno_saida[]', '1° Turno'), ('turno_saida[]', '1° Turno'), ('turno_desligamento[]', ''), ('turno_desligamento[]', '')])
+[2025-12-19 16:14:18] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:562]: [RETRY] Sessão do banco de dados limpa antes do agrupamento
+[2025-12-19 16:14:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:579]: [LOCK] Lock adquirido para grupo [1914]: lock_id=1621884550
+[2025-12-19 16:14:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:594]: [INFO] Processando 1 solicitação(ões): IDs [1914]
+[2025-12-19 16:14:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:660]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC1'], mesmo_grupo_bloco=True
+[2025-12-19 16:14:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:809]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-12-19 16:14:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:877]: [>>>] Tentando atualizar 1 solicitações: [1914]
+[2025-12-19 16:14:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:888]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-12-19 16:14:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:894]: [SAVE] Flush executado e cache limpo
+[2025-12-19 16:14:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:945]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-12-19 16:14:19] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:579]: [LOCK] Lock adquirido para grupo [1915]: lock_id=517928620
+[2025-12-19 16:14:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:594]: [INFO] Processando 1 solicitação(ões): IDs [1915]
+[2025-12-19 16:14:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:660]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['CPV5'], mesmo_grupo_bloco=True
+[2025-12-19 16:14:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:809]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-12-19 16:14:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:877]: [>>>] Tentando atualizar 1 solicitações: [1915]
+[2025-12-19 16:14:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:888]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-12-19 16:14:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:894]: [SAVE] Flush executado e cache limpo
+[2025-12-19 16:14:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:945]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-12-19 16:14:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:962]: [OK] COMMIT REALIZADO: 2 viagem(ns), 0 fretado(s), 2 solicitação(ões) agrupada(s)
+[2025-12-19 16:14:20] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:1015]: [>>>] Iniciando envio de notificação em lote sobre 2 viagem(ns) criada(s)...
+[2025-12-19 16:14:24] WARNING in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:999]: [AVISO]  Nenhum motorista notificado sobre as 2 viagem(ns) criadas
+[2025-12-19 17:11:01] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-19 17:11:01] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-19 17:11:01] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-19 17:11:01] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-19 17:11:01] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-19 17:11:01] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-19 17:11:18] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-19 17:13:05] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /operador/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\operador.py", line 190, in operador_dashboard
+    Viagem.data_inicio_real.isnot(None),
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'Viagem' has no attribute 'data_inicio_real'. Did you mean: 'data_inicio'?
+[2025-12-19 17:15:07] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-19 17:15:07] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-19 17:15:07] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-19 17:15:07] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-19 17:15:07] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-19 17:15:07] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-19 17:15:21] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-19 17:15:42] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /operador/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\operador.py", line 190, in operador_dashboard
+    Viagem.data_inicio_real.isnot(None),
+    ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'Viagem' has no attribute 'data_inicio_real'. Did you mean: 'data_inicio'?
+[2025-12-19 17:17:32] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-19 17:17:32] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-19 17:17:32] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-19 17:17:33] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-19 17:17:33] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-19 17:17:33] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-19 17:17:48] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-19 17:18:07] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /operador/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\operador.py", line 199, in operador_dashboard
+    if v.data_inicio_real and v.data_finalizacao:
+       ^^^^^^^^^^^^^^^^^^
+AttributeError: 'Viagem' object has no attribute 'data_inicio_real'. Did you mean: 'data_inicio'?
+[2025-12-19 17:18:19] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /operador/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\operador.py", line 199, in operador_dashboard
+    if v.data_inicio_real and v.data_finalizacao:
+       ^^^^^^^^^^^^^^^^^^
+AttributeError: 'Viagem' object has no attribute 'data_inicio_real'. Did you mean: 'data_inicio'?
+[2025-12-19 17:20:05] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-19 17:20:05] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-19 17:20:05] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-19 17:20:05] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-19 17:20:05] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-19 17:20:05] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-19 17:20:21] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-19 17:32:00] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-19 17:32:00] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-19 17:32:00] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-19 17:32:00] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-19 17:32:00] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-19 17:32:00] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-19 17:32:16] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-19 17:32:50] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/solicitacoes [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py", line 185, in solicitacoes
+    Empresa.id == current_user.empresa.id).order_by(Bloco.codigo_bloco).all()
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'id'
+[2025-12-19 17:38:28] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-19 17:38:28] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-19 17:38:28] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-19 17:38:28] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-19 17:38:28] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-19 17:38:28] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-19 17:38:43] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-19 18:03:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-19 18:03:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-19 18:03:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-19 18:03:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-19 18:03:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-19 18:03:57] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-19 18:04:12] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-19 18:06:36] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-19 18:06:36] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-19 18:06:36] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-19 18:06:36] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-19 18:06:36] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-19 18:06:36] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-19 18:06:51] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-19 18:12:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-19 18:12:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-19 18:12:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-19 18:12:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-19 18:12:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-19 18:12:56] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-19 18:13:13] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-19 18:27:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-19 18:27:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-19 18:27:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-19 18:27:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-19 18:27:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-19 18:27:34] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-19 18:27:50] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-19 18:29:02] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:204]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '2'), ('planta_id', '1'), ('tipo_corrida', 'saida'), ('colaborador_id[]', '10'), ('horario_entrada[]', ''), ('horario_saida[]', '2025-12-19T20:30'), ('horario_desligamento[]', ''), ('turno_entrada[]', ''), ('turno_saida[]', '1° Turno'), ('turno_desligamento[]', '')])
+[2025-12-19 18:29:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:562]: [RETRY] Sessão do banco de dados limpa antes do agrupamento
+[2025-12-19 18:29:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:579]: [LOCK] Lock adquirido para grupo [1916]: lock_id=463439574
+[2025-12-19 18:29:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:594]: [INFO] Processando 1 solicitação(ões): IDs [1916]
+[2025-12-19 18:29:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:660]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC1'], mesmo_grupo_bloco=True
+[2025-12-19 18:29:46] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:809]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-12-19 18:29:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:877]: [>>>] Tentando atualizar 1 solicitações: [1916]
+[2025-12-19 18:29:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:888]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-12-19 18:29:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:894]: [SAVE] Flush executado e cache limpo
+[2025-12-19 18:29:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:945]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-12-19 18:29:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:962]: [OK] COMMIT REALIZADO: 1 viagem(ns), 0 fretado(s), 1 solicitação(ões) agrupada(s)
+[2025-12-19 18:29:47] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:1015]: [>>>] Iniciando envio de notificação em lote sobre 1 viagem(ns) criada(s)...
+[2025-12-19 18:29:51] WARNING in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:999]: [AVISO]  Nenhum motorista notificado sobre as 1 viagem(ns) criadas
+[2025-12-23 11:07:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-23 11:07:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-23 11:07:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-23 11:07:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-23 11:07:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-23 11:07:59] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-23 11:08:13] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-23 11:35:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-23 11:35:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-23 11:35:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-23 11:35:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-23 11:35:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-23 11:35:56] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-23 11:36:10] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-23 12:04:21] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-23 12:04:21] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-23 12:04:21] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-23 12:04:21] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-23 12:04:21] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-23 12:04:21] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-23 12:04:35] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-23 14:23:41] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /logout [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: server closed the connection unexpectedly
+	This probably means the server terminated abnormally
+	before or while processing the request.
+server closed the connection unexpectedly
+	This probably means the server terminated abnormally
+	before or while processing the request.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 284, in decorated_view
+    elif not current_user.is_authenticated:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\werkzeug\local.py", line 311, in __get__
+    obj = instance._get_current_object()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\werkzeug\local.py", line 515, in _get_current_object
+    return get_name(local())
+                    ~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 25, in <lambda>
+    current_user = LocalProxy(lambda: _get_user())
+                                      ~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 372, in _get_user
+    current_app.login_manager._load_user()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\login_manager.py", line 364, in _load_user
+    user = self._user_callback(user_id)
+  File "H:\Meu Drive\Python_Project\doug\app\__init__.py", line 74, in load_user
+    return User.query.get(int(user_id))
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "<string>", line 2, in get
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\deprecations.py", line 402, in warned
+    return fn(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 943, in get
+    return self._get_impl(ident, loading.load_on_pk_identity)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 947, in _get_impl
+    return self.session._get_impl(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        mapper,
+        ^^^^^^^
+    ...<6 lines>...
+        execution_options=self._execution_options,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2912, in _get_impl
+    return db_load_fn(
+        self,
+    ...<2 lines>...
+        load_options=load_options,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\loading.py", line 530, in load_on_pk_identity
+    session.execute(
+    ~~~~~~~~~~~~~~~^
+        q,
+        ^^
+    ...<2 lines>...
+        bind_arguments=bind_arguments,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1712, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1631, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 332, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, multiparams, params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1498, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1862, in _execute_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, statement, parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2043, in _handle_dbapi_exception
+    util.raise_(
+    ~~~~~~~~~~~^
+        sqlalchemy_exception, with_traceback=exc_info[2], from_=e
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) server closed the connection unexpectedly
+	This probably means the server terminated abnormally
+	before or while processing the request.
+server closed the connection unexpectedly
+	This probably means the server terminated abnormally
+	before or while processing the request.
+
+[SQL: SELECT "user".id AS user_id, "user".email AS user_email, "user".password AS user_password, "user".role AS user_role, "user".foto_perfil AS user_foto_perfil, "user".is_active AS user_is_active 
+FROM "user" 
+WHERE "user".id = %(pk_1)s]
+[parameters: {'pk_1': 57}]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+[2025-12-23 16:00:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-23 16:00:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-23 16:00:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-23 16:00:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-23 16:00:04] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-23 16:00:04] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-23 16:00:19] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-23 16:20:32] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-23 16:20:32] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-23 16:20:32] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-23 16:20:32] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-23 16:20:32] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-23 16:23:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-23 16:23:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-23 16:23:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-23 16:23:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-23 16:23:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-23 16:23:41] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-23 16:23:55] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes

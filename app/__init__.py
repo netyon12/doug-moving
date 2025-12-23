@@ -109,6 +109,14 @@ def create_app():
     from .blueprints.consulta_viagens import consulta_bp
     app.register_blueprint(consulta_bp)
 
+    # NOVO: Cadastro de Usuários (Configurações)
+    from .blueprints.usuarios.cad_users import cad_users_bp
+    app.register_blueprint(cad_users_bp)
+
+    # NOVO: Blueprint do Operador
+    from .blueprints.operador import operador_bp
+    app.register_blueprint(operador_bp)
+
     # --- FILTROS PERSONALIZADOS DO JINJA2 ---
 
     @app.template_filter('number_format')
@@ -141,6 +149,10 @@ def create_app():
         """
         Rota principal que redireciona o usuário logado para o dashboard correto.
         """
+        if not current_user.is_authenticated:
+            # Embora tenha @login_required, esta é uma verificação de segurança
+            return redirect(url_for('auth.login'))
+
         if current_user.role == 'admin':
             # Redireciona para a função 'dashboard' dentro do blueprint 'admin'
             return redirect(url_for('admin.admin_dashboard'))
@@ -153,8 +165,10 @@ def create_app():
             return redirect(url_for('supervisor.dashboard_supervisor'))
 
         elif current_user.role == 'motorista':
-            # Redireciona para a função 'dashboard' dentro do blueprint 'motorista'
             return redirect(url_for('motorista.dashboard_motorista'))
+
+        elif current_user.role == 'operador':
+            return redirect(url_for('operador.operador_dashboard'))
 
         else:
             # Caso de segurança: se a role for desconhecida, desloga o usuário.

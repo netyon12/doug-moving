@@ -79,7 +79,7 @@ def cadastrar_empresa():
 @admin_bp.route('/empresas/editar/<int:empresa_id>', methods=['GET', 'POST'])
 @login_required
 def editar_empresa(empresa_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     empresa = Empresa.query.get_or_404(empresa_id)
@@ -108,7 +108,7 @@ def editar_empresa(empresa_id):
 @admin_bp.route('/empresas/excluir/<int:empresa_id>', methods=['POST'])
 @login_required
 def excluir_empresa(empresa_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     empresa = Empresa.query.get_or_404(empresa_id)
@@ -193,7 +193,7 @@ def cadastrar_planta():
 @admin_bp.route('/plantas/editar/<int:planta_id>', methods=['GET', 'POST'])
 @login_required
 def editar_planta(planta_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     planta = Planta.query.get_or_404(planta_id)
@@ -216,7 +216,7 @@ def editar_planta(planta_id):
 @admin_bp.route('/plantas/excluir/<int:planta_id>', methods=['POST'])
 @login_required
 def excluir_planta(planta_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     planta = Planta.query.get_or_404(planta_id)
@@ -251,7 +251,7 @@ def excluir_planta(planta_id):
 @admin_bp.route('/centros-custo/cadastrar', methods=['GET', 'POST'])
 @login_required
 def cadastrar_centro_custo():
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     if request.method == 'POST':
@@ -284,7 +284,7 @@ def cadastrar_centro_custo():
 @admin_bp.route('/centros-custo/editar/<int:cc_id>', methods=['GET', 'POST'])
 @login_required
 def editar_centro_custo(cc_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     centro_custo = CentroCusto.query.get_or_404(cc_id)
@@ -306,7 +306,7 @@ def editar_centro_custo(cc_id):
 @admin_bp.route('/centros-custo/excluir/<int:cc_id>', methods=['POST'])
 @login_required
 def excluir_centro_custo(cc_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     centro_custo = CentroCusto.query.get_or_404(cc_id)
@@ -329,7 +329,7 @@ def excluir_centro_custo(cc_id):
 @admin_bp.route('/turnos/cadastrar', methods=['GET', 'POST'])
 @login_required
 def cadastrar_turno():
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     if request.method == 'POST':
@@ -368,7 +368,7 @@ def cadastrar_turno():
 @admin_bp.route('/turnos/editar/<int:turno_id>', methods=['GET', 'POST'])
 @login_required
 def editar_turno(turno_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     turno = Turno.query.get_or_404(turno_id)
@@ -408,7 +408,7 @@ def editar_turno(turno_id):
 @admin_bp.route('/turnos/excluir/<int:turno_id>', methods=['POST'])
 @login_required
 def excluir_turno(turno_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     turno = Turno.query.get_or_404(turno_id)
@@ -431,7 +431,7 @@ def excluir_turno(turno_id):
 @admin_bp.route('/blocos/cadastrar', methods=['GET', 'POST'])
 @login_required
 def cadastrar_bloco():
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     if request.method == 'POST':
@@ -482,7 +482,7 @@ def cadastrar_bloco():
 @admin_bp.route('/blocos/editar/<int:bloco_id>', methods=['GET', 'POST'])
 @login_required
 def editar_bloco(bloco_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     bloco = Bloco.query.get_or_404(bloco_id)
@@ -536,7 +536,7 @@ def editar_bloco(bloco_id):
 @admin_bp.route('/blocos/excluir/<int:bloco_id>', methods=['POST'])
 @login_required
 def excluir_bloco(bloco_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     bloco = Bloco.query.get_or_404(bloco_id)
@@ -561,7 +561,7 @@ def excluir_bloco(bloco_id):
 @admin_bp.route('/bairros/cadastrar', methods=['GET', 'POST'])
 @login_required
 def cadastrar_bairro():
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     if request.method == 'POST':
@@ -586,7 +586,7 @@ def cadastrar_bairro():
 @admin_bp.route('/bairros/editar/<int:bairro_id>', methods=['GET', 'POST'])
 @login_required
 def editar_bairro(bairro_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     bairro = Bairro.query.get_or_404(bairro_id)
@@ -604,7 +604,7 @@ def editar_bairro(bairro_id):
 @admin_bp.route('/bairros/excluir/<int:bairro_id>', methods=['POST'])
 @login_required
 def excluir_bairro(bairro_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     bairro = Bairro.query.get_or_404(bairro_id)
@@ -691,7 +691,7 @@ def associar_bairros_bloco(bloco_id):
 @admin_bp.route('/gerentes/cadastrar', methods=['GET', 'POST'])
 @login_required
 def cadastrar_gerente():
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     if request.method == 'POST':
@@ -834,7 +834,7 @@ def cadastrar_gerente():
 @admin_bp.route('/gerentes/editar/<int:gerente_id>', methods=['GET', 'POST'])
 @login_required
 def editar_gerente(gerente_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     gerente = Gerente.query.get_or_404(gerente_id)
@@ -996,7 +996,7 @@ def editar_gerente(gerente_id):
 @admin_bp.route('/gerentes/excluir/<int:gerente_id>', methods=['POST'])
 @login_required
 def excluir_gerente(gerente_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     gerente = Gerente.query.get_or_404(gerente_id)
@@ -1019,7 +1019,7 @@ def excluir_gerente(gerente_id):
 
 @admin_bp.route('/supervisores/cadastrar', methods=['GET', 'POST'])
 @login_required
-@permission_required(['admin', 'gerente'])
+@permission_required(['admin', 'gerente', 'operador'])
 def cadastrar_supervisor():
 
     if request.method == 'POST':
@@ -1146,7 +1146,7 @@ def cadastrar_supervisor():
             }), 500
 
     # GET: Prepara dados para o formulário
-    if current_user.role == 'admin':
+    if current_user.role in ['admin', 'operador']:
         empresas = Empresa.query.order_by(Empresa.nome).all()
         gerentes = Gerente.query.order_by(Gerente.nome).all()
     else:  # Se for gerente
@@ -1169,7 +1169,7 @@ def cadastrar_supervisor():
 
 @admin_bp.route('/supervisores/editar/<int:supervisor_id>', methods=['GET', 'POST'])
 @login_required
-@permission_required(['admin', 'gerente'])
+@permission_required(['admin', 'gerente', 'operador'])
 def editar_supervisor(supervisor_id):
 
     if current_user.role not in ['admin', 'gerente']:
@@ -1244,7 +1244,7 @@ def editar_supervisor(supervisor_id):
                 'message': f'Erro ao atualizar supervisor: {str(e)}'
             }), 500
 
-    if current_user.role == 'admin':
+    if current_user.role in ['admin', 'operador']:
         empresas = Empresa.query.all()
         gerentes = Gerente.query.all()
     else:  # Se for gerente
@@ -1263,7 +1263,7 @@ def editar_supervisor(supervisor_id):
 @admin_bp.route('/supervisores/excluir/<int:supervisor_id>', methods=['POST'])
 @login_required
 def excluir_supervisor(supervisor_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     supervisor = Supervisor.query.get_or_404(supervisor_id)

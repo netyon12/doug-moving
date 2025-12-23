@@ -5,7 +5,7 @@ from flask import flash, redirect, url_for, abort
 from flask_login import current_user
 
 
-def permission_required(permission):
+def permission_required(*permissions):
     """
     Decorator que verifica se o usuário logado tem a permissão necessária.
     A 'permissão' é simplesmente o nome do 'role' (ex: 'admin', 'gerente').
@@ -14,14 +14,14 @@ def permission_required(permission):
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            # Converte a permissão para uma lista, caso seja uma string única
-            if isinstance(permission, str):
-                permissions = [permission]
-            else:
-                permissions = permission
-
+            # Se for chamado com um único argumento que é uma lista, usa a lista.
+            # Caso contrário, usa os argumentos passados (*permissions)
+            perms = permissions
+            if len(perms) == 1 and isinstance(perms[0], (list, tuple)):
+                perms = perms[0]
+            
             # Se o perfil do usuário não estiver na lista de permissões, bloqueia o acesso.
-            if current_user.role not in permissions:
+            if current_user.role not in perms:
                 # Você pode personalizar a ação de bloqueio aqui.
                 # Opção 1: Mostrar uma página de "Acesso Negado" (403 Forbidden)
                 abort(403)
@@ -35,7 +35,7 @@ def permission_required(permission):
     return decorator
 
 
-def role_required(role):
+def role_required(*roles):
     """
     Decorator que verifica se o usuário logado tem o role necessário.
     É um alias para permission_required, mantendo compatibilidade.
@@ -49,7 +49,7 @@ def role_required(role):
         def minha_rota():
             ...
     """
-    return permission_required(role)
+    return permission_required(*roles)
 
 
 def agrupamento_required(f):
@@ -64,7 +64,7 @@ def agrupamento_required(f):
             return redirect(url_for('auth.login'))
 
         # Apenas Admin e Gerente podem acessar agrupamento
-        if current_user.role not in ['admin', 'gerente']:
+        if current_user.role not in ['admin', 'gerente', 'operador']:
             flash(
                 'Acesso negado. Apenas Administradores e Gerentes podem acessar o Agrupamento.', 'error')
             abort(403)

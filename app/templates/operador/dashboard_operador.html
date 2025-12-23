@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard Administrativo - Go Mobi{% endblock %}
+{% block title %}Dashboard Operacional - Go Mobi{% endblock %}
 
 {% block content %}
 <!-- CSS específico do Dashboard Administrativo -->
@@ -42,56 +42,6 @@
     color: white;
 }
 
-/* Cards com comparação */
-.kpi-card-executivo {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: transform 0.3s, box-shadow 0.3s;
-    overflow: hidden;
-}
-
-.kpi-card-executivo:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 12px rgba(0,0,0,0.15);
-}
-
-.kpi-header {
-    font-size: 0.875rem;
-    color: #6b7280;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.kpi-value-large {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
-.kpi-comparison {
-    font-size: 0.875rem;
-    font-weight: 600;
-    padding: 4px 8px;
-    border-radius: 6px;
-    display: inline-block;
-}
-
-.kpi-comparison.positive {
-    background: #d1fae5;
-    color: #065f46;
-}
-
-.kpi-comparison.negative {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-.kpi-comparison.neutral {
-    background: #e5e7eb;
-    color: #374151;
-}
-
 /* Alertas */
 .alert-card {
     border-left: 4px solid;
@@ -129,9 +79,9 @@
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h1 class="h2 mb-2">
-                    <i class="bi bi-speedometer2"></i> Dashboard Administrativo
+                    <i class="bi bi-speedometer2"></i> Dashboard Operacional
                 </h1>
-                <p class="mb-0 opacity-75">Visão geral completa do sistema Go Mobi</p>
+                <p class="mb-0 opacity-75">Visão geral operacional do sistema Go Mobi</p>
             </div>
             <div class="col-md-4 text-md-end">
                 <small class="d-block opacity-75">Última atualização</small>
@@ -143,7 +93,7 @@
 
 <!-- Filtros: Empresa e Período -->
 <div class="company-filter mb-4">
-    <form method="GET" action="{{ url_for('admin.admin_dashboard') }}" id="form_filtros">
+    <form method="GET" action="{{ url_for('operador.operador_dashboard') }}" id="form_filtros">
         <input type="hidden" name="aba" id="aba_input" value="{{ request.args.get('aba', 'operacional') }}">
         <div class="row align-items-end g-3">
             <!-- Filtro de Empresa -->
@@ -219,7 +169,7 @@
                     type="button" 
                     role="tab"
                     onclick="mudarAba('executivo')">
-                <i class="bi bi-graph-up-arrow"></i> Executivo
+                <i class="bi bi-graph-up-arrow"></i> Indicadores
             </button>
         </li>
         <li class="nav-item" role="presentation">
@@ -330,7 +280,7 @@
                         <div class="card-body position-relative">
                             <div class="kpi-value">{{ kpis_viagens.agendadas }}</div>
                             <div class="kpi-label">Agendadas</div>
-                            <i class="bi bi-calendar-event kpi-icon"></i>
+                            <i class="bi bi-calendar-check kpi-icon"></i>
                         </div>
                     </div>
                 </div>
@@ -339,7 +289,7 @@
                         <div class="card-body position-relative">
                             <div class="kpi-value">{{ kpis_viagens.em_andamento }}</div>
                             <div class="kpi-label">Em Andamento</div>
-                            <i class="bi bi-arrow-clockwise kpi-icon"></i>
+                            <i class="bi bi-arrow-repeat kpi-icon"></i>
                         </div>
                     </div>
                 </div>
@@ -347,17 +297,8 @@
                     <div class="card kpi-card kpi-viagens-finalizadas">
                         <div class="card-body position-relative">
                             <div class="kpi-value">{{ kpis_viagens.finalizadas_periodo }}</div>
-                            <div class="kpi-label">Finalizadas do Período</div>
+                            <div class="kpi-label">Finalizadas</div>
                             <i class="bi bi-check-circle kpi-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6 col-6">
-                    <div class="card kpi-card kpi-viagens-canceladas">
-                        <div class="card-body position-relative">
-                            <div class="kpi-value">{{ kpis_viagens.canceladas_periodo }}</div>
-                            <div class="kpi-label">Canceladas do Período</div>
-                            <i class="bi bi-x-circle kpi-icon"></i>
                         </div>
                     </div>
                 </div>
@@ -411,117 +352,22 @@
         
     </div>
     
-    <!-- ========== ABA EXECUTIVO ========== -->
+    <!-- ========== ABA INDICADORES (EXECUTIVO LIMITADO) ========== -->
     <div class="tab-pane fade {% if request.args.get('aba') == 'executivo' %}show active{% endif %}" 
          id="executivo" 
          role="tabpanel">
         
-        <!-- Resumo Executivo (3 cards grandes) -->
+        <!-- KPIs Operacionais (Permitidos para Operador) -->
         <div class="mb-4">
             <h3 class="section-title">
-                <i class="bi bi-star-fill"></i> Resumo Executivo
+                <i class="bi bi-gear"></i> Indicadores de Performance
                 <small class="text-muted fs-6">(Período: {{ data_inicio }} a {{ data_fim }})</small>
-            </h3>
-            <div class="row g-3">
-                <!-- Receita -->
-                <div class="col-md-4">
-                    <div class="card kpi-card-executivo" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">
-                        <div class="card-body">
-                            <div class="kpi-header" style="color: rgba(255,255,255,0.9);">Receita do Período</div>
-                            <div class="kpi-value-large">R$ {{ "{:,.2f}".format(kpis_performance.receita_total).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
-                            <div class="kpi-comparison {% if kpis_performance.variacao_receita > 0 %}positive{% elif kpis_performance.variacao_receita < 0 %}negative{% else %}neutral{% endif %}" style="background: rgba(255,255,255,0.2); color: white;">
-                                {% if kpis_performance.variacao_receita > 0 %}↑{% elif kpis_performance.variacao_receita < 0 %}↓{% else %}→{% endif %}
-                                {{ kpis_performance.variacao_receita|abs }}% vs período anterior
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Margem Líquida -->
-                <div class="col-md-4">
-                    <div class="card kpi-card-executivo" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;">
-                        <div class="card-body">
-                            <div class="kpi-header" style="color: rgba(255,255,255,0.9);">Margem Líquida</div>
-                            <div class="kpi-value-large">R$ {{ "{:,.2f}".format(kpis_performance.margem_liquida).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
-                            <div class="kpi-comparison {% if kpis_performance.variacao_margem > 0 %}positive{% elif kpis_performance.variacao_margem < 0 %}negative{% else %}neutral{% endif %}" style="background: rgba(255,255,255,0.2); color: white;">
-                                {% if kpis_performance.variacao_margem > 0 %}↑{% elif kpis_performance.variacao_margem < 0 %}↓{% else %}→{% endif %}
-                                {{ kpis_performance.variacao_margem|abs }}% vs período anterior
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Viagens Finalizadas -->
-                <div class="col-md-4">
-                    <div class="card kpi-card-executivo" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white;">
-                        <div class="card-body">
-                            <div class="kpi-header" style="color: rgba(255,255,255,0.9);">Viagens Finalizadas</div>
-                            <div class="kpi-value-large">{{ kpis_viagens.finalizadas_periodo }}</div>
-                            <div class="kpi-comparison {% if kpis_performance.variacao_viagens > 0 %}positive{% elif kpis_performance.variacao_viagens < 0 %}negative{% else %}neutral{% endif %}" style="background: rgba(255,255,255,0.2); color: white;">
-                                {% if kpis_performance.variacao_viagens > 0 %}↑{% elif kpis_performance.variacao_viagens < 0 %}↓{% else %}→{% endif %}
-                                {{ kpis_performance.variacao_viagens|abs }}% vs período anterior
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- KPIs Financeiros -->
-        <div class="mb-4">
-            <h3 class="section-title">
-                <i class="bi bi-currency-dollar"></i> KPIs Financeiros
-            </h3>
-            <div class="row g-3">
-                <div class="col-md-3 col-sm-6">
-                    <div class="card kpi-card kpi-receita">
-                        <div class="card-body position-relative">
-                            <div class="kpi-value">R$ {{ "{:,.2f}".format(kpis_performance.receita_total).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
-                            <div class="kpi-label">Receita Total</div>
-                            <i class="bi bi-currency-dollar kpi-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="card kpi-card kpi-repasse">
-                        <div class="card-body position-relative">
-                            <div class="kpi-value">R$ {{ "{:,.2f}".format(kpis_performance.custo_repasse).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
-                            <div class="kpi-label">Custo de Repasse</div>
-                            <i class="bi bi-cash-stack kpi-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="card kpi-card kpi-margem">
-                        <div class="card-body position-relative">
-                            <div class="kpi-value">R$ {{ "{:,.2f}".format(kpis_performance.margem_liquida).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
-                            <div class="kpi-label">Margem Líquida</div>
-                            <i class="bi bi-graph-up-arrow kpi-icon"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 col-sm-6">
-                    <div class="card kpi-card kpi-ticket">
-                        <div class="card-body position-relative">
-                            <div class="kpi-value">R$ {{ "{:,.2f}".format(kpis_performance.ticket_medio).replace(',', 'X').replace('.', ',').replace('X', '.') }}</div>
-                            <div class="kpi-label">Ticket Médio</div>
-                            <i class="bi bi-receipt kpi-icon"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- KPIs Operacionais -->
-        <div class="mb-4">
-            <h3 class="section-title">
-                <i class="bi bi-gear"></i> KPIs Operacionais
             </h3>
             <div class="row g-3">
                 <div class="col-md-3 col-sm-6">
                     <div class="card kpi-card kpi-ocupacao">
                         <div class="card-body position-relative">
-                            <div class="kpi-value">{{ kpis_performance.taxa_ocupacao }}%</div>
+                            <div class="kpi-value">{{ kpis_performance.taxa_ocupacao|default(0) }}%</div>
                             <div class="kpi-label">Taxa de Ocupação</div>
                             <i class="bi bi-percent kpi-icon"></i>
                         </div>
@@ -530,7 +376,7 @@
                 <div class="col-md-3 col-sm-6">
                     <div class="card kpi-card kpi-tempo">
                         <div class="card-body position-relative">
-                            <div class="kpi-value">{{ kpis_performance.tempo_medio_viagem }} min</div>
+                            <div class="kpi-value">{{ kpis_performance.tempo_medio_viagem|default(0) }} min</div>
                             <div class="kpi-label">Tempo Médio de Viagem</div>
                             <i class="bi bi-stopwatch kpi-icon"></i>
                         </div>
@@ -539,7 +385,7 @@
                 <div class="col-md-3 col-sm-6">
                     <div class="card kpi-card kpi-viagens-motorista">
                         <div class="card-body position-relative">
-                            <div class="kpi-value">{{ kpis_performance.viagens_por_motorista }}</div>
+                            <div class="kpi-value">{{ kpis_performance.viagens_por_motorista|default(0) }}</div>
                             <div class="kpi-label">Viagens por Motorista</div>
                             <i class="bi bi-person-check kpi-icon"></i>
                         </div>
@@ -548,7 +394,7 @@
                 <div class="col-md-3 col-sm-6">
                     <div class="card kpi-card kpi-cancelamento">
                         <div class="card-body position-relative">
-                            <div class="kpi-value">{{ kpis_performance.taxa_cancelamento }}%</div>
+                            <div class="kpi-value">{{ kpis_performance.taxa_cancelamento|default(0) }}%</div>
                             <div class="kpi-label">Taxa de Cancelamento</div>
                             <i class="bi bi-x-octagon kpi-icon"></i>
                         </div>
@@ -563,28 +409,21 @@
                 <i class="bi bi-exclamation-triangle"></i> Alertas e Insights
             </h3>
             
-            {% if kpis_performance.taxa_cancelamento > 5 %}
+            {% if kpis_performance.taxa_cancelamento|default(0) > 5 %}
             <div class="alert-card alert-danger">
                 <strong><i class="bi bi-exclamation-circle"></i> ALERTA:</strong> 
                 Taxa de cancelamento acima de 5% (atual: {{ kpis_performance.taxa_cancelamento }}%)
             </div>
             {% endif %}
             
-            {% if kpis_performance.taxa_ocupacao < 60 %}
+            {% if kpis_performance.taxa_ocupacao|default(0) < 60 %}
             <div class="alert-card alert-warning">
                 <strong><i class="bi bi-exclamation-triangle"></i> ATENÇÃO:</strong> 
                 Taxa de ocupação abaixo de 60% (atual: {{ kpis_performance.taxa_ocupacao }}%)
             </div>
             {% endif %}
             
-            {% if kpis_performance.variacao_margem > 10 %}
-            <div class="alert-card alert-success">
-                <strong><i class="bi bi-check-circle"></i> POSITIVO:</strong> 
-                Margem líquida cresceu {{ kpis_performance.variacao_margem }}% vs período anterior
-            </div>
-            {% endif %}
-            
-            {% if kpis_performance.taxa_cancelamento <= 5 and kpis_performance.taxa_ocupacao >= 60 and kpis_performance.variacao_margem <= 10 %}
+            {% if kpis_performance.taxa_cancelamento|default(0) <= 5 and kpis_performance.taxa_ocupacao|default(0) >= 60 %}
             <div class="alert-card alert-success">
                 <strong><i class="bi bi-check-circle"></i> TUDO OK:</strong> 
                 Nenhum alerta no momento. Operação dentro dos parâmetros esperados.
@@ -592,47 +431,6 @@
             {% endif %}
         </div>
         
-    </div>
-</div>
-
-<!-- Acesso Rápido (em ambas as abas) -->
-<div class="mb-4">
-    <h3 class="section-title">
-        <i class="bi bi-lightning"></i> Acesso Rápido
-    </h3>
-    <div class="row g-3">
-        <div class="col-md-3 col-sm-6">
-            <a href="{{ url_for('admin.solicitacoes') }}" class="card quick-access-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-clipboard-check display-4 mb-2"></i>
-                    <h5 class="card-title">Solicitações</h5>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <a href="{{ url_for('admin.viagens') }}" class="card quick-access-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-car-front display-4 mb-2"></i>
-                    <h5 class="card-title">Viagens</h5>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <a href="{{ url_for('admin.agrupamento') }}" class="card quick-access-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-collection display-4 mb-2"></i>
-                    <h5 class="card-title">Agrupamento</h5>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <a href="{{ url_for('relatorios.conferencia_viagens') }}" class="card quick-access-card">
-                <div class="card-body text-center">
-                    <i class="bi bi-file-earmark-text display-4 mb-2"></i>
-                    <h5 class="card-title">Relatórios</h5>
-                </div>
-            </a>
-        </div>
     </div>
     
     <!-- ========== ABA GRÁFICOS ========== -->
@@ -644,15 +442,11 @@
         <h2 class="mb-4"><i class="bi bi-bar-chart-line"></i> Gráficos e Análises</h2>
         
         <!-- Gráfico 1: Receita Diária -->
-        {% if dados_graficos and dados_graficos.receita %}
+        {% if dados_graficos and dados_graficos.receita_diaria %}
         <div class="mb-4">
             <div class="card">
-                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <div class="card-header bg-success text-white">
                     <h5 class="mb-0"><i class="bi bi-graph-up"></i> Receita Diária do Período</h5>
-                    <div>
-                        <span class="badge bg-light text-dark me-2">Total: R$ {{ "{:,.2f}".format(dados_graficos.receita.total) }}</span>
-                        <span class="badge bg-warning text-dark">Média: R$ {{ "{:,.2f}".format(dados_graficos.receita.media) }}</span>
-                    </div>
                 </div>
                 <div class="card-body">
                     <canvas id="graficoReceitaDiaria" style="max-height: 400px;"></canvas>
@@ -661,7 +455,7 @@
         </div>
         {% endif %}
         
-        <!-- Gráfico 2: Viagens Finalizadas por Horário -->
+                <!-- Gráfico 1: Viagens Finalizadas por Horário -->
         {% if dados_graficos and dados_graficos.viagens_horario %}
         <div class="mb-4">
             <div class="card">
@@ -676,7 +470,7 @@
         </div>
         {% endif %}
         
-        <!-- Gráfico 3: Viagens por Planta -->
+        <!-- Gráfico 2: Viagens por Planta -->
         {% if dados_graficos and dados_graficos.viagens_planta %}
         <div class="mb-4">
             <div class="card">
@@ -721,11 +515,11 @@
         </div>
         {% endif %}
         
-        <!-- Gráfico 4: Ranking de Motoristas -->
+        <!-- Gráfico 3: Ranking de Motoristas -->
         {% if dados_graficos and dados_graficos.ranking_motoristas %}
         <div class="mb-4">
             <div class="card">
-                <div class="card-header bg-info text-white">
+                <div class="card-header bg-success text-white">
                     <h5 class="mb-0"><i class="bi bi-trophy"></i> Ranking de Motoristas (Viagens Finalizadas)</h5>
                 </div>
                 <div class="card-body">
@@ -786,25 +580,71 @@
             </div>
         </div>
         {% endif %}
+
         
     </div>
     
 </div>
 
+<!-- Acesso Rápido -->
+<div class="mb-4">
+    <h3 class="section-title">
+        <i class="bi bi-lightning"></i> Acesso Rápido
+    </h3>
+    <div class="row g-3">
+        <div class="col-md-3 col-sm-6">
+            <a href="{{ url_for('admin.solicitacoes') }}" class="card quick-access-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-clipboard-check display-4 mb-2"></i>
+                    <h5 class="card-title">Solicitações</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <a href="{{ url_for('admin.viagens') }}" class="card quick-access-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-car-front display-4 mb-2"></i>
+                    <h5 class="card-title">Viagens</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <a href="{{ url_for('admin.agrupamento') }}" class="card quick-access-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-collection display-4 mb-2"></i>
+                    <h5 class="card-title">Agrupamento</h5>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <a href="{{ url_for('relatorios.conferencia_viagens') }}" class="card quick-access-card">
+                <div class="card-body text-center">
+                    <i class="bi bi-file-earmark-text display-4 mb-2"></i>
+                    <h5 class="card-title">Relatórios</h5>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
 // ========== INICIALIZAR GRÁFICOS ==========
 
+{% if dados_graficos and dados_graficos.receita_diaria %}
 // Gráfico 1: Receita Diária
 const ctxReceita = document.getElementById('graficoReceitaDiaria');
 if (ctxReceita) {
     new Chart(ctxReceita, {
         type: 'line',
         data: {
-            labels: {{ dados_graficos.receita.labels_dias | tojson }},
+            labels: {{ dados_graficos.labels_dias | tojson }},
             datasets: [{
                 label: 'Receita (R$)',
-                data: {{ dados_graficos.receita.receita_diaria | tojson }},
+                data: {{ dados_graficos.receita_diaria | tojson }},
                 borderColor: 'rgb(34, 197, 94)',
                 backgroundColor: 'rgba(34, 197, 94, 0.1)',
                 borderWidth: 3,
@@ -841,8 +681,10 @@ if (ctxReceita) {
         }
     });
 }
+{% endif %}
 
-// Gráfico 2: Viagens Finalizadas por Horário
+{% if dados_graficos and dados_graficos.viagens_horario %}
+// Gráfico 1: Viagens Finalizadas por Horário (Linha)
 const ctxViagensHorario = document.getElementById('graficoViagensHorario');
 if (ctxViagensHorario) {
     new Chart(ctxViagensHorario, {
@@ -856,7 +698,9 @@ if (ctxViagensHorario) {
                 backgroundColor: 'rgba(59, 130, 246, 0.1)',
                 borderWidth: 3,
                 fill: true,
-                tension: 0.4
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6
             }]
         },
         options: {
@@ -866,6 +710,13 @@ if (ctxViagensHorario) {
                 legend: {
                     display: true,
                     position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Viagens: ' + context.parsed.y;
+                        }
+                    }
                 }
             },
             scales: {
@@ -879,8 +730,10 @@ if (ctxViagensHorario) {
         }
     });
 }
+{% endif %}
 
-// Gráfico 3: Viagens por Planta
+{% if dados_graficos and dados_graficos.viagens_planta %}
+// Gráfico 3: Viagens por Planta (Pizza)
 const ctxViagensPlanta = document.getElementById('graficoViagensPlanta');
 if (ctxViagensPlanta) {
     new Chart(ctxViagensPlanta, {
@@ -890,14 +743,14 @@ if (ctxViagensPlanta) {
             datasets: [{
                 data: {{ dados_graficos.viagens_planta.valores | tojson }},
                 backgroundColor: [
-                    'rgb(249, 115, 22)',
-                    'rgb(168, 85, 247)',
-                    'rgb(6, 182, 212)',
-                    'rgb(34, 197, 94)',
-                    'rgb(239, 68, 68)',
-                    'rgb(234, 179, 8)',
-                    'rgb(236, 72, 153)',
-                    'rgb(14, 165, 233)'
+                    'rgb(59, 130, 246)',   // Azul
+                    'rgb(34, 197, 94)',    // Verde
+                    'rgb(249, 115, 22)',   // Laranja
+                    'rgb(168, 85, 247)',   // Roxo
+                    'rgb(236, 72, 153)',   // Rosa
+                    'rgb(6, 182, 212)',    // Ciano
+                    'rgb(251, 191, 36)',   // Amarelo
+                    'rgb(239, 68, 68)'     // Vermelho
                 ],
                 borderWidth: 2,
                 borderColor: '#fff'
@@ -916,8 +769,8 @@ if (ctxViagensPlanta) {
                         label: function(context) {
                             const label = context.label || '';
                             const value = context.parsed || 0;
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            const percentuais = {{ dados_graficos.viagens_planta.percentuais | tojson }};
+                            const percentage = percentuais[context.dataIndex];
                             return label + ': ' + value + ' (' + percentage + '%)';
                         }
                     }
@@ -926,9 +779,8 @@ if (ctxViagensPlanta) {
         }
     });
 }
-</script>
+{% endif %}
 
-<script>
 // Atualizar data/hora atual
 function atualizarDataHora() {
     const agora = new Date();
@@ -977,5 +829,4 @@ function mudarAba(aba) {
     document.getElementById('aba_input').value = aba;
 }
 </script>
-
 {% endblock %}

@@ -38,7 +38,7 @@ logger.info("Módulo solicitacoes carregado")
 
 @admin_bp.route('/solicitacoes')
 @login_required
-@permission_required(['admin', 'gerente', 'supervisor'])
+@permission_required(['admin', 'gerente', 'supervisor', 'operador'])
 def solicitacoes():
     # --- LÓGICA DE FILTRAGEM ---
     query = Solicitacao.query
@@ -171,7 +171,7 @@ def solicitacoes():
     ).order_by(Solicitacao.id.desc()).limit(500).all()
 
     # --- DADOS PARA OS DROPDOWNS DOS FILTROS ---
-    if current_user.role == 'admin':
+    if current_user.role in ['admin', 'operador']:
         supervisores_filtro = Supervisor.query.order_by(Supervisor.nome).all()
         blocos_filtro = Bloco.query.order_by(Bloco.codigo_bloco).all()
     elif current_user.role == 'gerente':
@@ -197,7 +197,7 @@ def solicitacoes():
 @admin_bp.route('/nova_solicitacao', methods=['GET', 'POST'])
 @login_required
 # Permissão atualizada para incluir 'admin' e 'gerente'
-@permission_required(['supervisor', 'admin', 'gerente'])
+@permission_required(['admin', 'supervisor', 'gerente', 'operador'])
 def nova_solicitacao():
 
     if request.method == 'POST':
@@ -270,7 +270,7 @@ def nova_solicitacao():
                 if planta_id and int(planta_id) not in planta_ids_supervisor:
                     flash('Planta inválida para este supervisor.', 'danger')
                     return redirect(url_for('admin.nova_solicitacao'))
-            elif current_user.role == 'admin':
+            elif current_user.role in ['admin', 'operador']:
                 # Admin precisa especificar empresa e planta
                 empresa_id = request.form.get('empresa_id')
                 planta_id = request.form.get('planta_id')
@@ -616,7 +616,7 @@ def nova_solicitacao():
     # --- LÓGICA DO GET (INTELIGENTE) ---
 
     # Se for admin, ele precisa da lista de empresas para escolher
-    if current_user.role == 'admin':
+    if current_user.role in ['admin', 'operador']:
         empresas = Empresa.query.order_by(Empresa.nome).all()
         return render_template('nova_solicitacao.html', empresas=empresas)
 
@@ -672,7 +672,7 @@ def nova_solicitacao():
 
 @admin_bp.route('/solicitacoes/<int:id>/visualizar')
 @login_required
-@permission_required(['supervisor', 'admin', 'gerente'])
+@permission_required(['admin', 'supervisor', 'gerente', 'operador'])
 def visualizar_solicitacao(id):
     """Rota para visualizar uma solicitação (somente leitura)"""
     solicitacao = Solicitacao.query.get_or_404(id)
@@ -696,7 +696,7 @@ def visualizar_solicitacao(id):
 
 @admin_bp.route('/solicitacoes/<int:id>/editar', methods=['GET', 'POST'])
 @login_required
-@permission_required(['supervisor', 'admin'])
+@permission_required(['admin', 'supervisor', 'gerente', 'operador'])
 def editar_solicitacao(id):
     solicitacao = Solicitacao.query.get_or_404(id)
 
@@ -822,7 +822,7 @@ def editar_solicitacao(id):
 
 @admin_bp.route('/solicitacoes/<int:id>/excluir', methods=['POST'])
 @login_required
-@permission_required(['supervisor', 'admin'])
+@permission_required(['admin', 'supervisor', 'gerente', 'operador'])
 def excluir_solicitacao(id):
     try:
         # ✅ SELECT FOR UPDATE: Lock pessimista para prevenir race condition
@@ -888,7 +888,7 @@ def excluir_solicitacao(id):
 
 @admin_bp.route('/solicitacao/<int:solicitacao_id>/detalhes')
 @login_required
-@permission_required(['supervisor', 'admin'])
+@permission_required(['admin', 'supervisor', 'gerente', 'operador'])
 def detalhes_solicitacao(solicitacao_id):
     """Retorna detalhes da solicitação em formato JSON para exibição no modal"""
     try:

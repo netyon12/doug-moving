@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% block title %}Cadastro de Usuários{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="h3 mb-4 text-gray-800">Gerenciamento de Usuários</h1>
+
+    <!-- Botão para Incluir Novo Usuário -->
+    <div class="d-flex justify-content-end mb-3">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#incluirUsuarioModal">
+            <i class="fas fa-plus"></i> Incluir Novo Usuário
+        </button>
+    </div>
+
+    <!-- Mensagens Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'danger' if category == 'error' or category == 'danger' else 'success' }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Tabela de Usuários -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Usuários</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>E-mail (Login)</th>
+                            <th>Perfil (Role)</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario in usuarios %}
+                        <tr>
+                            <td>{{ usuario.id }}</td>
+                            <td>{{ usuario.email }}</td>
+                            <td>{{ usuario.role | capitalize }}</td>
+                            <td>
+                                {% if usuario.is_active %}
+                                    <span class="badge bg-success">Ativo</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inativo</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <!-- Botão Editar -->
+                                <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#editarUsuarioModal"
+                                    data-id="{{ usuario.id }}"
+                                    data-email="{{ usuario.email }}"
+                                    data-role="{{ usuario.role }}"
+                                    data-is_active="{{ 'true' if usuario.is_active else 'false' }}">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+
+                                <!-- Botão Excluir -->
+                                {% if current_user.role == 'admin' %}
+                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#excluirUsuarioModal"
+                                    data-id="{{ usuario.id }}"
+                                    data-email="{{ usuario.email }}">
+                                    <i class="fas fa-trash"></i> Excluir
+                                </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================================================== -->
+<!-- MODAL INCLUIR NOVO USUÁRIO -->
+<!-- ================================================================================================== -->
+<div class="modal fade" id="incluirUsuarioModal" tabindex="-1" aria-labelledby="incluirUsuarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="incluirUsuarioModalLabel">Incluir Novo Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ url_for('cad_users.incluir_usuario') }}" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-mail (Login)</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Perfil</label>
+                        <select class="form-control" id="role" name="role" required>
+                            {% for role in roles %}
+                                <option value="{{ role }}">{{ role | capitalize }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="is_active_incluir" name="is_active" checked>
+                        <label class="form-check-label" for="is_active_incluir">Usuário Ativo</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Salvar Usuário</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================================================== -->
+<!-- MODAL EDITAR USUÁRIO -->
+<!-- ================================================================================================== -->
+<div class="modal fade" id="editarUsuarioModal" tabindex="-1" aria-labelledby="editarUsuarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarUsuarioModalLabel">Editar Usuário</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <!-- O action será preenchido via JavaScript -->
+            <form id="editarUsuarioForm" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_email" class="form-label">E-mail (Login)</label>
+                        <input type="email" class="form-control" id="edit_email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_password" class="form-label">Nova Senha (Deixe em branco para não alterar)</label>
+                        <input type="password" class="form-control" id="edit_password" name="password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_role" class="form-label">Perfil</label>
+                        <select class="form-control" id="edit_role" name="role" required>
+                            {% for role in roles %}
+                                <option value="{{ role }}">{{ role | capitalize }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="edit_is_active" name="is_active">
+                        <label class="form-check-label" for="edit_is_active">Usuário Ativo</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ================================================================================================== -->
+<!-- MODAL EXCLUIR USUÁRIO -->
+<!-- ================================================================================================== -->
+<div class="modal fade" id="excluirUsuarioModal" tabindex="-1" aria-labelledby="excluirUsuarioModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="excluirUsuarioModalLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="excluirUsuarioForm" method="POST">
+                <div class="modal-body">
+                    <p>Tem certeza que deseja excluir o usuário <strong id="excluirUsuarioEmail"></strong>?</p>
+                    <p class="text-danger"><strong>ATENÇÃO:</strong> Se este usuário estiver vinculado a um Gerente, Supervisor ou Motorista, a exclusão será bloqueada. Você deverá excluir o cadastro de origem primeiro.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+<!-- ================================================================================================== -->
+<!-- SCRIPTS JAVASCRIPT -->
+<!-- ================================================================================================== -->
+{% block scripts %}
+    {{ super() }}
+    <!-- Script para preencher os modais de Edição e Exclusão -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Script para o Modal de Edição
+            var editarUsuarioModal = document.getElementById('editarUsuarioModal');
+            editarUsuarioModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var userId = button.getAttribute('data-id');
+                var userEmail = button.getAttribute('data-email');
+                var userRole = button.getAttribute('data-role');
+                var userIsActive = button.getAttribute('data-is_active') === 'true';
+
+                var modalTitle = editarUsuarioModal.querySelector('.modal-title');
+                var form = document.getElementById('editarUsuarioForm');
+                var emailInput = document.getElementById('edit_email');
+                var roleSelect = document.getElementById('edit_role');
+                var isActiveCheckbox = document.getElementById('edit_is_active');
+
+                modalTitle.textContent = 'Editar Usuário ID: ' + userId;
+                form.action = '{{ url_for("cad_users.editar_usuario", user_id=0) }}'.replace('0', userId);
+                emailInput.value = userEmail;
+                roleSelect.value = userRole;
+                isActiveCheckbox.checked = userIsActive;
+            });
+
+            // Script para o Modal de Exclusão
+            var excluirUsuarioModal = document.getElementById('excluirUsuarioModal');
+            excluirUsuarioModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var userId = button.getAttribute('data-id');
+                var userEmail = button.getAttribute('data-email');
+
+                var form = document.getElementById('excluirUsuarioForm');
+                var emailDisplay = document.getElementById('excluirUsuarioEmail');
+
+                form.action = '{{ url_for("cad_users.excluir_usuario", user_id=0) }}'.replace('0', userId);
+                emailDisplay.textContent = userEmail;
+            });
+        });
+    </script>
+{% endblock %}

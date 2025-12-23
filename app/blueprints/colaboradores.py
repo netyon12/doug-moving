@@ -29,7 +29,7 @@ from .admin import admin_bp
 
 @admin_bp.route('/colaboradores/cadastrar', methods=['GET', 'POST'])
 @login_required
-@permission_required(['admin', 'gerente', 'supervisor'])
+@permission_required(['admin', 'gerente', 'supervisor', 'operador'])
 def cadastrar_colaborador():
 
     if request.method == 'POST':
@@ -135,7 +135,7 @@ def cadastrar_colaborador():
             }), 500
 
     # Lógica do GET: passa todos os dados para os dropdowns
-    if current_user.role == 'admin':
+    if current_user.role in ['admin', 'operador']:
         empresas = Empresa.query.all()
         plantas = Planta.query.all()
     elif current_user.role == 'gerente':
@@ -160,11 +160,11 @@ def cadastrar_colaborador():
 
 @admin_bp.route('/colaboradores/editar/<int:colaborador_id>', methods=['GET', 'POST'])
 @login_required
-@permission_required(['admin', 'gerente', 'supervisor'])
+@permission_required(['admin', 'gerente', 'supervisor', 'operador'])
 def editar_colaborador(colaborador_id):
     colaborador = Colaborador.query.get_or_404(colaborador_id)
 
-    if current_user.role not in ['admin', 'supervisor', 'gerente']:
+    if current_user.role not in ['admin', 'supervisor', 'gerente', 'operador']:
         abort(403)
 
     if request.method == 'POST':
@@ -254,7 +254,7 @@ def editar_colaborador(colaborador_id):
             }), 500
 
     # Lógica do GET para edição
-    if current_user.role == 'admin':
+    if current_user.role in ['admin', 'operador']:
         empresas = Empresa.query.all()
         plantas = Planta.query.all()
     else:  # Gerente ou Supervisor
@@ -278,7 +278,7 @@ def editar_colaborador(colaborador_id):
 @login_required
 def excluir_colaborador(colaborador_id):
     # Apenas o admin pode excluir
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     colaborador = Colaborador.query.get_or_404(colaborador_id)
@@ -355,7 +355,7 @@ def buscar_bloco_por_bairro():
 @admin_bp.route('/motoristas/cadastrar', methods=['GET', 'POST'])
 @login_required
 def cadastrar_motorista():
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     if request.method == 'POST':
@@ -464,7 +464,7 @@ def cadastrar_motorista():
 @admin_bp.route('/motoristas/editar/<int:motorista_id>', methods=['GET', 'POST'])
 @login_required
 def editar_motorista(motorista_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     motorista = Motorista.query.get_or_404(motorista_id)
@@ -571,7 +571,7 @@ def editar_motorista(motorista_id):
 @admin_bp.route('/motoristas/excluir/<int:motorista_id>', methods=['POST'])
 @login_required
 def excluir_motorista(motorista_id):
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         abort(403)
 
     motorista = Motorista.query.get_or_404(motorista_id)

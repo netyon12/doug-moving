@@ -27,7 +27,7 @@ from .admin import admin_bp
 
 @admin_bp.route('/fretados')
 @login_required
-@permission_required(['admin', 'gerente', 'supervisor'])
+@permission_required(['admin', 'gerente', 'supervisor', 'operador'])
 def fretados():
     """
     Lista todos os fretados (colaboradores individuais).
@@ -171,7 +171,7 @@ def fretados():
 
 @admin_bp.route('/fretados/exportar')
 @login_required
-@permission_required(['admin', 'gerente', 'supervisor'])
+@permission_required(['admin', 'gerente', 'supervisor', 'operador'])
 def exportar_fretados():
     """
     Exporta os fretados filtrados para Excel ou CSV.

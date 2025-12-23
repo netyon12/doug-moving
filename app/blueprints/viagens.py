@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 @admin_bp.route('/viagens')
 @login_required
-@permission_required(['admin', 'gerente', 'supervisor'])
+@permission_required(['admin', 'gerente', 'supervisor', 'operador'])
 def viagens():
     """Lista e filtra viagens criadas no sistema"""
     try:
@@ -177,7 +177,7 @@ def viagens():
 
 @admin_bp.route('/viagens/<int:viagem_id>/detalhes')
 @login_required
-@permission_required(['admin', 'gerente', 'supervisor'])
+@permission_required(['admin', 'gerente', 'supervisor', 'operador'])
 def viagem_detalhes(viagem_id):
     """Retorna os detalhes completos de uma viagem específica em JSON"""
     try:
@@ -268,7 +268,7 @@ def viagem_detalhes(viagem_id):
 
 @admin_bp.route('/motoristas_disponiveis')
 @login_required
-@permission_required(['admin', 'supervisor'])
+@permission_required(['admin', 'supervisor', 'operador'])
 def motoristas_disponiveis():
     """Retorna lista de motoristas disponíveis para associação"""
     try:
@@ -295,7 +295,7 @@ def motoristas_disponiveis():
 
 @admin_bp.route('/viagens/<int:viagem_id>/associar_motorista', methods=['POST'])
 @login_required
-@permission_required(['admin'])
+@permission_required(['admin', 'operador'])
 def associar_motorista(viagem_id):
     """Associa um motorista a uma viagem"""
     logger.info(
@@ -367,7 +367,7 @@ def associar_motorista(viagem_id):
 
 @admin_bp.route('/viagens/<int:viagem_id>/cancelar', methods=['POST'])
 @login_required
-@permission_required(['admin'])
+@permission_required(['admin', 'operador'])
 def cancelar_viagem(viagem_id):
     """Cancela uma viagem e retorna as solicitações para status Pendente"""
     logger.info(f"[CANCEL] Iniciando cancelamento da viagem {viagem_id}")
@@ -442,7 +442,7 @@ def cancelar_viagem(viagem_id):
 
 @admin_bp.route('/viagens/<int:viagem_id>/hora-parada', methods=['GET'])
 @login_required
-@permission_required(['admin'])
+@permission_required(['admin', 'operador'])
 def viagem_hora_parada_form(viagem_id):
     """
     Exibe o formulário (modal) para adicionar/editar hora parada em uma viagem.
@@ -519,7 +519,7 @@ def viagem_hora_parada_form(viagem_id):
 
 @admin_bp.route('/viagens/<int:viagem_id>/hora-parada', methods=['POST'])
 @login_required
-@permission_required(['admin'])
+@permission_required(['admin', 'operador'])
 def viagem_hora_parada_salvar(viagem_id):
     """
     Salva (cria ou atualiza) a hora parada de uma viagem.
@@ -619,7 +619,7 @@ def viagem_hora_parada_salvar(viagem_id):
 
 @admin_bp.route('/viagens/<int:viagem_id>/hora-parada', methods=['DELETE'])
 @login_required
-@permission_required(['admin'])
+@permission_required(['admin', 'operador'])
 def viagem_hora_parada_excluir(viagem_id):
     """
     Exclui a hora parada de uma viagem.

@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Se for admin sem planta selecionada, desabilita campo de busca
-    if (userRole === 'admin' && !plantaIdAtual) {
+    if ((userRole === 'admin' || userRole === 'operador') && !plantaIdAtual) {
         searchInput.disabled = true;
         searchInput.placeholder = 'Selecione uma planta primeiro';
     }
@@ -474,7 +474,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const query = searchInput.value;
         
         // VALIDAÇÃO: Admin deve selecionar planta antes de buscar
-        if (userRole === 'admin' && !plantaIdAtual) {
+        if ((userRole === 'admin' || userRole === 'operador') && !plantaIdAtual) {
             searchResults.innerHTML = '';
             const item = document.createElement('div');
             item.className = 'list-group-item list-group-item-warning';
@@ -492,7 +492,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let url = '/admin/api/colaboradores/buscar?q=' + encodeURIComponent(query);
         
         // Se for admin, adiciona o filtro de planta
-        if (userRole === 'admin' && plantaIdAtual) {
+        if ((userRole === 'admin' || userRole === 'operador') && plantaIdAtual) {
             url += '&planta_id=' + plantaIdAtual;
         }
 

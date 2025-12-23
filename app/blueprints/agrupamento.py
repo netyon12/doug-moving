@@ -178,7 +178,7 @@ def agrupamento():
 
 @admin_bp.route('/criar_grupo_manual', methods=['POST'])
 @login_required
-@permission_required(['admin', 'supervisor'])
+@permission_required(['admin', 'supervisor', 'operador'])
 def criar_grupo_manual():
     """Cria um grupo de viagem manualmente com as solicitações selecionadas"""
     try:
@@ -299,7 +299,7 @@ def criar_grupo_manual():
 
 @admin_bp.route('/agrupar_automatico')
 @login_required
-@permission_required(['admin', 'supervisor'])
+@permission_required(['admin', 'supervisor', 'operador'])
 def agrupar_automatico():
     """Agrupa automaticamente as solicitações pendentes usando algoritmo inteligente"""
     try:
@@ -1045,7 +1045,7 @@ def finalizar_agrupamento():
 
 @admin_bp.route('/desfazer_grupo', methods=['POST'])
 @login_required
-@permission_required(['admin', 'supervisor'])
+@permission_required(['admin', 'supervisor', 'operador'])
 def desfazer_grupo():
     """Remove um grupo específico das sugestões"""
     try:
@@ -1071,7 +1071,7 @@ def desfazer_grupo():
 
 @admin_bp.route('/remover_solicitacao_grupo', methods=['POST'])
 @login_required
-@permission_required(['admin', 'supervisor'])
+@permission_required(['admin', 'supervisor', 'operador'])
 def remover_solicitacao_grupo():
     """Remove uma solicitação específica de um grupo"""
     try:
@@ -1103,7 +1103,7 @@ def remover_solicitacao_grupo():
 
 @admin_bp.route('/adicionar_solicitacao_grupo', methods=['POST'])
 @login_required
-@permission_required(['admin', 'supervisor'])
+@permission_required(['admin', 'supervisor', 'operador'])
 def adicionar_solicitacao_grupo():
     """Adiciona uma solicitação a um grupo existente"""
     try:
@@ -1144,7 +1144,7 @@ def adicionar_solicitacao_grupo():
 
 @admin_bp.route('/criar_novo_grupo', methods=['POST'])
 @login_required
-@permission_required(['admin', 'supervisor'])
+@permission_required(['admin', 'supervisor', 'operador'])
 def criar_novo_grupo():
     """Cria um novo grupo vazio nas sugestões"""
     try:
@@ -1166,7 +1166,7 @@ def criar_novo_grupo():
 
 @admin_bp.route('/mesclar_grupos', methods=['POST'])
 @login_required
-@permission_required(['admin', 'supervisor'])
+@permission_required(['admin', 'supervisor', 'operador'])
 def mesclar_grupos():
     """Mescla dois grupos em um só"""
     try:

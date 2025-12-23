@@ -131,6 +131,12 @@ def configuracoes():
     # ===== FIM DO NOVO CÓDIGO =====
 
     return render_template('configuracoes.html',
+                           # Adiciona o link para o menu lateral
+                           menu_configuracoes=[
+                               {'url': url_for('cad_users.listar_usuarios'), 'icone': 'fas fa-users', 'texto': 'Usuários', 'role': 'admin,operador'},
+                               {'url': url_for('admin.configuracoes'), 'icone': 'fas fa-cogs', 'texto': 'Gerais', 'role': 'admin'},
+                               {'url': url_for('admin.pagina_importacoes'), 'icone': 'fas fa-file-import', 'texto': 'Importações', 'role': 'admin'},
+                           ],
                            tempo_cortesia=tempo_cortesia,
                            max_passageiros=max_passageiros,
                            limite_fretado=limite_fretado,
@@ -659,7 +665,7 @@ def api_buscar_colaboradores():
         return jsonify([])
 
     # VALIDAÇÃO: Admin deve selecionar planta antes de buscar
-    if current_user.role == 'admin' and not planta_id:
+    if current_user.role in ['admin', 'operador'] and not planta_id:
         return jsonify({'error': 'Selecione uma planta antes de buscar colaboradores'}), 400
 
     # Monta a query base
@@ -733,7 +739,7 @@ def api_buscar_bairros():
 @cache.cached(timeout=3600, query_string=True)
 def api_plantas_por_empresa(empresa_id):
     """API para buscar plantas de uma empresa"""
-    if current_user.role != 'admin':
+    if current_user.role not in ['admin', 'operador']:
         return jsonify({'error': 'Acesso negado'}), 403
 
     plantas = Planta.query.filter_by(
