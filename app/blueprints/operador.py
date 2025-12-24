@@ -218,7 +218,7 @@ def operador_dashboard():
 
     # ===== DADOS PARA GRÁFICOS =====
     
-    # Gráfico 1: Viagens Finalizadas por Horário (Linha)
+    # Gráfico 1: Viagens por Horário (Entrada, Saída, Desligamento)
     viagens_finalizadas_horario = Viagem.query.filter(
         Viagem.empresa_id == empresa_id,
         Viagem.status == 'Finalizada',
@@ -226,17 +226,56 @@ def operador_dashboard():
         Viagem.data_finalizacao <= data_fim
     ).all()
     
-    # Agrupa por hora (0-23)
-    viagens_por_hora = {h: 0 for h in range(24)}
+    # Agrupa por hora (0-23) para cada tipo de horário
+    entrada_por_hora = {h: 0 for h in range(24)}
+    saida_por_hora = {h: 0 for h in range(24)}
+    desligamento_por_hora = {h: 0 for h in range(24)}
+    
     for viagem in viagens_finalizadas_horario:
-        if viagem.data_finalizacao:
-            hora = viagem.data_finalizacao.hour
-            viagens_por_hora[hora] += 1
+        # Horário de entrada
+        if viagem.horario_entrada:
+            hora = viagem.horario_entrada.hour
+            entrada_por_hora[hora] += 1
+        
+        # Horário de saída
+        if viagem.horario_saida:
+            hora = viagem.horario_saida.hour
+            saida_por_hora[hora] += 1
+        
+        # Horário de desligamento
+        if viagem.horario_desligamento:
+            hora = viagem.horario_desligamento.hour
+            desligamento_por_hora[hora] += 1
+    
+    # Calcula totais
+    total_entrada = sum(entrada_por_hora.values())
+    total_saida = sum(saida_por_hora.values())
+    total_desligamento = sum(desligamento_por_hora.values())
+    total_geral = total_entrada + total_saida + total_desligamento
     
     grafico_viagens_horario = {
         'labels': [f'{h:02d}:00' for h in range(24)],
-        'valores': [viagens_por_hora[h] for h in range(24)],
-        'total': sum(viagens_por_hora.values())
+        'series': [
+            {
+                'name': 'Entrada',
+                'data': [entrada_por_hora[h] for h in range(24)],
+                'color': '#4CAF50',  # Verde
+                'total': total_entrada
+            },
+            {
+                'name': 'Saída',
+                'data': [saida_por_hora[h] for h in range(24)],
+                'color': '#2196F3',  # Azul
+                'total': total_saida
+            },
+            {
+                'name': 'Desligamento',
+                'data': [desligamento_por_hora[h] for h in range(24)],
+                'color': '#FF9800',  # Laranja
+                'total': total_desligamento
+            }
+        ],
+        'total': total_geral
     }
     
     # Gráfico 2: Ranking Completo de Motoristas

@@ -66,7 +66,7 @@ def get_grafico_receita_diaria(empresa_id, data_inicio, data_fim):
 
 def get_grafico_viagens_horario(empresa_id, data_inicio, data_fim):
     """
-    Calcula os dados para o gráfico de Viagens Finalizadas por Horário.
+    Calcula os dados para o gráfico de Viagens por Horário (Entrada, Saída, Desligamento).
     
     Args:
         empresa_id: ID da empresa para filtrar
@@ -74,7 +74,7 @@ def get_grafico_viagens_horario(empresa_id, data_inicio, data_fim):
         data_fim: Data final do período
         
     Returns:
-        dict: Dados do gráfico (labels, valores, total) ou None se sem permissão
+        dict: Dados do gráfico com 3 séries (entrada, saída, desligamento) ou None se sem permissão
     """
     if not pode_ver_kpi('grafico_viagens_horario'):
         return None
@@ -87,17 +87,56 @@ def get_grafico_viagens_horario(empresa_id, data_inicio, data_fim):
         Viagem.data_finalizacao <= data_fim
     ).all()
     
-    # Agrupa por hora (0-23)
-    viagens_por_hora = {h: 0 for h in range(24)}
+    # Agrupa por hora (0-23) para cada tipo de horário
+    entrada_por_hora = {h: 0 for h in range(24)}
+    saida_por_hora = {h: 0 for h in range(24)}
+    desligamento_por_hora = {h: 0 for h in range(24)}
+    
     for viagem in viagens_finalizadas:
-        if viagem.data_finalizacao:
-            hora = viagem.data_finalizacao.hour
-            viagens_por_hora[hora] += 1
+        # Horário de entrada
+        if viagem.horario_entrada:
+            hora = viagem.horario_entrada.hour
+            entrada_por_hora[hora] += 1
+        
+        # Horário de saída
+        if viagem.horario_saida:
+            hora = viagem.horario_saida.hour
+            saida_por_hora[hora] += 1
+        
+        # Horário de desligamento
+        if viagem.horario_desligamento:
+            hora = viagem.horario_desligamento.hour
+            desligamento_por_hora[hora] += 1
+    
+    # Calcula totais
+    total_entrada = sum(entrada_por_hora.values())
+    total_saida = sum(saida_por_hora.values())
+    total_desligamento = sum(desligamento_por_hora.values())
+    total_geral = total_entrada + total_saida + total_desligamento
     
     return {
         'labels': [f'{h:02d}:00' for h in range(24)],
-        'valores': [viagens_por_hora[h] for h in range(24)],
-        'total': sum(viagens_por_hora.values())
+        'series': [
+            {
+                'name': 'Entrada',
+                'data': [entrada_por_hora[h] for h in range(24)],
+                'color': '#4CAF50',  # Verde
+                'total': total_entrada
+            },
+            {
+                'name': 'Saída',
+                'data': [saida_por_hora[h] for h in range(24)],
+                'color': '#2196F3',  # Azul
+                'total': total_saida
+            },
+            {
+                'name': 'Desligamento',
+                'data': [desligamento_por_hora[h] for h in range(24)],
+                'color': '#FF9800',  # Laranja
+                'total': total_desligamento
+            }
+        ],
+        'total': total_geral
     }
 
 

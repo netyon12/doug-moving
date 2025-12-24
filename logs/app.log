@@ -2989,3 +2989,64 @@ WHERE "user".id = %(pk_1)s]
 [2025-12-23 16:23:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
 [2025-12-23 16:23:41] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
 [2025-12-23 16:23:55] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-24 13:42:23] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-24 13:42:23] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-24 13:42:23] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-24 13:42:23] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-24 13:42:23] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-24 13:42:23] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-24 13:42:39] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-24 14:29:59] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:204]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '2'), ('planta_id', '1'), ('tipo_corrida', 'entrada'), ('colaborador_id[]', '20'), ('horario_entrada[]', '2025-12-24T15:30'), ('horario_saida[]', ''), ('horario_desligamento[]', ''), ('turno_entrada[]', '1° Turno'), ('turno_saida[]', ''), ('turno_desligamento[]', '')])
+[2025-12-24 14:30:27] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:562]: [RETRY] Sessão do banco de dados limpa antes do agrupamento
+[2025-12-24 14:30:27] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:579]: [LOCK] Lock adquirido para grupo [1917]: lock_id=579680565
+[2025-12-24 14:30:27] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:594]: [INFO] Processando 1 solicitação(ões): IDs [1917]
+[2025-12-24 14:30:27] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:660]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['CPV2'], mesmo_grupo_bloco=True
+[2025-12-24 14:30:27] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:809]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-12-24 14:30:27] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:877]: [>>>] Tentando atualizar 1 solicitações: [1917]
+[2025-12-24 14:30:28] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:888]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-12-24 14:30:28] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:894]: [SAVE] Flush executado e cache limpo
+[2025-12-24 14:30:28] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:945]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-12-24 14:30:28] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:962]: [OK] COMMIT REALIZADO: 1 viagem(ns), 0 fretado(s), 1 solicitação(ões) agrupada(s)
+[2025-12-24 14:30:28] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:1015]: [>>>] Iniciando envio de notificação em lote sobre 1 viagem(ns) criada(s)...
+[2025-12-24 14:30:31] WARNING in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:999]: [AVISO]  Nenhum motorista notificado sobre as 1 viagem(ns) criadas
+[2025-12-24 14:31:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-24 14:31:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-24 14:31:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-24 14:31:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-24 14:31:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-24 14:31:56] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-24 14:32:11] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-24 14:38:17] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-24 14:38:17] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-24 14:38:17] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-24 14:38:17] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-24 14:38:17] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-24 14:38:17] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-24 14:38:20] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-24 14:41:52] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:204]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '2'), ('planta_id', '1'), ('tipo_corrida', 'entrada'), ('colaborador_id[]', '24'), ('horario_entrada[]', '2025-12-24T15:45'), ('horario_saida[]', ''), ('horario_desligamento[]', ''), ('turno_entrada[]', '1° Turno'), ('turno_saida[]', ''), ('turno_desligamento[]', '')])
+[2025-12-24 14:42:06] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:562]: [RETRY] Sessão do banco de dados limpa antes do agrupamento
+[2025-12-24 14:42:07] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:579]: [LOCK] Lock adquirido para grupo [1918]: lock_id=1751158669
+[2025-12-24 14:42:07] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:594]: [INFO] Processando 1 solicitação(ões): IDs [1918]
+[2025-12-24 14:42:07] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:660]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['CPV2'], mesmo_grupo_bloco=True
+[2025-12-24 14:42:07] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:809]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2025-12-24 14:42:07] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:877]: [>>>] Tentando atualizar 1 solicitações: [1918]
+[2025-12-24 14:42:07] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:888]: [...] UPDATE em massa retornou: 1 registro(s)
+[2025-12-24 14:42:07] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:894]: [SAVE] Flush executado e cache limpo
+[2025-12-24 14:42:07] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:945]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2025-12-24 14:42:07] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:962]: [OK] COMMIT REALIZADO: 1 viagem(ns), 0 fretado(s), 1 solicitação(ões) agrupada(s)
+[2025-12-24 14:42:07] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:1015]: [>>>] Iniciando envio de notificação em lote sobre 1 viagem(ns) criada(s)...
+[2025-12-24 14:42:07] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:996]: [OK] 1 motorista(s) notificado(s) sobre 1 nova(s) viagem(ns)
+[2025-12-24 18:39:33] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-24 18:39:33] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-24 18:39:33] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-24 18:39:33] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-24 18:39:33] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-24 18:39:34] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-24 18:39:36] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-24 18:41:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-24 18:41:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-24 18:41:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-24 18:41:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-24 18:41:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-24 18:41:52] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-24 18:41:54] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes

@@ -842,22 +842,24 @@ if (ctxReceita) {
     });
 }
 
-// Gráfico 2: Viagens Finalizadas por Horário
+// Gráfico 2: Viagens por Horário (Entrada, Saída, Desligamento)
 const ctxViagensHorario = document.getElementById('graficoViagensHorario');
 if (ctxViagensHorario) {
+    const series = {{ dados_graficos.viagens_horario.series | tojson }};
+    
     new Chart(ctxViagensHorario, {
         type: 'line',
         data: {
             labels: {{ dados_graficos.viagens_horario.labels | tojson }},
-            datasets: [{
-                label: 'Viagens Finalizadas',
-                data: {{ dados_graficos.viagens_horario.valores | tojson }},
-                borderColor: 'rgb(59, 130, 246)',
-                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+            datasets: series.map(s => ({
+                label: s.name + ' (' + s.total + ')',
+                data: s.data,
+                borderColor: s.color,
+                backgroundColor: s.color + '20',
                 borderWidth: 3,
                 fill: true,
                 tension: 0.4
-            }]
+            }))
         },
         options: {
             responsive: true,
@@ -866,6 +868,10 @@ if (ctxViagensHorario) {
                 legend: {
                     display: true,
                     position: 'top'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
                 }
             },
             scales: {
@@ -875,6 +881,11 @@ if (ctxViagensHorario) {
                         stepSize: 1
                     }
                 }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
             }
         }
     });

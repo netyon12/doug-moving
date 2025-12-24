@@ -22,7 +22,8 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 from reportlab.lib.units import inch
 
-from app.models import db, Solicitacao, Viagem, Motorista, Colaborador, Empresa, Planta, Bloco, Supervisor, Gerente
+from app import db
+from app.models import Solicitacao, Viagem, Motorista, Colaborador, Empresa, Planta, Bloco, Supervisor, Gerente
 from app import cache
 from sqlalchemy.orm import joinedload
 import locale
