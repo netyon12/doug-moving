@@ -15,7 +15,8 @@ from io import StringIO
 import io
 import csv
 
-from .. import db, cache
+from .. import db
+from ..config.tenant_utils import query_tenant, get_tenant_session
 from ..models import (
     User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
     Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao
@@ -32,6 +33,9 @@ from .admin import admin_bp
 def configuracoes():
 
     if request.method == 'POST':
+        # Usa sessão do tenant para garantir salvamento no banco correto
+        tenant_session = get_tenant_session()
+        
         # Pega os valores do formulário
         tempo_cortesia_str = request.form.get('tempo_cortesia')
         max_passageiros_str = request.form.get('max_passageiros')
@@ -41,80 +45,86 @@ def configuracoes():
 
         # ===== NOVO: Salva Timeout de Inatividade =====
         timeout_inatividade_str = request.form.get('timeout_inatividade')
-        config_timeout = Configuracao.query.filter_by(
+        config_timeout = query_tenant(Configuracao).filter_by(
             chave='timeout_inatividade_minutos').first()
         if not config_timeout:
             config_timeout = Configuracao(
                 chave='timeout_inatividade_minutos', valor=timeout_inatividade_str or '30')
-            db.session.add(config_timeout)
+            tenant_session.add(config_timeout)
+
         else:
             config_timeout.valor = timeout_inatividade_str or '30'
         # ===== FIM DO NOVO CÓDIGO =====
 
         # Salva Tempo de Cortesia
-        config_cortesia = Configuracao.query.filter_by(
+        config_cortesia = query_tenant(Configuracao).filter_by(
             chave='TEMPO_CORTESIA_MINUTOS').first()
         if not config_cortesia:
             config_cortesia = Configuracao(
                 chave='TEMPO_CORTESIA_MINUTOS', valor=tempo_cortesia_str)
-            db.session.add(config_cortesia)
+            tenant_session.add(config_cortesia)
+
         else:
             config_cortesia.valor = tempo_cortesia_str
 
         # Salva Máximo de Passageiros
-        config_passageiros = Configuracao.query.filter_by(
+        config_passageiros = query_tenant(Configuracao).filter_by(
             chave='MAX_PASSAGEIROS_POR_VIAGEM').first()
         if not config_passageiros:
             config_passageiros = Configuracao(
                 chave='MAX_PASSAGEIROS_POR_VIAGEM', valor=max_passageiros_str)
-            db.session.add(config_passageiros)
+            tenant_session.add(config_passageiros)
+
         else:
             config_passageiros.valor = max_passageiros_str
 
         # Salva Limite de Fretado
-        config_limite = Configuracao.query.filter_by(
+        config_limite = query_tenant(Configuracao).filter_by(
             chave='limite_fretado').first()
         if not config_limite:
             config_limite = Configuracao(
                 chave='limite_fretado', valor=limite_fretado_str)
-            db.session.add(config_limite)
+            tenant_session.add(config_limite)
+
         else:
             config_limite.valor = limite_fretado_str
 
         # Salva Valor Hora Parada (Viagem)
-        config_hp_valor = Configuracao.query.filter_by(
+        config_hp_valor = query_tenant(Configuracao).filter_by(
             chave='hora_parada_valor_periodo').first()
         if not config_hp_valor:
             config_hp_valor = Configuracao(
                 chave='hora_parada_valor_periodo', valor=hora_parada_valor_str)
-            db.session.add(config_hp_valor)
+            tenant_session.add(config_hp_valor)
+
         else:
             config_hp_valor.valor = hora_parada_valor_str
 
         # Salva Valor Hora Parada (Repasse Motorista)
-        config_hp_repasse = Configuracao.query.filter_by(
+        config_hp_repasse = query_tenant(Configuracao).filter_by(
             chave='hora_parada_repasse_periodo').first()
         if not config_hp_repasse:
             config_hp_repasse = Configuracao(
                 chave='hora_parada_repasse_periodo', valor=hora_parada_repasse_str)
-            db.session.add(config_hp_repasse)
+            tenant_session.add(config_hp_repasse)
+
         else:
             config_hp_repasse.valor = hora_parada_repasse_str
 
-        db.session.commit()
+        tenant_session.commit()
         flash('Configurações salvas com sucesso!', 'success')
         return redirect(url_for('admin.configuracoes'))
 
     # Se for GET, busca os valores atuais para exibir no formulário
-    config_cortesia = Configuracao.query.filter_by(
+    config_cortesia = query_tenant(Configuracao).filter_by(
         chave='TEMPO_CORTESIA_MINUTOS').first()
-    config_passageiros = Configuracao.query.filter_by(
+    config_passageiros = query_tenant(Configuracao).filter_by(
         chave='MAX_PASSAGEIROS_POR_VIAGEM').first()
-    config_limite = Configuracao.query.filter_by(
+    config_limite = query_tenant(Configuracao).filter_by(
         chave='limite_fretado').first()
-    config_hp_valor = Configuracao.query.filter_by(
+    config_hp_valor = query_tenant(Configuracao).filter_by(
         chave='hora_parada_valor_periodo').first()
-    config_hp_repasse = Configuracao.query.filter_by(
+    config_hp_repasse = query_tenant(Configuracao).filter_by(
         chave='hora_parada_repasse_periodo').first()
 
     # Valores padrão
@@ -125,12 +135,26 @@ def configuracoes():
     hora_parada_repasse = config_hp_repasse.valor if config_hp_repasse else '29.00'
 
     # ===== NOVO: Busca Timeout de Inatividade =====
-    config_timeout = Configuracao.query.filter_by(
+    config_timeout = query_tenant(Configuracao).filter_by(
         chave='timeout_inatividade_minutos').first()
     timeout_inatividade = int(config_timeout.valor) if config_timeout else 30
     # ===== FIM DO NOVO CÓDIGO =====
 
-    return render_template('configuracoes.html',
+    # ===== SELEÇÃO DE TEMPLATE POR EMPRESA =====
+    from flask import session
+    empresa_slug = session.get('empresa_ativa_slug', 'lear').lower()
+    
+    # Mapear slug para template
+    templates_por_empresa = {
+        'lear': 'config/configuracoes_lear.html',
+        'nsg': 'config/configuracoes_nsg.html',
+    }
+    
+    # Usar template da empresa ou fallback para LEAR
+    template_name = templates_por_empresa.get(empresa_slug, 'config/configuracoes_lear.html')
+    # ===== FIM DA SELEÇÃO =====
+
+    return render_template(template_name,
                            # Adiciona o link para o menu lateral
                            menu_configuracoes=[
                                {'url': url_for('cad_users.listar_usuarios'), 'icone': 'fas fa-users', 'texto': 'Usuários', 'role': 'admin,operador'},
@@ -155,7 +179,7 @@ def configuracoes():
 def exportar_solicitacoes_csv():
 
     # --- LÓGICA DE FILTRO DE DATA (permanece a mesma) ---
-    query_solicitacoes = Solicitacao.query
+    query_solicitacoes = query_tenant(Solicitacao)
     data_inicio_str = request.args.get('data_inicio')
     data_fim_str = request.args.get('data_fim')
 
@@ -293,7 +317,7 @@ def importar_colaboradores():
                     continue
 
                 # Verifica se matrícula já existe
-                if Colaborador.query.filter_by(matricula=matricula).first():
+                if query_tenant(Colaborador).filter_by(matricula=matricula).first():
                     erros.append(
                         f"Linha {i}: Matrícula '{matricula}' já existe no sistema")
                     linhas_ignoradas += 1
@@ -302,7 +326,7 @@ def importar_colaboradores():
                 # Busca bloco (se fornecido)
                 bloco_id = None
                 if bloco_codigo:
-                    bloco = Bloco.query.filter_by(
+                    bloco = query_tenant(Bloco).filter_by(
                         codigo_bloco=bloco_codigo).first()
                     if bloco:
                         bloco_id = bloco.id
@@ -330,7 +354,7 @@ def importar_colaboradores():
                     continue
 
                 # Busca planta
-                planta = Planta.query.filter_by(
+                planta = query_tenant(Planta).filter_by(
                     nome=planta_nome, empresa_id=empresa.id).first()
                 if not planta:
                     erros.append(
@@ -360,10 +384,11 @@ def importar_colaboradores():
                     status=status if status else 'Ativo'
                 )
 
-                db.session.add(novo_colaborador)
+                tenant_session.add(novo_colaborador)
+
                 colaboradores_adicionados += 1
 
-            db.session.commit()
+            tenant_session.commit()
 
             # Mensagens de feedback
             if colaboradores_adicionados > 0:
@@ -384,14 +409,14 @@ def importar_colaboradores():
             return redirect(url_for('admin.admin_dashboard', aba='colaboradores'))
 
         except Exception as e:
-            db.session.rollback()
+            tenant_session.rollback()
             flash(
                 f'Ocorreu um erro crítico ao processar o arquivo: {e}', 'danger')
             return redirect(request.url)
 
     # GET: Busca empresas e plantas para o template
     empresas = Empresa.query.all()
-    plantas = Planta.query.all()
+    plantas = query_tenant(Planta).all()
     return render_template('config/importar_colaboradores.html', empresas=empresas, plantas=plantas)
 
 
@@ -443,7 +468,7 @@ def importar_supervisores():
                     continue
 
                 # Verifica se matrícula já existe
-                if Supervisor.query.filter_by(matricula=matricula).first():
+                if query_tenant(Supervisor).filter_by(matricula=matricula).first():
                     erros.append(
                         f"Linha {i}: Matrícula '{matricula}' já existe no sistema")
                     linhas_ignoradas += 1
@@ -464,7 +489,7 @@ def importar_supervisores():
                     continue
 
                 # Busca planta
-                planta = Planta.query.filter_by(
+                planta = query_tenant(Planta).filter_by(
                     nome=planta_nome, empresa_id=empresa.id).first()
                 if not planta:
                     erros.append(
@@ -482,8 +507,9 @@ def importar_supervisores():
                     senha, method='pbkdf2:sha256')
                 new_user = User(
                     email=email, password=hashed_password, role='supervisor')
-                db.session.add(new_user)
-                db.session.flush()  # Para obter o user_id
+                tenant_session.add(new_user)
+
+                tenant_session.flush()  # Para obter o user_id
 
                 # Cria supervisor
                 novo_supervisor = Supervisor(
@@ -495,10 +521,11 @@ def importar_supervisores():
                     email=email,
                     status=status if status else 'Ativo'
                 )
-                db.session.add(novo_supervisor)
+                tenant_session.add(novo_supervisor)
+
                 supervisores_adicionados += 1
 
-            db.session.commit()
+            tenant_session.commit()
 
             # Mensagens de feedback
             if supervisores_adicionados > 0:
@@ -519,14 +546,14 @@ def importar_supervisores():
             return redirect(url_for('admin.admin_dashboard', aba='supervisores'))
 
         except Exception as e:
-            db.session.rollback()
+            tenant_session.rollback()
             flash(
                 f'Ocorreu um erro crítico ao processar o arquivo: {e}', 'danger')
             return redirect(request.url)
 
     # GET: Busca empresas e plantas para o template
     empresas = Empresa.query.all()
-    plantas = Planta.query.all()
+    plantas = query_tenant(Planta).all()
     return render_template('config/importar_supervisores.html', empresas=empresas, plantas=plantas)
 
 
@@ -603,8 +630,9 @@ def importar_motoristas():
                     senha, method='pbkdf2:sha256')
                 new_user = User(
                     email=email, password=hashed_password, role='motorista')
-                db.session.add(new_user)
-                db.session.flush()  # Para obter o user_id
+                tenant_session.add(new_user)
+
+                tenant_session.flush()  # Para obter o user_id
 
                 # Cria motorista
                 novo_motorista = Motorista(
@@ -618,10 +646,11 @@ def importar_motoristas():
                     veiculo_placa=veiculo_placa if veiculo_placa else None,
                     status='Ativo'
                 )
-                db.session.add(novo_motorista)
+                tenant_session.add(novo_motorista)
+
                 motoristas_adicionados += 1
 
-            db.session.commit()
+            tenant_session.commit()
 
             # Mensagens de feedback
             if motoristas_adicionados > 0:
@@ -642,7 +671,7 @@ def importar_motoristas():
             return redirect(url_for('admin.admin_dashboard', aba='motoristas'))
 
         except Exception as e:
-            db.session.rollback()
+            tenant_session.rollback()
             flash(
                 f'Ocorreu um erro crítico ao processar o arquivo: {e}', 'danger')
             return redirect(request.url)
@@ -669,7 +698,7 @@ def api_buscar_colaboradores():
         return jsonify({'error': 'Selecione uma planta antes de buscar colaboradores'}), 400
 
     # Monta a query base
-    query = Colaborador.query.filter(Colaborador.status == 'Ativo')
+    query = query_tenant(Colaborador).filter(Colaborador.status == 'Ativo')
 
     # Filtra por planta se especificado
     if planta_id:
@@ -717,7 +746,7 @@ def api_buscar_bairros():
 
     # Busca bairros que contenham o texto digitado (case-insensitive)
     # Usando ilike para busca sem diferenciar maiúsculas/minúsculas
-    bairros = Bairro.query.filter(
+    bairros = query_tenant(Bairro).filter(
         Bairro.nome.ilike(f'%{query}%')
     ).order_by(Bairro.nome).limit(20).all()
 
@@ -736,13 +765,12 @@ def api_buscar_bairros():
 
 @admin_bp.route('/api/empresas/<int:empresa_id>/plantas')
 @login_required
-@cache.cached(timeout=3600, query_string=True)
 def api_plantas_por_empresa(empresa_id):
     """API para buscar plantas de uma empresa"""
     if current_user.role not in ['admin', 'operador']:
         return jsonify({'error': 'Acesso negado'}), 403
 
-    plantas = Planta.query.filter_by(
+    plantas = query_tenant(Planta).filter_by(
         empresa_id=empresa_id).order_by(Planta.nome).all()
 
     resultado = [{'id': p.id, 'nome': p.nome} for p in plantas]
@@ -752,10 +780,9 @@ def api_plantas_por_empresa(empresa_id):
 
 @admin_bp.route('/api/plantas/<int:planta_id>/supervisores')
 @login_required
-@cache.cached(timeout=3600, query_string=True)
 def api_supervisores_por_planta(planta_id):
     """API para buscar supervisores de uma planta"""
-    supervisores = Supervisor.query.filter_by(
+    supervisores = query_tenant(Supervisor).filter_by(
         planta_id=planta_id,
         status='Ativo'
     ).order_by(Supervisor.nome).all()
@@ -768,10 +795,9 @@ def api_supervisores_por_planta(planta_id):
 
 @admin_bp.route('/api/plantas/<int:planta_id>/turnos')
 @login_required
-@cache.cached(timeout=3600, query_string=True)  # Cache por 1 hora
 def api_turnos_por_planta(planta_id):
-    """API para buscar turnos de uma planta (com cache)"""
-    turnos = Turno.query.filter_by(
+    """API para buscar turnos de uma planta"""
+    turnos = query_tenant(Turno).filter_by(
         planta_id=planta_id).order_by(Turno.horario_inicio).all()
 
     resultado = []

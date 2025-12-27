@@ -17,7 +17,7 @@ import io
 import csv
 
 from .. import db, cache
-from ..config.tenant_utils import query_tenant, get_tenant_session, get_or_404_tenant
+from ..config.tenant_utils import query_tenant, get_tenant_session
 from ..models import (
     User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
     Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao
@@ -163,7 +163,7 @@ def cadastrar_colaborador():
 @login_required
 @permission_required(['admin', 'gerente', 'supervisor', 'operador'])
 def editar_colaborador(colaborador_id):
-    colaborador = get_or_404_tenant(Colaborador, colaborador_id)
+    colaborador = query_tenant(Colaborador).get_or_404(colaborador_id)
 
     if current_user.role not in ['admin', 'supervisor', 'gerente', 'operador']:
         abort(403)
@@ -282,7 +282,7 @@ def excluir_colaborador(colaborador_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    colaborador = get_or_404_tenant(Colaborador, colaborador_id)
+    colaborador = query_tenant(Colaborador).get_or_404(colaborador_id)
 
     # Verificação de segurança (opcional, mas recomendada): impede a exclusão se tiver solicitações associadas
     if query_tenant(Solicitacao).filter_by(colaborador_id=colaborador.id).first():
@@ -489,7 +489,7 @@ def editar_motorista(motorista_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    motorista = get_or_404_tenant(Motorista, motorista_id)
+    motorista = query_tenant(Motorista).get_or_404(motorista_id)
 
     if request.method == 'POST':
         try:
@@ -615,7 +615,7 @@ def excluir_motorista(motorista_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    motorista = get_or_404_tenant(Motorista, motorista_id)
+    motorista = query_tenant(Motorista).get_or_404(motorista_id)
 
     # if motorista.viagens: # Verificação de segurança futura
     #     flash('Não é possível excluir motoristas com viagens associadas.', 'danger')

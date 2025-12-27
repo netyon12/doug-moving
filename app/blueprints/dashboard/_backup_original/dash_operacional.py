@@ -14,7 +14,6 @@ Permissões: Admin e Operador
 from sqlalchemy import func
 
 from app import db
-from app.config.tenant_utils import query_tenant
 from app.models import (
     Empresa, Planta, Motorista, Colaborador, 
     Solicitacao, Viagem
@@ -61,14 +60,14 @@ def get_kpis_solicitacoes(empresa_id, data_inicio, data_fim):
     }
 
     # Finalizadas e Canceladas do período (queries separadas necessárias)
-    kpis_solicitacoes['finalizadas_periodo'] = query_tenant(Solicitacao).filter(
+    kpis_solicitacoes['finalizadas_periodo'] = Solicitacao.query.filter(
         Solicitacao.empresa_id == empresa_id,
         Solicitacao.status == 'Finalizada',
         Solicitacao.data_atualizacao >= data_inicio,
         Solicitacao.data_atualizacao <= data_fim
     ).count()
     
-    kpis_solicitacoes['canceladas_periodo'] = query_tenant(Solicitacao).filter(
+    kpis_solicitacoes['canceladas_periodo'] = Solicitacao.query.filter(
         Solicitacao.empresa_id == empresa_id,
         Solicitacao.status == 'Cancelada',
         Solicitacao.data_atualizacao >= data_inicio,
@@ -119,14 +118,14 @@ def get_kpis_viagens(empresa_id, data_inicio, data_fim):
     }
 
     # Viagens finalizadas e canceladas DO PERÍODO (queries separadas necessárias)
-    kpis_viagens['finalizadas_periodo'] = query_tenant(Viagem).filter(
+    kpis_viagens['finalizadas_periodo'] = Viagem.query.filter(
         Viagem.empresa_id == empresa_id,
         Viagem.status == 'Finalizada',
         Viagem.data_finalizacao >= data_inicio,
         Viagem.data_finalizacao <= data_fim
     ).count()
 
-    kpis_viagens['canceladas_periodo'] = query_tenant(Viagem).filter(
+    kpis_viagens['canceladas_periodo'] = Viagem.query.filter(
         Viagem.empresa_id == empresa_id,
         Viagem.status == 'Cancelada',
         Viagem.data_criacao >= data_inicio,
@@ -148,7 +147,7 @@ def get_kpis_motoristas():
         return None
     
     # Busca TODOS os motoristas ativos (independente de terem viagens)
-    motoristas_empresa = query_tenant(Motorista).filter_by(status='Ativo').all()
+    motoristas_empresa = Motorista.query.filter_by(status='Ativo').all()
 
     kpis_motoristas = {
         'disponiveis': 0,
@@ -190,13 +189,13 @@ def get_kpis_gerais(empresa_id):
         return None
     
     # Total de motoristas ativos
-    total_motoristas = query_tenant(Motorista).filter_by(status='Ativo').count()
+    total_motoristas = Motorista.query.filter_by(status='Ativo').count()
     
     kpis_gerais = {
-        'total_empresas': query_tenant(Empresa).count(),
-        'total_plantas': query_tenant(Planta).filter_by(empresa_id=empresa_id).count(),
+        'total_empresas': Empresa.query.count(),
+        'total_plantas': Planta.query.filter_by(empresa_id=empresa_id).count(),
         'total_motoristas': total_motoristas,
-        'total_colaboradores': query_tenant(Colaborador).join(Planta).filter(
+        'total_colaboradores': Colaborador.query.join(Planta).filter(
             Planta.empresa_id == empresa_id
         ).count()
     }

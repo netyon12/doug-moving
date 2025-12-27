@@ -1,9 +1,8 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session, abort, g, current_app
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from datetime import datetime, timedelta
 from sqlalchemy import or_
 from app import db
 from app.models import Colaborador, Viagem, Motorista
-from app.config.tenant_utils import query_tenant, get_tenant_session
 
 # Criação do Blueprint para as rotas de consulta
 consulta_bp = Blueprint('consulta', __name__)
@@ -15,90 +14,59 @@ def horario_brasil():
     return datetime.utcnow() - timedelta(hours=3)
 
 
-@consulta_bp.route('/consulta-viagens/<empresa_slug>', methods=['GET', 'POST'])
-def consulta_viagens(empresa_slug):
+@consulta_bp.route('/consulta-viagens', methods=['GET', 'POST'])
+def consulta_viagens():
     """
-    Rota dinâmica para consulta pública de viagens por matrícula.
-    Suporta múltiplas empresas via URL.
-    
-    URLs:
-        /consulta-viagens/lear - Consulta no banco da LEAR
-        /consulta-viagens/nsg - Consulta no banco da NSG
-    
+    Rota para a consulta pública de viagens por matrícula.
     GET: Exibe o formulário de consulta.
     POST: Processa a matrícula e exibe o resultado da viagem mais próxima.
     """
-    
-    # Validar empresa_slug
-    empresa_slug = empresa_slug.lower()
-    
-    # Mapeamento de slugs para nomes de empresas
-    empresas_config = {
-        'lear': 'LEAR',
-        'nsg': 'NSG PKG'
-    }
-    
-    if empresa_slug not in empresas_config:
-        abort(404, description=f"Empresa '{empresa_slug}' não encontrada")
-    
-    # Forçar empresa ativa na sessão E no g para garantir query no banco correto
-    # O middleware usa g.empresa_ativa para rotear queries
-    session['empresa_ativa_slug'] = empresa_slug
-    
-    current_app.logger.info(f"[CONSULTA VIAGENS] URL acessada: /consulta-viagens/{empresa_slug}")
-    current_app.logger.info(f"[CONSULTA VIAGENS] session['empresa_ativa_slug'] = {empresa_slug}")
-    
-    # CRÍTICO: Buscar empresa no BANCO 1 (db.session) para pegar credenciais do Banco 2
-    # NÃO usar query_tenant() aqui, pois g.empresa_ativa ainda não existe!
-    from app.models import Empresa
-    
-    # Buscar no banco padrão (Banco 1) usando db.session
-    empresa_obj = db.session.query(Empresa).filter_by(slug_licenciado=empresa_slug).first()
-    
-    if not empresa_obj:
-        current_app.logger.error(f"[CONSULTA VIAGENS] Empresa '{empresa_slug}' não encontrada no Banco 1")
-        abort(404, description=f"Empresa '{empresa_slug}' não encontrada")
-    
-    # Definir g.empresa_ativa ANTES de qualquer query_tenant()
-    g.empresa_ativa = empresa_obj
-    
-    # CRÍTICO: Definir is_banco_local na sessão para get_empresa_session() funcionar
-    session['is_banco_local'] = empresa_obj.is_banco_local
-    
-    current_app.logger.info(f"[CONSULTA VIAGENS] g.empresa_ativa definido: {empresa_obj.nome} (ID: {empresa_obj.id})")
-    current_app.logger.info(f"[CONSULTA VIAGENS] is_banco_local: {empresa_obj.is_banco_local}")
-    current_app.logger.info(f"[CONSULTA VIAGENS] Banco remoto: {empresa_obj.db_host}/{empresa_obj.db_name}")
-    
-    # Nome da empresa para exibir no template
-    empresa_nome = empresas_config[empresa_slug]
 
     if request.method == 'POST':
         matricula = request.form.get('matricula')
 
         if not matricula:
             flash('Por favor, digite a matrícula para consultar.', 'danger')
-            return redirect(url_for('consulta.consulta_viagens', empresa_slug=empresa_slug))
+            return redirect(url_for('consulta.consulta_viagens'))
 
-        # 1. Buscar colaborador por matrícula (usando query_tenant)
-        colaborador = query_tenant(Colaborador).filter_by(matricula=matricula).first()
+        # 1. Buscar colaborador por matrícula
+        colaborador = Colaborador.query.filter_by(matricula=matricula).first()
 
         if not colaborador:
             flash('Matrícula inválida. Colaborador não encontrado.', 'danger')
             # Retorna para o formulário sem resultado
-            return render_template('consulta_viagens.html', 
-                                 resultado=None, 
-                                 empresa_slug=empresa_slug,
-                                 empresa_nome=empresa_nome)
+            return render_template('consulta_viagens.html', resultado=None)
 
         # 2. Buscar viagens do colaborador com status 'Agendada' OU 'Pendente'
         #    e data/hora FUTURAS (>= data/hora atual)
 
+        # O campo 'colaboradores_ids' na tabela Viagem é um TEXT que armazena uma lista JSON de IDs.
+        # A busca deve ser feita verificando se o ID do colaborador está contido nessa string.
+
         agora_brasil = horario_brasil()
 
-        # Buscar viagens usando query_tenant
+        # A lógica de busca deve considerar o horário de entrada, saída ou desligamento,
+        # dependendo do tipo_corrida. Como a Viagem é um agrupamento de Solicitações,
+        # vamos usar o campo de data/hora mais relevante para a viagem.
+        # No modelo Viagem, não há um campo único 'data_hora', mas sim 'horario_entrada', 'horario_saida', etc.
+        # Para simplificar a consulta, vamos buscar a viagem mais próxima no futuro.
+
+        # Para a consulta, vamos buscar todas as viagens onde o ID do colaborador está na lista
+        # de colaboradores_ids (usando LIKE, que é comum para JSON/Text em SQL)
+        # e o status é 'Pendente' ou 'Agendada'.
+
+        # A busca por data futura é complexa no modelo Viagem, pois depende do tipo_corrida.
+        # Vamos simplificar e buscar a viagem mais próxima no futuro, assumindo que a data
+        # mais relevante é a que está preenchida e é a mais próxima de agora.
+
+        # Vamos buscar todas as viagens futuras (Pendente ou Agendada) que contenham o ID do colaborador.
+
+        # Viagens Pendentes ou Agendadas
+        # A busca deve ser precisa: [ID], [ID, ...], ..., ID], ..., ID, ...
+        # Buscamos a string exata do ID do colaborador, cercada por caracteres de separação JSON ([, ], ,)
         colaborador_id_str = str(colaborador.id)
 
-        viagens_candidatas = query_tenant(Viagem).filter(
+        viagens_candidatas = Viagem.query.filter(
             # Busca o ID do colaborador cercado por caracteres de separação JSON
             or_(
                 # Começo da lista: [10, ...
@@ -175,17 +143,17 @@ def consulta_viagens(empresa_slug):
                 flash(
                     f"Sua Viagem ID {viagem_mais_proxima.id} ainda está com status de 'Pendente' e aguarda a confirmação de um motorista. Por favor, consulte novamente mais tarde.", 'warning')
 
-            # Se for Agendada, busca dados do motorista
+            # Se for Agendada, a mensagem de sucesso será exibida no template
             if viagem_mais_proxima.status == 'Agendada' and viagem_mais_proxima.motorista_id:
-                motorista = query_tenant(Motorista).get(viagem_mais_proxima.motorista_id)
+                motorista = Motorista.query.get(
+                    viagem_mais_proxima.motorista_id)
                 if motorista:
                     resultado['modelo_veiculo'] = motorista.veiculo_nome
                     resultado['cor_veiculo'] = motorista.veiculo_cor
 
-            return render_template('consulta_viagens.html', 
-                                 resultado=resultado,
-                                 empresa_slug=empresa_slug,
-                                 empresa_nome=empresa_nome)
+                # A mensagem de sucesso será exibida no template, não precisa de flash aqui.
+
+            return render_template('consulta_viagens.html', resultado=resultado)
 
         else:
             # 4. Sem viagem
@@ -195,16 +163,10 @@ def consulta_viagens(empresa_slug):
             }
             flash(
                 f"Olá {colaborador.nome}, não encontramos nenhuma viagem futura agendada ou pendente para sua matrícula.", 'info')
-            return render_template('consulta_viagens.html', 
-                                 resultado=resultado,
-                                 empresa_slug=empresa_slug,
-                                 empresa_nome=empresa_nome)
+            return render_template('consulta_viagens.html', resultado=resultado)
 
     # Rota GET (exibe o formulário)
-    return render_template('consulta_viagens.html', 
-                         resultado=None,
-                         empresa_slug=empresa_slug,
-                         empresa_nome=empresa_nome)
+    return render_template('consulta_viagens.html', resultado=None)
 
 # É necessário registrar o Blueprint no arquivo principal da aplicação (app/__init__.py)
 # para que as rotas sejam reconhecidas.

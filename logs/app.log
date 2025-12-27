@@ -3050,3 +3050,1201 @@ WHERE "user".id = %(pk_1)s]
 [2025-12-24 18:41:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
 [2025-12-24 18:41:52] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
 [2025-12-24 18:41:54] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-25 15:52:43] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-25 15:52:43] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-25 15:52:43] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-25 15:52:43] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-25 15:52:43] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-25 15:52:44] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-25 15:52:47] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-25 15:53:57] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: GOMOBI (slug=gomobi, local=True)
+[2025-12-25 15:53:57] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:225]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: GOMOBI
+[2025-12-25 15:58:21] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG (slug=nsg, local=False)
+[2025-12-25 15:58:21] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:326]: Troca de empresa: admin@netyonsolutions.com -> NSG
+[2025-12-25 16:06:37] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-25 16:06:38] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:268]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-25 16:13:48] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-25 16:13:48] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-25 16:13:48] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-25 16:13:48] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-25 16:13:48] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-25 16:13:48] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-25 16:13:51] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-25 16:14:05] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=True)
+[2025-12-25 16:14:05] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2025-12-25 16:14:47] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-25 16:14:47] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-25 16:14:56] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=True)
+[2025-12-25 16:14:57] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2025-12-25 16:16:53] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:486]: Teste de conexão bem-sucedido: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-25 16:17:46] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:486]: Teste de conexão bem-sucedido: dpg-d3t0tq24d50c73enuqog-a.ohio-postgres.render.com/homolog_gomobi_db
+[2025-12-25 16:18:04] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG (slug=nsg, local=False)
+[2025-12-25 16:18:05] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG
+[2025-12-25 16:23:33] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-25 16:23:33] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-25 17:00:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-25 17:00:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-25 17:00:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-25 17:00:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-25 17:00:31] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-25 17:00:31] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:36]: Módulo solicitacoes carregado
+[2025-12-25 17:00:34] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-25 17:01:04] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-25 17:01:05] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2025-12-25 17:01:05] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: lear
+[2025-12-25 17:01:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:01:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:01:45] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:01:47] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:02:04] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:02:09] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:02:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:02:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:02:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:02:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:02:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:02:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:02:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:03:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:03:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-25 17:03:20] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG (slug=nsg, local=False)
+[2025-12-25 17:03:21] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG
+[2025-12-25 17:03:23] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: nsg
+[2025-12-25 17:03:23] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-25 17:03:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-25 17:06:38] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-25 17:06:38] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-26 10:40:14] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 10:40:14] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 10:40:14] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 10:40:14] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 10:40:14] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 10:45:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 10:45:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 10:45:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 10:45:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 10:45:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 10:45:40] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 10:45:44] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 10:49:25] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 10:49:25] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: andreaafoleto@yahoo.com.br (motorista) -> Empresa: LEAR
+[2025-12-26 10:49:26] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: lear
+[2025-12-26 10:49:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 10:49:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 10:49:32] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 10:49:35] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 10:49:36] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG (slug=nsg, local=False)
+[2025-12-26 10:49:36] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: andreaafoleto@yahoo.com.br -> NSG
+[2025-12-26 10:49:38] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: nsg
+[2025-12-26 10:49:38] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 10:49:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 10:49:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 10:49:56] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 10:49:57] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: andreaafoleto@yahoo.com.br -> LEAR
+[2025-12-26 10:49:58] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 10:50:01] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 10:50:01] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: andreaafoleto@yahoo.com.br (motorista)
+[2025-12-26 10:50:09] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 10:50:10] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2025-12-26 10:50:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 10:50:11] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 10:53:55] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 10:53:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 10:53:56] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG (slug=nsg, local=False)
+[2025-12-26 10:53:57] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG
+[2025-12-26 10:53:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 10:54:20] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/dashboard [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedColumn: column viagem.valor does not exist
+LINE 1: SELECT sum(viagem.valor) AS sum_1 
+                   ^
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\dashboard\dashboard.py", line 150, in admin_dashboard
+    dados_graficos = get_todos_graficos(empresa_id, data_inicio, data_fim, kpis_viagens)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\dashboard\dash_graficos.py", line 242, in get_todos_graficos
+    receita = get_grafico_receita_diaria(empresa_id, data_inicio, data_fim)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\dashboard\dash_graficos.py", line 50, in get_grafico_receita_diaria
+    ).scalar() or 0
+      ~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2888, in scalar
+    ret = self.one()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2865, in one
+    return self._iter().one()
+           ~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2903, in _iter
+    result = self.session.execute(
+        statement,
+        params,
+        execution_options={"_sa_orm_load_options": self.load_options},
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1712, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1631, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 332, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, multiparams, params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1498, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1862, in _execute_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, statement, parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2043, in _handle_dbapi_exception
+    util.raise_(
+    ~~~~~~~~~~~^
+        sqlalchemy_exception, with_traceback=exc_info[2], from_=e
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.ProgrammingError: (psycopg2.errors.UndefinedColumn) column viagem.valor does not exist
+LINE 1: SELECT sum(viagem.valor) AS sum_1 
+                   ^
+
+[SQL: SELECT sum(viagem.valor) AS sum_1 
+FROM viagem 
+WHERE viagem.empresa_id = %(empresa_id_1)s AND viagem.status = %(status_1)s AND viagem.data_finalizacao >= %(data_finalizacao_1)s AND viagem.data_finalizacao <= %(data_finalizacao_2)s]
+[parameters: {'empresa_id_1': 2, 'status_1': 'Finalizada', 'data_finalizacao_1': datetime.datetime(2025, 12, 1, 0, 0), 'data_finalizacao_2': datetime.datetime(2025, 12, 1, 23, 59, 59)}]
+(Background on this error at: https://sqlalche.me/e/14/f405)
+[2025-12-26 11:18:38] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 11:18:38] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 11:18:38] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 11:18:38] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 11:18:38] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 11:18:38] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 11:18:40] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 11:18:47] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: nsg
+[2025-12-26 11:18:47] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 11:18:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 11:20:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 11:20:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 11:20:22] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 11:20:22] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> LEAR
+[2025-12-26 11:20:24] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: lear
+[2025-12-26 11:20:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 11:20:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 11:20:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 11:20:53] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG (slug=nsg, local=False)
+[2025-12-26 11:20:54] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG
+[2025-12-26 11:20:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 11:26:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 11:28:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 11:28:17] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 11:28:17] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-26 12:48:44] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 12:48:44] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 12:48:44] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 12:48:44] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 12:48:44] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 12:48:44] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 12:48:47] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 12:49:01] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 12:49:02] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2025-12-26 12:49:02] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: lear
+[2025-12-26 12:49:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 12:49:03] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 12:49:32] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 12:49:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 12:49:34] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG (slug=nsg, local=False)
+[2025-12-26 12:49:35] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG
+[2025-12-26 12:49:36] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: nsg
+[2025-12-26 12:49:36] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:49:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:49:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:49:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:50:03] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:51:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:51:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:52:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:53:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:53:09] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:53:12] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:53:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:53:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 12:54:54] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 12:54:54] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-26 13:16:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 13:16:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 13:16:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 13:16:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 13:16:51] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 13:16:51] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 13:16:54] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 13:18:59] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:19:00] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2025-12-26 13:19:00] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: lear
+[2025-12-26 13:19:00] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:19:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:20:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:20:23] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:20:24] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG (slug=nsg, local=False)
+[2025-12-26 13:20:24] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG
+[2025-12-26 13:20:26] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: nsg
+[2025-12-26 13:20:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:20:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:21:03] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:21:07] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:21:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:21:44] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:25:46] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 13:25:46] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-26 13:25:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 13:25:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 13:25:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 13:25:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 13:25:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 13:25:59] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 13:26:03] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 13:26:23] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:26:23] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2025-12-26 13:26:24] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: lear
+[2025-12-26 13:26:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:26:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:26:52] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:26:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:26:54] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG (slug=nsg, local=False)
+[2025-12-26 13:26:54] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG
+[2025-12-26 13:26:56] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: nsg
+[2025-12-26 13:26:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:27:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:27:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:27:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:27:31] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:27:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:27:36] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:27:44] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:27:49] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:27:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:27:51] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:27:51] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> LEAR
+[2025-12-26 13:27:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:27:58] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:28:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:28:01] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/empresas/editar/3 [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\cadastros.py", line 98, in editar_empresa
+    empresa = query_tenant(Empresa).get_or_404(empresa_id)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Query' object has no attribute 'get_or_404'
+[2025-12-26 13:29:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:29:25] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:29:25] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/plantas/editar/4 [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\cadastros.py", line 234, in editar_planta
+    planta = query_tenant(Planta).get_or_404(planta_id)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Query' object has no attribute 'get_or_404'
+[2025-12-26 13:29:29] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:29:31] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:29:31] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/centros-custo/editar/4 [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\cadastros.py", line 325, in editar_centro_custo
+    centro_custo = query_tenant(CentroCusto).get_or_404(cc_id)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Query' object has no attribute 'get_or_404'
+[2025-12-26 13:29:40] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 13:29:40] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-26 13:32:33] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 13:32:33] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 13:32:33] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 13:32:33] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 13:32:33] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 13:32:33] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 13:32:36] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 13:33:32] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:33:32] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2025-12-26 13:33:33] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: lear
+[2025-12-26 13:33:33] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:33:33] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:34:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:34:04] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:34:04] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/empresas/editar/3 [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\cadastros.py", line 98, in editar_empresa
+    empresa = query_tenant(Empresa).filter_by(id=empresa_id).first_or_404()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Query' object has no attribute 'first_or_404'
+[2025-12-26 13:34:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:34:51] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/empresas/editar/2 [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\cadastros.py", line 98, in editar_empresa
+    empresa = query_tenant(Empresa).filter_by(id=empresa_id).first_or_404()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Query' object has no attribute 'first_or_404'
+[2025-12-26 13:34:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:34:56] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/empresas/editar/3 [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\cadastros.py", line 98, in editar_empresa
+    empresa = query_tenant(Empresa).filter_by(id=empresa_id).first_or_404()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Query' object has no attribute 'first_or_404'
+[2025-12-26 13:35:38] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:35:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:35:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:35:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:35:49] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:35:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:35:57] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 13:35:57] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-26 13:39:42] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 13:39:42] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 13:39:42] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 13:39:42] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 13:39:42] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 13:39:43] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 13:39:45] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 13:40:03] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:40:03] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2025-12-26 13:40:04] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: lear
+[2025-12-26 13:40:04] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:40:04] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:40:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:40:37] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:41:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:41:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:41:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:41:31] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:41:31] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-26 13:41:32] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG PKG
+[2025-12-26 13:41:34] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: nsg
+[2025-12-26 13:41:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:41:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:42:07] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:42:08] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:42:13] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:42:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:42:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:42:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:42:42] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 13:42:43] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-26 13:42:53] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:42:53] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: andreaafoleto@yahoo.com.br (motorista) -> Empresa: LEAR
+[2025-12-26 13:42:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:42:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:43:00] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:43:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:43:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:43:06] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-26 13:43:07] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: andreaafoleto@yahoo.com.br -> NSG PKG
+[2025-12-26 13:43:09] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:43:11] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:43:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:43:19] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /motorista/minhas-viagens [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\motorista.py", line 818, in minhas_viagens
+    viagens_paginadas = query.order_by(Viagem.data_criacao.desc()).paginate(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Query' object has no attribute 'paginate'
+[2025-12-26 13:45:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:45:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:45:33] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 13:45:33] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: andreaafoleto@yahoo.com.br (motorista)
+[2025-12-26 13:45:45] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:45:46] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: denilson@gmail.com (operador) -> Empresa: LEAR
+[2025-12-26 13:45:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:45:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:46:04] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:46:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:46:06] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-26 13:46:07] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: denilson@gmail.com -> NSG PKG
+[2025-12-26 13:46:08] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:46:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:46:38] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:46:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:46:45] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:46:49] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:46:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:46:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:46:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:49:22] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 13:49:22] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 13:49:22] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 13:49:22] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 13:49:22] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 13:49:23] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 13:49:26] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 13:49:34] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 13:49:35] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: denilson@gmail.com (operador)
+[2025-12-26 13:49:42] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:49:42] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: andreaafoleto@yahoo.com.br (motorista) -> Empresa: LEAR
+[2025-12-26 13:49:43] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: lear
+[2025-12-26 13:49:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:49:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:49:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:49:52] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:49:53] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-26 13:49:53] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: andreaafoleto@yahoo.com.br -> NSG PKG
+[2025-12-26 13:49:55] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: nsg
+[2025-12-26 13:49:55] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:50:03] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:50:03] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /motorista/minhas-viagens [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\motorista.py", line 818, in minhas_viagens
+    viagens_paginadas = paginate_tenant(
+        query.order_by(Viagem.data_criacao.desc()),
+        page=page, per_page=15, error_out=False)
+  File "H:\Meu Drive\Python_Project\doug\app\config\tenant_utils.py", line 99, in paginate_tenant
+    from flask_sqlalchemy.pagination import Pagination
+ModuleNotFoundError: No module named 'flask_sqlalchemy.pagination'
+[2025-12-26 13:54:29] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 13:54:29] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: andreaafoleto@yahoo.com.br (motorista)
+[2025-12-26 13:55:19] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 13:55:19] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 13:55:19] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 13:55:19] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 13:55:19] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 13:55:20] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 13:55:22] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 13:55:31] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:55:31] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: andreaafoleto@yahoo.com.br (motorista) -> Empresa: LEAR
+[2025-12-26 13:55:32] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: lear
+[2025-12-26 13:55:32] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:55:32] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:55:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:55:47] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:55:49] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:55:49] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-26 13:55:50] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: andreaafoleto@yahoo.com.br -> NSG PKG
+[2025-12-26 13:55:52] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: nsg
+[2025-12-26 13:55:52] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:56:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:56:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:56:09] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:56:12] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:56:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:56:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:56:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:56:31] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:56:32] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:56:33] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:56:34] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: andreaafoleto@yahoo.com.br -> LEAR
+[2025-12-26 13:56:35] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:56:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:56:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:57:03] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 13:57:03] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: andreaafoleto@yahoo.com.br (motorista)
+[2025-12-26 13:57:11] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:57:11] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: denilson@gmail.com (operador) -> Empresa: LEAR
+[2025-12-26 13:57:11] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:57:12] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:57:33] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:57:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:57:35] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-26 13:57:35] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: denilson@gmail.com -> NSG PKG
+[2025-12-26 13:57:37] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:57:44] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:57:47] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:57:52] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:57:55] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:57:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 13:57:57] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:57:58] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: denilson@gmail.com -> LEAR
+[2025-12-26 13:57:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:58:03] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:58:08] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:58:15] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 13:58:15] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: denilson@gmail.com (operador)
+[2025-12-26 13:58:22] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 13:58:23] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2025-12-26 13:58:23] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:58:23] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:58:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:58:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:59:09] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:59:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:59:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:59:47] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 13:59:48] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-26 13:59:48] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG PKG
+[2025-12-26 13:59:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:04:04] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:04:07] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:04:09] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:04:17] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:04:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:04:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:07:19] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 14:07:20] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-26 14:13:18] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 14:13:18] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 14:13:18] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 14:13:18] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 14:13:18] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 14:13:18] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 14:13:21] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 14:13:40] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 14:13:40] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2025-12-26 14:13:41] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: lear
+[2025-12-26 14:13:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:13:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:14:12] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:14:17] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:14:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:14:19] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-26 14:14:19] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG PKG
+[2025-12-26 14:14:21] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: nsg
+[2025-12-26 14:14:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:14:44] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:14:46] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/configuracoes [POST]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1799, in _execute_context
+    self.dialect.do_executemany(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\dialects\postgresql\psycopg2.py", line 953, in do_executemany
+    context._psycopg2_fetched_rows = xtras.execute_values(
+                                     ~~~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+    ...<4 lines>...
+        **kwargs
+        ^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\psycopg2\extras.py", line 1299, in execute_values
+    cur.execute(b''.join(parts))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "configuracao_chave_key"
+DETAIL:  Key (chave)=(timeout_inatividade_minutos) already exists.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 33, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\configuracoes.py", line 105, in configuracoes
+    db.session.commit()
+    ~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in commit
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1451, in commit
+    self._transaction.commit(_to_root=self.future)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 829, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 808, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 3383, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 3522, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 70, in __exit__
+    compat.raise_(
+    ~~~~~~~~~~~~~^
+        exc_value,
+        ^^^^^^^^^^
+        with_traceback=exc_tb,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 3483, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 456, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 630, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 245, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 1156, in _emit_insert_statements
+    c = connection._execute_20(
+        statement, multiparams, execution_options=execution_options
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1631, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 332, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, multiparams, params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1498, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1862, in _execute_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, statement, parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2043, in _handle_dbapi_exception
+    util.raise_(
+    ~~~~~~~~~~~^
+        sqlalchemy_exception, with_traceback=exc_info[2], from_=e
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1799, in _execute_context
+    self.dialect.do_executemany(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\dialects\postgresql\psycopg2.py", line 953, in do_executemany
+    context._psycopg2_fetched_rows = xtras.execute_values(
+                                     ~~~~~~~~~~~~~~~~~~~~^
+        cursor,
+        ^^^^^^^
+    ...<4 lines>...
+        **kwargs
+        ^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\psycopg2\extras.py", line 1299, in execute_values
+    cur.execute(b''.join(parts))
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "configuracao_chave_key"
+DETAIL:  Key (chave)=(timeout_inatividade_minutos) already exists.
+
+[SQL: INSERT INTO configuracao (chave, valor) VALUES (%(chave)s, %(valor)s) RETURNING configuracao.id]
+[parameters: ({'chave': 'timeout_inatividade_minutos', 'valor': '30'}, {'chave': 'TEMPO_CORTESIA_MINUTOS', 'valor': '60'}, {'chave': 'MAX_PASSAGEIROS_POR_VIAGEM', 'valor': '3'}, {'chave': 'limite_fretado', 'valor': '9'}, {'chave': 'hora_parada_valor_periodo', 'valor': '71.02'}, {'chave': 'hora_parada_repasse_periodo', 'valor': '29.00'})]
+(Background on this error at: https://sqlalche.me/e/14/gkpj)
+[2025-12-26 14:16:47] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:16:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:16:48] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 14:16:49] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> LEAR
+[2025-12-26 14:16:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:16:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:16:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:16:57] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-26 14:16:57] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG PKG
+[2025-12-26 14:16:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:17:24] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 14:17:24] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-26 14:22:43] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 14:22:43] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 14:22:43] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 14:22:43] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 14:22:43] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 14:22:44] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 14:25:53] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 14:25:53] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 14:25:53] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 14:25:53] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 14:25:53] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 14:25:53] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 14:28:54] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 14:28:54] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 14:28:54] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 14:28:54] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 14:28:54] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 14:28:55] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 14:28:57] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 14:29:11] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 14:29:12] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2025-12-26 14:29:12] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: lear
+[2025-12-26 14:29:12] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:29:13] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:29:44] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:29:47] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:29:49] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:29:49] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-26 14:29:50] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG PKG
+[2025-12-26 14:29:52] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:81]: Engine criado para empresa: nsg
+[2025-12-26 14:29:52] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:30:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:30:27] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:30:29] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:31:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:31:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:31:23] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 14:31:23] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> LEAR
+[2025-12-26 14:31:25] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:31:31] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:31:32] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:31:32] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-26 14:31:33] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG PKG
+[2025-12-26 14:31:35] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:31:47] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:31:49] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:31:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:31:55] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:31:55] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-26 14:31:56] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> LEAR
+[2025-12-26 14:31:58] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:32:17] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:32:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: lear
+[2025-12-26 14:32:19] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-26 14:32:19] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:333]: Troca de empresa: admin@netyonsolutions.com -> NSG PKG
+[2025-12-26 14:32:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:35:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:35:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:35:32] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:35:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:35:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:36:17] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:36:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:159]: Request configurado para empresa: nsg
+[2025-12-26 14:36:44] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-26 14:36:44] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2025-12-26 15:12:10] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 15:12:10] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 15:12:10] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 15:12:10] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 15:12:10] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 15:12:11] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 15:12:13] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 15:12:48] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /consulta-viagens/lear [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\base.py", line 1694, in _entity_namespace_key
+    return getattr(ns, key)
+AttributeError: type object 'Empresa' has no attribute 'slug'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py", line 44, in consulta_viagens
+    empresa = query_tenant(Empresa).filter_by(slug=empresa_slug).first()
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 1803, in filter_by
+    _entity_namespace_key(from_entity, key) == value
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\base.py", line 1696, in _entity_namespace_key
+    util.raise_(
+    ~~~~~~~~~~~^
+        exc.InvalidRequestError(
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        replace_context=err,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+sqlalchemy.exc.InvalidRequestError: Entity namespace for "empresa" has no property "slug"
+[2025-12-26 15:15:52] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 15:15:52] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 15:15:52] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 15:15:52] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 15:15:52] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 15:15:53] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 15:15:55] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 15:17:00] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /consulta-viagens/lear [POST]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py", line 174, in consulta_viagens
+    return render_template('consulta_viagens.html',
+                         resultado=resultado,
+                         empresa_slug=empresa_slug,
+                         empresa_nome=empresa_nome)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 147, in render_template
+    return _render(app, template, context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 130, in _render
+    rv = template.render(context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "H:\Meu Drive\Python_Project\doug\app\templates\consulta_viagens.html", line 408, in top-level template code
+    <a href="{{ url_for('consulta.consulta_viagens') }}" class="btn btn-primary btn-lg">
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2031, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2020, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\werkzeug\routing\map.py", line 950, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'consulta.consulta_viagens'. Did you forget to specify values ['empresa_slug']?
+[2025-12-26 15:22:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 15:22:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 15:22:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 15:22:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 15:22:40] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 15:22:40] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 15:22:43] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 15:30:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 15:30:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 15:30:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 15:30:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 15:30:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 15:30:34] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 15:30:37] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 15:34:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 15:34:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 15:34:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 15:34:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 15:34:56] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 15:34:56] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 15:34:58] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 15:35:31] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 15:35:31] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 15:35:33] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:60]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 15:35:42] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 15:35:42] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 15:35:42] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:60]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 15:41:30] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 15:41:30] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 15:41:30] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 15:41:30] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 15:41:30] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 15:41:30] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 15:41:33] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 15:41:36] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 15:41:36] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 15:41:38] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:60]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 15:41:49] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 15:41:49] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 15:41:49] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:60]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 15:54:37] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 15:54:37] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 15:54:37] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 15:54:37] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 15:54:37] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 15:54:37] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 15:54:39] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 15:56:30] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 15:56:30] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 15:56:33] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /consulta-viagens/nsg [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py", line 64, in consulta_viagens
+    current_app.logger.info(f"[CONSULTA VIAGENS] g.empresa_ativa definido: {empresa_obj.nome_fantasia} (ID: {empresa_obj.id})")
+                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Empresa' object has no attribute 'nome_fantasia'
+[2025-12-26 15:57:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 15:57:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 15:57:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 15:57:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 15:57:59] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 15:58:00] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 15:58:02] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 15:58:20] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 15:58:20] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 15:58:22] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:64]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 15:58:22] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:65]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 15:58:32] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 15:58:32] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 15:58:33] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:64]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 15:58:33] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:65]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 16:00:25] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 16:00:25] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 16:00:25] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 16:00:25] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 16:00:25] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 16:00:25] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 16:00:28] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 16:00:35] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 16:00:35] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 16:00:38] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:64]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 16:00:38] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:65]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 16:00:41] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 16:00:41] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 16:00:41] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:64]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 16:00:41] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:65]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 16:00:51] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 16:00:51] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 16:00:51] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:64]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 16:00:51] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:65]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 16:01:00] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 16:01:00] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 16:01:00] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:64]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 16:01:00] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:65]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 16:01:06] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/lear
+[2025-12-26 16:01:06] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = lear
+[2025-12-26 16:01:06] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:64]: [CONSULTA VIAGENS] g.empresa_ativa definido: LEAR (ID: 2)
+[2025-12-26 16:01:06] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:65]: [CONSULTA VIAGENS] Banco remoto: dpg-d3t0tq24d50c73enuqog-a.ohio-postgres.render.com/homolog_gomobi_db
+[2025-12-26 16:01:11] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 16:01:11] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 16:01:11] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:64]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 16:01:11] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:65]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 16:01:28] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 16:01:28] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 16:01:28] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:64]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 16:01:28] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:65]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 16:06:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:120]: ======================================================================
+[2025-12-26 16:06:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:121]: [START] Sistema de Logging Configurado
+[2025-12-26 16:06:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:122]: [STATS] Ambiente: DESENVOLVIMENTO (Local)
+[2025-12-26 16:06:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:128]: [>>>] Logs sendo enviados para: stdout + logs/app.log
+[2025-12-26 16:06:34] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:130]: ======================================================================
+[2025-12-26 16:06:34] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-26 16:06:37] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-26 16:06:50] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 16:06:50] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 16:06:52] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:68]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 16:06:52] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:69]: [CONSULTA VIAGENS] is_banco_local: False
+[2025-12-26 16:06:52] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:70]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 16:07:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:60]: Buscando empresa no banco padrão: nsg
+[2025-12-26 16:07:05] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: nsg
+[2025-12-26 16:07:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-26 16:07:05] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 16:07:05] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 16:07:05] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:68]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 16:07:05] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:69]: [CONSULTA VIAGENS] is_banco_local: False
+[2025-12-26 16:07:05] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:70]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 16:07:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:52]: Usando g.empresa_ativa: NSG PKG (ID: 3)
+[2025-12-26 16:07:05] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: nsg
+[2025-12-26 16:07:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-26 16:07:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-26 16:07:15] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 16:07:15] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 16:07:15] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:68]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 16:07:15] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:69]: [CONSULTA VIAGENS] is_banco_local: False
+[2025-12-26 16:07:15] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:70]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 16:07:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:52]: Usando g.empresa_ativa: NSG PKG (ID: 3)
+[2025-12-26 16:07:15] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: nsg
+[2025-12-26 16:07:35] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-26 16:07:35] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-26 16:07:35] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/lear
+[2025-12-26 16:07:35] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = lear
+[2025-12-26 16:07:35] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:68]: [CONSULTA VIAGENS] g.empresa_ativa definido: LEAR (ID: 2)
+[2025-12-26 16:07:35] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:69]: [CONSULTA VIAGENS] is_banco_local: False
+[2025-12-26 16:07:35] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:70]: [CONSULTA VIAGENS] Banco remoto: dpg-d3t0tq24d50c73enuqog-a.ohio-postgres.render.com/homolog_gomobi_db
+[2025-12-26 16:07:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:60]: Buscando empresa no banco padrão: lear
+[2025-12-26 16:07:46] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: lear
+[2025-12-26 16:07:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-26 16:07:46] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/lear
+[2025-12-26 16:07:46] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = lear
+[2025-12-26 16:07:46] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:68]: [CONSULTA VIAGENS] g.empresa_ativa definido: LEAR (ID: 2)
+[2025-12-26 16:07:46] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:69]: [CONSULTA VIAGENS] is_banco_local: False
+[2025-12-26 16:07:46] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:70]: [CONSULTA VIAGENS] Banco remoto: dpg-d3t0tq24d50c73enuqog-a.ohio-postgres.render.com/homolog_gomobi_db
+[2025-12-26 16:07:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:52]: Usando g.empresa_ativa: LEAR (ID: 2)
+[2025-12-26 16:07:46] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: lear
+[2025-12-26 16:07:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-26 16:07:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-26 16:07:50] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/lear
+[2025-12-26 16:07:50] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = lear
+[2025-12-26 16:07:50] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:68]: [CONSULTA VIAGENS] g.empresa_ativa definido: LEAR (ID: 2)
+[2025-12-26 16:07:50] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:69]: [CONSULTA VIAGENS] is_banco_local: False
+[2025-12-26 16:07:50] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:70]: [CONSULTA VIAGENS] Banco remoto: dpg-d3t0tq24d50c73enuqog-a.ohio-postgres.render.com/homolog_gomobi_db
+[2025-12-26 16:07:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-26 16:07:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-26 16:07:53] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 16:07:53] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 16:07:53] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:68]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 16:07:53] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:69]: [CONSULTA VIAGENS] is_banco_local: False
+[2025-12-26 16:07:53] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:70]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 16:07:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-26 16:07:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-26 16:07:56] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:48]: [CONSULTA VIAGENS] URL acessada: /consulta-viagens/nsg
+[2025-12-26 16:07:56] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:49]: [CONSULTA VIAGENS] session['empresa_ativa_slug'] = nsg
+[2025-12-26 16:07:56] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:68]: [CONSULTA VIAGENS] g.empresa_ativa definido: NSG PKG (ID: 3)
+[2025-12-26 16:07:56] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:69]: [CONSULTA VIAGENS] is_banco_local: False
+[2025-12-26 16:07:56] INFO in consulta_viagens [H:\Meu Drive\Python_Project\doug\app\blueprints\consulta_viagens.py:70]: [CONSULTA VIAGENS] Banco remoto: dpg-d56o6hkhg0os73aqvdi0-a.ohio-postgres.render.com/db_nsg_homolog
+[2025-12-26 16:07:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:52]: Usando g.empresa_ativa: NSG PKG (ID: 3)
+[2025-12-26 16:07:56] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: nsg

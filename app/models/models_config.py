@@ -27,6 +27,14 @@ class User(UserMixin, db.Model):
     # NOVO CAMPO: Status de Ativação
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
+    # =========================================================================
+    # CAMPO MULTI-TENANT - Controle de acesso a múltiplas empresas
+    # =========================================================================
+    # Lista de slugs das empresas que o usuário tem acesso (ex: 'lear,nsg')
+    # Para Admin e Operador: NULL significa acesso a todas
+    # Para Gerente/Supervisor: lista específica de empresas
+    empresas_acesso = db.Column(db.Text)
+
     # --- RELACIONAMENTOS COM OS PERFIS ---
     # Cada usuário pode ser, no máximo, um destes perfis.
     gerente = db.relationship(
@@ -84,6 +92,48 @@ class User(UserMixin, db.Model):
 
     def __repr__(self):
         return f'<User {self.email} - {self.role}>'
+
+    # =========================================================================
+    # MÉTODOS MULTI-TENANT
+    # =========================================================================
+    def get_empresas_lista(self):
+        """
+        Retorna lista de slugs das empresas que o usuário tem acesso.
+        
+        Returns:
+            list: Lista de slugs (ex: ['lear', 'nsg'])
+        """
+        if self.empresas_acesso:
+            return [e.strip().lower() for e in self.empresas_acesso.split(',') if e.strip()]
+        return []
+    
+    def tem_acesso_empresa(self, slug):
+        """
+        Verifica se o usuário tem acesso a determinada empresa.
+        
+        Args:
+            slug: Slug da empresa (ex: 'lear', 'nsg')
+            
+        Returns:
+            bool: True se tem acesso, False caso contrário
+        """
+        # Admin e Operador têm acesso a todas as empresas
+        if self.role in ['admin', 'operador']:
+            return True
+        
+        if not slug:
+            return False
+        
+        return slug.lower() in self.get_empresas_lista()
+    
+    def tem_acesso_todas_empresas(self):
+        """
+        Verifica se o usuário tem acesso a todas as empresas.
+        
+        Returns:
+            bool: True se é Admin ou Operador
+        """
+        return self.role in ['admin', 'operador']
 
 
 class Configuracao(db.Model):

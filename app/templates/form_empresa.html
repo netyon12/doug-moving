@@ -69,6 +69,109 @@
                             <textarea class="form-control" id="observacoes" name="observacoes" rows="3">{{ empresa.observacoes if empresa else '' }}</textarea>
                         </div>
 
+                        <!-- ============================================= -->
+                        <!-- CONFIGURAÇÕES MULTI-TENANT (Somente Admin) -->
+                        <!-- ============================================= -->
+                        {% if current_user.role == 'admin' %}
+                        <hr>
+                        <div class="card border-warning mb-3">
+                            <div class="card-header bg-warning text-dark">
+                                <i class="bi bi-database-gear"></i> <strong>Configurações Multi-Tenant</strong>
+                                <small class="text-muted">(Somente Admin)</small>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="slug_licenciado" class="form-label">
+                                            <i class="bi bi-key"></i> Slug do Licenciado*
+                                        </label>
+                                        <input type="text" class="form-control" id="slug_licenciado" name="slug_licenciado" 
+                                               value="{{ empresa.slug_licenciado if empresa else '' }}" 
+                                               placeholder="Ex: lear, nsg"
+                                               style="text-transform: lowercase;"
+                                               pattern="[a-z0-9_]+"
+                                               title="Apenas letras minúsculas, números e underscore">
+                                        <small class="text-muted">Usado no campo "Licenciado" do login</small>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="is_banco_local" class="form-label">
+                                            <i class="bi bi-hdd-network"></i> Tipo de Banco
+                                        </label>
+                                        <select class="form-select" id="is_banco_local" name="is_banco_local" onchange="toggleBancoRemoto()">
+                                            <option value="true" {% if not empresa or empresa.is_banco_local %}selected{% endif %}>
+                                                🏠 Banco Local (mesmo servidor)
+                                            </option>
+                                            <option value="false" {% if empresa and not empresa.is_banco_local %}selected{% endif %}>
+                                                ☁️ Banco Remoto (outro servidor)
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Campos de Banco Remoto (ocultos por padrão) -->
+                                <div id="bancoRemotoConfig" style="display: {% if empresa and not empresa.is_banco_local %}block{% else %}none{% endif %};">
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle"></i> 
+                                        Configure os dados de conexão com o banco de dados remoto desta empresa.
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-8 mb-3">
+                                            <label for="db_host" class="form-label">Host do Banco*</label>
+                                            <input type="text" class="form-control" id="db_host" name="db_host" 
+                                                   value="{{ empresa.db_host if empresa else '' }}"
+                                                   placeholder="Ex: dpg-xxxxx.oregon-postgres.render.com">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="db_port" class="form-label">Porta</label>
+                                            <input type="number" class="form-control" id="db_port" name="db_port" 
+                                                   value="{{ empresa.db_port if empresa else 5432 }}"
+                                                   placeholder="5432">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="db_name" class="form-label">Nome do Banco*</label>
+                                            <input type="text" class="form-control" id="db_name" name="db_name" 
+                                                   value="{{ empresa.db_name if empresa else '' }}"
+                                                   placeholder="Ex: db_nsg_homolog">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="db_user" class="form-label">Usuário do Banco*</label>
+                                            <input type="text" class="form-control" id="db_user" name="db_user" 
+                                                   value="{{ empresa.db_user if empresa else '' }}"
+                                                   placeholder="Ex: db_nsg_user">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12 mb-3">
+                                            <label for="db_pass" class="form-label">Senha do Banco*</label>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="db_pass" name="db_pass" 
+                                                       value="{{ empresa.db_pass if empresa else '' }}"
+                                                       placeholder="Senha do banco de dados">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="toggleSenha()">
+                                                    <i class="bi bi-eye" id="toggleSenhaIcon"></i>
+                                                </button>
+                                            </div>
+                                            <small class="text-muted">A senha será armazenada de forma segura</small>
+                                        </div>
+                                    </div>
+
+                                    <!-- Botão Testar Conexão -->
+                                    <div class="d-grid gap-2">
+                                        <button type="button" class="btn btn-outline-primary" onclick="testarConexao()">
+                                            <i class="bi bi-plug"></i> Testar Conexão
+                                        </button>
+                                    </div>
+                                    <div id="resultadoConexao" class="mt-2"></div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
                         <hr>
                         <div class="d-flex justify-content-end">
                             <a href="{{ url_for('admin.admin_dashboard', aba='empresas') }}" class="btn btn-secondary me-2">Cancelar</a>
@@ -80,4 +183,83 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Toggle visibilidade dos campos de banco remoto
+function toggleBancoRemoto() {
+    const select = document.getElementById('is_banco_local');
+    const config = document.getElementById('bancoRemotoConfig');
+    
+    if (select.value === 'false') {
+        config.style.display = 'block';
+    } else {
+        config.style.display = 'none';
+    }
+}
+
+// Toggle visibilidade da senha
+function toggleSenha() {
+    const input = document.getElementById('db_pass');
+    const icon = document.getElementById('toggleSenhaIcon');
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+
+// Testar conexão com banco remoto
+function testarConexao() {
+    const host = document.getElementById('db_host').value;
+    const port = document.getElementById('db_port').value;
+    const name = document.getElementById('db_name').value;
+    const user = document.getElementById('db_user').value;
+    const pass = document.getElementById('db_pass').value;
+    const resultado = document.getElementById('resultadoConexao');
+    
+    if (!host || !name || !user || !pass) {
+        resultado.innerHTML = '<div class="alert alert-warning">Preencha todos os campos de conexão.</div>';
+        return;
+    }
+    
+    resultado.innerHTML = '<div class="alert alert-info"><span class="spinner-border spinner-border-sm"></span> Testando conexão...</div>';
+    
+    fetch('/testar-conexao-banco', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            db_host: host,
+            db_port: port || 5432,
+            db_name: name,
+            db_user: user,
+            db_pass: pass
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            resultado.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle"></i> ' + data.message + '</div>';
+        } else {
+            resultado.innerHTML = '<div class="alert alert-danger"><i class="bi bi-x-circle"></i> ' + data.message + '</div>';
+        }
+    })
+    .catch(error => {
+        resultado.innerHTML = '<div class="alert alert-danger"><i class="bi bi-x-circle"></i> Erro ao testar conexão</div>';
+    });
+}
+
+// Converter slug para lowercase
+document.getElementById('slug_licenciado')?.addEventListener('input', function(e) {
+    e.target.value = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+});
+</script>
 {% endblock %}

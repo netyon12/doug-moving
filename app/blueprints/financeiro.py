@@ -6,6 +6,7 @@ Gerenciamento de Contas a Receber e Contas a Pagar
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from app import db
+from app.config.tenant_utils import query_tenant, get_or_404_tenant
 from app.models import (
     FinContasReceber, FinReceberViagens,
     FinContasPagar, FinPagarViagens,
@@ -58,7 +59,7 @@ def contas_receber():
     titulos = query.order_by(FinContasReceber.data_emissao.desc()).all()
 
     # Buscar empresas para o filtro
-    empresas = Empresa.query.filter_by(
+    empresas = query_tenant(Empresa).filter_by(
         status='Ativo').order_by(Empresa.nome).all()
 
     # Calcular totalizadores
@@ -101,7 +102,7 @@ def gerar_fatura():
 
         try:
             # Buscar viagens selecionadas (com hora parada)
-            viagens = Viagem.query.options(db.joinedload(Viagem.hora_parada)).filter(
+            viagens = query_tenant(Viagem).options(db.joinedload(Viagem.hora_parada)).filter(
                 Viagem.id.in_(viagens_ids)).all()
 
             if not viagens:
@@ -116,7 +117,7 @@ def gerar_fatura():
                     valor_total += float(v.hora_parada.valor_adicional)
 
             # Gerar número do título
-            ultimo_titulo = FinContasReceber.query.order_by(
+            ultimo_titulo = query_tenant(FinContasReceber).order_by(
                 FinContasReceber.id.desc()).first()
             if ultimo_titulo:
                 ultimo_numero = int(ultimo_titulo.numero_titulo.split('-')[-1])
@@ -160,7 +161,7 @@ def gerar_fatura():
             return redirect(url_for('financeiro.gerar_fatura'))
 
     # GET - Exibir formulário
-    empresas = Empresa.query.filter_by(
+    empresas = query_tenant(Empresa).filter_by(
         status='Ativo').order_by(Empresa.nome).all()
     return render_template('financeiro/gerar_fatura.html', empresas=empresas)
 
@@ -188,7 +189,7 @@ def buscar_viagens_receber():
             FinReceberViagens.viagem_id).all()
         viagens_faturadas_ids = [v[0] for v in viagens_faturadas_ids]
 
-        viagens = Viagem.query.options(db.joinedload(Viagem.hora_parada)).filter(
+        viagens = query_tenant(Viagem).options(db.joinedload(Viagem.hora_parada)).filter(
             and_(
                 Viagem.empresa_id == int(empresa_id),
                 Viagem.status == 'Finalizada',
@@ -238,7 +239,7 @@ def buscar_viagens_receber():
 def editar_receber(titulo_id):
     """Editar título a receber"""
 
-    titulo = FinContasReceber.query.get_or_404(titulo_id)
+    titulo = get_or_404_tenant(FinContasReceber, titulo_id)
 
     if request.method == 'POST':
         try:
@@ -280,7 +281,7 @@ def editar_receber(titulo_id):
 def excluir_receber(titulo_id):
     """Excluir título a receber"""
 
-    titulo = FinContasReceber.query.get_or_404(titulo_id)
+    titulo = get_or_404_tenant(FinContasReceber, titulo_id)
 
     # Não permitir excluir títulos recebidos
     if titulo.status == 'Recebido':
@@ -338,7 +339,7 @@ def contas_pagar():
     titulos = query.order_by(FinContasPagar.data_emissao.desc()).all()
 
     # Buscar motoristas para o filtro
-    motoristas = Motorista.query.filter_by(
+    motoristas = query_tenant(Motorista).filter_by(
         status='Ativo').order_by(Motorista.nome).all()
 
     # Calcular totalizadores
@@ -381,7 +382,7 @@ def gerar_pagamento():
 
         try:
             # Buscar viagens selecionadas (com hora parada)
-            viagens = Viagem.query.options(db.joinedload(Viagem.hora_parada)).filter(
+            viagens = query_tenant(Viagem).options(db.joinedload(Viagem.hora_parada)).filter(
                 Viagem.id.in_(viagens_ids)).all()
 
             if not viagens:
@@ -396,7 +397,7 @@ def gerar_pagamento():
                     valor_total += float(v.hora_parada.repasse_adicional)
 
             # Gerar número do título
-            ultimo_titulo = FinContasPagar.query.order_by(
+            ultimo_titulo = query_tenant(FinContasPagar).order_by(
                 FinContasPagar.id.desc()).first()
             if ultimo_titulo:
                 ultimo_numero = int(ultimo_titulo.numero_titulo.split('-')[-1])
@@ -441,7 +442,7 @@ def gerar_pagamento():
             return redirect(url_for('financeiro.gerar_pagamento'))
 
     # GET - Exibir formulário
-    motoristas = Motorista.query.filter_by(
+    motoristas = query_tenant(Motorista).filter_by(
         status='Ativo').order_by(Motorista.nome).all()
     return render_template('financeiro/gerar_pagamento.html', motoristas=motoristas)
 
@@ -468,7 +469,7 @@ def buscar_viagens_pagar():
         viagens_pagas_ids = db.session.query(FinPagarViagens.viagem_id).all()
         viagens_pagas_ids = [v[0] for v in viagens_pagas_ids]
 
-        viagens = Viagem.query.options(db.joinedload(Viagem.hora_parada)).filter(
+        viagens = query_tenant(Viagem).options(db.joinedload(Viagem.hora_parada)).filter(
             and_(
                 Viagem.motorista_id == int(motorista_id),
                 Viagem.status == 'Finalizada',
@@ -517,7 +518,7 @@ def buscar_viagens_pagar():
 def editar_pagar(titulo_id):
     """Editar título a pagar"""
 
-    titulo = FinContasPagar.query.get_or_404(titulo_id)
+    titulo = get_or_404_tenant(FinContasPagar, titulo_id)
 
     if request.method == 'POST':
         try:
@@ -559,7 +560,7 @@ def editar_pagar(titulo_id):
 def excluir_pagar(titulo_id):
     """Excluir título a pagar"""
 
-    titulo = FinContasPagar.query.get_or_404(titulo_id)
+    titulo = get_or_404_tenant(FinContasPagar, titulo_id)
 
     # Não permitir excluir títulos pagos
     if titulo.status == 'Pago':

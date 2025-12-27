@@ -27,7 +27,6 @@ from app.models import Solicitacao, Viagem, Motorista, Colaborador, Empresa, Pla
 from app import cache
 from sqlalchemy.orm import joinedload
 import locale
-from app.config.tenant_utils import query_tenant, get_tenant_session
 # locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
 # Criar blueprint
@@ -87,23 +86,23 @@ def listagem_solicitacoes():
 
     # Filtrar empresas baseado no perfil
     if empresa_id_usuario:
-        empresas = query_tenant(Empresa).filter_by(id=empresa_id_usuario).all()
+        empresas = Empresa.query.filter_by(id=empresa_id_usuario).all()
     else:
-        empresas = query_tenant(Empresa).all()
+        empresas = Empresa.query.all()
 
     # Filtrar plantas baseado no perfil
     if planta_id_usuario:
-        plantas = query_tenant(Planta).filter_by(id=planta_id_usuario).all()
+        plantas = Planta.query.filter_by(id=planta_id_usuario).all()
     elif empresa_id_usuario:
-        plantas = query_tenant(Planta).filter_by(empresa_id=empresa_id_usuario).all()
+        plantas = Planta.query.filter_by(empresa_id=empresa_id_usuario).all()
     else:
-        plantas = query_tenant(Planta).all()
+        plantas = Planta.query.all()
 
-    blocos = query_tenant(Bloco).all()
+    blocos = Bloco.query.all()
 
     # Buscar supervisores (apenas para admin)
     if current_user.role in ['admin', 'operador']:
-        supervisores = query_tenant(Supervisor).all()
+        supervisores = Supervisor.query.all()
     else:
         supervisores = []
 
@@ -144,7 +143,7 @@ def dados_listagem_solicitacoes():
         horario_filtro = request.form.get('horario')  # NOVO: Filtro de horário
 
         # Construir query
-        query = query_tenant(Solicitacao)
+        query = Solicitacao.query
 
         # APLICAR PERMISSÕES POR PERFIL
         if current_user.role == 'supervisor':
@@ -301,21 +300,21 @@ def conferencia_viagens():
 
     # Filtrar empresas baseado no perfil
     if empresa_id_usuario:
-        empresas = query_tenant(Empresa).filter_by(id=empresa_id_usuario).all()
+        empresas = Empresa.query.filter_by(id=empresa_id_usuario).all()
     else:
-        empresas = query_tenant(Empresa).all()
+        empresas = Empresa.query.all()
 
     # Filtrar plantas baseado no perfil
     if planta_id_usuario:
-        plantas = query_tenant(Planta).filter_by(id=planta_id_usuario).all()
+        plantas = Planta.query.filter_by(id=planta_id_usuario).all()
     elif empresa_id_usuario:
-        plantas = query_tenant(Planta).filter_by(empresa_id=empresa_id_usuario).all()
+        plantas = Planta.query.filter_by(empresa_id=empresa_id_usuario).all()
     else:
-        plantas = query_tenant(Planta).all()
+        plantas = Planta.query.all()
 
     # Buscar motoristas e colaboradores para filtros
-    motoristas = query_tenant(Motorista).all()
-    colaboradores = query_tenant(Colaborador).all()
+    motoristas = Motorista.query.all()
+    colaboradores = Colaborador.query.all()
 
     return render_template(
         'relatorios/conferencia_viagens.html',
@@ -352,7 +351,7 @@ def dados_conferencia_viagens():
         por_pagina = 100
 
         # Construir query
-        query = query_tenant(Viagem).options(db.joinedload(Viagem.hora_parada))
+        query = Viagem.query.options(db.joinedload(Viagem.hora_parada))
 
         # APLICAR PERMISSÕES POR PERFIL
         if current_user.role == 'supervisor':
@@ -360,7 +359,7 @@ def dados_conferencia_viagens():
             supervisor_id_usuario = get_user_supervisor_id()
             if supervisor_id_usuario:
                 # Buscar IDs de viagens das solicitações do supervisor
-                solicitacoes_supervisor = query_tenant(Solicitacao).filter_by(
+                solicitacoes_supervisor = Solicitacao.query.filter_by(
                     supervisor_id=supervisor_id_usuario).all()
                 viagem_ids = [
                     sol.viagem_id for sol in solicitacoes_supervisor if sol.viagem_id]
@@ -484,7 +483,7 @@ def dados_conferencia_viagens():
         # 1 query para buscar todos os colaboradores
         colaboradores_dict = {}
         if todos_col_ids:
-            cols = query_tenant(Colaborador).filter(
+            cols = Colaborador.query.filter(
                 Colaborador.id.in_(todos_col_ids)).all()
             colaboradores_dict = {col.id: col for col in cols}
 
@@ -583,9 +582,9 @@ def conferencia_motoristas():
 
     # Se for motorista, só pode ver suas próprias viagens
     if current_user.role == 'motorista':
-        motoristas = query_tenant(Motorista).filter_by(id=motorista_id_usuario).all()
+        motoristas = Motorista.query.filter_by(id=motorista_id_usuario).all()
     else:
-        motoristas = query_tenant(Motorista).all()
+        motoristas = Motorista.query.all()
 
     return render_template(
         'relatorios/conferencia_motoristas.html',
@@ -613,7 +612,7 @@ def dados_conferencia_motoristas():
         por_pagina = 100
 
         # Construir query
-        query = query_tenant(Viagem).options(db.joinedload(Viagem.hora_parada))
+        query = Viagem.query.options(db.joinedload(Viagem.hora_parada))
 
         # APLICAR PERMISSÕES POR PERFIL
         motorista_id_usuario = get_user_motorista_id()
@@ -702,7 +701,7 @@ def dados_conferencia_motoristas():
         # 1 query para buscar todos os colaboradores
         colaboradores_dict = {}
         if todos_col_ids:
-            cols = query_tenant(Colaborador).filter(
+            cols = Colaborador.query.filter(
                 Colaborador.id.in_(todos_col_ids)).all()
             colaboradores_dict = {col.id: col for col in cols}
 
@@ -802,7 +801,7 @@ def dados_conferencia_motoristas():
 def plantas_por_empresa(empresa_id):
     """Retorna as plantas de uma empresa específica (para filtro dinâmico)"""
     try:
-        plantas = query_tenant(Planta).filter_by(empresa_id=empresa_id).all()
+        plantas = Planta.query.filter_by(empresa_id=empresa_id).all()
         return jsonify({
             'success': True,
             'plantas': [{'id': p.id, 'nome': p.nome} for p in plantas]

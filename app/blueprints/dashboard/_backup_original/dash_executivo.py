@@ -20,7 +20,6 @@ from datetime import timedelta
 from sqlalchemy import func
 
 from app import db
-from app.config.tenant_utils import query_tenant
 from app.models import Viagem, Solicitacao
 from .dash_utils import pode_ver_kpi, get_capacidade_veiculo
 
@@ -38,7 +37,7 @@ def get_viagens_finalizadas_periodo(empresa_id, data_inicio, data_fim):
     Returns:
         list: Lista de viagens finalizadas
     """
-    return query_tenant(Viagem).filter(
+    return Viagem.query.filter(
         Viagem.empresa_id == empresa_id,
         Viagem.status == 'Finalizada',
         Viagem.data_finalizacao >= data_inicio,
@@ -139,7 +138,7 @@ def get_kpis_operacionais_executivo(empresa_id, data_inicio, data_fim, viagens_f
     if pode_ver_kpi('taxa_ocupacao'):
         total_passageiros = 0
         for viagem in viagens_finalizadas:
-            passageiros_viagem = query_tenant(Solicitacao).filter_by(viagem_id=viagem.id).count()
+            passageiros_viagem = Solicitacao.query.filter_by(viagem_id=viagem.id).count()
             total_passageiros += passageiros_viagem
         
         if num_viagens > 0:
@@ -182,7 +181,7 @@ def get_kpis_operacionais_executivo(empresa_id, data_inicio, data_fim, viagens_f
     
     # Taxa de Cancelamento
     if pode_ver_kpi('taxa_cancelamento'):
-        viagens_canceladas = query_tenant(Viagem).filter(
+        viagens_canceladas = Viagem.query.filter(
             Viagem.empresa_id == empresa_id,
             Viagem.status == 'Cancelada',
             Viagem.data_criacao >= data_inicio,
@@ -222,7 +221,7 @@ def get_comparacao_periodo(empresa_id, data_inicio, data_fim, viagens_finalizada
     data_fim_anterior = data_inicio - timedelta(days=1)
     
     # Busca viagens do período anterior
-    viagens_anterior = query_tenant(Viagem).filter(
+    viagens_anterior = Viagem.query.filter(
         Viagem.empresa_id == empresa_id,
         Viagem.status == 'Finalizada',
         Viagem.data_finalizacao >= data_inicio_anterior,

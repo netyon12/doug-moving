@@ -25,7 +25,6 @@ from datetime import datetime
 from sqlalchemy import and_, or_
 
 from .. import db
-from ..config.tenant_utils import query_tenant, get_tenant_session, get_or_404_tenant, paginate_tenant
 from ..models import Viagem, Motorista, Solicitacao, Colaborador, User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro
 from ..decorators import role_required
 
@@ -92,12 +91,12 @@ def dashboard_motorista():
     motorista_id = motorista.id
 
     # Estatísticas
-    viagens_agendadas = query_tenant(Viagem).filter_by(
+    viagens_agendadas = Viagem.query.filter_by(
         motorista_id=motorista.id,
         status='Agendada'
     ).count()
 
-    viagens_em_andamento = query_tenant(Viagem).filter_by(
+    viagens_em_andamento = Viagem.query.filter_by(
         motorista_id=motorista.id,
         status='Em Andamento'
     ).count()
@@ -110,7 +109,7 @@ def dashboard_motorista():
 
     if db_type == 'postgresql':
         # PostgreSQL usa to_char
-        viagens_finalizadas_mes = query_tenant(Viagem).filter(
+        viagens_finalizadas_mes = Viagem.query.filter(
             and_(
                 Viagem.motorista_id == motorista.id,
                 Viagem.status == 'Finalizada',
@@ -120,7 +119,7 @@ def dashboard_motorista():
         ).count()
     else:
         # SQLite usa strftime
-        viagens_finalizadas_mes = query_tenant(Viagem).filter(
+        viagens_finalizadas_mes = Viagem.query.filter(
             and_(
                 Viagem.motorista_id == motorista.id,
                 Viagem.status == 'Finalizada',
@@ -129,13 +128,13 @@ def dashboard_motorista():
         ).count()
 
     # Viagens disponíveis (Pendente, sem motorista) - limit(30) - quantidade de viagens aparece na tela
-    viagens_disponiveis = query_tenant(Viagem).filter_by(
+    viagens_disponiveis = Viagem.query.filter_by(
         status='Pendente',
         motorista_id=None
     ).order_by(Viagem.data_criacao.desc()).limit(30).all()
 
     # Minhas próximas viagens
-    minhas_viagens = query_tenant(Viagem).filter(
+    minhas_viagens = Viagem.query.filter(
         and_(
             Viagem.motorista_id == motorista.id,
             Viagem.status.in_(['Agendada', 'Em Andamento'])
@@ -159,7 +158,7 @@ def dashboard_motorista():
 def viagens_disponiveis():
     """Lista todas as viagens disponíveis para aceite."""
 
-    viagens = query_tenant(Viagem).filter_by(
+    viagens = Viagem.query.filter_by(
         status='Pendente',
         motorista_id=None
     ).order_by(Viagem.data_criacao.desc()).all()
@@ -178,7 +177,7 @@ def detalhes_viagem(viagem_id):
 
     motorista = current_user.motorista
 
-    viagem = get_or_404_tenant(Viagem, viagem_id)
+    viagem = Viagem.query.get_or_404(viagem_id)
 
     # Verifica se o motorista tem permissão para ver esta viagem
     if viagem.motorista_id and viagem.motorista_id != motorista.id:
@@ -193,14 +192,14 @@ def detalhes_viagem(viagem_id):
             # Converte a string JSON para lista de IDs
             ids_lista = json.loads(viagem.colaboradores_ids)
             # Busca os colaboradores pelos IDs
-            colaboradores = query_tenant(Colaborador).filter(
+            colaboradores = Colaborador.query.filter(
                 Colaborador.id.in_(ids_lista)).all()
         except:
             # Se der erro no JSON, tenta split por vírgula
             try:
                 ids_lista = [int(x.strip()) for x in viagem.colaboradores_ids.strip(
                     '[]').split(',') if x.strip()]
-                colaboradores = query_tenant(Colaborador).filter(
+                colaboradores = Colaborador.query.filter(
                     Colaborador.id.in_(ids_lista)).all()
             except:
                 colaboradores = []
@@ -223,7 +222,7 @@ def aceitar_viagem(viagem_id):
     """Aceita uma viagem disponível."""
 
     motorista = current_user.motorista
-    viagem = get_or_404_tenant(Viagem, viagem_id)
+    viagem = Viagem.query.get_or_404(viagem_id)
 
     # Verifica se a viagem pode ser aceita
     if not viagem.pode_ser_aceita():
@@ -242,7 +241,7 @@ def aceitar_viagem(viagem_id):
     # Verifica se o motorista já tem outra viagem no mesmo horário
     horario_viagem = viagem.horario_entrada or viagem.horario_saida
     if horario_viagem:
-        conflito = query_tenant(Viagem).filter(
+        conflito = Viagem.query.filter(
             and_(
                 Viagem.motorista_id == motorista.id,
                 Viagem.status.in_(['Agendada', 'Em Andamento']),
@@ -269,7 +268,7 @@ def aceitar_viagem(viagem_id):
                 'mensagem': 'Não foi possível aceitar a viagem.'
             }), 400
 
-        get_tenant_session().commit()
+        db.session.commit()
 
         # ✅ LOG no Terminal (APÓS commit)
         num_passageiros = len(
@@ -330,7 +329,7 @@ def aceitar_viagem(viagem_id):
         })
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
         current_app.logger.error(
             f"❌ ERRO ao aceitar viagem {viagem_id}: {str(e)}")
         flash('Erro ao aceitar viagem', 'danger')
@@ -358,7 +357,7 @@ def cancelar_viagem(viagem_id):
     """Desassocia o motorista da viagem, tornando-a disponível novamente."""
 
     motorista = current_user.motorista
-    viagem = get_or_404_tenant(Viagem, viagem_id)
+    viagem = Viagem.query.get_or_404(viagem_id)
 
     # Verifica se o motorista é o dono da viagem
     if viagem.motorista_id != motorista.id:
@@ -392,7 +391,7 @@ def cancelar_viagem(viagem_id):
                 'mensagem': 'Não foi possível cancelar a viagem.'
             }), 400
 
-        get_tenant_session().commit()
+        db.session.commit()
 
         # Notifica colaboradores sobre cancelamento (exceto Desligamento)
         if viagem.tipo_corrida != 'desligamento':
@@ -430,7 +429,7 @@ def cancelar_viagem(viagem_id):
         })
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
 
         # Registra erro no log
         log_audit(
@@ -456,7 +455,7 @@ def iniciar_viagem(viagem_id):
 
     motorista = current_user.motorista
     motorista_id = motorista.id  # ← ADICIONAR ESTA LINHA
-    viagem = get_or_404_tenant(Viagem, viagem_id)
+    viagem = Viagem.query.get_or_404(viagem_id)
 
     # Verifica se o motorista é o dono da viagem
     if viagem.motorista_id != motorista.id:
@@ -467,7 +466,7 @@ def iniciar_viagem(viagem_id):
 
     # VALIDAÇÃO: Verifica se o motorista já tem outra viagem EM ANDAMENTO
     # (Motorista não pode dirigir duas corridas ao mesmo tempo)
-    viagem_em_andamento = query_tenant(Viagem).filter(
+    viagem_em_andamento = Viagem.query.filter(
         and_(
             Viagem.motorista_id == motorista.id,
             Viagem.status == 'Em Andamento',
@@ -498,7 +497,7 @@ def iniciar_viagem(viagem_id):
                 'mensagem': 'Não foi possível iniciar a viagem.'
             }), 400
 
-        get_tenant_session().commit()
+        db.session.commit()
 
         # ✅ LOG no Terminal (APÓS commit)
         current_app.logger.info(
@@ -522,7 +521,7 @@ def iniciar_viagem(viagem_id):
         })
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
 
         # Registra erro no log
         log_audit(
@@ -548,7 +547,7 @@ def finalizar_viagem(viagem_id):
 
     motorista = current_user.motorista
     motorista_id = motorista.id  # ← ADICIONAR ESTA LINHA
-    viagem = get_or_404_tenant(Viagem, viagem_id)
+    viagem = Viagem.query.get_or_404(viagem_id)
 
     # Verifica se o motorista é o dono da viagem
     if viagem.motorista_id != motorista.id:
@@ -574,7 +573,7 @@ def finalizar_viagem(viagem_id):
                 'mensagem': 'Não foi possível finalizar a viagem.'
             }), 400
 
-        get_tenant_session().commit()
+        db.session.commit()
 
         # ✅ LOG no Terminal (APÓS commit)
         duracao = viagem.data_finalizacao - \
@@ -615,7 +614,7 @@ def finalizar_viagem(viagem_id):
         })
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
         current_app.logger.error(
             f"❌ ERRO ao finalizar viagem {viagem_id}: {str(e)}")
 
@@ -648,7 +647,7 @@ def toggle_disponibilidade():
     motorista = current_user.motorista
 
     # Verifica se o motorista tem viagens em andamento
-    viagens_em_andamento = query_tenant(Viagem).filter(
+    viagens_em_andamento = Viagem.query.filter(
         and_(
             Viagem.motorista_id == motorista.id,
             Viagem.status == 'Em Andamento'
@@ -671,7 +670,7 @@ def toggle_disponibilidade():
             motorista.status_disponibilidade = 'online'
             mensagem = 'Você está agora ONLINE. Pode receber novas viagens.'
 
-        get_tenant_session().commit()
+        db.session.commit()
 
         # Registra no log de auditoria
         log_audit(
@@ -691,7 +690,7 @@ def toggle_disponibilidade():
         })
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
         return jsonify({
             'sucesso': False,
             'mensagem': f'Erro ao alterar disponibilidade: {str(e)}'
@@ -727,7 +726,7 @@ def atualizar_status_disponibilidade():
     try:
         status_anterior = motorista.status
         motorista.status = novo_status
-        get_tenant_session().commit()
+        db.session.commit()
 
         # Registra no log de auditoria
         log_audit(
@@ -746,7 +745,7 @@ def atualizar_status_disponibilidade():
         })
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
         return jsonify({'sucesso': False, 'mensagem': f'Erro ao atualizar status: {str(e)}'}), 500
 
 
@@ -768,7 +767,7 @@ def minhas_viagens():
     filtro_bloco_id = request.args.get('bloco_id', '')
 
     # Query base
-    query = query_tenant(Viagem).filter_by(motorista_id=motorista.id)
+    query = Viagem.query.filter_by(motorista_id=motorista.id)
 
     # Aplicar filtros
     if filtro_viagem_id:
@@ -815,22 +814,21 @@ def minhas_viagens():
             flash('ID de bloco inválido.', 'warning')
 
     # Paginação
-    viagens_paginadas = paginate_tenant(
-        query.order_by(Viagem.data_criacao.desc()),
+    viagens_paginadas = query.order_by(Viagem.data_criacao.desc()).paginate(
         page=page, per_page=15, error_out=False)
 
     # Calcular totais (baseado na query filtrada)
     total_viagens = query.count()
-    total_repasse = get_tenant_session().query(db.func.sum(Viagem.valor_repasse)).filter(
+    total_repasse = db.session.query(db.func.sum(Viagem.valor_repasse)).filter(
         Viagem.motorista_id == motorista.id
     ).scalar() or 0.0
 
     # Buscar dados para os filtros
     status_opcoes = ['Pendente', 'Agendada',
                      'Em Andamento', 'Finalizada', 'Cancelada']
-    empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
-    plantas = query_tenant(Planta).order_by(Planta.nome).all()
-    blocos = query_tenant(Bloco).order_by(Bloco.codigo_bloco).all()
+    empresas = Empresa.query.order_by(Empresa.nome).all()
+    plantas = Planta.query.order_by(Planta.nome).all()
+    blocos = Bloco.query.order_by(Bloco.codigo_bloco).all()
 
     return render_template(
         "motorista/viagens_motorista.html",

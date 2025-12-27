@@ -19,7 +19,6 @@ import logging
 from datetime import datetime, date
 
 from .. import db
-from ..config.tenant_utils import query_tenant, get_tenant_session, get_or_404_tenant
 from ..models import (
     User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
     Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao
@@ -42,11 +41,11 @@ logger.info("Módulo solicitacoes carregado")
 @permission_required(['admin', 'gerente', 'supervisor', 'operador'])
 def solicitacoes():
     # --- LÓGICA DE FILTRAGEM ---
-    query = query_tenant(Solicitacao)
+    query = Solicitacao.query
 
     # Filtro por perfil
     if current_user.role == 'gerente':
-        ids_supervisores = [s.id for s in query_tenant(Supervisor).filter_by(
+        ids_supervisores = [s.id for s in Supervisor.query.filter_by(
             gerente_id=current_user.gerente.id)]
         query = query.filter(Solicitacao.supervisor_id.in_(ids_supervisores))
     elif current_user.role == 'supervisor':
@@ -173,16 +172,16 @@ def solicitacoes():
 
     # --- DADOS PARA OS DROPDOWNS DOS FILTROS ---
     if current_user.role in ['admin', 'operador']:
-        supervisores_filtro = query_tenant(Supervisor).order_by(Supervisor.nome).all()
-        blocos_filtro = query_tenant(Bloco).order_by(Bloco.codigo_bloco).all()
+        supervisores_filtro = Supervisor.query.order_by(Supervisor.nome).all()
+        blocos_filtro = Bloco.query.order_by(Bloco.codigo_bloco).all()
     elif current_user.role == 'gerente':
-        supervisores_filtro = query_tenant(Supervisor).filter_by(
+        supervisores_filtro = Supervisor.query.filter_by(
             gerente_id=current_user.gerente.id).order_by(Supervisor.nome).all()
-        blocos_filtro = query_tenant(Bloco).join(Empresa).filter(
+        blocos_filtro = Bloco.query.join(Empresa).filter(
             Empresa.id == current_user.empresa.id).order_by(Bloco.codigo_bloco).all()
     else:  # Supervisor
         supervisores_filtro = [current_user.supervisor]
-        blocos_filtro = query_tenant(Bloco).join(Empresa).filter(
+        blocos_filtro = Bloco.query.join(Empresa).filter(
             Empresa.id == current_user.empresa.id).order_by(Bloco.codigo_bloco).all()
 
     # Retorna o template com as variáveis corretas
@@ -281,7 +280,7 @@ def nova_solicitacao():
                     return redirect(url_for('admin.nova_solicitacao'))
 
                 # Busca supervisor da planta (pega o primeiro que tem essa planta)
-                supervisor = query_tenant(Supervisor).join(
+                supervisor = Supervisor.query.join(
                     Supervisor.plantas).filter(Planta.id == planta_id).first()
                 if not supervisor:
                     flash('Nenhum supervisor encontrado para esta planta.', 'danger')
@@ -296,7 +295,7 @@ def nova_solicitacao():
                     return redirect(url_for('admin.nova_solicitacao'))
 
                 # Busca a planta para obter empresa_id
-                planta = query_tenant(Planta).get(planta_id)
+                planta = Planta.query.get(planta_id)
                 if not planta:
                     flash('Planta inválida.', 'danger')
                     return redirect(url_for('admin.nova_solicitacao'))
@@ -304,7 +303,7 @@ def nova_solicitacao():
                 empresa_id = planta.empresa_id
 
                 # Busca supervisor da planta que pertence ao gerente
-                supervisor = query_tenant(Supervisor).join(
+                supervisor = Supervisor.query.join(
                     Supervisor.plantas).filter(
                         Planta.id == planta_id,
                         Supervisor.gerente_id == current_user.gerente.id
@@ -323,7 +322,7 @@ def nova_solicitacao():
             def buscar_turno_id(nome_turno, planta_id):
                 if not nome_turno or nome_turno == 'Não definido':
                     return None
-                turno = query_tenant(Turno).filter_by(
+                turno = Turno.query.filter_by(
                     nome=nome_turno, planta_id=planta_id).first()
                 return turno.id if turno else None
 
@@ -332,8 +331,8 @@ def nova_solicitacao():
                 if not bloco_id or not turno_id:
                     return None, None
 
-                bloco = query_tenant(Bloco).get(bloco_id)
-                turno = query_tenant(Turno).get(turno_id)
+                bloco = Bloco.query.get(bloco_id)
+                turno = Turno.query.get(turno_id)
 
                 if not bloco or not turno:
                     return None, None
@@ -350,7 +349,7 @@ def nova_solicitacao():
 
             for i, colab_id in enumerate(colaborador_ids):
                 # Verifica se o colaborador existe
-                colaborador = query_tenant(Colaborador).get(colab_id)
+                colaborador = Colaborador.query.get(colab_id)
                 if not colaborador:
                     continue
 
@@ -415,7 +414,7 @@ def nova_solicitacao():
 
                         # Validação de duplicação para entrada
                         data_entrada = dados_entrada['horario_entrada'].date()
-                        entrada_existente = query_tenant(Solicitacao).filter(
+                        entrada_existente = Solicitacao.query.filter(
                             Solicitacao.colaborador_id == colab_id,
                             Solicitacao.tipo_corrida == 'entrada',
                             db.func.date(
@@ -425,8 +424,8 @@ def nova_solicitacao():
 
                         if not entrada_existente:
                             solicitacao_entrada = Solicitacao(**dados_entrada)
-                            get_tenant_session().add(solicitacao_entrada)
-                            get_tenant_session().flush()  # Para obter o ID
+                            db.session.add(solicitacao_entrada)
+                            db.session.flush()  # Para obter o ID
                             solicitacoes_ids_criadas.append(
                                 solicitacao_entrada.id)
                             solicitacoes_criadas += 1
@@ -456,7 +455,7 @@ def nova_solicitacao():
 
                         # Validação de duplicação para saída
                         data_saida = dados_saida['horario_saida'].date()
-                        saida_existente = query_tenant(Solicitacao).filter(
+                        saida_existente = Solicitacao.query.filter(
                             Solicitacao.colaborador_id == colab_id,
                             Solicitacao.tipo_corrida == 'saida',
                             db.func.date(
@@ -466,8 +465,8 @@ def nova_solicitacao():
 
                         if not saida_existente:
                             solicitacao_saida = Solicitacao(**dados_saida)
-                            get_tenant_session().add(solicitacao_saida)
-                            get_tenant_session().flush()  # Para obter o ID
+                            db.session.add(solicitacao_saida)
+                            db.session.flush()  # Para obter o ID
                             solicitacoes_ids_criadas.append(
                                 solicitacao_saida.id)
                             solicitacoes_criadas += 1
@@ -493,7 +492,7 @@ def nova_solicitacao():
 
                 # if tipo_corrida == 'entrada' and dados_solicitacao.get('horario_entrada'):
                 #    data_entrada = dados_solicitacao['horario_entrada'].date()
-                #    entrada_existente = query_tenant(Solicitacao).filter(
+                #    entrada_existente = Solicitacao.query.filter(
                 #        Solicitacao.colaborador_id == colab_id,
                 #        Solicitacao.tipo_corrida == 'entrada',
                 #        db.func.date(Solicitacao.horario_entrada) == data_entrada,
@@ -506,7 +505,7 @@ def nova_solicitacao():
 
                # elif tipo_corrida == 'saida' and dados_solicitacao.get('horario_saida'):
                 #    data_saida = dados_solicitacao['horario_saida'].date()
-                #    saida_existente = query_tenant(Solicitacao).filter(
+                #    saida_existente = Solicitacao.query.filter(
                 #        Solicitacao.colaborador_id == colab_id,
                 #        Solicitacao.tipo_corrida == 'saida',
                 #        db.func.date(Solicitacao.horario_saida) == data_saida,
@@ -519,7 +518,7 @@ def nova_solicitacao():
 
               #  elif tipo_corrida == 'desligamento' and dados_solicitacao.get('horario_desligamento'):
               #      data_desligamento = dados_solicitacao['horario_desligamento'].date()
-              #      desligamento_existente = query_tenant(Solicitacao).filter(
+              #      desligamento_existente = Solicitacao.query.filter(
               #          Solicitacao.colaborador_id == colab_id,
               #          Solicitacao.tipo_corrida == 'desligamento',
               #          db.func.date(Solicitacao.horario_desligamento) == data_desligamento,
@@ -545,12 +544,12 @@ def nova_solicitacao():
 
                 # Cria a solicitação
                 solicitacao = Solicitacao(**dados_solicitacao)
-                get_tenant_session().add(solicitacao)
-                get_tenant_session().flush()  # Para obter o ID
+                db.session.add(solicitacao)
+                db.session.flush()  # Para obter o ID
                 solicitacoes_ids_criadas.append(solicitacao.id)
                 solicitacoes_criadas += 1
 
-            get_tenant_session().commit()
+            db.session.commit()
 
             # AUDITORIA: Registra criação de solicitações
             for sol_id in solicitacoes_ids_criadas:
@@ -595,7 +594,7 @@ def nova_solicitacao():
                 return redirect(url_for('admin.solicitacoes'))
 
         except Exception as e:
-            get_tenant_session().rollback()
+            db.session.rollback()
             logger.error(f"[ERRO] Erro ao criar solicitação: {str(e)}")
             logger.exception("Traceback completo:")
 
@@ -618,7 +617,7 @@ def nova_solicitacao():
 
     # Se for admin, ele precisa da lista de empresas para escolher
     if current_user.role in ['admin', 'operador']:
-        empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
+        empresas = Empresa.query.order_by(Empresa.nome).all()
         return render_template('nova_solicitacao.html', empresas=empresas)
 
     # Se for supervisor, filtra apenas plantas associadas
@@ -646,7 +645,7 @@ def nova_solicitacao():
             return redirect(url_for('home'))
 
         # Busca todos os supervisores do gerente
-        supervisores = query_tenant(Supervisor).filter_by(
+        supervisores = Supervisor.query.filter_by(
             gerente_id=current_user.gerente.id).all()
 
         # Busca todas as plantas dos supervisores
@@ -676,7 +675,7 @@ def nova_solicitacao():
 @permission_required(['admin', 'supervisor', 'gerente', 'operador'])
 def visualizar_solicitacao(id):
     """Rota para visualizar uma solicitação (somente leitura)"""
-    solicitacao = get_or_404_tenant(Solicitacao, id)
+    solicitacao = Solicitacao.query.get_or_404(id)
 
     # Verifica permissão
     if current_user.role == 'supervisor':
@@ -685,7 +684,7 @@ def visualizar_solicitacao(id):
             return redirect(url_for('admin.solicitacoes'))
     elif current_user.role == 'gerente':
         # Gerente só pode ver solicitações dos seus supervisores
-        ids_supervisores = [s.id for s in query_tenant(Supervisor).filter_by(
+        ids_supervisores = [s.id for s in Supervisor.query.filter_by(
             gerente_id=current_user.gerente.id)]
         if solicitacao.supervisor_id not in ids_supervisores:
             flash('Você não tem permissão para visualizar esta solicitação.', 'danger')
@@ -699,7 +698,7 @@ def visualizar_solicitacao(id):
 @login_required
 @permission_required(['admin', 'supervisor', 'gerente', 'operador'])
 def editar_solicitacao(id):
-    solicitacao = get_or_404_tenant(Solicitacao, id)
+    solicitacao = Solicitacao.query.get_or_404(id)
 
     # Verifica permissão
     if current_user.role == 'supervisor':
@@ -734,7 +733,7 @@ def editar_solicitacao(id):
                     # Recalcula turno de entrada
                     turno_entrada_nome = request.form.get('turno_entrada')
                     if turno_entrada_nome:
-                        turno = query_tenant(Turno).filter_by(
+                        turno = Turno.query.filter_by(
                             nome=turno_entrada_nome, planta_id=solicitacao.planta_id).first()
                         solicitacao.turno_entrada_id = turno.id if turno else None
 
@@ -747,7 +746,7 @@ def editar_solicitacao(id):
                     # Recalcula turno de saída
                     turno_saida_nome = request.form.get('turno_saida')
                     if turno_saida_nome:
-                        turno = query_tenant(Turno).filter_by(
+                        turno = Turno.query.filter_by(
                             nome=turno_saida_nome, planta_id=solicitacao.planta_id).first()
                         solicitacao.turno_saida_id = turno.id if turno else None
 
@@ -762,15 +761,15 @@ def editar_solicitacao(id):
                     turno_desligamento_nome = request.form.get(
                         'turno_desligamento')
                     if turno_desligamento_nome:
-                        turno = query_tenant(Turno).filter_by(
+                        turno = Turno.query.filter_by(
                             nome=turno_desligamento_nome, planta_id=solicitacao.planta_id).first()
                         solicitacao.turno_desligamento_id = turno.id if turno else None
 
             # Recalcula valores
             turno_principal_id = solicitacao.turno_entrada_id or solicitacao.turno_saida_id or solicitacao.turno_desligamento_id
             if turno_principal_id and solicitacao.bloco_id:
-                bloco = query_tenant(Bloco).get(solicitacao.bloco_id)
-                turno = query_tenant(Turno).get(turno_principal_id)
+                bloco = Bloco.query.get(solicitacao.bloco_id)
+                turno = Turno.query.get(turno_principal_id)
 
                 if bloco and turno:
                     solicitacao.valor = float(bloco.get_valor_por_turno(turno))
@@ -778,7 +777,7 @@ def editar_solicitacao(id):
                         bloco.get_repasse_por_turno(turno))
 
             solicitacao.data_atualizacao = datetime.now()
-            get_tenant_session().commit()
+            db.session.commit()
 
             # AUDITORIA: Registra edição de solicitação
             valores_novos = {
@@ -812,7 +811,7 @@ def editar_solicitacao(id):
             return redirect(url_for('admin.solicitacoes'))
 
         except Exception as e:
-            get_tenant_session().rollback()
+            db.session.rollback()
             flash(f'Erro ao atualizar solicitação: {str(e)}', 'danger')
             import traceback
             print(traceback.format_exc())
@@ -829,28 +828,28 @@ def excluir_solicitacao(id):
         # ✅ SELECT FOR UPDATE: Lock pessimista para prevenir race condition
         # Trava a solicitação durante validação para evitar que seja agrupada
         # enquanto estamos validando a exclusão
-        solicitacao = query_tenant(Solicitacao).filter_by(
+        solicitacao = Solicitacao.query.filter_by(
             id=id
         ).with_for_update().first_or_404()
 
         # Verifica permissão
         if current_user.role == 'supervisor':
             if solicitacao.supervisor_id != current_user.supervisor.id:
-                get_tenant_session().rollback()  # Libera lock
+                db.session.rollback()  # Libera lock
                 flash('Você não tem permissão para excluir esta solicitação.', 'danger')
                 return redirect(url_for('admin.solicitacoes'))
 
         # [FIX] CORREÇÃO CRÍTICA: Verifica se tem viagem associada
         # Re-validação após lock (pode ter sido agrupada durante validação)
         if solicitacao.viagem_id:
-            get_tenant_session().rollback()  # Libera lock
+            db.session.rollback()  # Libera lock
             flash(
                 'Não é possível excluir solicitação com viagem associada. Cancele a viagem primeiro.', 'danger')
             return redirect(url_for('admin.solicitacoes'))
 
         # Apenas solicitações pendentes podem ser excluídas
         if solicitacao.status != 'Pendente':
-            get_tenant_session().rollback()  # Libera lock
+            db.session.rollback()  # Libera lock
             flash('Apenas solicitações pendentes podem ser excluídas.', 'warning')
             return redirect(url_for('admin.solicitacoes'))
 
@@ -865,8 +864,8 @@ def excluir_solicitacao(id):
             'status': solicitacao.status
         }
 
-        get_tenant_session().delete(solicitacao)
-        get_tenant_session().commit()
+        db.session.delete(solicitacao)
+        db.session.commit()
 
         # AUDITORIA: Registra exclusão
         log_audit(
@@ -881,7 +880,7 @@ def excluir_solicitacao(id):
         flash(
             f'Solicitação de {colaborador_nome} excluída com sucesso!', 'success')
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
         flash(f'Erro ao excluir solicitação: {str(e)}', 'danger')
 
     return redirect(url_for('admin.solicitacoes'))
@@ -893,7 +892,7 @@ def excluir_solicitacao(id):
 def detalhes_solicitacao(solicitacao_id):
     """Retorna detalhes da solicitação em formato JSON para exibição no modal"""
     try:
-        solicitacao = get_or_404_tenant(Solicitacao, solicitacao_id)
+        solicitacao = Solicitacao.query.get_or_404(solicitacao_id)
 
         # Verifica permissão
         if current_user.role == 'supervisor':

@@ -14,7 +14,6 @@ from ..models import (
     Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao, ViagemHoraParada
 )
 from .. import db
-from ..config.tenant_utils import query_tenant, get_tenant_session, get_or_404_tenant
 from flask import Blueprint, render_template, request, redirect, url_for, flash, Response, jsonify, abort
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
@@ -43,7 +42,7 @@ def viagens():
     """Lista e filtra viagens criadas no sistema"""
     try:
         # Busca base de viagens (com eager loading de hora_parada)
-        query = query_tenant(Viagem).options(db.joinedload(Viagem.hora_parada))
+        query = Viagem.query.options(db.joinedload(Viagem.hora_parada))
 
         # Inicializa variáveis de filtro
         filtro_viagem_id = request.args.get('viagem_id', '')
@@ -147,9 +146,9 @@ def viagens():
         ).order_by(Viagem.id.desc()).limit(500).all()
 
         # Busca dados para os filtros
-        motoristas = query_tenant(Motorista).order_by(Motorista.nome).all()
-        blocos = query_tenant(Bloco).order_by(Bloco.codigo_bloco).all()
-        plantas = query_tenant(Planta).order_by(Planta.nome).all()
+        motoristas = Motorista.query.order_by(Motorista.nome).all()
+        blocos = Bloco.query.order_by(Bloco.codigo_bloco).all()
+        plantas = Planta.query.order_by(Planta.nome).all()
 
         # Opções de status
         status_opcoes = ['Pendente', 'Agendada',
@@ -182,7 +181,7 @@ def viagens():
 def viagem_detalhes(viagem_id):
     """Retorna os detalhes completos de uma viagem específica em JSON"""
     try:
-        viagem = get_or_404_tenant(Viagem, viagem_id)
+        viagem = Viagem.query.get_or_404(viagem_id)
 
         # Monta dados do motorista com tratamento seguro
         motorista_info = None
@@ -204,7 +203,7 @@ def viagem_detalhes(viagem_id):
                 colaboradores_ids = json.loads(viagem.colaboradores_ids)
 
                 # Busca todos os colaboradores de uma vez (mais eficiente)
-                colaboradores = query_tenant(Colaborador).filter(
+                colaboradores = Colaborador.query.filter(
                     Colaborador.id.in_(colaboradores_ids)
                 ).all()
 
@@ -273,7 +272,7 @@ def viagem_detalhes(viagem_id):
 def motoristas_disponiveis():
     """Retorna lista de motoristas disponíveis para associação"""
     try:
-        motoristas = query_tenant(Motorista).filter_by(
+        motoristas = Motorista.query.filter_by(
             status='Ativo').order_by(Motorista.nome).all()
 
         dados_motoristas = [
@@ -309,8 +308,8 @@ def associar_motorista(viagem_id):
             return jsonify({'success': False, 'message': 'Motorista não informado'}), 400
 
         # Busca viagem e motorista
-        viagem = get_or_404_tenant(Viagem, viagem_id)
-        motorista = get_or_404_tenant(Motorista, motorista_id)
+        viagem = Viagem.query.get_or_404(viagem_id)
+        motorista = Motorista.query.get_or_404(motorista_id)
 
         logger.info(
             f"[...] Associando motorista {motorista.nome} (ID: {motorista_id}) à viagem {viagem_id}")
@@ -336,7 +335,7 @@ def associar_motorista(viagem_id):
                 'message': 'Não foi possível associar motorista à viagem'
             }), 400
 
-        get_tenant_session().commit()
+        db.session.commit()
 
         # ========== INTEGRAÇÃO WHATSAPP - INÍCIO ==========
         # Envia notificação WhatsApp para colaboradores (exceto Desligamento)
@@ -362,7 +361,7 @@ def associar_motorista(viagem_id):
         return jsonify({'success': True, 'message': 'Motorista associado com sucesso'})
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
@@ -380,7 +379,7 @@ def cancelar_viagem(viagem_id):
             return jsonify({'success': False, 'message': 'Motivo do cancelamento é obrigatório'}), 400
 
         # Busca viagem
-        viagem = get_or_404_tenant(Viagem, viagem_id)
+        viagem = Viagem.query.get_or_404(viagem_id)
 
         logger.info(f"[...] Cancelando viagem {viagem_id} - Motivo: {motivo}")
 
@@ -395,12 +394,12 @@ def cancelar_viagem(viagem_id):
         viagem.data_atualizacao = datetime.now()
 
         # Retorna solicitações para status Pendente
-        solicitacoes = query_tenant(Solicitacao).filter_by(viagem_id=viagem_id).all()
+        solicitacoes = Solicitacao.query.filter_by(viagem_id=viagem_id).all()
         for solicitacao in solicitacoes:
             solicitacao.status = 'Pendente'
             solicitacao.viagem_id = None
 
-        get_tenant_session().commit()
+        db.session.commit()
 
         # ========== INTEGRAÇÃO WHATSAPP - INÍCIO ==========
         # Envia notificação WhatsApp para colaboradores sobre cancelamento
@@ -433,7 +432,7 @@ def cancelar_viagem(viagem_id):
         })
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
@@ -454,7 +453,7 @@ def viagem_hora_parada_form(viagem_id):
         import math
 
         # Busca a viagem
-        viagem = get_or_404_tenant(Viagem, viagem_id)
+        viagem = Viagem.query.get_or_404(viagem_id)
 
         # Verifica se a viagem está finalizada
         if viagem.status != 'Finalizada':
@@ -464,7 +463,7 @@ def viagem_hora_parada_form(viagem_id):
             }), 400
 
         # Verifica se já existe hora parada cadastrada
-        hora_parada_existente = query_tenant(ViagemHoraParada).filter_by(
+        hora_parada_existente = ViagemHoraParada.query.filter_by(
             viagem_id=viagem_id).first()
 
         # Determina o horário agendado baseado no tipo de corrida
@@ -530,7 +529,7 @@ def viagem_hora_parada_salvar(viagem_id):
         from ..models import ViagemHoraParada
 
         # Busca a viagem
-        viagem = get_or_404_tenant(Viagem, viagem_id)
+        viagem = Viagem.query.get_or_404(viagem_id)
 
         # Verifica se a viagem está finalizada
         if viagem.status != 'Finalizada':
@@ -576,7 +575,7 @@ def viagem_hora_parada_salvar(viagem_id):
         repasse_adicional = repasse_periodo * periodos_30min
 
         # Verifica se já existe hora parada
-        hora_parada = query_tenant(ViagemHoraParada).filter_by(
+        hora_parada = ViagemHoraParada.query.filter_by(
             viagem_id=viagem_id).first()
 
         if hora_parada:
@@ -600,10 +599,10 @@ def viagem_hora_parada_salvar(viagem_id):
                 observacoes=observacoes,
                 created_by_user_id=current_user.id
             )
-            get_tenant_session().add(hora_parada)
+            db.session.add(hora_parada)
             mensagem = f'Hora parada adicionada à viagem #{viagem.id} com sucesso!'
 
-        get_tenant_session().commit()
+        db.session.commit()
 
         flash(mensagem, 'success')
         return jsonify({
@@ -614,7 +613,7 @@ def viagem_hora_parada_salvar(viagem_id):
         })
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
@@ -630,7 +629,7 @@ def viagem_hora_parada_excluir(viagem_id):
         from ..models import ViagemHoraParada
 
         # Busca a hora parada
-        hora_parada = query_tenant(ViagemHoraParada).filter_by(
+        hora_parada = ViagemHoraParada.query.filter_by(
             viagem_id=viagem_id).first()
 
         if not hora_parada:
@@ -639,8 +638,8 @@ def viagem_hora_parada_excluir(viagem_id):
                 'message': 'Hora parada não encontrada para esta viagem.'
             }), 404
 
-        get_tenant_session().delete(hora_parada)
-        get_tenant_session().commit()
+        db.session.delete(hora_parada)
+        db.session.commit()
 
         flash(
             f'Hora parada da viagem #{viagem_id} excluída com sucesso!', 'success')
@@ -650,7 +649,7 @@ def viagem_hora_parada_excluir(viagem_id):
         })
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
 # ===========================================================================================

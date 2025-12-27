@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block title %}Configurações do Sistema{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row">
+        <!-- Menu Lateral de Configurações -->
+        <div class="col-lg-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0">Opções de Configuração</h6>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for item in menu_configuracoes %}
+                        {% set roles_permitidas = item.role.split(',') %}
+                        {% if current_user.role in roles_permitidas %}
+                            <a href="{{ item.url }}" class="list-group-item list-group-item-action {% if request.path == item.url %}active{% endif %}">
+                                <i class="{{ item.icone }} me-2"></i>{{ item.texto }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <!-- Conteúdo Principal -->
+        <div class="col-lg-9">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-gear-fill me-2"></i>Configurações do Sistema
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST" action="{{ url_for('admin.configuracoes') }}">
+                        <!-- Tempo da Janela de Cortesia -->
+                        <div class="mb-4">
+                            <label for="tempo_cortesia" class="form-label fw-bold">
+                                <i class="bi bi-clock me-1"></i>Tempo da Janela de Cortesia (minutos)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="tempo_cortesia" 
+                                   name="tempo_cortesia" 
+                                   value="{{ tempo_cortesia }}" 
+                                   min="1" 
+                                   max="60" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Tempo (em minutos) que um supervisor ou motorista tem para cancelar uma solicitação/viagem após o aceite, sem penalidades.
+                            </small>
+                        </div>
+
+                        <!-- Passageiros por Viagem -->
+                        <div class="mb-4">
+                            <label for="max_passageiros" class="form-label fw-bold">
+                                <i class="bi bi-people-fill me-1"></i>Passageiros por Viagem
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="max_passageiros" 
+                                   name="max_passageiros" 
+                                   value="{{ max_passageiros }}" 
+                                   min="1" 
+                                   max="10" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Quantidade máxima de passageiros por viagem no agrupamento automático (recomendado: 3 ou 4).
+                            </small>
+                        </div>
+
+                        <!-- Limite de Passageiros para Fretado -->
+                        <div class="mb-4">
+                            <label for="limite_fretado" class="form-label fw-bold">
+                                <i class="bi bi-bus-front me-1"></i>Limite de Passageiros para Fretado
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="limite_fretado" 
+                                   name="limite_fretado" 
+                                   value="{{ limite_fretado }}" 
+                                   min="1" 
+                                   max="50" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Grupos com MAIS de X passageiros serão considerados Fretados. Grupos com X ou menos passageiros serão Veículos (recomendado: 9).
+                            </small>
+                        </div>
+
+                        <!-- Valor Hora Parada (Viagem) -->
+                        <div class="mb-4">
+                            <label for="hora_parada_valor" class="form-label fw-bold">
+                                <i class="bi bi-currency-dollar me-1"></i>Valor Hora Parada - Viagem (R$)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="hora_parada_valor" 
+                                   name="hora_parada_valor" 
+                                   value="{{ hora_parada_valor }}" 
+                                   min="0" 
+                                   step="0.01" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Valor cobrado do cliente por período de 30 minutos de hora parada (recomendado: R$ 71,02).
+                            </small>
+                        </div>
+
+                        <!-- Valor Hora Parada (Repasse Motorista) -->
+                        <div class="mb-4">
+                            <label for="hora_parada_repasse" class="form-label fw-bold">
+                                <i class="bi bi-cash-coin me-1"></i>Valor Hora Parada - Repasse Motorista (R$)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="hora_parada_repasse" 
+                                   name="hora_parada_repasse" 
+                                   value="{{ hora_parada_repasse }}" 
+                                   min="0" 
+                                   step="0.01" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Valor repassado ao motorista por período de 30 minutos de hora parada (recomendado: R$ 29,00).
+                            </small>
+                        </div>
+
+                        <!-- Timeout de Inatividade -->
+                        <div class="mb-4">
+                            <label for="timeout_inatividade" class="form-label fw-bold">
+                                <i class="bi bi-hourglass-split me-1"></i>Timeout de Inatividade (minutos)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="timeout_inatividade" 
+                                   name="timeout_inatividade" 
+                                   value="{{ timeout_inatividade }}" 
+                                   min="5" 
+                                   max="120" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Tempo de inatividade antes de deslogar automaticamente (5 a 120 minutos)
+                            </small>
+                        </div>
+
+
+
+                        <!-- Botões -->
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Voltar ao Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle me-1"></i>Salvar Configurações
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            
+
+            <!-- Card de Informações -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle-fill me-2"></i>Informações
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="fw-bold">Tempo da Janela de Cortesia</h6>
+                    <p class="text-muted">
+                        Define o período em que é permitido cancelar uma solicitação ou viagem sem gerar penalidades. 
+                        Após esse tempo, o cancelamento pode resultar em advertências ou outras ações.
+                    </p>
+
+                    <h6 class="fw-bold mt-3">Passageiros por Viagem</h6>
+                    <p class="text-muted">
+                        Define a capacidade máxima de passageiros que o sistema deve considerar ao agrupar solicitações automaticamente. 
+                        Valores típicos são 3 ou 4 passageiros por veículo.
+                    </p>
+
+                    <h6 class="fw-bold mt-3">Limite de Passageiros para Fretado</h6>
+                    <p class="text-muted">
+                        Define o limite que separa Fretados de Veículos. Grupos com <strong>MAIS</strong> passageiros que este valor 
+                        serão tratados como <strong>Fretados</strong>. Grupos com este valor ou menos serão tratados como <strong>Veículos</strong>.
+                        <br><strong>Exemplo:</strong> Se o limite for 9:
+                        <ul class="mb-0 mt-2">
+                            <li>Grupo com 9 passageiros = <span class="badge bg-primary">Veículo</span></li>
+                            <li>Grupo com 10 passageiros = <span class="badge bg-success">Fretado</span></li>
+                        </ul>
+                    </p>
+
+                    <div class="alert alert-warning mt-3" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Atenção:</strong> Alterações nessas configurações afetam o comportamento do sistema imediatamente.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

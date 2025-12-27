@@ -19,7 +19,7 @@ import logging
 from datetime import datetime, date
 
 from .. import db
-from ..config.tenant_utils import query_tenant, get_tenant_session, get_or_404_tenant
+from ..config.tenant_utils import query_tenant, get_tenant_session
 from ..models import (
     User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
     Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao
@@ -42,7 +42,7 @@ logger.info("Módulo solicitacoes carregado")
 @permission_required(['admin', 'gerente', 'supervisor', 'operador'])
 def solicitacoes():
     # --- LÓGICA DE FILTRAGEM ---
-    query = query_tenant(Solicitacao)
+    query = Solicitacao.query
 
     # Filtro por perfil
     if current_user.role == 'gerente':
@@ -676,7 +676,7 @@ def nova_solicitacao():
 @permission_required(['admin', 'supervisor', 'gerente', 'operador'])
 def visualizar_solicitacao(id):
     """Rota para visualizar uma solicitação (somente leitura)"""
-    solicitacao = get_or_404_tenant(Solicitacao, id)
+    solicitacao = query_tenant(Solicitacao).get_or_404(id)
 
     # Verifica permissão
     if current_user.role == 'supervisor':
@@ -699,7 +699,7 @@ def visualizar_solicitacao(id):
 @login_required
 @permission_required(['admin', 'supervisor', 'gerente', 'operador'])
 def editar_solicitacao(id):
-    solicitacao = get_or_404_tenant(Solicitacao, id)
+    solicitacao = query_tenant(Solicitacao).get_or_404(id)
 
     # Verifica permissão
     if current_user.role == 'supervisor':
@@ -893,7 +893,7 @@ def excluir_solicitacao(id):
 def detalhes_solicitacao(solicitacao_id):
     """Retorna detalhes da solicitação em formato JSON para exibição no modal"""
     try:
-        solicitacao = get_or_404_tenant(Solicitacao, solicitacao_id)
+        solicitacao = query_tenant(Solicitacao).get_or_404(solicitacao_id)
 
         # Verifica permissão
         if current_user.role == 'supervisor':

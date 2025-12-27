@@ -364,7 +364,7 @@
                 <h1>
                     <i class="bi bi-geo-alt-fill icon"></i>GO MOBI
                 </h1>
-                <p>Consulta de Viagens para Colaboradores</p>
+                <p>Consulta de Viagens para Colaboradores - {{ empresa_nome }} </p>
             </div>
 
             <!-- Formulário com efeito de vidro -->
@@ -405,7 +405,7 @@
                         {% endif %}
                     </div>
                     <div class="d-grid mt-4">
-                        <a href="{{ url_for('consulta.consulta_viagens') }}" class="btn btn-primary btn-lg">
+                        <a href="{{ url_for('consulta.consulta_viagens', empresa_slug=empresa_slug) }}" class="btn btn-primary btn-lg">
                             <i class="bi bi-arrow-clockwise"></i> Nova Consulta
                         </a>
                     </div>

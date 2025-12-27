@@ -13,6 +13,7 @@ from sqlalchemy import func
 import calendar
 
 from app import db
+from app.config.tenant_utils import query_tenant
 from app.models import (
     Empresa, Planta, Motorista, Colaborador, 
     Solicitacao, Viagem
@@ -32,7 +33,7 @@ def operador_dashboard():
     # Obter filtro de empresa (padrão: primeira empresa)
     empresa_id = request.args.get('empresa_id', type=int)
     if not empresa_id:
-        primeira_empresa = Empresa.query.order_by(Empresa.id).first()
+        primeira_empresa = query_tenant(Empresa).order_by(Empresa.id).first()
         empresa_id = primeira_empresa.id if primeira_empresa else 1
 
     # Obter filtro de período (padrão: mês atual)
@@ -58,8 +59,8 @@ def operador_dashboard():
         data_fim_str = data_fim.strftime('%Y-%m-%d')
 
     # Buscar todas as empresas para o dropdown
-    empresas = Empresa.query.order_by(Empresa.nome).all()
-    empresa_selecionada = Empresa.query.get(empresa_id)
+    empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
+    empresa_selecionada = query_tenant(Empresa).get(empresa_id)
 
     # ===== KPIs DE SOLICITAÇÕES =====
     # Otimização: Consolida COUNTs em 1 query usando GROUP BY
@@ -86,13 +87,13 @@ def operador_dashboard():
     }
 
     # Finalizadas e Canceladas do período (queries separadas necessárias)
-    kpis_solicitacoes['finalizadas_periodo'] = Solicitacao.query.filter(
+    kpis_solicitacoes['finalizadas_periodo'] = query_tenant(Solicitacao).filter(
         Solicitacao.empresa_id == empresa_id,
         Solicitacao.status == 'Finalizada',
         Solicitacao.data_atualizacao >= data_inicio,
         Solicitacao.data_atualizacao <= data_fim
     ).count()
-    kpis_solicitacoes['canceladas_periodo'] = Solicitacao.query.filter(
+    kpis_solicitacoes['canceladas_periodo'] = query_tenant(Solicitacao).filter(
         Solicitacao.empresa_id == empresa_id,
         Solicitacao.status == 'Cancelada',
         Solicitacao.data_atualizacao >= data_inicio,
@@ -126,14 +127,14 @@ def operador_dashboard():
     }
 
     # Viagens finalizadas e canceladas DO PERÍODO (queries separadas necessárias)
-    kpis_viagens['finalizadas_periodo'] = Viagem.query.filter(
+    kpis_viagens['finalizadas_periodo'] = query_tenant(Viagem).filter(
         Viagem.empresa_id == empresa_id,
         Viagem.status == 'Finalizada',
         Viagem.data_finalizacao >= data_inicio,
         Viagem.data_finalizacao <= data_fim
     ).count()
 
-    kpis_viagens['canceladas_periodo'] = Viagem.query.filter(
+    kpis_viagens['canceladas_periodo'] = query_tenant(Viagem).filter(
         Viagem.empresa_id == empresa_id,
         Viagem.status == 'Cancelada',
         Viagem.data_criacao >= data_inicio,
@@ -142,7 +143,7 @@ def operador_dashboard():
 
     # ===== KPIs DE MOTORISTAS (SEM FILTRO DE DATA) =====
     # Busca TODOS os motoristas ativos (independente de terem viagens)
-    motoristas_empresa = Motorista.query.filter_by(status='Ativo').all()
+    motoristas_empresa = query_tenant(Motorista).filter_by(status='Ativo').all()
 
     kpis_motoristas = {
         'disponiveis': 0,
@@ -168,7 +169,7 @@ def operador_dashboard():
 
     # ===== DADOS GERAIS =====
     kpis_gerais = {
-        'total_empresas': Empresa.query.count(),
+        'total_empresas': query_tenant(Empresa).count(),
         'total_plantas': Planta.query.filter_by(empresa_id=empresa_id).count(),
         'total_motoristas': len(motoristas_empresa),
         'total_colaboradores': Colaborador.query.join(Planta).filter(Planta.empresa_id == empresa_id).count()
@@ -182,7 +183,7 @@ def operador_dashboard():
     taxa_ocupacao = round((kpis_motoristas['ocupados'] / total_motoristas_ativos * 100), 1) if total_motoristas_ativos > 0 else 0
     
     # Tempo Médio de Viagem (em minutos) - baseado nas viagens finalizadas do período
-    viagens_finalizadas = Viagem.query.filter(
+    viagens_finalizadas = query_tenant(Viagem).filter(
         Viagem.empresa_id == empresa_id,
         Viagem.status == 'Finalizada',
         Viagem.data_finalizacao >= data_inicio,
@@ -219,7 +220,7 @@ def operador_dashboard():
     # ===== DADOS PARA GRÁFICOS =====
     
     # Gráfico 1: Viagens por Horário (Entrada, Saída, Desligamento)
-    viagens_finalizadas_horario = Viagem.query.filter(
+    viagens_finalizadas_horario = query_tenant(Viagem).filter(
         Viagem.empresa_id == empresa_id,
         Viagem.status == 'Finalizada',
         Viagem.data_finalizacao >= data_inicio,

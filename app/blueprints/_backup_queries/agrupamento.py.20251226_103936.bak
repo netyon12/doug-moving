@@ -16,7 +16,6 @@ from ..models import (
     Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Fretado, Configuracao
 )
 from .. import db
-from ..config.tenant_utils import query_tenant, get_tenant_session
 from flask import Blueprint, render_template, request, redirect, url_for, flash, Response, jsonify, abort
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
@@ -80,7 +79,7 @@ def agrupamento():
     status_filtro = request.args.get('status', 'Pendente')
 
     # Query base
-    query = query_tenant(Solicitacao).join(Colaborador).join(Supervisor)
+    query = Solicitacao.query.join(Colaborador).join(Supervisor)
 
     # Filtro por data (considera todos os tipos de horário)
     if data_filtro:
@@ -129,7 +128,7 @@ def agrupamento():
                              current_user.supervisor.id)
     elif current_user.role == 'gerente':
         # Gerente vê solicitações de todas as suas plantas
-        gerente = query_tenant(Gerente).filter_by(user_id=current_user.id).first()
+        gerente = Gerente.query.filter_by(user_id=current_user.id).first()
         if gerente:
             plantas_ids = [p.id for p in gerente.plantas.all()]
             # Join com Colaborador já existe na query base (linha 80)
@@ -147,7 +146,7 @@ def agrupamento():
     # Busca plantas do gerente (se aplicável)
     plantas_gerente = []
     if current_user.role == 'gerente':
-        gerente = query_tenant(Gerente).filter_by(user_id=current_user.id).first()
+        gerente = Gerente.query.filter_by(user_id=current_user.id).first()
         if gerente:
             plantas_gerente = gerente.plantas.all()
 
@@ -160,7 +159,7 @@ def agrupamento():
                          1) // passageiros_por_viagem if total_solicitacoes > 0 else 0
 
     # Busca todos os blocos para o filtro
-    todos_blocos = query_tenant(Bloco).filter_by(
+    todos_blocos = Bloco.query.filter_by(
         status='Ativo').order_by(Bloco.codigo_bloco).all()
 
     return render_template(
@@ -195,7 +194,7 @@ def criar_grupo_manual():
         # ✅ SELECT FOR UPDATE: Lock pessimista para prevenir race condition
         # Trava as solicitações durante a transação para evitar que outro supervisor
         # agrupe as mesmas solicitações simultaneamente
-        solicitacoes = query_tenant(Solicitacao).filter(
+        solicitacoes = Solicitacao.query.filter(
             Solicitacao.id.in_(solicitacoes_ids),
             Solicitacao.status == 'Pendente',
             Solicitacao.viagem_id.is_(None),
@@ -204,7 +203,7 @@ def criar_grupo_manual():
 
         # Re-validação após lock
         if len(solicitacoes) != len(solicitacoes_ids):
-            get_tenant_session().rollback()
+            db.session.rollback()
             return jsonify({
                 'success': False, 
                 'message': 'Algumas solicitações já foram agrupadas por outro supervisor ou não estão disponíveis'
@@ -261,8 +260,8 @@ def criar_grupo_manual():
             data_criacao=datetime.utcnow(),
             data_atualizacao=datetime.utcnow()
         )
-        get_tenant_session().add(nova_viagem)
-        get_tenant_session().flush()  # Para obter o ID da viagem
+        db.session.add(nova_viagem)
+        db.session.flush()  # Para obter o ID da viagem
 
         # [FIX] CORREÇÃO: Status correto é 'Agrupada', não 'Agendada'
         # Agendada = quando motorista aceita
@@ -272,7 +271,7 @@ def criar_grupo_manual():
             solicitacao.status = 'Agrupada'  # ✅ CORRETO
 
         # ✅ COMMIT dentro do try/except para capturar erros
-        get_tenant_session().commit()
+        db.session.commit()
 
         # AUDITORIA: Registra criação de viagem manual
         log_viagem_audit(
@@ -294,7 +293,7 @@ def criar_grupo_manual():
         })
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
@@ -319,7 +318,7 @@ def agrupar_automatico():
         # Query CORRIGIDA que considera entrada, saida e desligamento
         # Remove acentos e usa lowercase para comparação
         from sqlalchemy import case
-        query = query_tenant(Solicitacao).filter(
+        query = Solicitacao.query.filter(
             Solicitacao.status == 'Pendente',
             or_(
                 # Solicitações de ENTRADA (usa horario_entrada)
@@ -350,7 +349,7 @@ def agrupar_automatico():
         )
 
         if current_user.role == 'supervisor':
-            supervisor = query_tenant(Supervisor).filter_by(
+            supervisor = Supervisor.query.filter_by(
                 user_id=current_user.id).first()
             if supervisor:
                 query = query.filter(
@@ -372,9 +371,9 @@ def agrupar_automatico():
             return redirect(url_for('admin.agrupamento'))
 
         # Busca configurações (se existirem)
-        config_max_pass = query_tenant(Configuracao).filter_by(
+        config_max_pass = Configuracao.query.filter_by(
             chave='MAX_PASSAGEIROS_POR_VIAGEM').first()
-        config_janela = query_tenant(Configuracao).filter_by(
+        config_janela = Configuracao.query.filter_by(
             chave='JANELA_TEMPO_AGRUPAMENTO_MIN').first()
 
         max_passageiros = int(config_max_pass.valor) if config_max_pass else 3
@@ -393,7 +392,7 @@ def agrupar_automatico():
         # Confirma e salva no banco
         resultado = confirmar_agrupamento(sugestoes, current_user.id)
 
-        get_tenant_session().commit()
+        db.session.commit()
 
         # Monta mensagem detalhada
         mensagem = (
@@ -408,7 +407,7 @@ def agrupar_automatico():
         return redirect(url_for('admin.agrupamento', data_filtro=data_filtro))
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
         flash(f'Erro ao agrupar automaticamente: {str(e)}', 'danger')
         return redirect(url_for('admin.agrupamento'))
 
@@ -443,7 +442,7 @@ def gerar_sugestoes_agrupamento():
         # Converte string de data para objeto date
         data_obj = dt_module.strptime(data_filtro, '%Y-%m-%d').date()
 
-        query = query_tenant(Solicitacao).filter(
+        query = Solicitacao.query.filter(
             Solicitacao.status == status,
             or_(
                 func.date(Solicitacao.horario_entrada) == data_obj,
@@ -459,14 +458,14 @@ def gerar_sugestoes_agrupamento():
 
         # Filtro adicional por perfil do usuário
         if current_user.role == 'gerente':
-            gerente = query_tenant(Gerente).filter_by(user_id=current_user.id).first()
+            gerente = Gerente.query.filter_by(user_id=current_user.id).first()
             if gerente:
                 plantas_ids = [p.id for p in gerente.plantas.all()]
                 query = query.join(Colaborador).filter(
                     Colaborador.planta_id.in_(plantas_ids))
 
         elif current_user.role == 'supervisor':
-            supervisor = query_tenant(Supervisor).filter_by(
+            supervisor = Supervisor.query.filter_by(
                 user_id=current_user.id).first()
             if supervisor:
                 query = query.filter(
@@ -485,9 +484,9 @@ def gerar_sugestoes_agrupamento():
             return redirect(url_for('admin.agrupamento'))
 
         # Busca configurações
-        config_max_pass = query_tenant(Configuracao).filter_by(
+        config_max_pass = Configuracao.query.filter_by(
             chave='max_passageiros_viagem').first()
-        config_janela = query_tenant(Configuracao).filter_by(
+        config_janela = Configuracao.query.filter_by(
             chave='janela_tempo_agrupamento').first()
 
         max_passageiros = int(config_max_pass.valor) if config_max_pass else 3
@@ -559,7 +558,7 @@ def finalizar_agrupamento():
         viagens_ids_para_notificar = []  # [OK] NOVA: Lista para armazenar IDs das viagens
 
         # [FIX] CORREÇÃO: Força reload de todos os objetos da sessão para evitar objetos desatualizados
-        get_tenant_session().expire_all()
+        db.session.expire_all()
         logger.info(
             "[RETRY] Sessão do banco de dados limpa antes do agrupamento")
 
@@ -576,13 +575,13 @@ def finalizar_agrupamento():
             # 🔒 LOCK: Garante que apenas 1 worker processa este grupo por vez
             # Usa advisory lock do PostgreSQL (liberado automaticamente no commit)
             lock_id = hash(f"agrupamento_{'-'.join(map(str, sorted(grupo_ids)))}") % 2147483647
-            get_tenant_session().execute(text("SELECT pg_advisory_xact_lock(:lock_id)"), {"lock_id": lock_id})
+            db.session.execute(text("SELECT pg_advisory_xact_lock(:lock_id)"), {"lock_id": lock_id})
             logger.info(f"[LOCK] Lock adquirido para grupo {grupo_ids}: lock_id={lock_id}")
 
             # Busca as solicitações do grupo
             # [FIX] NOTA: NÃO usamos with_for_update() porque é incompatível com joinedload() (LEFT OUTER JOIN)
             # Proteção contra duplicação é feita via: advisory lock + expire_all() + validação de status + flush()
-            solicitacoes = query_tenant(Solicitacao).options(
+            solicitacoes = Solicitacao.query.options(
                 joinedload(Solicitacao.colaborador).joinedload(
                     Colaborador.bloco)
             ).filter(Solicitacao.id.in_(grupo_ids)).all()
@@ -742,8 +741,8 @@ def finalizar_agrupamento():
                             data_atualizacao=datetime.utcnow()
                         )
 
-                        get_tenant_session().add(novo_fretado)
-                        get_tenant_session().flush()  # Para obter o ID
+                        db.session.add(novo_fretado)
+                        db.session.flush()  # Para obter o ID
 
                     # [OK] CORREÇÃO V3: Atualiza fretados com VALIDAÇÃO
                     solicitacoes_ids_fretado = []
@@ -759,7 +758,7 @@ def finalizar_agrupamento():
                             f"[>>>] Atualizando {len(solicitacoes_ids_fretado)} solicitações para Fretado")
 
                         # UPDATE em massa
-                        quantidade_fretado = query_tenant(Solicitacao).filter(
+                        quantidade_fretado = Solicitacao.query.filter(
                             Solicitacao.id.in_(solicitacoes_ids_fretado)
                         ).update({
                             'status': 'Fretado'
@@ -769,11 +768,11 @@ def finalizar_agrupamento():
                             f"[...] UPDATE fretado retornou: {quantidade_fretado} registro(s)")
 
                         # Flush
-                        get_tenant_session().flush()
+                        db.session.flush()
                         logger.info(f"[SAVE] Flush executado para fretado")
 
                         # VALIDAÇÃO
-                        solicitacoes_verif_fretado = query_tenant(Solicitacao).filter(
+                        solicitacoes_verif_fretado = Solicitacao.query.filter(
                             Solicitacao.id.in_(solicitacoes_ids_fretado)
                         ).all()
 
@@ -787,12 +786,12 @@ def finalizar_agrupamento():
                             logger.warning(
                                 f"[AVISO]  {len(nao_fretadas)} solicitações não foram fretadas, tentando retry...")
                             for sol_id in nao_fretadas:
-                                sol = query_tenant(Solicitacao).get(sol_id)
+                                sol = Solicitacao.query.get(sol_id)
                                 if sol:
                                     sol.status = 'Fretado'
                                     logger.info(
                                         f"[OK] Solicitação #{sol_id} fretada manualmente")
-                            get_tenant_session().flush()
+                            db.session.flush()
 
                         solicitacoes_agrupadas += len(solicitacoes_ids_fretado)
                         logger.info(
@@ -857,8 +856,8 @@ def finalizar_agrupamento():
                     # Auditoria
                     created_by_user_id=current_user.id
                 )
-                get_tenant_session().add(nova_viagem)
-                get_tenant_session().flush()
+                db.session.add(nova_viagem)
+                db.session.flush()
 
                 # [FIX] CORREÇÃO DEFINITIVA: Usa UPDATE em massa ao invés de atualizar objeto por objeto
                 # Isso evita problemas com expire_all() e garante que o status seja atualizado corretamente
@@ -879,7 +878,7 @@ def finalizar_agrupamento():
                             f"[>>>] Tentando atualizar {len(solicitacoes_ids_para_agrupar)} solicitações: {solicitacoes_ids_para_agrupar}")
 
                         # TENTATIVA 1: UPDATE em massa
-                        quantidade_atualizada = query_tenant(Solicitacao).filter(
+                        quantidade_atualizada = Solicitacao.query.filter(
                             Solicitacao.id.in_(solicitacoes_ids_para_agrupar)
                         ).update({
                             'viagem_id': nova_viagem.id,
@@ -890,12 +889,12 @@ def finalizar_agrupamento():
                             f"[...] UPDATE em massa retornou: {quantidade_atualizada} registro(s)")
 
                         # Força flush para persistir
-                        get_tenant_session().flush()
-                        get_tenant_session().expire_all()  # Limpa cache para evitar dados antigos
+                        db.session.flush()
+                        db.session.expire_all()  # Limpa cache para evitar dados antigos
                         logger.info(f"[SAVE] Flush executado e cache limpo")
 
                         # VALIDAÇÃO: Verifica se TODAS foram atualizadas
-                        solicitacoes_verificacao = query_tenant(Solicitacao).filter(
+                        solicitacoes_verificacao = Solicitacao.query.filter(
                             Solicitacao.id.in_(solicitacoes_ids_para_agrupar)
                         ).all()
 
@@ -912,7 +911,7 @@ def finalizar_agrupamento():
                                 f"[RETRY] Tentando RETRY objeto por objeto...")
 
                             for sol_id in nao_atualizadas:
-                                sol = query_tenant(Solicitacao).get(sol_id)
+                                sol = Solicitacao.query.get(sol_id)
                                 if sol:
                                     sol.viagem_id = nova_viagem.id
                                     sol.status = 'Agrupada'
@@ -920,11 +919,11 @@ def finalizar_agrupamento():
                                         f"[OK] Solicitação #{sol_id} atualizada manualmente")
 
                             # Flush após retry
-                            get_tenant_session().flush()
+                            db.session.flush()
                             logger.info(f"[SAVE] Flush executado após retry")
 
                             # VALIDAÇÃO FINAL
-                            solicitacoes_final = query_tenant(Solicitacao).filter(
+                            solicitacoes_final = Solicitacao.query.filter(
                                 Solicitacao.id.in_(
                                     solicitacoes_ids_para_agrupar)
                             ).all()
@@ -959,7 +958,7 @@ def finalizar_agrupamento():
                 viagens_ids_para_notificar.append(nova_viagem.id)
 
         # [FIX] CORREÇÃO: Commit final com log de confirmação
-        get_tenant_session().commit()
+        db.session.commit()
         logger.info(
             f"[OK] COMMIT REALIZADO: {viagens_criadas} viagem(ns), {fretados_criados} fretado(s), {solicitacoes_agrupadas} solicitação(ões) agrupada(s)")
 
@@ -1040,7 +1039,7 @@ def finalizar_agrupamento():
         })
 
     except Exception as e:
-        get_tenant_session().rollback()
+        db.session.rollback()
         return jsonify({'success': False, 'message': str(e)}), 500
 
 
@@ -1117,7 +1116,7 @@ def adicionar_solicitacao_grupo():
             return jsonify({'success': False, 'message': 'Índice de grupo inválido'}), 400
 
         # Busca configuração de máximo de passageiros
-        config_max_pass = query_tenant(Configuracao).filter_by(
+        config_max_pass = Configuracao.query.filter_by(
             chave='MAX_PASSAGEIROS_POR_VIAGEM').first()
         max_passageiros = int(config_max_pass.valor) if config_max_pass else 3
 
@@ -1183,7 +1182,7 @@ def mesclar_grupos():
             return jsonify({'success': False, 'message': 'Índices de grupo inválidos'}), 400
 
         # Busca configuração de máximo de passageiros
-        config_max_pass = query_tenant(Configuracao).filter_by(
+        config_max_pass = Configuracao.query.filter_by(
             chave='MAX_PASSAGEIROS_POR_VIAGEM').first()
         max_passageiros = int(config_max_pass.valor) if config_max_pass else 3
 

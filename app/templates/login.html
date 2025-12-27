@@ -357,6 +357,20 @@
                 {% endwith %}
 
                 <form method="POST">
+                    <!-- Campo Licenciado (Multi-Tenant) -->
+                    <div class="mb-3">
+                        <label for="licenciado" class="form-label">
+                            <i class="bi bi-building"></i> Licenciado
+                        </label>
+                        <input type="text" class="form-control" id="licenciado" name="licenciado" 
+                               placeholder="Ex: gomobi, lear, nsg" required
+                               style="text-transform: lowercase;"
+                               autocomplete="off">
+                        <small class="text-muted" style="color: rgba(255,255,255,0.5) !important; font-size: 0.8rem;">
+                            Informe o código da sua empresa
+                        </small>
+                    </div>
+                    
                     <div class="mb-3">
                         <label for="email" class="form-label">
                             <i class="bi bi-envelope-fill"></i> Email

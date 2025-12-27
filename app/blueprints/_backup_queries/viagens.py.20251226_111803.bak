@@ -14,7 +14,7 @@ from ..models import (
     Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao, ViagemHoraParada
 )
 from .. import db
-from ..config.tenant_utils import query_tenant, get_tenant_session, get_or_404_tenant
+from ..config.tenant_utils import query_tenant, get_tenant_session
 from flask import Blueprint, render_template, request, redirect, url_for, flash, Response, jsonify, abort
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
@@ -182,7 +182,7 @@ def viagens():
 def viagem_detalhes(viagem_id):
     """Retorna os detalhes completos de uma viagem específica em JSON"""
     try:
-        viagem = get_or_404_tenant(Viagem, viagem_id)
+        viagem = query_tenant(Viagem).get_or_404(viagem_id)
 
         # Monta dados do motorista com tratamento seguro
         motorista_info = None
@@ -309,8 +309,8 @@ def associar_motorista(viagem_id):
             return jsonify({'success': False, 'message': 'Motorista não informado'}), 400
 
         # Busca viagem e motorista
-        viagem = get_or_404_tenant(Viagem, viagem_id)
-        motorista = get_or_404_tenant(Motorista, motorista_id)
+        viagem = query_tenant(Viagem).get_or_404(viagem_id)
+        motorista = query_tenant(Motorista).get_or_404(motorista_id)
 
         logger.info(
             f"[...] Associando motorista {motorista.nome} (ID: {motorista_id}) à viagem {viagem_id}")
@@ -380,7 +380,7 @@ def cancelar_viagem(viagem_id):
             return jsonify({'success': False, 'message': 'Motivo do cancelamento é obrigatório'}), 400
 
         # Busca viagem
-        viagem = get_or_404_tenant(Viagem, viagem_id)
+        viagem = query_tenant(Viagem).get_or_404(viagem_id)
 
         logger.info(f"[...] Cancelando viagem {viagem_id} - Motivo: {motivo}")
 
@@ -454,7 +454,7 @@ def viagem_hora_parada_form(viagem_id):
         import math
 
         # Busca a viagem
-        viagem = get_or_404_tenant(Viagem, viagem_id)
+        viagem = query_tenant(Viagem).get_or_404(viagem_id)
 
         # Verifica se a viagem está finalizada
         if viagem.status != 'Finalizada':
@@ -530,7 +530,7 @@ def viagem_hora_parada_salvar(viagem_id):
         from ..models import ViagemHoraParada
 
         # Busca a viagem
-        viagem = get_or_404_tenant(Viagem, viagem_id)
+        viagem = query_tenant(Viagem).get_or_404(viagem_id)
 
         # Verifica se a viagem está finalizada
         if viagem.status != 'Finalizada':

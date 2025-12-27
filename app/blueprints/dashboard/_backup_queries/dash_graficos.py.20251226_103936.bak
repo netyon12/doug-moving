@@ -17,7 +17,6 @@ from sqlalchemy import func
 from app import db
 from app.models import Viagem, Motorista, Planta
 from .dash_utils import pode_ver_kpi
-from app.config.tenant_utils import query_tenant, get_tenant_session
 
 
 def get_grafico_receita_diaria(empresa_id, data_inicio, data_fim):
@@ -42,7 +41,7 @@ def get_grafico_receita_diaria(empresa_id, data_inicio, data_fim):
     while data_atual <= data_fim:
         data_fim_dia = data_atual.replace(hour=23, minute=59, second=59)
         
-        receita_dia = get_tenant_session().query(func.sum(Viagem.valor)).filter(
+        receita_dia = db.session.query(func.sum(Viagem.valor)).filter(
             Viagem.empresa_id == empresa_id,
             Viagem.status == 'Finalizada',
             Viagem.data_finalizacao >= data_atual,
@@ -81,7 +80,7 @@ def get_grafico_viagens_horario(empresa_id, data_inicio, data_fim):
         return None
     
     # Busca todas as viagens finalizadas no período
-    viagens_finalizadas = query_tenant(Viagem).filter(
+    viagens_finalizadas = Viagem.query.filter(
         Viagem.empresa_id == empresa_id,
         Viagem.status == 'Finalizada',
         Viagem.data_finalizacao >= data_inicio,
@@ -157,7 +156,7 @@ def get_grafico_viagens_planta(empresa_id, data_inicio, data_fim):
         return None
     
     # Busca viagens agrupadas por planta
-    viagens_por_planta = get_tenant_session().query(
+    viagens_por_planta = db.session.query(
         Planta.nome,
         func.count(Viagem.id).label('total_viagens')
     ).join(
@@ -201,7 +200,7 @@ def get_grafico_ranking_motoristas(empresa_id, data_inicio, data_fim):
         return None
     
     # Busca ranking de motoristas
-    ranking_motoristas = get_tenant_session().query(
+    ranking_motoristas = db.session.query(
         Motorista.nome,
         func.count(Viagem.id).label('total_viagens')
     ).join(

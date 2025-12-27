@@ -25,6 +25,7 @@ import io
 import csv
 
 from .. import db
+from ..config.tenant_utils import query_tenant, paginate_tenant
 from ..models import AuditLog, ViagemAuditoria, Viagem, User, Motorista
 from ..decorators import role_required
 from ..utils.admin_audit import (
@@ -62,7 +63,7 @@ def logs_gerais():
     data_fim = request.args.get('data_fim', '')
     
     # Query base
-    query = AuditLog.query
+    query = query_tenant(AuditLog)
     
     # Aplica filtros
     if action:
@@ -90,18 +91,19 @@ def logs_gerais():
             pass
     
     # Ordena e pagina
-    logs_pagination = query.order_by(desc(AuditLog.timestamp)).paginate(
+    logs_pagination = paginate_tenant(
+        query.order_by(desc(AuditLog.timestamp)),
         page=page,
         per_page=per_page,
         error_out=False
     )
     
     # Estatísticas rápidas
-    total_logs = AuditLog.query.count()
-    logs_hoje = AuditLog.query.filter(
+    total_logs = query_tenant(AuditLog).count()
+    logs_hoje = query_tenant(AuditLog).filter(
         AuditLog.timestamp >= datetime.utcnow().replace(hour=0, minute=0, second=0)
     ).count()
-    logs_erro = AuditLog.query.filter(
+    logs_erro = query_tenant(AuditLog).filter(
         AuditLog.status.in_(['FAILED', 'ERROR'])
     ).count()
     
@@ -154,7 +156,7 @@ def logs_viagens():
     data_fim = request.args.get('data_fim', '')
     
     # Query base
-    query = ViagemAuditoria.query
+    query = query_tenant(ViagemAuditoria)
     
     # Aplica filtros
     if viagem_id:
@@ -178,21 +180,22 @@ def logs_viagens():
             pass
     
     # Ordena e pagina
-    logs_pagination = query.order_by(desc(ViagemAuditoria.timestamp)).paginate(
+    logs_pagination = paginate_tenant(
+        query.order_by(desc(ViagemAuditoria.timestamp)),
         page=page,
         per_page=per_page,
         error_out=False
     )
     
     # Estatísticas
-    total_logs = ViagemAuditoria.query.count()
-    viagens_aceitas_hoje = ViagemAuditoria.query.filter(
+    total_logs = query_tenant(ViagemAuditoria).count()
+    viagens_aceitas_hoje = query_tenant(ViagemAuditoria).filter(
         and_(
             ViagemAuditoria.action == 'VIAGEM_ACEITA',
             ViagemAuditoria.timestamp >= datetime.utcnow().replace(hour=0, minute=0, second=0)
         )
     ).count()
-    cancelamentos_hoje = ViagemAuditoria.query.filter(
+    cancelamentos_hoje = query_tenant(ViagemAuditoria).filter(
         and_(
             ViagemAuditoria.action.in_(['VIAGEM_CANCELADA', 'MOTORISTA_DESASSOCIADO']),
             ViagemAuditoria.timestamp >= datetime.utcnow().replace(hour=0, minute=0, second=0)
@@ -283,7 +286,7 @@ def operacoes_falhadas():
 def detalhes_log(log_id):
     """Retorna detalhes de um log específico em JSON."""
     
-    log = AuditLog.query.get_or_404(log_id)
+    log = query_tenant(AuditLog).get_or_404(log_id)
     return jsonify(log.to_dict())
 
 
@@ -293,7 +296,7 @@ def detalhes_log(log_id):
 def detalhes_viagem_audit(audit_id):
     """Retorna detalhes de um log de viagem em JSON."""
     
-    audit = ViagemAuditoria.query.get_or_404(audit_id)
+    audit = query_tenant(ViagemAuditoria).get_or_404(audit_id)
     return jsonify(audit.to_dict())
 
 
@@ -308,7 +311,7 @@ def estatisticas():
     data_inicio = datetime.utcnow() - timedelta(days=dias)
     
     # Total de logs
-    total_logs = AuditLog.query.filter(
+    total_logs = query_tenant(AuditLog).filter(
         AuditLog.timestamp >= data_inicio
     ).count()
     
@@ -340,7 +343,7 @@ def estatisticas():
     ).group_by(AuditLog.user_name).order_by(desc('total')).limit(10).all()
     
     # Erros
-    total_erros = AuditLog.query.filter(
+    total_erros = query_tenant(AuditLog).filter(
         and_(
             AuditLog.timestamp >= data_inicio,
             AuditLog.status.in_(['FAILED', 'ERROR'])
@@ -374,7 +377,7 @@ def exportar_csv():
     data_fim = request.args.get('data_fim', '')
     
     # Query
-    query = AuditLog.query
+    query = query_tenant(AuditLog)
     
     if action:
         query = query.filter_by(action=action)
@@ -441,7 +444,7 @@ def exportar_viagens_csv():
     viagem_id = request.args.get('viagem_id', type=int)
     motorista_id = request.args.get('motorista_id', type=int)
     
-    query = ViagemAuditoria.query
+    query = query_tenant(ViagemAuditoria)
     
     if viagem_id:
         query = query.filter_by(viagem_id=viagem_id)

@@ -477,8 +477,37 @@
 
         <!-- Informações do Usuário -->
         <div class="d-flex align-items-center text-white ms-auto">
-            <!-- Mostra a Empresa -->
-            {% if current_user.empresa %}
+            
+            <!-- ============================================= -->
+            <!-- SELETOR DE EMPRESA (Multi-Tenant) -->
+            <!-- ============================================= -->
+            {% if session.get('empresa_ativa_nome') %}
+                <!-- Verifica se usuário pode trocar de empresa -->
+                {% if current_user.role in ['admin', 'operador'] or (current_user.role == 'motorista' and current_user.motorista and current_user.motorista.get_empresas_lista()|length > 1) %}
+                    <!-- Seletor de Empresa (clicavel) -->
+                    <div class="dropdown me-3">
+                        <button class="btn btn-outline-warning btn-sm dropdown-toggle" type="button" 
+                                id="empresaSelectorBtn" data-bs-toggle="dropdown" aria-expanded="false"
+                                style="border-color: var(--gomobi-yellow); color: var(--gomobi-yellow);">
+                            <i class="bi bi-building"></i> {{ session.get('empresa_ativa_nome', 'Empresa') }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="empresaSelectorBtn" id="empresaDropdown">
+                            <li><h6 class="dropdown-header">Trocar Empresa</h6></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="text-center py-2">
+                                <span class="spinner-border spinner-border-sm" role="status"></span>
+                                <span class="ms-1">Carregando...</span>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <!-- Empresa fixa (sem dropdown) -->
+                    <span class="navbar-text me-3">
+                        <i class="bi bi-building"></i> {{ session.get('empresa_ativa_nome', 'Empresa') }}
+                    </span>
+                {% endif %}
+            {% elif current_user.empresa %}
+                <!-- Fallback: Mostra empresa do perfil -->
                 <span class="navbar-text me-3">
                     <i class="bi bi-building"></i> {{ current_user.empresa.nome }}
                 </span>
@@ -1092,6 +1121,113 @@
     
     <!-- Feedback.js (deve carregar DEPOIS do jQuery e SweetAlert2) -->
     <script src="{{ url_for('static', filename='js/feedback.js') }}"></script>
+
+    <!-- ===== SELETOR DE EMPRESA (Multi-Tenant) ===== -->
+    {% if current_user.is_authenticated and (current_user.role in ['admin', 'operador'] or (current_user.role == 'motorista' and current_user.motorista and current_user.motorista.get_empresas_lista()|length > 1)) %}
+    <script>
+    (function() {
+        const empresaDropdown = document.getElementById('empresaDropdown');
+        const empresaSelectorBtn = document.getElementById('empresaSelectorBtn');
+        
+        if (!empresaDropdown || !empresaSelectorBtn) return;
+        
+        let empresasCarregadas = false;
+        
+        // Carrega empresas quando o dropdown é aberto
+        empresaSelectorBtn.addEventListener('click', function() {
+            if (empresasCarregadas) return;
+            
+            fetch('/empresas-disponiveis')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        empresasCarregadas = true;
+                        renderizarEmpresas(data.empresas, data.empresa_ativa_slug);
+                    } else {
+                        empresaDropdown.innerHTML = '<li class="text-center py-2 text-danger">Erro ao carregar</li>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    empresaDropdown.innerHTML = '<li class="text-center py-2 text-danger">Erro ao carregar</li>';
+                });
+        });
+        
+        function renderizarEmpresas(empresas, empresaAtivaSlug) {
+            let html = '<li><h6 class="dropdown-header">Trocar Empresa</h6></li>';
+            html += '<li><hr class="dropdown-divider"></li>';
+            
+            empresas.forEach(function(empresa) {
+                const isAtiva = empresa.slug === empresaAtivaSlug;
+                const iconClass = isAtiva ? 'bi-check-circle-fill text-success' : 'bi-circle';
+                const activeClass = isAtiva ? 'active' : '';
+                
+                html += `
+                    <li>
+                        <a class="dropdown-item ${activeClass}" href="#" 
+                           onclick="trocarEmpresa('${empresa.slug}'); return false;">
+                            <i class="bi ${iconClass} me-2"></i>${empresa.nome}
+                        </a>
+                    </li>
+                `;
+            });
+            
+            empresaDropdown.innerHTML = html;
+        }
+        
+        // Função global para trocar empresa
+        window.trocarEmpresa = function(slug) {
+            // Mostrar loading
+            Swal.fire({
+                title: 'Trocando empresa...',
+                text: 'Aguarde um momento',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            fetch('/trocar-empresa', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ empresa_slug: slug })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Empresa alterada!',
+                        text: data.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        // Recarrega a página para atualizar dados
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Erro',
+                        text: data.message || 'Não foi possível trocar de empresa'
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: 'Erro ao conectar com o servidor'
+                });
+            });
+        };
+    })();
+    </script>
+    {% endif %}
+    <!-- ===== FIM SELETOR DE EMPRESA ===== -->
 
     <!-- Scripts Customizados -->
     {% block scripts %}{% endblock %}

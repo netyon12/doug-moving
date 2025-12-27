@@ -17,7 +17,7 @@ import io
 import csv
 
 from .. import db
-from ..config.tenant_utils import query_tenant, get_tenant_session, get_or_404_tenant
+from ..config.tenant_utils import query_tenant, get_tenant_session
 from ..models import (
     User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
     Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao
@@ -95,7 +95,7 @@ def editar_empresa(empresa_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    empresa = get_or_404_tenant(Empresa, empresa_id)
+    empresa = query_tenant(Empresa).get_or_404(empresa_id)
 
     if request.method == 'POST':
         # Captura valores antigos
@@ -146,7 +146,7 @@ def excluir_empresa(empresa_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    empresa = get_or_404_tenant(Empresa, empresa_id)
+    empresa = query_tenant(Empresa).get_or_404(empresa_id)
 
     # Verificação de segurança: não permite excluir se tiver plantas associadas
     if empresa.plantas:
@@ -231,7 +231,7 @@ def editar_planta(planta_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    planta = get_or_404_tenant(Planta, planta_id)
+    planta = query_tenant(Planta).get_or_404(planta_id)
 
     if request.method == 'POST':
         valores_antigos = {'nome': planta.nome}
@@ -254,7 +254,7 @@ def excluir_planta(planta_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    planta = get_or_404_tenant(Planta, planta_id)
+    planta = query_tenant(Planta).get_or_404(planta_id)
 
     # Adicione aqui futuras verificações se necessário (ex: se a planta tem supervisores associados)
     # if planta.supervisores:
@@ -322,7 +322,7 @@ def editar_centro_custo(cc_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    centro_custo = get_or_404_tenant(CentroCusto, cc_id)
+    centro_custo = query_tenant(CentroCusto).get_or_404(cc_id)
 
     if request.method == 'POST':
         centro_custo.codigo = request.form.get('codigo')
@@ -344,7 +344,7 @@ def excluir_centro_custo(cc_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    centro_custo = get_or_404_tenant(CentroCusto, cc_id)
+    centro_custo = query_tenant(CentroCusto).get_or_404(cc_id)
 
     # Adicionar futuras verificações aqui (ex: se está em uso por um gerente)
 
@@ -406,7 +406,7 @@ def editar_turno(turno_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    turno = get_or_404_tenant(Turno, turno_id)
+    turno = query_tenant(Turno).get_or_404(turno_id)
 
     if request.method == 'POST':
         nome_turno = request.form.get('nome')
@@ -446,7 +446,7 @@ def excluir_turno(turno_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    turno = get_or_404_tenant(Turno, turno_id)
+    turno = query_tenant(Turno).get_or_404(turno_id)
 
     # Adicionar futuras verificações aqui (ex: se está em uso por um bloco)
 
@@ -520,7 +520,7 @@ def editar_bloco(bloco_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    bloco = get_or_404_tenant(Bloco, bloco_id)
+    bloco = query_tenant(Bloco).get_or_404(bloco_id)
 
     if request.method == 'POST':
         valores_antigos = {'codigo_bloco': bloco.codigo_bloco}
@@ -574,7 +574,7 @@ def excluir_bloco(bloco_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    bloco = get_or_404_tenant(Bloco, bloco_id)
+    bloco = query_tenant(Bloco).get_or_404(bloco_id)
 
     # A exclusão em cascata configurada nos modelos cuidará de apagar
     # os valores e bairros associados automaticamente.
@@ -624,7 +624,7 @@ def editar_bairro(bairro_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    bairro = get_or_404_tenant(Bairro, bairro_id)
+    bairro = query_tenant(Bairro).get_or_404(bairro_id)
 
     if request.method == 'POST':
         bairro.nome = request.form.get('nome')
@@ -642,7 +642,7 @@ def excluir_bairro(bairro_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    bairro = get_or_404_tenant(Bairro, bairro_id)
+    bairro = query_tenant(Bairro).get_or_404(bairro_id)
 
     # Verificação de segurança: não permite excluir se estiver associado a um bloco
     if bairro.bloco_id:
@@ -679,7 +679,7 @@ def get_bloco_por_bairro(bairro_id):
 @admin_bp.route('/blocos/<int:bloco_id>/associar-bairros', methods=['GET', 'POST'])
 @login_required
 def associar_bairros_bloco(bloco_id):
-    bloco = get_or_404_tenant(Bloco, bloco_id)
+    bloco = query_tenant(Bloco).get_or_404(bloco_id)
 
     if request.method == 'POST':
         # --- LÓGICA DE ASSOCIAÇÃO CORRIGIDA ---
@@ -872,7 +872,7 @@ def editar_gerente(gerente_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    gerente = get_or_404_tenant(Gerente, gerente_id)
+    gerente = query_tenant(Gerente).get_or_404(gerente_id)
 
     if request.method == 'POST':
         try:
@@ -1034,7 +1034,7 @@ def excluir_gerente(gerente_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    gerente = get_or_404_tenant(Gerente, gerente_id)
+    gerente = query_tenant(Gerente).get_or_404(gerente_id)
 
     # O cascade="all, delete-orphan" no modelo User cuidará de apagar o gerente
     # quando o usuário for apagado.
@@ -1210,7 +1210,7 @@ def editar_supervisor(supervisor_id):
     if current_user.role not in ['admin', 'gerente']:
         abort(403)
 
-    supervisor = get_or_404_tenant(Supervisor, supervisor_id)
+    supervisor = query_tenant(Supervisor).get_or_404(supervisor_id)
 
     if request.method == 'POST':
         try:
@@ -1301,7 +1301,7 @@ def excluir_supervisor(supervisor_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    supervisor = get_or_404_tenant(Supervisor, supervisor_id)
+    supervisor = query_tenant(Supervisor).get_or_404(supervisor_id)
 
     # ✅ VERIFICAR SE TEM SOLICITAÇÕES VINCULADAS
     solicitacoes_vinculadas = query_tenant(Solicitacao).filter_by(

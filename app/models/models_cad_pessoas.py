@@ -181,6 +181,14 @@ class Motorista(db.Model):
     veiculo_km = db.Column(db.Float)
     veiculo_obs = db.Column(db.Text)
 
+    # =========================================================================
+    # CAMPOS MULTI-TENANT - Controle de acesso a múltiplas empresas
+    # =========================================================================
+    # Lista de slugs das empresas que o motorista tem acesso (ex: 'lear,nsg')
+    empresas_acesso = db.Column(db.Text)
+    # Empresa padrão ao logar (slug)
+    empresa_padrao_slug = db.Column(db.String(50))
+
     # Relacionamentos
     user = db.relationship('User', back_populates='motorista', uselist=False)
     viagens = db.relationship('Viagem', back_populates='motorista')
@@ -252,6 +260,58 @@ class Motorista(db.Model):
         }
 
         return badges.get(status, badges['disponivel'])
+
+    # =========================================================================
+    # MÉTODOS MULTI-TENANT
+    # =========================================================================
+    def get_empresas_lista(self):
+        """
+        Retorna lista de slugs das empresas que o motorista tem acesso.
+        
+        Returns:
+            list: Lista de slugs (ex: ['lear', 'nsg'])
+        """
+        if self.empresas_acesso:
+            return [e.strip().lower() for e in self.empresas_acesso.split(',') if e.strip()]
+        return []
+    
+    def tem_acesso_empresa(self, slug):
+        """
+        Verifica se o motorista tem acesso a determinada empresa.
+        
+        Args:
+            slug: Slug da empresa (ex: 'lear', 'nsg')
+            
+        Returns:
+            bool: True se tem acesso, False caso contrário
+        """
+        if not slug:
+            return False
+        return slug.lower() in self.get_empresas_lista()
+    
+    def adicionar_empresa_acesso(self, slug):
+        """
+        Adiciona uma empresa à lista de acesso do motorista.
+        
+        Args:
+            slug: Slug da empresa a adicionar
+        """
+        empresas = self.get_empresas_lista()
+        if slug.lower() not in empresas:
+            empresas.append(slug.lower())
+            self.empresas_acesso = ','.join(empresas)
+    
+    def remover_empresa_acesso(self, slug):
+        """
+        Remove uma empresa da lista de acesso do motorista.
+        
+        Args:
+            slug: Slug da empresa a remover
+        """
+        empresas = self.get_empresas_lista()
+        if slug.lower() in empresas:
+            empresas.remove(slug.lower())
+            self.empresas_acesso = ','.join(empresas) if empresas else None
 
 
 # =============================================================================

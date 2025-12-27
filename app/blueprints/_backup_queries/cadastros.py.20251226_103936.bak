@@ -17,7 +17,6 @@ import io
 import csv
 
 from .. import db
-from ..config.tenant_utils import query_tenant, get_tenant_session, get_or_404_tenant
 from ..models import (
     User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
     Gerente, Supervisor, Colaborador, Motorista, Solicitacao, Viagem, Configuracao
@@ -41,10 +40,10 @@ def cadastrar_empresa():
         cnpj = request.form.get('cnpj')
 
         # Verifica se já existe uma empresa com o mesmo nome ou CNPJ (se informado)
-        if query_tenant(Empresa).filter_by(nome=nome).first():
+        if Empresa.query.filter_by(nome=nome).first():
             flash(f'A empresa "{nome}" já está cadastrada.', 'warning')
             return redirect(url_for('admin.cadastrar_empresa'))
-        if cnpj and query_tenant(Empresa).filter_by(cnpj=cnpj).first():
+        if cnpj and Empresa.query.filter_by(cnpj=cnpj).first():
             flash(f'O CNPJ "{cnpj}" já está em uso.', 'warning')
             return redirect(url_for('admin.cadastrar_empresa'))
 
@@ -70,8 +69,8 @@ def cadastrar_empresa():
             db_pass=request.form.get('db_pass') if not is_banco_local else None,
             db_port=int(request.form.get('db_port', 5432)) if not is_banco_local else 5432
         )
-        get_tenant_session().add(nova_empresa)
-        get_tenant_session().commit()
+        db.session.add(nova_empresa)
+        db.session.commit()
 
         # AUDITORIA: Registra criação de empresa
         log_audit(
@@ -95,7 +94,7 @@ def editar_empresa(empresa_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    empresa = get_or_404_tenant(Empresa, empresa_id)
+    empresa = Empresa.query.get_or_404(empresa_id)
 
     if request.method == 'POST':
         # Captura valores antigos
@@ -132,7 +131,7 @@ def editar_empresa(empresa_id):
                 empresa.db_pass = None
                 empresa.db_port = 5432
 
-        get_tenant_session().commit()
+        db.session.commit()
         flash(f'Empresa "{empresa.nome}" atualizada com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='empresas'))
 
@@ -146,7 +145,7 @@ def excluir_empresa(empresa_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    empresa = get_or_404_tenant(Empresa, empresa_id)
+    empresa = Empresa.query.get_or_404(empresa_id)
 
     # Verificação de segurança: não permite excluir se tiver plantas associadas
     if empresa.plantas:
@@ -157,8 +156,8 @@ def excluir_empresa(empresa_id):
     nome_empresa = empresa.nome
     empresa_cnpj = empresa.cnpj
 
-    get_tenant_session().delete(empresa)
-    get_tenant_session().commit()
+    db.session.delete(empresa)
+    db.session.commit()
 
     # AUDITORIA: Registra exclusão
     log_audit(
@@ -190,11 +189,11 @@ def cadastrar_planta():
         planta_id = request.form.get('id')
 
         # Verifica se o ID já está em uso
-        if query_tenant(Planta).get(planta_id):
+        if Planta.query.get(planta_id):
             flash(
                 f'O ID de planta "{planta_id}" já está em uso. Por favor, escolha outro.', 'danger')
             # Retorna para o formulário mantendo os dados digitados
-            empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
+            empresas = Empresa.query.order_by(Empresa.nome).all()
             return render_template('form_planta.html', aba_ativa='plantas', empresas=empresas)
 
         # --- CRIAÇÃO DA NOVA PLANTA ---
@@ -203,8 +202,8 @@ def cadastrar_planta():
             nome=request.form.get('nome'),
             empresa_id=request.form.get('empresa_id')
         )
-        get_tenant_session().add(nova_planta)
-        get_tenant_session().commit()
+        db.session.add(nova_planta)
+        db.session.commit()
 
         # AUDITORIA
         log_audit(
@@ -221,7 +220,7 @@ def cadastrar_planta():
         return redirect(url_for('admin.admin_dashboard', aba='plantas'))
 
     # A lógica do GET permanece a mesma
-    empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
+    empresas = Empresa.query.order_by(Empresa.nome).all()
     return render_template('form_planta.html', aba_ativa='plantas', empresas=empresas)
 
 
@@ -231,7 +230,7 @@ def editar_planta(planta_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    planta = get_or_404_tenant(Planta, planta_id)
+    planta = Planta.query.get_or_404(planta_id)
 
     if request.method == 'POST':
         valores_antigos = {'nome': planta.nome}
@@ -239,12 +238,12 @@ def editar_planta(planta_id):
         planta.nome = request.form.get('nome')
         planta.empresa_id = request.form.get('empresa_id')
 
-        get_tenant_session().commit()
+        db.session.commit()
         flash(f'Planta "{planta.nome}" atualizada com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='plantas'))
 
     # Se for GET, busca as empresas para o dropdown e mostra o formulário preenchido
-    empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
+    empresas = Empresa.query.order_by(Empresa.nome).all()
     return render_template('form_planta.html', aba_ativa='plantas', planta=planta, empresas=empresas)
 
 
@@ -254,7 +253,7 @@ def excluir_planta(planta_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    planta = get_or_404_tenant(Planta, planta_id)
+    planta = Planta.query.get_or_404(planta_id)
 
     # Adicione aqui futuras verificações se necessário (ex: se a planta tem supervisores associados)
     # if planta.supervisores:
@@ -262,8 +261,8 @@ def excluir_planta(planta_id):
     #     return redirect(url_for('admin.admin_dashboard', aba='plantas'))
 
     nome_planta = planta.nome
-    get_tenant_session().delete(planta)
-    get_tenant_session().commit()
+    db.session.delete(planta)
+    db.session.commit()
 
     # AUDITORIA
     log_audit(
@@ -295,7 +294,7 @@ def cadastrar_centro_custo():
         empresa_id = request.form.get('empresa_id')
 
         # Validação
-        cc_existente = query_tenant(CentroCusto).filter_by(
+        cc_existente = CentroCusto.query.filter_by(
             codigo=codigo, empresa_id=empresa_id).first()
         if cc_existente:
             flash(
@@ -307,12 +306,12 @@ def cadastrar_centro_custo():
             nome=nome,
             empresa_id=empresa_id
         )
-        get_tenant_session().add(novo_cc)
-        get_tenant_session().commit()
+        db.session.add(novo_cc)
+        db.session.commit()
         flash(f'Centro de Custo "{nome}" cadastrado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='centros_custo'))
 
-    empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
+    empresas = Empresa.query.order_by(Empresa.nome).all()
     return render_template('form_centro_custo.html', aba_ativa='centros_custo', empresas=empresas)
 
 
@@ -322,19 +321,19 @@ def editar_centro_custo(cc_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    centro_custo = get_or_404_tenant(CentroCusto, cc_id)
+    centro_custo = CentroCusto.query.get_or_404(cc_id)
 
     if request.method == 'POST':
         centro_custo.codigo = request.form.get('codigo')
         centro_custo.nome = request.form.get('nome')
         centro_custo.empresa_id = request.form.get('empresa_id')
 
-        get_tenant_session().commit()
+        db.session.commit()
         flash(
             f'Centro de Custo "{centro_custo.nome}" atualizado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='centros_custo'))
 
-    empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
+    empresas = Empresa.query.order_by(Empresa.nome).all()
     return render_template('form_centro_custo.html', aba_ativa='centros_custo', centro_custo=centro_custo, empresas=empresas)
 
 
@@ -344,13 +343,13 @@ def excluir_centro_custo(cc_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    centro_custo = get_or_404_tenant(CentroCusto, cc_id)
+    centro_custo = CentroCusto.query.get_or_404(cc_id)
 
     # Adicionar futuras verificações aqui (ex: se está em uso por um gerente)
 
     nome_cc = centro_custo.nome
-    get_tenant_session().delete(centro_custo)
-    get_tenant_session().commit()
+    db.session.delete(centro_custo)
+    db.session.commit()
     flash(f'Centro de Custo "{nome_cc}" excluído com sucesso.', 'success')
     return redirect(url_for('admin.admin_dashboard', aba='centros_custo'))
 
@@ -374,8 +373,8 @@ def cadastrar_turno():
         if not Turno.validar_nome(nome_turno):
             flash(
                 f'Nome de turno inválido! Use um dos valores permitidos: {", ".join(Turno.TURNOS_VALIDOS)}', 'danger')
-            empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
-            plantas = query_tenant(Planta).join(Empresa).order_by(
+            empresas = Empresa.query.order_by(Empresa.nome).all()
+            plantas = Planta.query.join(Empresa).order_by(
                 Empresa.nome, Planta.nome).all()
             return render_template('form_turno.html', aba_ativa='turnos', empresas=empresas, plantas=plantas)
 
@@ -388,13 +387,13 @@ def cadastrar_turno():
             empresa_id=request.form.get('empresa_id'),
             planta_id=request.form.get('planta_id')
         )
-        get_tenant_session().add(novo_turno)
-        get_tenant_session().commit()
+        db.session.add(novo_turno)
+        db.session.commit()
         flash(f'Turno "{novo_turno.nome}" cadastrado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='turnos'))
 
-    empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
-    plantas = query_tenant(Planta).join(Empresa).order_by(
+    empresas = Empresa.query.order_by(Empresa.nome).all()
+    plantas = Planta.query.join(Empresa).order_by(
         Empresa.nome, Planta.nome).all()
     turnos_validos = Turno.TURNOS_VALIDOS
     return render_template('form_turno.html', aba_ativa='turnos', empresas=empresas, plantas=plantas, turnos_validos=turnos_validos)
@@ -406,7 +405,7 @@ def editar_turno(turno_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    turno = get_or_404_tenant(Turno, turno_id)
+    turno = Turno.query.get_or_404(turno_id)
 
     if request.method == 'POST':
         nome_turno = request.form.get('nome')
@@ -415,8 +414,8 @@ def editar_turno(turno_id):
         if not Turno.validar_nome(nome_turno):
             flash(
                 f'Nome de turno inválido! Use um dos valores permitidos: {", ".join(Turno.TURNOS_VALIDOS)}', 'danger')
-            empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
-            plantas = query_tenant(Planta).join(Empresa).order_by(
+            empresas = Empresa.query.order_by(Empresa.nome).all()
+            plantas = Planta.query.join(Empresa).order_by(
                 Empresa.nome, Planta.nome).all()
             turnos_validos = Turno.TURNOS_VALIDOS
             return render_template('form_turno.html', aba_ativa='turnos', turno=turno, empresas=empresas, plantas=plantas, turnos_validos=turnos_validos)
@@ -429,12 +428,12 @@ def editar_turno(turno_id):
         turno.empresa_id = request.form.get('empresa_id')
         turno.planta_id = request.form.get('planta_id')
 
-        get_tenant_session().commit()
+        db.session.commit()
         flash(f'Turno "{turno.nome}" atualizado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='turnos'))
 
-    empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
-    plantas = query_tenant(Planta).join(Empresa).order_by(
+    empresas = Empresa.query.order_by(Empresa.nome).all()
+    plantas = Planta.query.join(Empresa).order_by(
         Empresa.nome, Planta.nome).all()
     turnos_validos = Turno.TURNOS_VALIDOS
     return render_template('form_turno.html', aba_ativa='turnos', turno=turno, empresas=empresas, plantas=plantas, turnos_validos=turnos_validos)
@@ -446,13 +445,13 @@ def excluir_turno(turno_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    turno = get_or_404_tenant(Turno, turno_id)
+    turno = Turno.query.get_or_404(turno_id)
 
     # Adicionar futuras verificações aqui (ex: se está em uso por um bloco)
 
     nome_turno = turno.nome
-    get_tenant_session().delete(turno)
-    get_tenant_session().commit()
+    db.session.delete(turno)
+    db.session.commit()
     flash(f'Turno "{nome_turno}" excluído com sucesso.', 'success')
     return redirect(url_for('admin.admin_dashboard', aba='turnos'))
 
@@ -490,8 +489,8 @@ def cadastrar_bloco():
             valor_admin=processar_valor('valor_admin'),
             repasse_admin=processar_valor('repasse_admin')
         )
-        get_tenant_session().add(novo_bloco)
-        get_tenant_session().commit()
+        db.session.add(novo_bloco)
+        db.session.commit()
 
         # AUDITORIA
         log_audit(
@@ -508,7 +507,7 @@ def cadastrar_bloco():
             f'Bloco "{novo_bloco.codigo_bloco}" cadastrado. Agora associe os bairros.', 'success')
         return redirect(url_for('admin.associar_bairros_bloco', bloco_id=novo_bloco.id))
 
-    empresas = query_tenant(Empresa).filter_by(
+    empresas = Empresa.query.filter_by(
         status='Ativo').order_by(Empresa.nome).all()
     turnos_validos = Turno.TURNOS_VALIDOS
     return render_template('form_bloco.html', aba_ativa='blocos', empresas=empresas, turnos_validos=turnos_validos, bloco=None)
@@ -520,7 +519,7 @@ def editar_bloco(bloco_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    bloco = get_or_404_tenant(Bloco, bloco_id)
+    bloco = Bloco.query.get_or_404(bloco_id)
 
     if request.method == 'POST':
         valores_antigos = {'codigo_bloco': bloco.codigo_bloco}
@@ -545,7 +544,7 @@ def editar_bloco(bloco_id):
         bloco.valor_admin = processar_valor('valor_admin')
         bloco.repasse_admin = processar_valor('repasse_admin')
 
-        get_tenant_session().commit()
+        db.session.commit()
 
         # AUDITORIA
         if valores_antigos['codigo_bloco'] != bloco.codigo_bloco:
@@ -562,7 +561,7 @@ def editar_bloco(bloco_id):
             f'Bloco "{bloco.codigo_bloco}" atualizado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='blocos'))
 
-    empresas = query_tenant(Empresa).filter_by(
+    empresas = Empresa.query.filter_by(
         status='Ativo').order_by(Empresa.nome).all()
     turnos_validos = Turno.TURNOS_VALIDOS
     return render_template('form_bloco.html', aba_ativa='blocos', bloco=bloco, empresas=empresas, turnos_validos=turnos_validos)
@@ -574,14 +573,14 @@ def excluir_bloco(bloco_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    bloco = get_or_404_tenant(Bloco, bloco_id)
+    bloco = Bloco.query.get_or_404(bloco_id)
 
     # A exclusão em cascata configurada nos modelos cuidará de apagar
     # os valores e bairros associados automaticamente.
 
     nome_bloco = bloco.codigo_bloco
-    get_tenant_session().delete(bloco)
-    get_tenant_session().commit()
+    db.session.delete(bloco)
+    db.session.commit()
     flash(
         f'Bloco "{nome_bloco}" e todos os seus dados associados foram excluídos.', 'success')
     return redirect(url_for('admin.admin_dashboard', aba='blocos'))
@@ -604,14 +603,14 @@ def cadastrar_bairro():
         cidade = request.form.get('cidade')
 
         # Validação para evitar duplicatas
-        if query_tenant(Bairro).filter_by(nome=nome, cidade=cidade).first():
+        if Bairro.query.filter_by(nome=nome, cidade=cidade).first():
             flash(
                 f'O bairro "{nome}" já está cadastrado na cidade "{cidade}".', 'warning')
             return redirect(request.url)
 
         novo_bairro = Bairro(nome=nome, cidade=cidade)
-        get_tenant_session().add(novo_bairro)
-        get_tenant_session().commit()
+        db.session.add(novo_bairro)
+        db.session.commit()
         flash('Bairro cadastrado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='bairros'))
 
@@ -624,12 +623,12 @@ def editar_bairro(bairro_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    bairro = get_or_404_tenant(Bairro, bairro_id)
+    bairro = Bairro.query.get_or_404(bairro_id)
 
     if request.method == 'POST':
         bairro.nome = request.form.get('nome')
         bairro.cidade = request.form.get('cidade')
-        get_tenant_session().commit()
+        db.session.commit()
         flash('Bairro atualizado com sucesso!', 'success')
         return redirect(url_for('admin.admin_dashboard', aba='bairros'))
 
@@ -642,7 +641,7 @@ def excluir_bairro(bairro_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    bairro = get_or_404_tenant(Bairro, bairro_id)
+    bairro = Bairro.query.get_or_404(bairro_id)
 
     # Verificação de segurança: não permite excluir se estiver associado a um bloco
     if bairro.bloco_id:
@@ -651,8 +650,8 @@ def excluir_bairro(bairro_id):
         return redirect(url_for('admin.admin_dashboard', aba='bairros'))
 
     nome_bairro = bairro.nome
-    get_tenant_session().delete(bairro)
-    get_tenant_session().commit()
+    db.session.delete(bairro)
+    db.session.commit()
     flash(f'Bairro "{nome_bairro}" excluído com sucesso.', 'success')
     return redirect(url_for('admin.admin_dashboard', aba='bairros'))
 
@@ -663,7 +662,7 @@ def get_bloco_por_bairro(bairro_id):
     """
     Recebe o ID de um bairro e retorna o código do bloco associado em JSON.
     """
-    bairro = query_tenant(Bairro).get(bairro_id)
+    bairro = Bairro.query.get(bairro_id)
 
     if bairro and bairro.bloco:
         return jsonify({'codigo_bloco': bairro.bloco.codigo_bloco})
@@ -679,7 +678,7 @@ def get_bloco_por_bairro(bairro_id):
 @admin_bp.route('/blocos/<int:bloco_id>/associar-bairros', methods=['GET', 'POST'])
 @login_required
 def associar_bairros_bloco(bloco_id):
-    bloco = get_or_404_tenant(Bloco, bloco_id)
+    bloco = Bloco.query.get_or_404(bloco_id)
 
     if request.method == 'POST':
         # --- LÓGICA DE ASSOCIAÇÃO CORRIGIDA ---
@@ -688,26 +687,26 @@ def associar_bairros_bloco(bloco_id):
         ids_remover = request.form.getlist('bairros_a_remover')
         if ids_remover:
             # Encontra os bairros e define seu bloco_id como None (desassocia)
-            query_tenant(Bairro).filter(Bairro.id.in_(ids_remover)).update(
+            Bairro.query.filter(Bairro.id.in_(ids_remover)).update(
                 {'bloco_id': None}, synchronize_session=False)
 
         # 2. Pega os IDs dos bairros que o usuário quer ADICIONAR a este bloco
         ids_adicionar = request.form.getlist('bairros_a_adicionar')
         if ids_adicionar:
             # Encontra os bairros e define seu bloco_id para o ID do bloco atual (associa)
-            query_tenant(Bairro).filter(Bairro.id.in_(ids_adicionar)).update(
+            Bairro.query.filter(Bairro.id.in_(ids_adicionar)).update(
                 {'bloco_id': bloco.id}, synchronize_session=False)
 
         # 3. Salva todas as alterações no banco de dados
-        get_tenant_session().commit()
+        db.session.commit()
 
         flash('Associações de bairros salvas com sucesso!', 'success')
         return redirect(url_for('admin.associar_bairros_bloco', bloco_id=bloco_id))
 
     # A lógica do GET para exibir a página permanece a mesma
-    bairros_no_bloco = query_tenant(Bairro).filter_by(
+    bairros_no_bloco = Bairro.query.filter_by(
         bloco_id=bloco.id).order_by(Bairro.nome).all()
-    bairros_disponiveis = query_tenant(Bairro).filter(
+    bairros_disponiveis = Bairro.query.filter(
         Bairro.bloco_id.is_(None)).order_by(Bairro.nome).all()
 
     return render_template(
@@ -746,7 +745,7 @@ def cadastrar_gerente():
                 }), 400
 
             # Validar email duplicado
-            if query_tenant(User).filter_by(email=email).first():
+            if User.query.filter_by(email=email).first():
                 return jsonify({
                     'success': False,
                     'message': 'Este e-mail de acesso já está em uso'
@@ -760,7 +759,7 @@ def cadastrar_gerente():
                 }), 400
 
             # Validar que todas as plantas são da mesma empresa
-            plantas = query_tenant(Planta).filter(Planta.id.in_(plantas_ids)).all()
+            plantas = Planta.query.filter(Planta.id.in_(plantas_ids)).all()
             if not all(p.empresa_id == int(empresa_id) for p in plantas):
                 return jsonify({
                     'success': False,
@@ -772,8 +771,8 @@ def cadastrar_gerente():
                 senha, method='pbkdf2:sha256')
             new_user = User(
                 email=email, password=hashed_password, role='gerente')
-            get_tenant_session().add(new_user)
-            get_tenant_session().flush()  # Gera o ID do user
+            db.session.add(new_user)
+            db.session.flush()  # Gera o ID do user
 
             # 2. Criar o Gerente (SEM planta_id)
             novo_gerente = Gerente(
@@ -783,8 +782,8 @@ def cadastrar_gerente():
                 empresa_id=empresa_id,
                 status=request.form.get('status', 'Ativo')
             )
-            get_tenant_session().add(novo_gerente)
-            get_tenant_session().flush()  # Gera o ID do gerente
+            db.session.add(novo_gerente)
+            db.session.flush()  # Gera o ID do gerente
 
             # 3. Associar Plantas
             for planta in plantas:
@@ -793,11 +792,11 @@ def cadastrar_gerente():
             # 4. Associar Centros de Custo
             cc_ids = request.form.getlist('centros_custo')
             if cc_ids:
-                centros_custo = query_tenant(CentroCusto).filter(
+                centros_custo = CentroCusto.query.filter(
                     CentroCusto.id.in_(cc_ids)).all()
                 novo_gerente.centros_custo.extend(centros_custo)
 
-            get_tenant_session().commit()
+            db.session.commit()
 
             # AUDITORIA
             log_audit(
@@ -820,7 +819,7 @@ def cadastrar_gerente():
             })
 
         except IntegrityError as e:
-            get_tenant_session().rollback()
+            db.session.rollback()
             error_msg = str(e.orig) if hasattr(e, 'orig') else str(e)
 
             if 'unique constraint' in error_msg.lower():
@@ -836,7 +835,7 @@ def cadastrar_gerente():
             }), 500
 
         except Exception as e:
-            get_tenant_session().rollback()
+            db.session.rollback()
             print(f"[ERRO] Erro ao cadastrar gerente: {str(e)}")
             return jsonify({
                 'success': False,
@@ -844,9 +843,9 @@ def cadastrar_gerente():
             }), 500
 
     # Prepara dados para o formulário GET
-    empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
-    plantas = query_tenant(Planta).order_by(Planta.nome).all()
-    centros_custo = query_tenant(CentroCusto).order_by(CentroCusto.nome).all()
+    empresas = Empresa.query.order_by(Empresa.nome).all()
+    plantas = Planta.query.order_by(Planta.nome).all()
+    centros_custo = CentroCusto.query.order_by(CentroCusto.nome).all()
 
     # Serializar plantas para JSON (para o JavaScript)
     import json
@@ -872,7 +871,7 @@ def editar_gerente(gerente_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    gerente = get_or_404_tenant(Gerente, gerente_id)
+    gerente = Gerente.query.get_or_404(gerente_id)
 
     if request.method == 'POST':
         try:
@@ -891,7 +890,7 @@ def editar_gerente(gerente_id):
 
             # Validar email duplicado (se foi alterado)
             if novo_email != gerente.user.email:
-                usuario_existente = query_tenant(User).filter(
+                usuario_existente = User.query.filter(
                     User.email == novo_email,
                     User.id != gerente.user.id
                 ).first()
@@ -909,7 +908,7 @@ def editar_gerente(gerente_id):
                 }), 400
 
             # Validar que todas as plantas são da mesma empresa
-            plantas = query_tenant(Planta).filter(Planta.id.in_(plantas_ids)).all()
+            plantas = Planta.query.filter(Planta.id.in_(plantas_ids)).all()
             if not all(p.empresa_id == int(empresa_id) for p in plantas):
                 return jsonify({
                     'success': False,
@@ -945,11 +944,11 @@ def editar_gerente(gerente_id):
             gerente.centros_custo.clear()
             cc_ids = request.form.getlist('centros_custo')
             if cc_ids:
-                centros_custo = query_tenant(CentroCusto).filter(
+                centros_custo = CentroCusto.query.filter(
                     CentroCusto.id.in_(cc_ids)).all()
                 gerente.centros_custo.extend(centros_custo)
 
-            get_tenant_session().commit()
+            db.session.commit()
 
             # AUDITORIA
             valores_novos = {
@@ -977,7 +976,7 @@ def editar_gerente(gerente_id):
             })
 
         except IntegrityError as e:
-            get_tenant_session().rollback()
+            db.session.rollback()
             error_msg = str(e.orig) if hasattr(e, 'orig') else str(e)
 
             if 'unique constraint' in error_msg.lower():
@@ -993,7 +992,7 @@ def editar_gerente(gerente_id):
             }), 500
 
         except Exception as e:
-            get_tenant_session().rollback()
+            db.session.rollback()
             print(f"[ERRO] Erro ao editar gerente: {str(e)}")
             return jsonify({
                 'success': False,
@@ -1001,9 +1000,9 @@ def editar_gerente(gerente_id):
             }), 500
 
     # Prepara dados para o formulário GET
-    empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
-    plantas = query_tenant(Planta).order_by(Planta.nome).all()
-    centros_custo = query_tenant(CentroCusto).order_by(CentroCusto.nome).all()
+    empresas = Empresa.query.order_by(Empresa.nome).all()
+    plantas = Planta.query.order_by(Planta.nome).all()
+    centros_custo = CentroCusto.query.order_by(CentroCusto.nome).all()
 
     # Serializar plantas para JSON (para o JavaScript)
     import json
@@ -1034,15 +1033,15 @@ def excluir_gerente(gerente_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    gerente = get_or_404_tenant(Gerente, gerente_id)
+    gerente = Gerente.query.get_or_404(gerente_id)
 
     # O cascade="all, delete-orphan" no modelo User cuidará de apagar o gerente
     # quando o usuário for apagado.
     user_para_excluir = gerente.user
 
     nome_gerente = gerente.nome
-    get_tenant_session().delete(user_para_excluir)
-    get_tenant_session().commit()
+    db.session.delete(user_para_excluir)
+    db.session.commit()
     flash(
         f'Gerente "{nome_gerente}" e seu usuário de acesso foram excluídos.', 'success')
     return redirect(url_for('admin.admin_dashboard', aba='gerentes'))
@@ -1086,14 +1085,14 @@ def cadastrar_supervisor():
                 return jsonify({'success': False, 'message': 'Empresa é obrigatória'}), 400
 
             # Validação de email duplicado
-            if query_tenant(User).filter_by(email=email).first():
+            if User.query.filter_by(email=email).first():
                 return jsonify({
                     'success': False,
                     'message': 'Este e-mail de acesso já está em uso.'
                 }), 400
 
             # Validação de matrícula duplicada
-            if query_tenant(Supervisor).filter_by(matricula=matricula).first():
+            if Supervisor.query.filter_by(matricula=matricula).first():
                 return jsonify({
                     'success': False,
                     'message': 'Já existe um supervisor com esta matrícula'
@@ -1104,8 +1103,8 @@ def cadastrar_supervisor():
                 senha, method='pbkdf2:sha256')
             new_user = User(
                 email=email, password=hashed_password, role='supervisor')
-            get_tenant_session().add(new_user)
-            get_tenant_session().flush()  # Gera o ID do user antes de criar o supervisor
+            db.session.add(new_user)
+            db.session.flush()  # Gera o ID do user antes de criar o supervisor
 
             # 2. Criar Supervisor
             novo_supervisor = Supervisor(
@@ -1122,26 +1121,26 @@ def cadastrar_supervisor():
                 uf=request.form.get('uf'),
                 telefone=request.form.get('telefone')
             )
-            get_tenant_session().add(novo_supervisor)
+            db.session.add(novo_supervisor)
 
             # 3. Associar Plantas (Múltiplas)
             plantas_ids = request.form.getlist('plantas_ids')
             if plantas_ids:
-                novo_supervisor.plantas = query_tenant(Planta).filter(
+                novo_supervisor.plantas = Planta.query.filter(
                     Planta.id.in_(plantas_ids)).all()
 
             # 4. Associar Turnos e Centros de Custo
             turnos_ids = request.form.getlist('turnos_ids')
             if turnos_ids:
-                novo_supervisor.turnos.extend(query_tenant(Turno).filter(
+                novo_supervisor.turnos.extend(Turno.query.filter(
                     Turno.id.in_(turnos_ids)).all())
 
             centros_ids = request.form.getlist('centros_ids')
             if centros_ids:
-                novo_supervisor.centros_custo.extend(query_tenant(CentroCusto).filter(
+                novo_supervisor.centros_custo.extend(CentroCusto.query.filter(
                     CentroCusto.id.in_(centros_ids)).all())
 
-            get_tenant_session().commit()
+            db.session.commit()
 
             # AUDITORIA (se você tiver log_audit configurado)
             try:
@@ -1163,7 +1162,7 @@ def cadastrar_supervisor():
             })
 
         except Exception as e:
-            get_tenant_session().rollback()
+            db.session.rollback()
             print(f"[DEBUG] Exceção capturada: {type(e).__name__}: {str(e)}")
 
             error_message = 'Erro ao cadastrar supervisor'
@@ -1182,15 +1181,15 @@ def cadastrar_supervisor():
 
     # GET: Prepara dados para o formulário
     if current_user.role in ['admin', 'operador']:
-        empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
-        gerentes = query_tenant(Gerente).order_by(Gerente.nome).all()
+        empresas = Empresa.query.order_by(Empresa.nome).all()
+        gerentes = Gerente.query.order_by(Gerente.nome).all()
     else:  # Se for gerente
         empresas = [current_user.gerente.empresa]
         gerentes = [current_user.gerente]
 
-    plantas = query_tenant(Planta).all()
-    turnos = query_tenant(Turno).all()
-    centros_custo = query_tenant(CentroCusto).all()
+    plantas = Planta.query.all()
+    turnos = Turno.query.all()
+    centros_custo = CentroCusto.query.all()
 
     return render_template('supervisor/form_supervisor.html',
                            aba_ativa='supervisores',
@@ -1210,7 +1209,7 @@ def editar_supervisor(supervisor_id):
     if current_user.role not in ['admin', 'gerente']:
         abort(403)
 
-    supervisor = get_or_404_tenant(Supervisor, supervisor_id)
+    supervisor = Supervisor.query.get_or_404(supervisor_id)
 
     if request.method == 'POST':
         try:
@@ -1238,18 +1237,18 @@ def editar_supervisor(supervisor_id):
 
             # 3. Atualizar Plantas (Múltiplas)
             plantas_ids = request.form.getlist('plantas_ids')
-            supervisor.plantas = query_tenant(Planta).filter(
+            supervisor.plantas = Planta.query.filter(
                 Planta.id.in_(plantas_ids)).all()
 
             # 4. Atualizar Turnos e Centros de Custo
             supervisor.turnos.clear()
             supervisor.centros_custo.clear()
-            supervisor.turnos.extend(query_tenant(Turno).filter(
+            supervisor.turnos.extend(Turno.query.filter(
                 Turno.id.in_(request.form.getlist('turnos_ids'))).all())
-            supervisor.centros_custo.extend(query_tenant(CentroCusto).filter(
+            supervisor.centros_custo.extend(CentroCusto.query.filter(
                 CentroCusto.id.in_(request.form.getlist('centros_ids'))).all())
 
-            get_tenant_session().commit()
+            db.session.commit()
 
             # AUDITORIA
             valores_novos = {'nome': supervisor.nome,
@@ -1273,25 +1272,25 @@ def editar_supervisor(supervisor_id):
             })
 
         except Exception as e:
-            get_tenant_session().rollback()
+            db.session.rollback()
             return jsonify({
                 'success': False,
                 'message': f'Erro ao atualizar supervisor: {str(e)}'
             }), 500
 
     if current_user.role in ['admin', 'operador']:
-        empresas = query_tenant(Empresa).all()
-        gerentes = query_tenant(Gerente).all()
+        empresas = Empresa.query.all()
+        gerentes = Gerente.query.all()
     else:  # Se for gerente
         empresas = [current_user.gerente.empresa]
         gerentes = [current_user.gerente]
 
     # Prepara dados para o formulário GET
-    empresas = query_tenant(Empresa).all()
-    plantas = query_tenant(Planta).all()
-    gerentes = query_tenant(Gerente).all()
-    turnos = query_tenant(Turno).all()
-    centros_custo = query_tenant(CentroCusto).all()
+    empresas = Empresa.query.all()
+    plantas = Planta.query.all()
+    gerentes = Gerente.query.all()
+    turnos = Turno.query.all()
+    centros_custo = CentroCusto.query.all()
     return render_template('supervisor/form_supervisor.html', aba_ativa='supervisores', supervisor=supervisor, empresas=empresas, plantas=plantas, gerentes=gerentes, turnos=turnos, centros_custo=centros_custo)
 
 
@@ -1301,10 +1300,10 @@ def excluir_supervisor(supervisor_id):
     if current_user.role not in ['admin', 'operador']:
         abort(403)
 
-    supervisor = get_or_404_tenant(Supervisor, supervisor_id)
+    supervisor = Supervisor.query.get_or_404(supervisor_id)
 
     # ✅ VERIFICAR SE TEM SOLICITAÇÕES VINCULADAS
-    solicitacoes_vinculadas = query_tenant(Solicitacao).filter_by(
+    solicitacoes_vinculadas = Solicitacao.query.filter_by(
         supervisor_id=supervisor_id).count()
 
     if solicitacoes_vinculadas > 0:
@@ -1320,8 +1319,8 @@ def excluir_supervisor(supervisor_id):
     nome_supervisor = supervisor.nome
 
     # Apaga o User, o Supervisor é apagado em cascata
-    get_tenant_session().delete(user_para_excluir)
-    get_tenant_session().commit()
+    db.session.delete(user_para_excluir)
+    db.session.commit()
 
     flash(
         f'Supervisor "{nome_supervisor}" e seu usuário de acesso foram excluídos.', 'success')

@@ -13,8 +13,6 @@ Permissões: Admin e Operador (com restrições por KPI)
 from flask import render_template, request, redirect, url_for, flash, abort
 from flask_login import login_required, current_user
 
-from app.config.tenant_utils import query_tenant
-
 from app import db, query_filters
 from app.models import (
     Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
@@ -55,7 +53,7 @@ def admin_dashboard():
             abort(403)
 
         from app.models import User
-        query = query_tenant(Supervisor).join(User)
+        query = Supervisor.query.join(User)
         if current_user.role == 'gerente':
             query = query.filter(Supervisor.gerente_id == current_user.gerente.id)
 
@@ -68,7 +66,7 @@ def admin_dashboard():
         if current_user.role not in ['admin', 'gerente', 'supervisor', 'operador']:
             abort(403)
 
-        query = query_tenant(Colaborador)
+        query = Colaborador.query
         if current_user.role == 'gerente':
             plantas_ids = [p.id for p in current_user.gerente.plantas.all()]
             if plantas_ids:
@@ -90,42 +88,42 @@ def admin_dashboard():
     elif current_user.role in ['admin', 'operador']:
         
         if aba == 'empresas':
-            dados = query_tenant(Empresa).order_by(Empresa.nome).all()
+            dados = Empresa.query.order_by(Empresa.nome).all()
             return render_template('admin/admin_cadastros.html', aba_ativa=aba, dados=dados, titulo='Empresas')
 
         elif aba == 'plantas':
-            dados = query_tenant(Planta).join(Empresa).order_by(Empresa.nome, Planta.nome).all()
+            dados = Planta.query.join(Empresa).order_by(Empresa.nome, Planta.nome).all()
             return render_template('admin/admin_cadastros.html', aba_ativa=aba, dados=dados, titulo='Plantas')
 
         elif aba == 'centros_custo':
-            dados = query_tenant(CentroCusto).join(Empresa).order_by(Empresa.nome, CentroCusto.nome).all()
+            dados = CentroCusto.query.join(Empresa).order_by(Empresa.nome, CentroCusto.nome).all()
             return render_template('admin/admin_cadastros.html', aba_ativa=aba, dados=dados, titulo='Centros de Custo')
 
         elif aba == 'turnos':
-            dados = query_tenant(Turno).join(Empresa).join(Planta).order_by(Empresa.nome, Planta.nome, Turno.nome).all()
+            dados = Turno.query.join(Empresa).join(Planta).order_by(Empresa.nome, Planta.nome, Turno.nome).all()
             return render_template('admin/admin_cadastros.html', aba_ativa=aba, dados=dados, titulo='Turnos')
 
         elif aba == 'blocos':
-            base_query = query_tenant(Bloco).join(Empresa)
+            base_query = Bloco.query.join(Empresa)
             query_filtrada = query_filters.filter_blocos_query(base_query, request.args)
             dados = query_filtrada.order_by(Empresa.nome, Bloco.codigo_bloco).all()
             return render_template('admin/admin_cadastros.html', aba_ativa=aba, dados=dados, titulo='Blocos', busca=request.args.get('busca', ''))
 
         elif aba == 'bairros':
-            base_query = query_tenant(Bairro)
+            base_query = Bairro.query
             query_filtrada = query_filters.filter_bairros_query(base_query, request.args)
             dados = query_filtrada.order_by(Bairro.cidade, Bairro.nome).all()
             return render_template('admin/admin_cadastros.html', aba_ativa=aba, dados=dados, titulo='Bairros', busca=request.args.get('busca', ''))
 
         elif aba == 'gerentes':
             from app.models import User
-            base_query = query_tenant(Gerente).join(User)
+            base_query = Gerente.query.join(User)
             query_filtrada = query_filters.filter_gerentes_query(base_query, request.args)
             dados = query_filtrada.order_by(Gerente.nome).all()
             return render_template('admin/admin_cadastros.html', aba_ativa=aba, dados=dados, titulo='Gerentes', busca=request.args.get('busca', ''))
 
         elif aba == 'motoristas':
-            base_query = query_tenant(Motorista)
+            base_query = Motorista.query
             query_filtrada = query_filters.filter_motoristas_query(base_query, request.args)
             dados = query_filtrada.order_by(Motorista.nome).all()
             return render_template('admin/admin_cadastros.html', aba_ativa=aba, dados=dados, titulo='Motoristas', busca=request.args.get('busca', ''))

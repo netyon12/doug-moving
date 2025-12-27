@@ -81,6 +81,48 @@
                             </select>
                         </div>
 
+                        <!-- Seção Multi-Tenant: Empresas de Acesso (Somente Admin) -->
+                        {% if current_user.role == 'admin' and empresas_disponiveis %}
+                        <h5 class="mt-4 mb-3 border-bottom pb-2">
+                            <i class="bi bi-building"></i> Empresas de Acesso
+                        </h5>
+                        <div class="alert alert-info small">
+                            <i class="bi bi-info-circle"></i>
+                            Selecione as empresas que este motorista pode acessar. 
+                            O motorista poderá trocar entre as empresas selecionadas no aplicativo.
+                        </div>
+                        <div class="row">
+                            {% for empresa in empresas_disponiveis %}
+                            <div class="col-md-6 mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" 
+                                           name="empresas_acesso" 
+                                           value="{{ empresa.slug_licenciado }}"
+                                           id="empresa_{{ empresa.id }}"
+                                           {% if motorista and empresa.slug_licenciado in motorista.get_empresas_lista() %}checked{% endif %}>
+                                    <label class="form-check-label" for="empresa_{{ empresa.id }}">
+                                        <strong>{{ empresa.nome }}</strong>
+                                        <small class="text-muted">({{ empresa.slug_licenciado }})</small>
+                                    </label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            <label for="empresa_padrao" class="form-label">Empresa Padrão (ao logar)</label>
+                            <select class="form-select" id="empresa_padrao" name="empresa_padrao">
+                                <option value="">-- Primeira empresa selecionada --</option>
+                                {% for empresa in empresas_disponiveis %}
+                                <option value="{{ empresa.slug_licenciado }}"
+                                        {% if motorista and motorista.empresa_padrao_slug == empresa.slug_licenciado %}selected{% endif %}>
+                                    {{ empresa.nome }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small class="form-text text-muted">Empresa que será carregada automaticamente ao logar.</small>
+                        </div>
+                        {% endif %}
+
                         <hr>
                         <div class="d-flex justify-content-end">
                             <a href="{{ url_for('admin.admin_dashboard', aba='motoristas') }}" class="btn btn-secondary me-2">Cancelar</a>

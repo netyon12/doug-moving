@@ -27,6 +27,21 @@ class Empresa(db.Model):
     status = db.Column(db.String(10), nullable=False,
                        default='Ativo')  # Ativo ou Inativo
 
+    # =========================================================================
+    # CAMPOS MULTI-TENANT - Configuração de conexão com bancos separados
+    # =========================================================================
+    # Identificador único para login (ex: 'gomobi', 'lear', 'nsg')
+    slug_licenciado = db.Column(db.String(50), unique=True)
+    # Configurações de conexão com banco de dados remoto
+    db_host = db.Column(db.String(255))  # Host do banco (ex: render.com)
+    db_name = db.Column(db.String(100))  # Nome do banco
+    db_user = db.Column(db.String(100))  # Usuário do banco
+    db_pass = db.Column(db.String(255))  # Senha (criptografada)
+    db_port = db.Column(db.Integer, default=5432)  # Porta (padrão PostgreSQL)
+    # Se TRUE, usa o banco local (DATABASE_URL do .env)
+    # Se FALSE, usa as configurações db_host, db_name, etc.
+    is_banco_local = db.Column(db.Boolean, default=True)
+
     # Relacionamentos: Uma empresa pode ter várias plantas, centros de custo e turnos
     plantas = db.relationship(
         'Planta', back_populates='empresa', cascade="all, delete-orphan")

@@ -65,6 +65,10 @@ def create_app():
     login_manager.init_app(app)
     cache.init_app(app)
     migrate = Migrate(app, db)
+    
+    # --- INICIALIZAÇÃO DO MIDDLEWARE MULTI-TENANT ---
+    from .config.db_middleware import init_multitenant_middleware
+    init_multitenant_middleware(app)
 
     # Configuração do Flask-Login
     from .models import User
@@ -215,5 +219,32 @@ def create_app():
         ).first()
         timeout = int(config_timeout.valor) if config_timeout else 30
         return {'timeout_config': timeout}
+
+    # ===== NOVO: Context Processor para Multi-Tenant =====
+
+    @app.context_processor
+    def inject_multitenant_info():
+        """Injeta informações multi-tenant em todos os templates."""
+        from flask import session
+        from flask_login import current_user
+        
+        multitenant_info = {
+            'empresa_ativa_nome': session.get('empresa_ativa_nome', ''),
+            'empresa_ativa_slug': session.get('empresa_ativa_slug', ''),
+            'empresa_ativa_id': session.get('empresa_ativa_id'),
+            'is_banco_local': session.get('is_banco_local', True),
+            'pode_trocar_empresa': False,
+            'empresas_disponiveis': []
+        }
+        
+        # Verificar se pode trocar de empresa
+        if current_user.is_authenticated:
+            if current_user.role in ['admin', 'operador']:
+                multitenant_info['pode_trocar_empresa'] = True
+            elif current_user.role == 'motorista' and hasattr(current_user, 'motorista') and current_user.motorista:
+                empresas_lista = current_user.motorista.get_empresas_lista() if hasattr(current_user.motorista, 'get_empresas_lista') else []
+                multitenant_info['pode_trocar_empresa'] = len(empresas_lista) > 1
+        
+        return multitenant_info
 
     return app

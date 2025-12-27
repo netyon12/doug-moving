@@ -10,8 +10,6 @@ import calendar
 from flask import request
 from flask_login import current_user
 
-from app.config.tenant_utils import query_tenant
-
 from app.models import Empresa, Configuracao
 
 
@@ -120,7 +118,7 @@ def get_filtros():
     # Obter filtro de empresa (padrão: primeira empresa ou ID 1)
     empresa_id = request.args.get('empresa_id', type=int)
     if not empresa_id:
-        primeira_empresa = query_tenant(Empresa).order_by(Empresa.id).first()
+        primeira_empresa = Empresa.query.order_by(Empresa.id).first()
         empresa_id = primeira_empresa.id if primeira_empresa else 1
 
     # Obter filtro de período (padrão: mês atual)
@@ -146,8 +144,8 @@ def get_filtros():
         data_fim_str = data_fim.strftime('%Y-%m-%d')
 
     # Buscar todas as empresas para o dropdown
-    empresas = query_tenant(Empresa).order_by(Empresa.nome).all()
-    empresa_selecionada = query_tenant(Empresa).get(empresa_id)
+    empresas = Empresa.query.order_by(Empresa.nome).all()
+    empresa_selecionada = Empresa.query.get(empresa_id)
 
     return {
         'empresa_id': empresa_id,
@@ -167,6 +165,6 @@ def get_capacidade_veiculo():
     Returns:
         int: Capacidade do veículo (padrão: 4)
     """
-    config_capacidade = query_tenant(Configuracao).filter_by(
+    config_capacidade = Configuracao.query.filter_by(
         chave='MAX_PASSAGEIROS_POR_VIAGEM').first()
     return int(config_capacidade.valor) if config_capacidade else 4
