@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from ... import db
 from ...models import User, Gerente, Supervisor, Motorista
 from ...decorators import role_required
-from ...config.tenant_utils import query_tenant  # ← CORREÇÃO: Importar query_tenant
+from ...config.tenant_utils import query_tenant, get_or_404_tenant  # ← CORREÇÃO: Importar query_tenant e get_or_404_tenant
 
 # Define o Blueprint
 cad_users_bp = Blueprint('cad_users', __name__, url_prefix='/configuracoes/usuarios')
@@ -90,7 +90,7 @@ def incluir_usuario():
 @role_required('admin', 'operador')
 def editar_usuario(user_id):
     """Edita um usuário existente."""
-    usuario = query_tenant(User).get_or_404(user_id)
+    usuario = get_or_404_tenant(User, user_id)
 
     if request.method == 'POST':
         email = request.form.get('email').strip()
@@ -142,7 +142,7 @@ def editar_usuario(user_id):
 @role_required('admin') # Apenas Admin pode excluir
 def excluir_usuario(user_id):
     """Exclui um usuário, verificando vínculos."""
-    usuario = query_tenant(User).get_or_404(user_id)
+    usuario = get_or_404_tenant(User, user_id)
 
     # 1. Verifica vínculos (Regra de Negócio)
     if usuario.gerente or usuario.supervisor or usuario.motorista:

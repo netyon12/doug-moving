@@ -25,7 +25,7 @@ import io
 import csv
 
 from .. import db
-from ..config.tenant_utils import query_tenant, paginate_tenant
+from ..config.tenant_utils import query_tenant, paginate_tenant, get_or_404_tenant
 from ..models import AuditLog, ViagemAuditoria, Viagem, User, Motorista
 from ..decorators import role_required
 from ..utils.admin_audit import (
@@ -233,7 +233,7 @@ def logs_viagens():
 def historico_viagem(viagem_id):
     """Exibe histórico completo de uma viagem específica."""
     
-    viagem = Viagem.query.get_or_404(viagem_id)
+    viagem = get_or_404_tenant(Viagem, viagem_id)
     historico = get_viagem_history(viagem_id)
     
     return render_template(
@@ -249,7 +249,7 @@ def historico_viagem(viagem_id):
 def atividades_usuario(user_id):
     """Exibe atividades de um usuário específico."""
     
-    user = User.query.get_or_404(user_id)
+    user = get_or_404_tenant(User, user_id)
     limit = request.args.get('limit', 100, type=int)
     
     atividades = get_user_activity(user_id, limit=limit)
@@ -286,7 +286,7 @@ def operacoes_falhadas():
 def detalhes_log(log_id):
     """Retorna detalhes de um log específico em JSON."""
     
-    log = query_tenant(AuditLog).get_or_404(log_id)
+    log = get_or_404_tenant(AuditLog, log_id)
     return jsonify(log.to_dict())
 
 
@@ -296,7 +296,7 @@ def detalhes_log(log_id):
 def detalhes_viagem_audit(audit_id):
     """Retorna detalhes de um log de viagem em JSON."""
     
-    audit = query_tenant(ViagemAuditoria).get_or_404(audit_id)
+    audit = get_or_404_tenant(ViagemAuditoria, audit_id)
     return jsonify(audit.to_dict())
 
 

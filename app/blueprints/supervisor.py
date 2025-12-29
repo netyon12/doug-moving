@@ -9,7 +9,7 @@ from .. import db
 from ..models import User, Supervisor, Colaborador, Motorista, Bloco, Viagem, Solicitacao, Configuracao
 from ..decorators import permission_required
 from ..models import Empresa
-from ..config.tenant_utils import query_tenant, get_tenant_session
+from ..config.tenant_utils import query_tenant, get_tenant_session, get_or_404_tenant
 from io import StringIO
 import csv
 
@@ -130,7 +130,7 @@ def dashboard_supervisor():
 @login_required
 def cancelar_solicitacao(solicitacao_id):
     # ... (código de verificação de permissão) ...
-    solicitacao = Solicitacao.query.get_or_404(solicitacao_id)
+    solicitacao = get_or_404_tenant(Solicitacao, solicitacao_id)
     supervisor_profile = current_user.supervisor
     # ... (outras verificações) ...
 
