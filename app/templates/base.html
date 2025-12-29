@@ -45,6 +45,10 @@
             /* CORES DE HOMOLOGAÇÃO - VERMELHO */
             --gomobi-yellow: #dc3545;      /* Vermelho para homologação */
             --gomobi-yellow-dark: #c82333; /* Vermelho escuro para hover */
+            {% elif ambiente == 'desenvolvimento' %}
+            /* CORES DE DESENVOLVIMENTO - LARANJA */
+            --gomobi-yellow: #fd7e14;      /* Laranja para desenvolvimento */
+            --gomobi-yellow-dark: #e8590c; /* Laranja escuro para hover */
             {% else %}
             /* CORES DE PRODUÇÃO - AMARELO */
             --gomobi-yellow: #F5B95F;      /* Amarelo principal da logo */
@@ -499,6 +503,13 @@
         <div class="d-none d-md-flex align-items-center justify-content-center flex-grow-1">
             <span class="badge bg-danger fs-6 px-4 py-2 pulse-animation" style="letter-spacing: 2px;">
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>AMBIENTE DE HOMOLOGAÇÃO
+            </span>
+        </div>
+        {% elif ambiente == 'desenvolvimento' %}
+        <!-- Badge de Desenvolvimento -->
+        <div class="d-none d-md-flex align-items-center justify-content-center flex-grow-1">
+            <span class="badge bg-warning text-dark fs-6 px-4 py-2 pulse-animation" style="letter-spacing: 2px;">
+                <i class="bi bi-tools me-2"></i>AMBIENTE DE DESENVOLVIMENTO
             </span>
         </div>
         {% endif %}

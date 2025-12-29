@@ -20,7 +20,7 @@ class NotificationService:
     def __init__(self):
         """Inicializa o serviço em modo desativado"""
         self.enabled = False
-        logger.info("ℹ️  Sistema de notificações DESATIVADO")
+        logger.info("[INFO] Sistema de notificacoes DESATIVADO")
 
     def _enviar_template_whatsapp(self, telefone: str, template_name: str, parametros: list) -> bool:
         """
@@ -46,7 +46,7 @@ class NotificationService:
         Returns:
             int: Retorna a quantidade recebida (simula sucesso)
         """
-        logger.debug(f"📭 Notificação desativada: {quantidade_viagens} viagem(ns) criada(s)")
+        logger.debug(f"[INFO] Notificacao desativada: {quantidade_viagens} viagem(ns) criada(s)")
         return quantidade_viagens
 
     def notificar_viagem_confirmada(self, viagem_id: int, motorista_id: int) -> dict:

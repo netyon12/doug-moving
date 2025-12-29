@@ -68,7 +68,7 @@ MODULOS_CARREGADOS = [
 
 logger = logging.getLogger(__name__)
 
-logger.info(f"✅ Blueprint Admin carregado (v{__version__})")
+logger.info(f"[OK] Blueprint Admin carregado (v{__version__})")
 logger.info(f"   Módulos ativos: {', '.join(MODULOS_CARREGADOS)}")
 
 #print(f"✅ Blueprint Admin carregado (v{__version__})")

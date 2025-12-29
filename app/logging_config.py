@@ -90,18 +90,12 @@ def setup_logging(app):
             
             app.logger.addHandler(file_handler)
         except Exception as e:
-            app.logger.warning(f"[AVISO]  Não foi possível criar handler de arquivo: {e}")
+            app.logger.warning(f"[AVISO] Nao foi possivel criar handler de arquivo: {e}")
     
     # ===== Configurar logger raiz =====
-    # Isso garante que outros módulos também loguem corretamente
+    # Define apenas o nível, sem adicionar handlers (evita duplicação)
     root_logger = logging.getLogger()
     root_logger.setLevel(log_level)
-    
-    # Remove handlers existentes do root logger
-    root_logger.handlers.clear()
-    
-    # Adiciona console handler ao root logger
-    root_logger.addHandler(console_handler)
     
     # ===== Reduzir verbosidade de bibliotecas externas =====
     # Gunicorn (servidor web)
@@ -116,18 +110,11 @@ def setup_logging(app):
     if is_production:
         logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
     
-    # ===== Logs iniciais =====
-    app.logger.info("="*70)
-    app.logger.info(f"[START] Sistema de Logging Configurado")
-    app.logger.info(f"[STATS] Ambiente: {env_name}")
-    app.logger.info(f"📈 Nível de log: {logging.getLevelName(log_level)}")
-    
+    # ===== Logs iniciais (simplificados) =====
     if is_production:
-        app.logger.info("[>>>] Logs sendo enviados para: stdout (Render Logs)")
+        app.logger.info(f"Sistema iniciado - Ambiente: {env_name} - Nivel: {logging.getLevelName(log_level)}")
     else:
-        app.logger.info("[>>>] Logs sendo enviados para: stdout + logs/app.log")
-    
-    app.logger.info("="*70)
+        app.logger.info(f"Sistema iniciado - Ambiente: {env_name} - Nivel: {logging.getLevelName(log_level)} - Logs: stdout + logs/app.log")
     
     # ===== Silenciar tracebacks internos do Python =====
     import threading

@@ -185,7 +185,7 @@ def init_multitenant_middleware(app):
             finally:
                 empresa_session.close()
     
-    logger.info("✅ Middleware Multi-Tenant inicializado")
+    logger.info("[OK] Middleware Multi-Tenant inicializado")
 
 
 def execute_on_empresa(empresa_slug, callback):
