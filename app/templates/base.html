@@ -41,12 +41,31 @@
         /* PALETA DE CORES GO MOBI */
         /* ========================================== */
         :root {
+            {% if ambiente == 'homologacao' %}
+            /* CORES DE HOMOLOGAÇÃO - VERMELHO */
+            --gomobi-yellow: #dc3545;      /* Vermelho para homologação */
+            --gomobi-yellow-dark: #c82333; /* Vermelho escuro para hover */
+            {% else %}
+            /* CORES DE PRODUÇÃO - AMARELO */
             --gomobi-yellow: #F5B95F;      /* Amarelo principal da logo */
             --gomobi-yellow-dark: #E5A84F; /* Amarelo escuro para hover */
+            {% endif %}
             --gomobi-black: #000000;       /* Preto da logo */
             --gomobi-gray-dark: #1a1a1a;   /* Cinza escuro para contraste */
             --gomobi-gray: #333333;        /* Cinza médio */
             --gomobi-gray-light: #666666;  /* Cinza claro */
+        }
+
+        /* ========================================== */
+        /* ANIMAÇÃO PULSE PARA HOMOLOGAÇÃO */
+        /* ========================================== */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.02); }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
         }
 
         /* ========================================== */
@@ -474,6 +493,15 @@
         <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="{{ url_for('admin.admin_dashboard') }}">
             <i class="bi bi-geo-alt-fill"></i> Go Mobi
         </a>
+        
+        {% if ambiente == 'homologacao' %}
+        <!-- Badge de Homologação -->
+        <div class="d-none d-md-flex align-items-center justify-content-center flex-grow-1">
+            <span class="badge bg-danger fs-6 px-4 py-2 pulse-animation" style="letter-spacing: 2px;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>AMBIENTE DE HOMOLOGAÇÃO
+            </span>
+        </div>
+        {% endif %}
 
         <!-- Informações do Usuário -->
         <div class="d-flex align-items-center text-white ms-auto">

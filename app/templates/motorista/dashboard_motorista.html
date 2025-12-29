@@ -19,31 +19,49 @@
         <h2><i class="bi bi-speedometer2"></i> Dashboard</h2>
         <p>Bem-vindo, <strong>{{ motorista.nome }}</strong></p>
         
-        <!-- Botão de Status Online/Offline com Cores Vibrantes -->
+        <!-- Status Atual do Motorista (Mobile) -->
+        {% set status_info_mobile = motorista.get_status_badge() %}
         <div style="margin-top: 16px;">
-            {% if motorista.status_disponibilidade == 'online' %}
-                <!-- ONLINE - Verde Vibrante -->
-                <button type="button" 
-                        class="btn-status-online" 
-                        onclick="toggleDisponibilidade()"
-                        id="btnToggleStatusMobile">
-                    <i class="bi bi-power"></i>
-                    <span class="status-principal">ONLINE</span>
-                    <span class="status-secundario">(Disponível)</span>
-                    <small>Toque para ficar offline</small>
-                </button>
-            {% else %}
-                <!-- OFFLINE - Cinza -->
-                <button type="button" 
-                        class="btn-status-offline" 
-                        onclick="toggleDisponibilidade()"
-                        id="btnToggleStatusMobile">
-                    <i class="bi bi-power"></i>
-                    <span class="status-principal">OFFLINE</span>
-                    <span class="status-secundario">(Indisponível)</span>
-                    <small>Toque para ficar online</small>
-                </button>
-            {% endif %}
+            <div class="card border-0 shadow-sm" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-body text-center text-white p-3">
+                    <h6 class="mb-2">SEU STATUS ATUAL</h6>
+                    <div class="d-flex align-items-center justify-content-center mb-3">
+                        <div class="status-icon-mobile me-2">
+                            <i class="bi bi-{{ status_info_mobile['icone'] }}" style="font-size: 2rem;"></i>
+                        </div>
+                        <div>
+                            <span class="badge {{ status_info_mobile['classe'] }}" style="font-size: 1.2rem; padding: 0.6rem 1.2rem;">
+                                <i class="bi bi-{{ status_info_mobile['icone'] }}"></i> {{ status_info_mobile['texto'] }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Botão Online/Offline -->
+                    {% if motorista.status_disponibilidade == 'online' %}
+                        <button type="button" 
+                                class="btn btn-light btn-sm w-100" 
+                                onclick="toggleDisponibilidade()"
+                                id="btnToggleStatusMobile"
+                                style="font-weight: 600;">
+                            <i class="bi bi-power"></i> Ficar Offline
+                        </button>
+                        <small class="text-white-50 mt-2 d-block">
+                            <i class="bi bi-info-circle"></i> Você está visível para novas viagens
+                        </small>
+                    {% else %}
+                        <button type="button" 
+                                class="btn btn-success btn-sm w-100" 
+                                onclick="toggleDisponibilidade()"
+                                id="btnToggleStatusMobile"
+                                style="font-weight: 600;">
+                            <i class="bi bi-power"></i> Ficar Online
+                        </button>
+                        <small class="text-white-50 mt-2 d-block">
+                            <i class="bi bi-info-circle"></i> Você não receberá novas viagens
+                        </small>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
     

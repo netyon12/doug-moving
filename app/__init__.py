@@ -239,6 +239,14 @@ def create_app():
         timeout = int(config_timeout.valor) if config_timeout else 30
         return {'timeout_config': timeout}
 
+    # ===== NOVO: Context Processor para Ambiente =====
+
+    @app.context_processor
+    def inject_ambiente():
+        """Injeta informação do ambiente (homologacao/producao) em todos os templates."""
+        ambiente = os.getenv('AMBIENTE', 'producao')
+        return {'ambiente': ambiente}
+
     # ===== NOVO: Context Processor para Multi-Tenant =====
 
     @app.context_processor
