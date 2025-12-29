@@ -178,6 +178,14 @@
                 <span class="total-label">Total Repasse</span>
                 <span class="total-value" id="totalRepasseMobile">R$ 0,00</span>
             </div>
+            <div class="total-item">
+                <span class="total-label" style="color: #dc3545;">Taxa Adm (<span id="percTaxaMobile">10</span>%)</span>
+                <span class="total-value" style="color: #dc3545;" id="valorTaxaMobile">R$ 0,00</span>
+            </div>
+            <div class="total-item" style="border-top: 2px solid #28a745; padding-top: 10px;">
+                <span class="total-label" style="color: #28a745; font-weight: bold;">Valor a Receber</span>
+                <span class="total-value" style="color: #28a745; font-weight: bold; font-size: 1.2em;" id="valorLiquidoMobile">R$ 0,00</span>
+            </div>
         </div>
         
         <div id="viagensMobile"></div>
@@ -303,6 +311,14 @@
                                 <td colspan="11" class="text-right">TOTAL REPASSE:</td>
                                 <td id="totalRepasse">R$ 0,00</td>
                             </tr>
+                            <tr class="text-danger">
+                                <td colspan="11" class="text-right">Taxa Administrativa (<span id="percTaxa">10</span>%):</td>
+                                <td id="valorTaxa">R$ 0,00</td>
+                            </tr>
+                            <tr class="font-weight-bold text-success" style="font-size: 1.1em;">
+                                <td colspan="11" class="text-right">VALOR A RECEBER:</td>
+                                <td id="valorLiquido">R$ 0,00</td>
+                            </tr>
                         </tfoot>
                     </table>
                 </div>
@@ -374,7 +390,7 @@ $('#formFiltros').on('submit', function(e) {
                 totalPaginas = response.total_paginas || 1;
                 totalRegistrosGlobal = response.total_registros || response.total;
                 
-                exibirResultados(response.dados, response.total, response.valor_total_repasse);
+                exibirResultados(response.dados, response.total, response.valor_total_repasse, response.taxa_adm_percentual, response.valor_taxa_adm, response.valor_liquido_repasse);
                 atualizarControlesPaginacao();
             } else {
                 Swal.fire({
@@ -414,7 +430,7 @@ function getStatusBadge(status) {
 }
 
 // Exibir resultados na tabela
-function exibirResultados(dados, total, valorTotalRepasse) {
+function exibirResultados(dados, total, valorTotalRepasse, taxaAdmPerc, valorTaxa, valorLiquido) {
     const tbody = $('#corpoTabela');
     tbody.empty();
     
@@ -448,6 +464,9 @@ function exibirResultados(dados, total, valorTotalRepasse) {
     
     $('#totalRegistros').text(total);
     $('#totalRepasse').text('R$ ' + valorTotalRepasse.toFixed(2));
+    $('#percTaxa').text(taxaAdmPerc.toFixed(2));
+    $('#valorTaxa').text('R$ ' + valorTaxa.toFixed(2));
+    $('#valorLiquido').text('R$ ' + valorLiquido.toFixed(2));
     $('#areaResultados').show();
 }
 
@@ -482,13 +501,16 @@ function navegarPagina(direcao) {
                 totalPaginas = response.total_paginas || 1;
                 totalRegistrosGlobal = response.total_registros || response.total;
                 valorTotalRepasseGlobal = response.valor_total_repasse || 0;
+                var taxaAdmGlobal = response.taxa_adm_percentual || 10.0;
+                var valorTaxaGlobal = response.valor_taxa_adm || 0;
+                var valorLiquidoGlobal = response.valor_liquido_repasse || 0;
                 
                 console.log('✅ Dados recebidos:', response.dados.length, 'registros');
-                console.log('📝 Página atual depois:', paginaAtual, 'de', totalPaginas);
+                console.log('📋 Página atual depois:', paginaAtual, 'de', totalPaginas);
                 console.log('📊 Total registros:', totalRegistrosGlobal);
                 console.log('💵 Valor total repasse:', valorTotalRepasseGlobal);
                 
-                exibirResultados(response.dados, totalRegistrosGlobal, valorTotalRepasseGlobal);
+                exibirResultados(response.dados, totalRegistrosGlobal, valorTotalRepasseGlobal, taxaAdmGlobal, valorTaxaGlobal, valorLiquidoGlobal);
                 atualizarControlesPaginacao();
             } else {
                 Swal.fire({
@@ -629,6 +651,9 @@ $('#formFiltrosMobile').on('submit', function(e) {
                 $('#totalizadorMobile').show();
                 $('#totalViagensMobile').text(response.total);
                 $('#totalRepasseMobile').text('R$ ' + response.valor_total_repasse.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                $('#percTaxaMobile').text(response.taxa_adm_percentual.toFixed(2));
+                $('#valorTaxaMobile').text('R$ ' + response.valor_taxa_adm.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+                $('#valorLiquidoMobile').text('R$ ' + response.valor_liquido_repasse.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
                 renderizarViagensMobile(response.dados);
             } else {
                 $('#emptyStateMobile').show();

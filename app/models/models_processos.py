@@ -11,6 +11,7 @@ Classes relacionadas ao fluxo operacional do sistema:
 from app import db
 from app.models import horario_brasil
 from datetime import datetime
+from app.config.tenant_utils import get_tenant_session
 
 
 class Viagem(db.Model):
@@ -143,6 +144,9 @@ class Viagem(db.Model):
         self.status = 'Agendada'
         self.data_atualizacao = datetime.utcnow()
 
+        # Atualiza status do motorista
+        motorista.status = 'Agendado'
+        get_tenant_session().add(motorista)  # Garante que a alteração seja persistida
         # Atualiza status das solicitações
         if self.solicitacoes:
             for solicitacao in self.solicitacoes:
@@ -167,6 +171,9 @@ class Viagem(db.Model):
         self.data_inicio = datetime.utcnow()
         self.data_atualizacao = datetime.utcnow()
 
+        # Atualiza status do motorista para Ocupado
+        self.motorista.status = 'Ocupado'
+        get_tenant_session().add(self.motorista)  # Garante que a alteração seja persistida
         # Atualiza status das solicitações
         if self.solicitacoes:
             for solicitacao in self.solicitacoes:
@@ -191,6 +198,9 @@ class Viagem(db.Model):
         self.data_finalizacao = datetime.utcnow()
         self.data_atualizacao = datetime.utcnow()
 
+        # Atualiza status do motorista para Disponível
+        self.motorista.status = 'Disponível'
+        get_tenant_session().add(self.motorista)  # Garante que a alteração seja persistida
         # Atualiza status das solicitações
         if self.solicitacoes:
             for solicitacao in self.solicitacoes:
@@ -275,6 +285,9 @@ class Viagem(db.Model):
         if self.status != 'Agendada':
             return False
 
+        # Salva referência ao motorista antes de desassociar
+        motorista_obj = self.motorista
+
         # Remove associação com motorista
         self.motorista_id = None
         self.nome_motorista = None
@@ -288,6 +301,10 @@ class Viagem(db.Model):
         for solicitacao in self.solicitacoes:
             solicitacao.status = 'Agrupada'
 
+        # Volta status do motorista para Disponível
+        if motorista_obj:
+            motorista_obj.status = 'Disponível'
+            get_tenant_session().add(motorista_obj)  # Garante que a alteração seja persistida
         return True
 
 

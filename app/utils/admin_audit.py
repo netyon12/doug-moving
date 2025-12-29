@@ -29,6 +29,7 @@ import time
 
 from .. import db
 from ..models import AuditLog, ViagemAuditoria
+from ..config.tenant_utils import get_tenant_session  # ← CORREÇÃO: Importar tenant_utils
 
 
 # ===========================================================================================
@@ -170,8 +171,9 @@ def log_audit(
             severity=severity
         )
 
-        db.session.add(audit_log)
-        db.session.commit()
+        tenant_session = get_tenant_session()
+        tenant_session.add(audit_log)
+        tenant_session.commit()
 
         return audit_log
 
@@ -180,7 +182,7 @@ def log_audit(
         # Apenas imprime o erro (em produção, usar logging adequado)
         print(f"ERRO ao criar audit log: {e}")
         try:
-            db.session.rollback()
+            get_tenant_session().rollback()
         except:
             pass
         return None
@@ -260,8 +262,9 @@ def log_viagem_audit(
             ip_address=ip_address
         )
 
-        db.session.add(viagem_audit)
-        db.session.commit()
+        tenant_session = get_tenant_session()
+        tenant_session.add(viagem_audit)
+        tenant_session.commit()
 
         # Também registra no log geral
         log_audit(
@@ -282,7 +285,7 @@ def log_viagem_audit(
     except Exception as e:
         print(f"ERRO ao criar viagem audit log: {e}")
         try:
-            db.session.rollback()
+            get_tenant_session().rollback()
         except:
             pass
         return None

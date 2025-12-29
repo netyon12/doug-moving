@@ -72,6 +72,39 @@ def get_database_type():
         return 'sqlite'
 
 
+def get_motorista_tenant():
+    """
+    Busca o motorista no banco correto (tenant) baseado no CPF.
+    
+    Em ambiente multi-tenant, o motorista pode ter IDs diferentes em cada banco.
+    Esta função garante que sempre usaremos o ID correto do banco ativo.
+    
+    Returns:
+        Motorista: Objeto motorista do banco tenant
+        None: Se motorista não encontrado
+    
+    Raises:
+        Exception: Se current_user não tem perfil de motorista
+    """
+    motorista_base = current_user.motorista
+    
+    if not motorista_base:
+        raise Exception('Perfil de motorista não encontrado')
+    
+    # Buscar motorista no banco tenant por CPF (chave única)
+    # Força refresh do banco para evitar cache
+    session = get_tenant_session()
+    motorista_tenant = session.query(Motorista).filter_by(
+        cpf_cnpj=motorista_base.cpf_cnpj
+    ).first()
+    
+    # Força refresh dos dados do banco
+    if motorista_tenant:
+        session.refresh(motorista_tenant)
+    
+    return motorista_tenant
+
+
 # =============================================================================
 # ROTAS DE VISUALIZAÇÃO
 # =============================================================================
@@ -82,14 +115,12 @@ def get_database_type():
 def dashboard_motorista():
     """Dashboard principal do motorista."""
 
-    motorista = current_user.motorista
-
-    # Verifica se o perfil de motorista existe
+    # Buscar motorista no banco correto (tenant)
+    motorista = get_motorista_tenant()
+    
     if not motorista:
-        flash('Perfil de motorista não encontrado. Entre em contato com o administrador.', 'danger')
+        flash('Seu cadastro não foi encontrado nesta empresa. Entre em contato com o administrador.', 'warning')
         return redirect(url_for('auth.logout'))
-
-    motorista_id = motorista.id
 
     # Estatísticas
     viagens_agendadas = query_tenant(Viagem).filter_by(
@@ -176,7 +207,11 @@ def viagens_disponiveis():
 def detalhes_viagem(viagem_id):
     """Exibe detalhes de uma viagem."""
 
-    motorista = current_user.motorista
+    motorista = get_motorista_tenant()
+    
+    if not motorista:
+        flash('Seu cadastro não foi encontrado nesta empresa.', 'warning')
+        return redirect(url_for('motorista.dashboard_motorista'))
 
     viagem = get_or_404_tenant(Viagem, viagem_id)
 
@@ -222,7 +257,14 @@ def detalhes_viagem(viagem_id):
 def aceitar_viagem(viagem_id):
     """Aceita uma viagem disponível."""
 
-    motorista = current_user.motorista
+    motorista = get_motorista_tenant()
+    
+    if not motorista:
+        return jsonify({
+            'sucesso': False,
+            'mensagem': 'Seu cadastro não foi encontrado nesta empresa. Entre em contato com o administrador.'
+        }), 403
+    
     viagem = get_or_404_tenant(Viagem, viagem_id)
 
     # Verifica se a viagem pode ser aceita
@@ -260,7 +302,7 @@ def aceitar_viagem(viagem_id):
             }), 400
 
     try:
-        # Aceita a viagem
+        # Aceita a viagem (motorista já é do banco correto)
         sucesso = viagem.aceitar_viagem(motorista)
 
         if not sucesso:
@@ -357,7 +399,14 @@ def aceitar_viagem(viagem_id):
 def cancelar_viagem(viagem_id):
     """Desassocia o motorista da viagem, tornando-a disponível novamente."""
 
-    motorista = current_user.motorista
+    motorista = get_motorista_tenant()
+    
+    if not motorista:
+        return jsonify({
+            'sucesso': False,
+            'mensagem': 'Seu cadastro não foi encontrado nesta empresa.'
+        }), 403
+    
     viagem = get_or_404_tenant(Viagem, viagem_id)
 
     # Verifica se o motorista é o dono da viagem
@@ -454,8 +503,14 @@ def cancelar_viagem(viagem_id):
 def iniciar_viagem(viagem_id):
     """Inicia uma viagem agendada."""
 
-    motorista = current_user.motorista
-    motorista_id = motorista.id  # ← ADICIONAR ESTA LINHA
+    motorista = get_motorista_tenant()
+    
+    if not motorista:
+        return jsonify({
+            'sucesso': False,
+            'mensagem': 'Seu cadastro não foi encontrado nesta empresa.'
+        }), 403
+    
     viagem = get_or_404_tenant(Viagem, viagem_id)
 
     # Verifica se o motorista é o dono da viagem
@@ -482,7 +537,7 @@ def iniciar_viagem(viagem_id):
         }), 400
 
     # Verifica se a viagem pode ser iniciada
-    if not viagem.pode_ser_iniciada(motorista_id):
+    if not viagem.pode_ser_iniciada(motorista.id):
         return jsonify({
             'sucesso': False,
             'mensagem': 'Esta viagem não pode ser iniciada (status incorreto).'
@@ -490,7 +545,7 @@ def iniciar_viagem(viagem_id):
 
     try:
         # Inicia a viagem
-        sucesso = viagem.iniciar_viagem(motorista_id)
+        sucesso = viagem.iniciar_viagem(motorista.id)
 
         if not sucesso:
             return jsonify({
@@ -546,8 +601,14 @@ def iniciar_viagem(viagem_id):
 def finalizar_viagem(viagem_id):
     """Finaliza uma viagem em andamento."""
 
-    motorista = current_user.motorista
-    motorista_id = motorista.id  # ← ADICIONAR ESTA LINHA
+    motorista = get_motorista_tenant()
+    
+    if not motorista:
+        return jsonify({
+            'sucesso': False,
+            'mensagem': 'Seu cadastro não foi encontrado nesta empresa.'
+        }), 403
+    
     viagem = get_or_404_tenant(Viagem, viagem_id)
 
     # Verifica se o motorista é o dono da viagem
@@ -558,7 +619,7 @@ def finalizar_viagem(viagem_id):
         }), 403
 
     # Verifica se a viagem pode ser finalizada
-    if not viagem.pode_ser_finalizada(motorista_id):
+    if not viagem.pode_ser_finalizada(motorista.id):
         return jsonify({
             'sucesso': False,
             'mensagem': 'Esta viagem não pode ser finalizada (não está em andamento).'
@@ -566,7 +627,7 @@ def finalizar_viagem(viagem_id):
 
     try:
         # Finaliza a viagem
-        sucesso = viagem.finalizar_viagem(motorista_id)
+        sucesso = viagem.finalizar_viagem(motorista.id)
 
         if not sucesso:
             return jsonify({
@@ -645,7 +706,13 @@ def finalizar_viagem(viagem_id):
 def toggle_disponibilidade():
     """Alterna o status de disponibilidade do motorista entre online e offline."""
 
-    motorista = current_user.motorista
+    motorista = get_motorista_tenant()
+    
+    if not motorista:
+        return jsonify({
+            'sucesso': False,
+            'mensagem': 'Seu cadastro não foi encontrado nesta empresa.'
+        }), 403
 
     # Verifica se o motorista tem viagens em andamento
     viagens_em_andamento = query_tenant(Viagem).filter(
@@ -755,7 +822,11 @@ def atualizar_status_disponibilidade():
 @role_required('motorista')
 def minhas_viagens():
     """Página para o motorista visualizar seu histórico de viagens."""
-    motorista = current_user.motorista
+    motorista = get_motorista_tenant()
+    
+    if not motorista:
+        flash('Seu cadastro não foi encontrado nesta empresa.', 'warning')
+        return redirect(url_for('motorista.dashboard_motorista'))
 
     # Filtros
     page = request.args.get('page', 1, type=int)

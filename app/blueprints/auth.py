@@ -310,6 +310,48 @@ def trocar_empresa():
         if not current_user.motorista or not current_user.motorista.tem_acesso_empresa(empresa_slug):
             logger.warning(f"Motorista '{current_user.email}' tentou trocar para empresa sem acesso: {empresa_slug}")
             return jsonify({'success': False, 'message': 'Você não tem acesso a esta empresa'}), 403
+        
+        # Validar se motorista existe no banco da empresa destino (por CPF)
+        if not empresa.is_banco_local:
+            from app.config.db_middleware import get_empresa_engine
+            from sqlalchemy.orm import sessionmaker
+            
+            try:
+                # Conectar ao banco remoto
+                engine_remoto = get_empresa_engine(empresa_slug)
+                
+                if not engine_remoto:
+                    logger.error(f"Não foi possível conectar ao banco de {empresa_slug}")
+                    return jsonify({
+                        'success': False, 
+                        'message': 'Erro ao conectar com o banco da empresa. Tente novamente.'
+                    }), 500
+                
+                Session = sessionmaker(bind=engine_remoto)
+                db_session_remoto = Session()
+                
+                # Buscar motorista por CPF
+                motorista_remoto = db_session_remoto.query(Motorista).filter_by(
+                    cpf_cnpj=current_user.motorista.cpf_cnpj
+                ).first()
+                
+                db_session_remoto.close()
+                
+                if not motorista_remoto:
+                    logger.warning(f"Motorista '{current_user.email}' (CPF: {current_user.motorista.cpf_cnpj}) não encontrado no banco de {empresa_slug}")
+                    return jsonify({
+                        'success': False, 
+                        'message': f'Seu cadastro não foi encontrado na empresa {empresa.nome}. Entre em contato com o administrador.'
+                    }), 403
+                
+                logger.info(f"Motorista '{current_user.email}' validado no banco de {empresa_slug} (ID remoto: {motorista_remoto.id})")
+                
+            except Exception as e:
+                logger.error(f"Erro ao validar motorista no banco remoto: {str(e)}")
+                return jsonify({
+                    'success': False, 
+                    'message': 'Erro ao validar acesso à empresa. Tente novamente.'
+                }), 500
     
     elif current_user.role not in ['admin', 'operador']:
         if not current_user.tem_acesso_empresa(empresa_slug):

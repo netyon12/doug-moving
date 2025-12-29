@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+# app/blueprints/supervisor.py
+from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime, timedelta, date
@@ -8,119 +9,120 @@ from .. import db
 from ..models import User, Supervisor, Colaborador, Motorista, Bloco, Viagem, Solicitacao, Configuracao
 from ..decorators import permission_required
 from ..models import Empresa
+from ..config.tenant_utils import query_tenant, get_tenant_session
 from io import StringIO
 import csv
 
-# Cria um Blueprint específico para autenticação
 supervisor_bp = Blueprint('supervisor', __name__, url_prefix='/supervisor')
-
-
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# ROTAS DO SUPERVISOR
-# =============================================================================
-# =============================================================================
-# =============================================================================
-# =============================================================================
 
 
 @supervisor_bp.route('/dashboard')
 @login_required
 @permission_required('supervisor')
 def dashboard_supervisor():
-    supervisor_profile = current_user.supervisor
+    """Dashboard do Supervisor com KPIs coloridos e separados por Solicitações e Viagens"""
+    
+    # Buscar supervisor usando query_tenant
+    supervisor_profile = query_tenant(Supervisor).filter_by(user_id=current_user.id).first()
     if not supervisor_profile:
         flash('Perfil de supervisor não encontrado.', 'danger')
         return redirect(url_for('auth.logout'))
 
-    # KPI 1: Solicitações Pendentes
-    solicitacoes_pendentes = Solicitacao.query.filter(
+    # ========== KPIs DE SOLICITAÇÕES ==========
+    
+    # Solicitações Pendentes
+    solicitacoes_pendentes = query_tenant(Solicitacao).filter(
         Solicitacao.supervisor_id == supervisor_profile.id,
         Solicitacao.status == 'Pendente'
     ).count()
 
-    # KPI 2: Solicitações Agendadas
-    solicitacoes_agendadas = Solicitacao.query.filter(
+    # Solicitações Agendadas
+    solicitacoes_agendadas = query_tenant(Solicitacao).filter(
         Solicitacao.supervisor_id == supervisor_profile.id,
         Solicitacao.status == 'Agendada'
     ).count()
 
-    # KPI 3: Viagens em Andamento (através das solicitações)
-    viagens_ids = db.session.query(Solicitacao.viagem_id).filter(
+    # Solicitações Em Andamento
+    solicitacoes_andamento = query_tenant(Solicitacao).filter(
         Solicitacao.supervisor_id == supervisor_profile.id,
-        Solicitacao.viagem_id.isnot(None)
-    ).distinct().all()
-    viagens_ids = [v[0] for v in viagens_ids]
+        Solicitacao.status == 'Em Andamento'
+    ).count()
 
-    viagens_andamento = Viagem.query.filter(
-        Viagem.id.in_(viagens_ids),
-        Viagem.status == 'Em Andamento'
-    ).count() if viagens_ids else 0
-
-    # KPI 4: Taxa de Ocupação Média (calculada com base nas viagens)
-    # KPI 4: Taxa de Ocupação Média (calculada com base nas viagens FINALIZADAS)
-    # Busca capacidade dos parâmetros gerais
-    config_capacidade = Configuracao.query.filter_by(
-        chave='capacidade_veiculo').first()
-    capacidade_veiculo = int(
-        config_capacidade.valor) if config_capacidade and config_capacidade.valor else 3
-
-    if viagens_ids:
-        # Filtra apenas viagens FINALIZADAS
-        viagens_finalizadas = Viagem.query.filter(
-            Viagem.id.in_(viagens_ids),
-            Viagem.status == 'Finalizada'
-        ).all()
-
-        if viagens_finalizadas:
-            # Soma total de passageiros transportados
-            total_passageiros = sum(
-                viagem.quantidade_passageiros or 0 for viagem in viagens_finalizadas)
-            total_viagens = len(viagens_finalizadas)
-
-            # Fórmula: (Total Passageiros) / (Total Viagens × Capacidade) × 100
-            taxa_ocupacao_media = (
-                total_passageiros / (total_viagens * capacidade_veiculo)) * 100 if total_viagens > 0 else 0
-        else:
-            taxa_ocupacao_media = 0
-    else:
-        taxa_ocupacao_media = 0
-
-    # KPI 5: Finalizadas Hoje
+    # Solicitações Finalizadas (Hoje)
     hoje = date.today()
-    finalizadas_hoje = Solicitacao.query.filter(
+    solicitacoes_finalizadas_hoje = query_tenant(Solicitacao).filter(
         Solicitacao.supervisor_id == supervisor_profile.id,
         Solicitacao.status == 'Finalizada',
         func.date(Solicitacao.data_criacao) == hoje
     ).count()
 
-    # KPI 6: Canceladas Hoje
-    canceladas_hoje = Solicitacao.query.filter(
+    # ========== KPIs DE VIAGENS ==========
+    
+    # Buscar IDs de viagens das solicitações do supervisor
+    viagens_ids = get_tenant_session().query(Solicitacao.viagem_id).filter(
+        Solicitacao.supervisor_id == supervisor_profile.id,
+        Solicitacao.viagem_id.isnot(None)
+    ).distinct().all()
+    viagens_ids = [v[0] for v in viagens_ids]
+
+    # Viagens Pendentes
+    viagens_pendentes = query_tenant(Viagem).filter(
+        Viagem.id.in_(viagens_ids),
+        Viagem.status == 'Pendente'
+    ).count() if viagens_ids else 0
+
+    # Viagens Agendadas
+    viagens_agendadas = query_tenant(Viagem).filter(
+        Viagem.id.in_(viagens_ids),
+        Viagem.status == 'Agendada'
+    ).count() if viagens_ids else 0
+
+    # Viagens Em Andamento
+    viagens_andamento = query_tenant(Viagem).filter(
+        Viagem.id.in_(viagens_ids),
+        Viagem.status == 'Em Andamento'
+    ).count() if viagens_ids else 0
+
+    # Viagens Finalizadas (Hoje)
+    viagens_finalizadas_hoje = query_tenant(Viagem).filter(
+        Viagem.id.in_(viagens_ids),
+        Viagem.status == 'Finalizada',
+        func.date(Viagem.data_finalizacao) == hoje
+    ).count() if viagens_ids else 0
+
+    # ========== KPIs DE RECURSOS ==========
+    
+    # Total de Colaboradores (todos do banco tenant)
+    total_colaboradores = query_tenant(Colaborador).count()
+
+    # Motoristas Ativos (status = 'Disponível' ou 'Ocupado')
+    motoristas_ativos = query_tenant(Motorista).filter(
+        Motorista.status.in_(['Disponível', 'Ocupado'])
+    ).count()
+
+    # Canceladas Hoje
+    canceladas_hoje = query_tenant(Solicitacao).filter(
         Solicitacao.supervisor_id == supervisor_profile.id,
         Solicitacao.status == 'Cancelada',
         func.date(Solicitacao.data_criacao) == hoje
     ).count()
 
-    # KPI 7: Total de Supervisores (no caso do supervisor, mostra apenas 1 - ele mesmo)
-    total_supervisores = 1
-
-    # KPI 8: Total de Colaboradores da Planta
-    total_colaboradores = Colaborador.query.filter_by(
-        planta=supervisor_profile.planta
-    ).count()
-
     return render_template(
         'supervisor/dashboard_supervisor.html',
+        # KPIs de Solicitações
         solicitacoes_pendentes=solicitacoes_pendentes,
         solicitacoes_agendadas=solicitacoes_agendadas,
+        solicitacoes_andamento=solicitacoes_andamento,
+        solicitacoes_finalizadas_hoje=solicitacoes_finalizadas_hoje,
+        # KPIs de Viagens
+        viagens_pendentes=viagens_pendentes,
+        viagens_agendadas=viagens_agendadas,
         viagens_andamento=viagens_andamento,
-        taxa_ocupacao_media=taxa_ocupacao_media,
-        finalizadas_hoje=finalizadas_hoje,
-        canceladas_hoje=canceladas_hoje,
-        total_supervisores=total_supervisores,
-        total_colaboradores=total_colaboradores
+        viagens_finalizadas_hoje=viagens_finalizadas_hoje,
+        # KPIs de Recursos
+        total_colaboradores=total_colaboradores,
+        motoristas_ativos=motoristas_ativos,
+        canceladas_hoje=canceladas_hoje
     )
 
 

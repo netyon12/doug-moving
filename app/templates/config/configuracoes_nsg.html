@@ -133,6 +133,25 @@
                             </small>
                         </div>
 
+                        <!-- Taxa Administrativa Motoristas -->
+                        <div class="mb-4">
+                            <label for="taxa_adm_motoristas" class="form-label fw-bold">
+                                <i class="bi bi-percent me-1"></i>Taxa Administrativa - Motoristas (%)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="taxa_adm_motoristas" 
+                                   name="taxa_adm_motoristas" 
+                                   value="{{ taxa_adm_motoristas }}" 
+                                   min="0" 
+                                   max="100" 
+                                   step="0.01" 
+                                   required>
+                            <small class="form-text text-muted">
+                                Percentual de taxa administrativa cobrada sobre o repasse dos motoristas (padrão: 10%).
+                            </small>
+                        </div>
+
                         <!-- Timeout de Inatividade -->
                         <div class="mb-4">
                             <label for="timeout_inatividade" class="form-label fw-bold">

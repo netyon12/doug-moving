@@ -75,7 +75,26 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        from flask import session
+        from .config.tenant_utils import query_tenant
+        
+        # Buscar empresa ativa da sessão
+        empresa_slug = session.get('empresa_ativa_slug')
+        
+        # Se não há empresa ativa, buscar no Banco 1 (padrão)
+        if not empresa_slug:
+            return User.query.get(int(user_id))
+        
+        # Com empresa ativa, buscar no banco da empresa (tenant)
+        # Isso funciona para TODOS os roles, incluindo motoristas replicados
+        user = query_tenant(User).get(int(user_id))
+        
+        if not user:
+            # Fallback: buscar no Banco 1 (para compatibilidade)
+            print(f"[LOAD_USER] User {user_id} não encontrado no banco de {empresa_slug}, buscando no Banco 1...")
+            return User.query.get(int(user_id))
+        
+        return user
 
     # Aponta para a rota 'login' dentro do blueprint 'auth'
     login_manager.login_view = 'auth.login'

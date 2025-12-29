@@ -111,6 +111,17 @@ def configuracoes():
         else:
             config_hp_repasse.valor = hora_parada_repasse_str
 
+        # Salva Taxa Administrativa Motoristas
+        taxa_adm_motoristas_str = request.form.get('taxa_adm_motoristas')
+        config_taxa_adm = query_tenant(Configuracao).filter_by(
+            chave='taxa_adm_motoristas').first()
+        if not config_taxa_adm:
+            config_taxa_adm = Configuracao(
+                chave='taxa_adm_motoristas', valor=taxa_adm_motoristas_str or '10.00')
+            tenant_session.add(config_taxa_adm)
+        else:
+            config_taxa_adm.valor = taxa_adm_motoristas_str or '10.00'
+
         tenant_session.commit()
         flash('Configurações salvas com sucesso!', 'success')
         return redirect(url_for('admin.configuracoes'))
@@ -126,6 +137,8 @@ def configuracoes():
         chave='hora_parada_valor_periodo').first()
     config_hp_repasse = query_tenant(Configuracao).filter_by(
         chave='hora_parada_repasse_periodo').first()
+    config_taxa_adm = query_tenant(Configuracao).filter_by(
+        chave='taxa_adm_motoristas').first()
 
     # Valores padrão
     tempo_cortesia = config_cortesia.valor if config_cortesia else '30'
@@ -133,6 +146,7 @@ def configuracoes():
     limite_fretado = config_limite.valor if config_limite else '9'
     hora_parada_valor = config_hp_valor.valor if config_hp_valor else '71.02'
     hora_parada_repasse = config_hp_repasse.valor if config_hp_repasse else '29.00'
+    taxa_adm_motoristas = config_taxa_adm.valor if config_taxa_adm else '10.00'
 
     # ===== NOVO: Busca Timeout de Inatividade =====
     config_timeout = query_tenant(Configuracao).filter_by(
@@ -166,6 +180,7 @@ def configuracoes():
                            limite_fretado=limite_fretado,
                            hora_parada_valor=hora_parada_valor,
                            hora_parada_repasse=hora_parada_repasse,
+                           taxa_adm_motoristas=taxa_adm_motoristas,
                            timeout_inatividade=timeout_inatividade)
 
 # =============================================================================

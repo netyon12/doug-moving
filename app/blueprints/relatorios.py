@@ -23,7 +23,7 @@ from reportlab.lib import colors
 from reportlab.lib.units import inch
 
 from app import db
-from app.models import Solicitacao, Viagem, Motorista, Colaborador, Empresa, Planta, Bloco, Supervisor, Gerente
+from app.models import Solicitacao, Viagem, Motorista, Colaborador, Empresa, Planta, Bloco, Supervisor, Gerente, Configuracao
 from app import cache
 from sqlalchemy.orm import joinedload
 import locale
@@ -67,9 +67,14 @@ def get_user_supervisor_id():
 
 
 def get_user_motorista_id():
-    """Retorna o ID do motorista logado (None se não for motorista)"""
+    """Retorna o ID do motorista logado no banco tenant correto (None se não for motorista)"""
     if current_user.role == 'motorista' and current_user.motorista:
-        return current_user.motorista.id
+        # Buscar motorista no banco tenant por CPF
+        motorista_tenant = query_tenant(Motorista).filter_by(
+            cpf_cnpj=current_user.motorista.cpf_cnpj
+        ).first()
+        if motorista_tenant:
+            return motorista_tenant.id
     return None
 
 
@@ -586,6 +591,7 @@ def conferencia_motoristas():
         motoristas = query_tenant(Motorista).filter_by(id=motorista_id_usuario).all()
     else:
         motoristas = query_tenant(Motorista).all()
+    
 
     return render_template(
         'relatorios/conferencia_motoristas.html',
@@ -771,6 +777,12 @@ def dados_conferencia_motoristas():
         import math
         total_paginas = math.ceil(total_registros / por_pagina)
 
+        # Buscar taxa administrativa da configuração
+        config_taxa = query_tenant(Configuracao).filter_by(chave='taxa_adm_motoristas').first()
+        taxa_adm_percentual = float(config_taxa.valor) if config_taxa else 10.0
+        valor_taxa_adm = valor_total_repasse_global * (taxa_adm_percentual / 100)
+        valor_liquido_repasse = valor_total_repasse_global - valor_taxa_adm
+
         return jsonify({
             'success': True,
             'dados': dados,
@@ -780,7 +792,10 @@ def dados_conferencia_motoristas():
             'total_paginas': total_paginas,
             'por_pagina': por_pagina,
             # 🔧 CORREÇÃO: Usar valor total global
-            'valor_total_repasse': valor_total_repasse_global
+            'valor_total_repasse': valor_total_repasse_global,
+            'taxa_adm_percentual': taxa_adm_percentual,
+            'valor_taxa_adm': valor_taxa_adm,
+            'valor_liquido_repasse': valor_liquido_repasse
         })
 
     except Exception as e:

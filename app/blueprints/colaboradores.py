@@ -63,10 +63,8 @@ def cadastrar_colaborador():
                 return jsonify({'success': False, 'message': 'Planta é obrigatória'}), 400
 
             # Validação de matrícula duplicada
-            print(f"[DEBUG] Verificando matrícula: '{matricula}'")
             colaborador_existente = query_tenant(Colaborador).filter_by(
                 matricula=matricula).first()
-            print(f"[DEBUG] Colaborador existente: {colaborador_existente}")
             if colaborador_existente:
                 print(
                     f"[DEBUG] Matrícula duplicada encontrada: ID={colaborador_existente.id}, Nome={colaborador_existente.nome}")
@@ -74,7 +72,6 @@ def cadastrar_colaborador():
                     'success': False,
                     'message': 'Já existe um colaborador com esta matrícula'
                 }), 400
-            print(f"[DEBUG] Matrícula '{matricula}' está disponível")
 
             # Validação do telefone
             telefone = request.form.get('telefone', '').replace(' ', '').replace(
@@ -113,7 +110,6 @@ def cadastrar_colaborador():
             get_tenant_session().rollback()
 
             # Tratamento de erros específicos
-            print(f"[DEBUG] Exceção capturada: {type(e).__name__}: {str(e)}")
             error_message = 'Erro ao cadastrar colaborador'
 
             if 'unique constraint' in str(e).lower():

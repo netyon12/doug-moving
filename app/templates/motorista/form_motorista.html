@@ -153,25 +153,36 @@ $(document).ready(function() {
         });
     }
     
+    // Função para formatar CPF/CNPJ
+    function formatarCpfCnpj(valor) {
+        valor = valor.replace(/\D/g, '');
+        if (valor.length <= 11) {
+            // CPF
+            valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+            valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+            valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+        } else {
+            // CNPJ
+            valor = valor.substring(0, 14);
+            valor = valor.replace(/^(\d{2})(\d)/, '$1.$2');
+            valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            valor = valor.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
+        }
+        return valor;
+    }
+    
     // Máscara de CPF/CNPJ
     const campoCpfCnpj = document.getElementById('cpf_cnpj');
     if (campoCpfCnpj) {
+        // Formatar valor existente ao carregar a página
+        if (campoCpfCnpj.value) {
+            campoCpfCnpj.value = formatarCpfCnpj(campoCpfCnpj.value);
+        }
+        
+        // Formatar enquanto digita
         campoCpfCnpj.addEventListener('input', function(e) {
-            let valor = e.target.value.replace(/\D/g, '');
-            if (valor.length <= 11) {
-                // CPF
-                valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-                valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-                valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-            } else {
-                // CNPJ
-                valor = valor.substring(0, 14);
-                valor = valor.replace(/^(\d{2})(\d)/, '$1.$2');
-                valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-                valor = valor.replace(/\.(\d{3})(\d)/, '.$1/$2');
-                valor = valor.replace(/(\d{4})(\d)/, '$1-$2');
-            }
-            e.target.value = valor;
+            e.target.value = formatarCpfCnpj(e.target.value);
         });
     }
     

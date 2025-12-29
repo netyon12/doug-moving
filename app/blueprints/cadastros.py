@@ -1102,8 +1102,17 @@ def cadastrar_supervisor():
             # 1. Criar User
             hashed_password = generate_password_hash(
                 senha, method='pbkdf2:sha256')
+            
+            # Buscar slug da empresa para preencher empresas_acesso
+            empresa = query_tenant(Empresa).get(empresa_id)
+            empresas_acesso_slug = empresa.slug_licenciado if empresa else None
+            
             new_user = User(
-                email=email, password=hashed_password, role='supervisor')
+                email=email, 
+                password=hashed_password, 
+                role='supervisor',
+                empresas_acesso=empresas_acesso_slug  # ← CORREÇÃO: Preencher empresas_acesso
+            )
             get_tenant_session().add(new_user)
             get_tenant_session().flush()  # Gera o ID do user antes de criar o supervisor
 
@@ -1164,7 +1173,6 @@ def cadastrar_supervisor():
 
         except Exception as e:
             get_tenant_session().rollback()
-            print(f"[DEBUG] Exceção capturada: {type(e).__name__}: {str(e)}")
 
             error_message = 'Erro ao cadastrar supervisor'
             if 'unique constraint' in str(e).lower():

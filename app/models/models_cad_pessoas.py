@@ -13,6 +13,7 @@ Inclui também as tabelas de associação para relacionamentos N:N
 
 from app import db
 from datetime import datetime
+from app.config.tenant_utils import query_tenant
 
 
 class Gerente(db.Model):
@@ -209,7 +210,7 @@ class Motorista(db.Model):
 
         # Verifica se tem viagem em andamento
         from app.models import Viagem
-        viagem_em_andamento = Viagem.query.filter_by(
+        viagem_em_andamento = query_tenant(Viagem).filter_by(
             motorista_id=self.id,
             status='Em Andamento'
         ).first()
@@ -217,7 +218,7 @@ class Motorista(db.Model):
             return 'ocupado'
 
         # Verifica se tem viagem agendada
-        viagem_agendada = Viagem.query.filter_by(
+        viagem_agendada = query_tenant(Viagem).filter_by(
             motorista_id=self.id,
             status='Agendada'
         ).first()

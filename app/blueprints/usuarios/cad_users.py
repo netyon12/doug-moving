@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from ... import db
 from ...models import User, Gerente, Supervisor, Motorista
 from ...decorators import role_required
+from ...config.tenant_utils import query_tenant  # ← CORREÇÃO: Importar query_tenant
 
 # Define o Blueprint
 cad_users_bp = Blueprint('cad_users', __name__, url_prefix='/configuracoes/usuarios')
@@ -24,7 +25,7 @@ ROLES_VALIDOS = ['admin', 'gerente', 'supervisor', 'motorista', 'operador']
 @role_required('admin', 'operador')
 def listar_usuarios():
     """Lista todos os usuários do sistema."""
-    usuarios = User.query.order_by(User.email).all()
+    usuarios = query_tenant(User).order_by(User.email).all()  # ← CORREÇÃO: Usar query_tenant
     return render_template('config/cad_users.html', usuarios=usuarios, roles=ROLES_VALIDOS)
 
 # =============================================================================
@@ -51,7 +52,7 @@ def incluir_usuario():
             return redirect(url_for('cad_users.incluir_usuario'))
 
         # 1. Verifica se o email já existe
-        if User.query.filter_by(email=email).first():
+        if query_tenant(User).filter_by(email=email).first():
             flash('Já existe um usuário cadastrado com este e-mail.', 'danger')
             return redirect(url_for('cad_users.incluir_usuario'))
 
@@ -89,7 +90,7 @@ def incluir_usuario():
 @role_required('admin', 'operador')
 def editar_usuario(user_id):
     """Edita um usuário existente."""
-    usuario = User.query.get_or_404(user_id)
+    usuario = query_tenant(User).get_or_404(user_id)
 
     if request.method == 'POST':
         email = request.form.get('email').strip()
@@ -107,7 +108,7 @@ def editar_usuario(user_id):
 
         try:
             # 1. Verifica unicidade do email (se mudou)
-            if email != usuario.email and User.query.filter_by(email=email).first():
+            if email != usuario.email and query_tenant(User).filter_by(email=email).first():
                 flash('Já existe outro usuário cadastrado com este e-mail.', 'danger')
                 return redirect(url_for('cad_users.listar_usuarios'))
 
@@ -141,7 +142,7 @@ def editar_usuario(user_id):
 @role_required('admin') # Apenas Admin pode excluir
 def excluir_usuario(user_id):
     """Exclui um usuário, verificando vínculos."""
-    usuario = User.query.get_or_404(user_id)
+    usuario = query_tenant(User).get_or_404(user_id)
 
     # 1. Verifica vínculos (Regra de Negócio)
     if usuario.gerente or usuario.supervisor or usuario.motorista:

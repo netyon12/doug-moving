@@ -1,9 +1,10 @@
-# Em app/blueprints/gerente.py
+# app/blueprints/gerente.py
 
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
-from ..models import Solicitacao, Supervisor, Colaborador, Viagem, Bloco
+from ..models import Solicitacao, Supervisor, Colaborador, Viagem, Bloco, Motorista
 from ..decorators import permission_required
+from ..config.tenant_utils import query_tenant, get_tenant_session
 from datetime import datetime, date
 from sqlalchemy import func
 
@@ -14,99 +15,139 @@ gerente_bp = Blueprint('gerente', __name__, url_prefix='/gerente')
 @login_required
 @permission_required(['gerente'])
 def dashboard_gerente():
+    """Dashboard do Gerente com KPIs coloridos e dados do banco tenant correto"""
+    
     if current_user.role != 'gerente':
         flash('Acesso negado.', 'danger')
         return redirect(url_for('home'))
 
-    gerente_profile = current_user.gerente
-    if not gerente_profile:
+    # CORREÇÃO: Buscar gerente usando query_tenant
+    gerente_profile = query_tenant(current_user.__class__).get(current_user.id)
+    if not gerente_profile or not hasattr(gerente_profile, 'gerente'):
         flash('Perfil de gerente não encontrado. Contate o administrador.', 'danger')
         return redirect(url_for('auth.logout'))
+    
+    gerente_data = gerente_profile.gerente
 
-    # Obter IDs dos supervisores gerenciados
-    ids_supervisores = [s.id for s in Supervisor.query.filter_by(
-        gerente_id=gerente_profile.id).all()]
+    # Obter IDs dos supervisores gerenciados (do banco tenant)
+    supervisores = query_tenant(Supervisor).filter_by(
+        gerente_id=gerente_data.id
+    ).all()
+    ids_supervisores = [s.id for s in supervisores]
 
-    # KPI 1: Solicitações Pendentes
-    solicitacoes_pendentes = Solicitacao.query.filter(
-        Solicitacao.supervisor_id.in_(ids_supervisores),
+    # ========== KPIs DE SOLICITAÇÕES ==========
+    
+    # Solicitações Pendentes
+    solicitacoes_pendentes = query_tenant(Solicitacao).filter(
+        Solicitacao.supervisor_id.in_(ids_supervisores) if ids_supervisores else False,
         Solicitacao.status == 'Pendente'
-    ).count()
+    ).count() if ids_supervisores else 0
 
-    # KPI 2: Solicitações Agendadas
-    solicitacoes_agendadas = Solicitacao.query.filter(
-        Solicitacao.supervisor_id.in_(ids_supervisores),
+    # Solicitações Agendadas
+    solicitacoes_agendadas = query_tenant(Solicitacao).filter(
+        Solicitacao.supervisor_id.in_(ids_supervisores) if ids_supervisores else False,
         Solicitacao.status == 'Agendada'
-    ).count()
+    ).count() if ids_supervisores else 0
 
-    # KPI 3: Viagens em Andamento (buscar através das solicitações)
-    from ..models import db
-    viagens_andamento = db.session.query(Viagem).join(Solicitacao).filter(
-        Solicitacao.supervisor_id.in_(ids_supervisores),
-        Viagem.status == 'Em Andamento'
-    ).distinct().count()
+    # Solicitações Em Andamento
+    solicitacoes_andamento = query_tenant(Solicitacao).filter(
+        Solicitacao.supervisor_id.in_(ids_supervisores) if ids_supervisores else False,
+        Solicitacao.status == 'Em Andamento'
+    ).count() if ids_supervisores else 0
 
-    # KPI 4: Taxa de Ocupação Média (calcular com base nas solicitações)
-    # Buscar configuração de max_passageiros
-    from ..models import Configuracao
-    config_max_pass = Configuracao.query.filter_by(
-        chave='MAX_PASSAGEIROS_POR_VIAGEM').first()
-    max_passageiros = int(config_max_pass.valor) if config_max_pass else 4
-
-    # Calcular taxa de ocupação média das viagens agendadas/em andamento
-    viagens_ativas = db.session.query(Viagem).join(Solicitacao).filter(
-        Solicitacao.supervisor_id.in_(ids_supervisores),
-        Viagem.status.in_(['Agendada', 'Em Andamento'])
-    ).distinct().all()
-
-    if viagens_ativas:
-        taxas = []
-        for viagem in viagens_ativas:
-            num_passageiros = len(viagem.solicitacoes)
-            taxa = (num_passageiros / max_passageiros) * \
-                100 if max_passageiros > 0 else 0
-            taxas.append(taxa)
-        taxa_ocupacao_media = sum(taxas) / len(taxas) if taxas else 0
-    else:
-        taxa_ocupacao_media = 0
-
-    # KPI 5: Finalizadas Hoje
+    # Solicitações Finalizadas (Hoje)
     hoje = date.today()
-    finalizadas_hoje = Solicitacao.query.filter(
-        Solicitacao.supervisor_id.in_(ids_supervisores),
+    solicitacoes_finalizadas_hoje = query_tenant(Solicitacao).filter(
+        Solicitacao.supervisor_id.in_(ids_supervisores) if ids_supervisores else False,
         Solicitacao.status == 'Finalizada',
         func.date(Solicitacao.data_criacao) == hoje
-    ).count()
+    ).count() if ids_supervisores else 0
 
-    # KPI 6: Canceladas Hoje
-    canceladas_hoje = Solicitacao.query.filter(
-        Solicitacao.supervisor_id.in_(ids_supervisores),
-        Solicitacao.status == 'Cancelada',
-        func.date(Solicitacao.data_criacao) == hoje
-    ).count()
+    # ========== KPIs DE VIAGENS ==========
+    
+    # Buscar IDs de viagens das solicitações dos supervisores
+    if ids_supervisores:
+        viagens_ids = get_tenant_session().query(Solicitacao.viagem_id).filter(
+            Solicitacao.supervisor_id.in_(ids_supervisores),
+            Solicitacao.viagem_id.isnot(None)
+        ).distinct().all()
+        viagens_ids = [v[0] for v in viagens_ids]
+    else:
+        viagens_ids = []
 
-    # KPI 7: Total de Supervisores Ativos
-    total_supervisores = len(ids_supervisores)
+    # Viagens Pendentes
+    viagens_pendentes = query_tenant(Viagem).filter(
+        Viagem.id.in_(viagens_ids) if viagens_ids else False,
+        Viagem.status == 'Pendente'
+    ).count() if viagens_ids else 0
 
-    # KPI 8: Total de Colaboradores de Todas as Plantas do Gerente
-    plantas_ids = [p.id for p in gerente_profile.plantas.all()]
+    # Viagens Agendadas
+    viagens_agendadas = query_tenant(Viagem).filter(
+        Viagem.id.in_(viagens_ids) if viagens_ids else False,
+        Viagem.status == 'Agendada'
+    ).count() if viagens_ids else 0
+
+    # Viagens Em Andamento
+    viagens_andamento = query_tenant(Viagem).filter(
+        Viagem.id.in_(viagens_ids) if viagens_ids else False,
+        Viagem.status == 'Em Andamento'
+    ).count() if viagens_ids else 0
+
+    # Viagens Finalizadas (Hoje)
+    viagens_finalizadas_hoje = query_tenant(Viagem).filter(
+        Viagem.id.in_(viagens_ids) if viagens_ids else False,
+        Viagem.status == 'Finalizada',
+        func.date(Viagem.data_finalizacao) == hoje
+    ).count() if viagens_ids else 0
+
+    # ========== KPIs DE RECURSOS ==========
+    
+    # Total de Colaboradores (CORREÇÃO: buscar do banco tenant)
+    # Buscar plantas do gerente
+    plantas_ids = []
+    if hasattr(gerente_data, 'plantas'):
+        plantas_ids = [p.id for p in gerente_data.plantas.all()]
+    
     if plantas_ids:
-        total_colaboradores = Colaborador.query.filter(
+        total_colaboradores = query_tenant(Colaborador).filter(
             Colaborador.planta_id.in_(plantas_ids)
         ).count()
     else:
-        total_colaboradores = 0
+        # Se não tem plantas específicas, contar todos os colaboradores do tenant
+        total_colaboradores = query_tenant(Colaborador).count()
+
+    # Motoristas Ativos (status = 'Disponível' ou 'Ocupado')
+    motoristas_ativos = query_tenant(Motorista).filter(
+        Motorista.status.in_(['Disponível', 'Ocupado'])
+    ).count()
+
+    # Total de Supervisores Ativos
+    total_supervisores = len(ids_supervisores)
+
+    # Canceladas Hoje
+    canceladas_hoje = query_tenant(Solicitacao).filter(
+        Solicitacao.supervisor_id.in_(ids_supervisores) if ids_supervisores else False,
+        Solicitacao.status == 'Cancelada',
+        func.date(Solicitacao.data_criacao) == hoje
+    ).count() if ids_supervisores else 0
 
     return render_template(
         'gerente/dashboard_gerente.html',
+        # KPIs de Solicitações
         solicitacoes_pendentes=solicitacoes_pendentes,
         solicitacoes_agendadas=solicitacoes_agendadas,
+        solicitacoes_andamento=solicitacoes_andamento,
+        solicitacoes_finalizadas_hoje=solicitacoes_finalizadas_hoje,
+        # KPIs de Viagens
+        viagens_pendentes=viagens_pendentes,
+        viagens_agendadas=viagens_agendadas,
         viagens_andamento=viagens_andamento,
-        taxa_ocupacao_media=taxa_ocupacao_media,
-        finalizadas_hoje=finalizadas_hoje,
-        canceladas_hoje=canceladas_hoje,
+        viagens_finalizadas_hoje=viagens_finalizadas_hoje,
+        # KPIs de Recursos
+        total_colaboradores=total_colaboradores,
+        motoristas_ativos=motoristas_ativos,
         total_supervisores=total_supervisores,
-        total_colaboradores=total_colaboradores
+        canceladas_hoje=canceladas_hoje
     )
 
 
@@ -124,13 +165,16 @@ def solicitacoes():
         flash('Perfil de gerente não encontrado.', 'danger')
         return redirect(url_for('auth.logout'))
 
-    # Obter IDs dos supervisores gerenciados
-    ids_supervisores = [s.id for s in Supervisor.query.filter_by(
-        gerente_id=gerente_profile.id).all()]
+    # Buscar supervisores do gerente (do banco tenant)
+    supervisores = query_tenant(Supervisor).filter_by(
+        gerente_id=gerente_profile.id
+    ).all()
+    ids_supervisores = [s.id for s in supervisores]
 
-    # Query base
-    query = Solicitacao.query.filter(
-        Solicitacao.supervisor_id.in_(ids_supervisores))
+    # Query base (do banco tenant)
+    query = query_tenant(Solicitacao).filter(
+        Solicitacao.supervisor_id.in_(ids_supervisores) if ids_supervisores else False
+    ) if ids_supervisores else query_tenant(Solicitacao).filter(False)
 
     # Aplicar filtros
     id_solicitacao = request.args.get('id_solicitacao')
@@ -187,10 +231,12 @@ def solicitacoes():
     # Executar query
     solicitacoes = query.order_by(Solicitacao.id.desc()).all()
 
-    # Buscar supervisores e blocos para os filtros
-    todos_supervisores = Supervisor.query.filter(
-        Supervisor.id.in_(ids_supervisores)).order_by(Supervisor.nome).all()
-    todos_blocos = Bloco.query.order_by(Bloco.codigo_bloco).all()
+    # Buscar supervisores e blocos para os filtros (do banco tenant)
+    todos_supervisores = query_tenant(Supervisor).filter(
+        Supervisor.id.in_(ids_supervisores) if ids_supervisores else False
+    ).order_by(Supervisor.nome).all() if ids_supervisores else []
+    
+    todos_blocos = query_tenant(Bloco).order_by(Bloco.codigo_bloco).all()
 
     return render_template(
         'gerente/solicitacoes_gerente.html',
@@ -210,12 +256,18 @@ def visualizar_solicitacao(id):
         flash('Acesso negado.', 'danger')
         return redirect(url_for('home'))
 
-    solicitacao = Solicitacao.query.get_or_404(id)
+    # Buscar solicitação do banco tenant
+    solicitacao = query_tenant(Solicitacao).get(id)
+    if not solicitacao:
+        flash('Solicitação não encontrada.', 'danger')
+        return redirect(url_for('gerente.solicitacoes'))
 
     # Verifica se a solicitação pertence a um supervisor gerenciado
     gerente_profile = current_user.gerente
-    ids_supervisores = [s.id for s in Supervisor.query.filter_by(
-        gerente_id=gerente_profile.id).all()]
+    supervisores = query_tenant(Supervisor).filter_by(
+        gerente_id=gerente_profile.id
+    ).all()
+    ids_supervisores = [s.id for s in supervisores]
 
     if solicitacao.supervisor_id not in ids_supervisores:
         flash('Você não tem permissão para visualizar esta solicitação.', 'danger')
