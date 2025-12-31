@@ -288,7 +288,7 @@ def nova_solicitacao():
                     return redirect(url_for('admin.nova_solicitacao'))
                 supervisor_id = supervisor.id
             elif current_user.role == 'gerente':
-                # Gerente funciona similar ao supervisor
+                # Gerente pode criar solicitações para suas plantas
                 planta_id = request.form.get('planta_id')
 
                 if not planta_id:
@@ -303,15 +303,15 @@ def nova_solicitacao():
 
                 empresa_id = planta.empresa_id
 
-                # Busca supervisor da planta que pertence ao gerente
+                # Busca QUALQUER supervisor da planta (não precisa ser do gerente)
+                # Gerente tem permissão para criar solicitações nas suas plantas
                 supervisor = query_tenant(Supervisor).join(
                     Supervisor.plantas).filter(
-                        Planta.id == planta_id,
-                        Supervisor.gerente_id == current_user.gerente.id
+                        Planta.id == planta_id
                 ).first()
 
                 if not supervisor:
-                    flash('Nenhum supervisor encontrado para esta planta.', 'danger')
+                    flash('Nenhum supervisor encontrado para esta planta. Entre em contato com o administrador.', 'danger')
                     return redirect(url_for('admin.nova_solicitacao'))
 
                 supervisor_id = supervisor.id
@@ -592,7 +592,12 @@ def nova_solicitacao():
                     flash(mensagem_sucesso, 'success')
                 if mensagem_duplicadas:
                     flash(mensagem_duplicadas, 'warning')
-                return redirect(url_for('admin.solicitacoes'))
+                
+                # Redireciona para a rota correta baseado no perfil
+                if current_user.role == 'gerente':
+                    return redirect(url_for('gerente.solicitacoes'))
+                else:
+                    return redirect(url_for('admin.solicitacoes'))
 
         except Exception as e:
             get_tenant_session().rollback()
@@ -639,28 +644,19 @@ def nova_solicitacao():
         # Passa as plantas para o template
         return render_template('nova_solicitacao.html', plantas_supervisor=plantas_supervisor)
 
-    # Se for gerente, filtra plantas dos supervisores associados
+    # Se for gerente, busca plantas diretamente associadas ao gerente
     elif current_user.role == 'gerente':
         if not current_user.gerente:
             flash('Perfil de gerente não encontrado.', 'danger')
             return redirect(url_for('home'))
 
-        # Busca todos os supervisores do gerente
-        supervisores = query_tenant(Supervisor).filter_by(
-            gerente_id=current_user.gerente.id).all()
-
-        # Busca todas as plantas dos supervisores
-        plantas_gerente = []
-        for supervisor in supervisores:
-            plantas_gerente.extend(supervisor.plantas)
-
-        # Remove duplicatas (caso mesma planta tenha múltiplos supervisores)
-        plantas_gerente = list(set(plantas_gerente))
+        # Busca plantas diretamente associadas ao gerente (relacionamento N:N)
+        plantas_gerente = current_user.gerente.plantas.all()
 
         # Se não tiver plantas, mostra aviso
         if not plantas_gerente:
             flash(
-                'Nenhuma planta encontrada para seus supervisores. Entre em contato com o administrador.', 'warning')
+                'Nenhuma planta encontrada no seu cadastro. Entre em contato com o administrador.', 'warning')
             return redirect(url_for('home'))
 
         # Passa as plantas para o template (usando mesmo nome que supervisor)
@@ -831,13 +827,17 @@ def excluir_solicitacao(id):
         # enquanto estamos validando a exclusão
         solicitacao = query_tenant(Solicitacao).filter_by(
             id=id
-        ).with_for_update().first_or_404()
+        ).with_for_update().first()
+        
+        if not solicitacao:
+            flash('Solicitação não encontrada.', 'danger')
+            return redirect(url_for('admin.solicitacoes'))
 
-        # Verifica permissão
+        # Verifica permissão (supervisor só pode excluir suas próprias solicitações)
         if current_user.role == 'supervisor':
-            if solicitacao.supervisor_id != current_user.supervisor.id:
+            if solicitacao.created_by_user_id != current_user.id:
                 get_tenant_session().rollback()  # Libera lock
-                flash('Você não tem permissão para excluir esta solicitação.', 'danger')
+                flash('Você só pode excluir solicitações criadas por você.', 'danger')
                 return redirect(url_for('admin.solicitacoes'))
 
         # [FIX] CORREÇÃO CRÍTICA: Verifica se tem viagem associada

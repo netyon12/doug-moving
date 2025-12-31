@@ -897,7 +897,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Event listener para o botão de concluir
                 document.getElementById('btn-progresso-ok').onclick = function() {
+                    {% if current_user.role == 'gerente' %}
+                    window.location.href = '{{ url_for("gerente.solicitacoes") }}';
+                    {% else %}
                     window.location.href = '{{ url_for("admin.solicitacoes") }}';
+                    {% endif %}
                 };
             } else {
                 // ❌ Erro no processamento

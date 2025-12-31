@@ -79,8 +79,12 @@ def agrupamento():
     bloco_id = request.args.get('bloco_id', '')
     status_filtro = request.args.get('status', 'Pendente')
 
-    # Query base
-    query = query_tenant(Solicitacao).join(Colaborador).join(Supervisor)
+    # Query base (com eager loading)
+    query = query_tenant(Solicitacao).options(
+        db.joinedload(Solicitacao.created_by),
+        db.joinedload(Solicitacao.colaborador),
+        db.joinedload(Solicitacao.supervisor)
+    ).join(Colaborador).join(Supervisor)
 
     # Filtro por data (considera todos os tipos de horário)
     if data_filtro:

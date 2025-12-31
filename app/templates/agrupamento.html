@@ -117,7 +117,7 @@
                 <thead class="table-dark">
                     <tr>
                         <th>ID Solic.</th>
-                        <th>Supervisor</th>
+                        <th>Solicitante</th>
                         <th>Colaborador</th>
                         <th>Bloco</th>
                         <th>Tipo Corrida</th>
@@ -132,7 +132,7 @@
                         data-bloco-id="{{ solicitacao.colaborador.bloco_id or '' }}"
                         data-tipo="{{ solicitacao.tipo_corrida }}">
                         <td><strong>#{{ solicitacao.id }}</strong></td>
-                        <td>{{ solicitacao.supervisor.nome }}</td>
+                        <td>{{ solicitacao.created_by.nome if solicitacao.created_by else 'N/A' }}</td>
                         <td>{{ solicitacao.colaborador.nome }}</td>
                         <td>
                             <span class="badge bg-info">

@@ -2,11 +2,12 @@
 
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from flask_login import login_required, current_user
-from ..models import Solicitacao, Supervisor, Colaborador, Viagem, Bloco, Motorista
+from ..models import Solicitacao, Supervisor, Colaborador, Viagem, Bloco, Motorista, Planta
 from ..decorators import permission_required
 from ..config.tenant_utils import query_tenant, get_tenant_session
 from datetime import datetime, date
 from sqlalchemy import func
+from sqlalchemy import orm as db
 
 gerente_bp = Blueprint('gerente', __name__, url_prefix='/gerente')
 
@@ -165,16 +166,32 @@ def solicitacoes():
         flash('Perfil de gerente não encontrado.', 'danger')
         return redirect(url_for('auth.logout'))
 
-    # Buscar supervisores do gerente (do banco tenant)
-    supervisores = query_tenant(Supervisor).filter_by(
-        gerente_id=gerente_profile.id
-    ).all()
-    ids_supervisores = [s.id for s in supervisores]
+    # Buscar plantas do gerente (relacionamento direto N:N)
+    plantas_gerente = gerente_profile.plantas.all()
+    ids_plantas = [p.id for p in plantas_gerente]
 
-    # Query base (do banco tenant)
-    query = query_tenant(Solicitacao).filter(
-        Solicitacao.supervisor_id.in_(ids_supervisores) if ids_supervisores else False
-    ) if ids_supervisores else query_tenant(Solicitacao).filter(False)
+    # Query base: Solicitações das plantas do gerente (com eager loading)
+    if ids_plantas:
+        query = query_tenant(Solicitacao).options(
+            db.joinedload(Solicitacao.colaborador),
+            db.joinedload(Solicitacao.supervisor),
+            db.joinedload(Solicitacao.bloco),
+            db.joinedload(Solicitacao.viagem),
+            db.joinedload(Solicitacao.created_by)
+        ).filter(
+            Solicitacao.planta_id.in_(ids_plantas)
+        )
+    else:
+        # Se gerente não tem plantas, não retorna nada
+        query = query_tenant(Solicitacao).filter(False)
+
+    # Buscar supervisores das plantas do gerente (para filtros)
+    supervisores = query_tenant(Supervisor).join(
+        Supervisor.plantas
+    ).filter(
+        Planta.id.in_(ids_plantas) if ids_plantas else False
+    ).distinct().all() if ids_plantas else []
+    ids_supervisores = [s.id for s in supervisores]
 
     # Aplicar filtros
     id_solicitacao = request.args.get('id_solicitacao')
@@ -223,7 +240,6 @@ def solicitacoes():
         query = query.filter(Solicitacao.bloco_id == int(bloco_id))
 
     if planta:
-        from ..models import Planta
         query = query.join(Colaborador).join(Planta).filter(
             Planta.nome.ilike(f'%{planta}%')
         )
@@ -262,15 +278,50 @@ def visualizar_solicitacao(id):
         flash('Solicitação não encontrada.', 'danger')
         return redirect(url_for('gerente.solicitacoes'))
 
-    # Verifica se a solicitação pertence a um supervisor gerenciado
+    # Verifica se a solicitação pertence a uma planta do gerente
     gerente_profile = current_user.gerente
-    supervisores = query_tenant(Supervisor).filter_by(
-        gerente_id=gerente_profile.id
-    ).all()
-    ids_supervisores = [s.id for s in supervisores]
+    plantas_gerente = gerente_profile.plantas.all()
+    ids_plantas = [p.id for p in plantas_gerente]
 
-    if solicitacao.supervisor_id not in ids_supervisores:
+    if solicitacao.planta_id not in ids_plantas:
         flash('Você não tem permissão para visualizar esta solicitação.', 'danger')
         return redirect(url_for('gerente.solicitacoes'))
 
     return render_template('gerente/visualizar_solicitacao_gerente.html', solicitacao=solicitacao)
+
+
+@gerente_bp.route('/solicitacoes/<int:id>/excluir', methods=['POST'])
+@login_required
+@permission_required(['gerente'])
+def excluir_solicitacao(id):
+    """Rota para excluir uma solicitação (apenas Pendentes criadas pelo próprio gerente)"""
+    if current_user.role != 'gerente':
+        flash('Acesso negado.', 'danger')
+        return redirect(url_for('home'))
+
+    # Buscar solicitação do banco tenant
+    solicitacao = query_tenant(Solicitacao).get(id)
+    if not solicitacao:
+        flash('Solicitação não encontrada.', 'danger')
+        return redirect(url_for('gerente.solicitacoes'))
+
+    # Verifica se a solicitação foi criada pelo gerente logado
+    if solicitacao.created_by_user_id != current_user.id:
+        flash('Você não tem permissão para excluir esta solicitação.', 'danger')
+        return redirect(url_for('gerente.solicitacoes'))
+
+    # Verifica se a solicitação está Pendente
+    if solicitacao.status != 'Pendente':
+        flash('Apenas solicitações com status "Pendente" podem ser excluídas.', 'warning')
+        return redirect(url_for('gerente.solicitacoes'))
+
+    try:
+        session = get_tenant_session()
+        session.delete(solicitacao)
+        session.commit()
+        flash(f'Solicitação #{id} excluída com sucesso!', 'success')
+    except Exception as e:
+        session.rollback()
+        flash(f'Erro ao excluir solicitação: {str(e)}', 'danger')
+
+    return redirect(url_for('gerente.solicitacoes'))

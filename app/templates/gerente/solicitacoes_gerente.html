@@ -106,7 +106,7 @@
                 <th>Tipo</th>
                 <th>Data da Viagem</th>
                 <th>Bloco</th>
-                <th>Supervisor</th>
+                <th>Solicitante</th>
                 <th>Status</th>
                 <th class="text-center">Ações</th>
             </tr>
@@ -141,7 +141,7 @@
                     {% endif %}
                 </td>
                 <td>{{ solicitacao.colaborador.bloco.codigo_bloco if solicitacao.colaborador and solicitacao.colaborador.bloco else 'N/A' }}</td>
-                <td>{{ solicitacao.supervisor.nome if solicitacao.supervisor else 'N/A' }}</td>
+                <td>{{ solicitacao.created_by.nome if solicitacao.created_by else 'N/A' }}</td>
                 <td>
                     {% if solicitacao.status == 'Pendente' %}
                         <span class="badge bg-warning text-dark">{{ solicitacao.status }}</span>
@@ -161,11 +161,8 @@
                         <i class="bi bi-eye"></i>
                     </a>
                     
-                    <!-- Botões Editar e Excluir - apenas para Pendentes e roles específicos -->
-                    {% if solicitacao.status == 'Pendente' and current_user.role in ['supervisor', 'admin'] %}
-                    <a href="{{ url_for('gerente.editar_solicitacao', id=solicitacao.id) }}" class="btn btn-sm btn-warning" title="Editar">
-                        <i class="bi bi-pencil"></i>
-                    </a>
+                    <!-- Botão Excluir - apenas para Pendentes criadas pelo próprio gerente -->
+                    {% if solicitacao.status == 'Pendente' and solicitacao.created_by_user_id == current_user.id %}
                     <button type="button" class="btn btn-sm btn-danger" title="Excluir" data-solicitacao-id="{{ solicitacao.id }}" onclick="confirmarExclusao(this.getAttribute('data-solicitacao-id'))">
                         <i class="bi bi-trash"></i>
                     </button>
@@ -193,7 +190,7 @@ function confirmarExclusao(solicitacaoId) {
         // Cria um formulário e submete
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = '/admin/solicitacoes/' + solicitacaoId + '/excluir';
+        form.action = '/gerente/solicitacoes/' + solicitacaoId + '/excluir';
         
         // Adiciona token CSRF se necessário
         const csrfToken = document.querySelector('meta[name="csrf-token"]');

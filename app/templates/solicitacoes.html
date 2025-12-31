@@ -182,7 +182,7 @@
                 </td>
                 {% if current_user.role in ['supervisor', 'admin'] %}
                 <td class="text-center">
-                    {% if solicitacao.status == 'Pendente' %}
+                    {% if solicitacao.status == 'Pendente' and (current_user.role == 'admin' or solicitacao.created_by_user_id == current_user.id) %}
                     <a href="{{ url_for('admin.editar_solicitacao', id=solicitacao.id) }}" class="btn btn-sm btn-warning" title="Editar">
                         <i class="bi bi-pencil"></i>
                     </a>
