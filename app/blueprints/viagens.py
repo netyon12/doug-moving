@@ -369,7 +369,7 @@ def associar_motorista(viagem_id):
 
 @admin_bp.route('/viagens/<int:viagem_id>/cancelar', methods=['POST'])
 @login_required
-@permission_required(['admin', 'operador'])
+@permission_required(['admin', 'operador', 'gerente', 'supervisor'])
 def cancelar_viagem(viagem_id):
     """Cancela uma viagem e retorna as solicitações para status Pendente"""
     logger.info(f"[CANCEL] Iniciando cancelamento da viagem {viagem_id}")
@@ -385,9 +385,38 @@ def cancelar_viagem(viagem_id):
 
         logger.info(f"[...] Cancelando viagem {viagem_id} - Motivo: {motivo}")
 
-        # Verifica se a viagem pode ser cancelada
+        # Verifica se a viagem pode ser cancelada (regras por status)
         if viagem.status in ['Finalizada', 'Cancelada']:
             return jsonify({'success': False, 'message': 'Esta viagem não pode ser cancelada'}), 400
+        
+        # Em Andamento: NINGUÉM pode cancelar (deve finalizar)
+        if viagem.status == 'Em Andamento':
+            return jsonify({
+                'success': False, 
+                'message': 'Viagens em andamento não podem ser canceladas. Aguarde a finalização.'
+            }), 400
+        
+        # Agendada: Apenas Admin e Operador podem cancelar
+        if viagem.status == 'Agendada':
+            if current_user.role not in ['admin', 'operador']:
+                return jsonify({
+                    'success': False, 
+                    'message': 'Viagens agendadas só podem ser canceladas por Admin ou Operador (motorista já foi notificado).'
+                }), 403
+        
+        # Pendente: Verifica permissão por perfil
+        if viagem.status == 'Pendente':
+            if current_user.role in ['gerente', 'supervisor']:
+                # Gerente e Supervisor: Apenas viagens criadas por eles
+                from app.utils.user_sync import get_current_user_id_in_current_db
+                user_id_atual = get_current_user_id_in_current_db()
+                
+                if viagem.created_by_user_id != user_id_atual:
+                    return jsonify({
+                        'success': False, 
+                        'message': 'Você só pode cancelar viagens Pendentes criadas por você.'
+                    }), 403
+            # Admin e Operador: Podem cancelar qualquer viagem Pendente
 
         # Atualiza status da viagem
         viagem.status = 'Cancelada'

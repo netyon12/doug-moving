@@ -835,12 +835,38 @@ def excluir_solicitacao(id):
             flash('Solicitação não encontrada.', 'danger')
             return redirect(url_for('admin.solicitacoes'))
 
-        # Verifica permissão (supervisor só pode excluir suas próprias solicitações)
+        # Verifica permissão por perfil
         if current_user.role == 'supervisor':
+            # Supervisor: Apenas suas solicitações
             if solicitacao.created_by_user_id != current_user.id:
                 get_tenant_session().rollback()  # Libera lock
                 flash('Você só pode excluir solicitações criadas por você.', 'danger')
                 return redirect(url_for('admin.solicitacoes'))
+        
+        elif current_user.role == 'gerente':
+            # Gerente: Suas solicitações + solicitações de supervisores das suas plantas
+            from app.models import Gerente, Supervisor
+            gerente = query_tenant(Gerente).filter_by(user_id=current_user.id).first()
+            
+            if not gerente:
+                get_tenant_session().rollback()
+                flash('Gerente não encontrado.', 'danger')
+                return redirect(url_for('admin.solicitacoes'))
+            
+            # Busca IDs dos supervisores das plantas do gerente
+            plantas_ids = [p.id for p in gerente.plantas.all()]
+            supervisores_ids = query_tenant(Supervisor).filter(
+                Supervisor.planta_id.in_(plantas_ids)
+            ).with_entities(Supervisor.user_id).all()
+            supervisores_ids = [s[0] for s in supervisores_ids]
+            
+            # Verifica se solicitação foi criada pelo gerente ou por supervisor abaixo dele
+            if solicitacao.created_by_user_id not in [current_user.id] + supervisores_ids:
+                get_tenant_session().rollback()
+                flash('Você só pode excluir solicitações criadas por você ou por supervisores da sua planta.', 'danger')
+                return redirect(url_for('admin.solicitacoes'))
+        
+        # Admin e Operador: Sem restrição (podem excluir qualquer)
 
         # [FIX] CORREÇÃO CRÍTICA: Verifica se tem viagem associada
         # Re-validação após lock (pode ter sido agrupada durante validação)
