@@ -7,7 +7,6 @@ Agrupamento de solicitações.
 
 from ..utils.admin_audit import log_audit, log_viagem_audit, AuditAction
 from app.services.notification_service import notification_service
-from app.utils.user_sync import get_current_user_id_in_current_db
 from .admin import admin_bp
 from app import query_filters
 from app.decorators import agrupamento_required
@@ -82,6 +81,7 @@ def agrupamento():
 
     # Query base (com eager loading)
     query = query_tenant(Solicitacao).options(
+        db.joinedload(Solicitacao.created_by),
         db.joinedload(Solicitacao.colaborador),
         db.joinedload(Solicitacao.supervisor)
     ).join(Colaborador).join(Supervisor)
@@ -115,7 +115,7 @@ def agrupamento():
 
     # Filtro por planta (opcional - apenas para Gerente)
     planta_filtro = request.args.get('planta_id')
-    if planta_filtro and planta_filtro != 'todas' and current_user.role == 'gerente':
+    if planta_filtro and current_user.role == 'gerente':
         # Join com Colaborador já existe na query base (linha 80)
         query = query.filter(Colaborador.planta_id == int(planta_filtro))
 
@@ -148,13 +148,12 @@ def agrupamento():
         )
     ).all()
 
-    # Busca plantas para o filtro (todos os perfis)
+    # Busca plantas do gerente (se aplicável)
+    plantas_gerente = []
     if current_user.role == 'gerente':
         gerente = query_tenant(Gerente).filter_by(user_id=current_user.id).first()
-        plantas_filtro = gerente.plantas.all() if gerente else []
-    else:
-        # Admin e Operador veem todas as plantas
-        plantas_filtro = query_tenant(Planta).order_by(Planta.nome).all()
+        if gerente:
+            plantas_gerente = gerente.plantas.all()
 
     # Calcula estatísticas
     total_solicitacoes = len(solicitacoes)
@@ -176,7 +175,7 @@ def agrupamento():
         viagens_estimadas=viagens_estimadas,
         passageiros_por_viagem=passageiros_por_viagem,
         todos_blocos=todos_blocos,
-        plantas_filtro=plantas_filtro,
+        plantas_gerente=plantas_gerente,  # NOVO
         filtros=request.args,
         data_hoje=data_hoje
     )
@@ -262,7 +261,7 @@ def criar_grupo_manual():
             valor_repasse=repasse_grupo,
             
             # Auditoria
-            created_by_user_id=get_current_user_id_in_current_db(),
+            created_by_user_id=current_user.id,
             data_criacao=datetime.utcnow(),
             data_atualizacao=datetime.utcnow()
         )
@@ -478,7 +477,7 @@ def gerar_sugestoes_agrupamento():
                     Solicitacao.supervisor_id == supervisor.id)
 
         # Filtro por planta (opcional - apenas para Gerente)
-        if planta_id and planta_id not in ['Todos', 'todas', ''] and current_user.role == 'gerente':
+        if planta_id and planta_id != 'Todos' and current_user.role == 'gerente':
             # Join com Colaborador já foi feito no filtro de Gerente acima (linha 407)
             query = query.filter(Colaborador.planta_id == int(planta_id))
 
@@ -742,7 +741,7 @@ def finalizar_agrupamento():
                             observacoes=f'Fretado criado automaticamente via agrupamento',
 
                             # Auditoria
-                            created_by_user_id=get_current_user_id_in_current_db(),
+                            created_by_user_id=current_user.id,
                             data_criacao=datetime.utcnow(),
                             data_atualizacao=datetime.utcnow()
                         )
@@ -860,7 +859,7 @@ def finalizar_agrupamento():
                     cancelado_por_user_id=None,
 
                     # Auditoria
-                    created_by_user_id=get_current_user_id_in_current_db()
+                    created_by_user_id=current_user.id
                 )
                 get_tenant_session().add(nova_viagem)
                 get_tenant_session().flush()

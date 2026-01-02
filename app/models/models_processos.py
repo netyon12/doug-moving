@@ -382,19 +382,44 @@ class Solicitacao(db.Model):
         'User', foreign_keys=[created_by_user_id], backref='solicitacoes_criadas')
 
     def get_criador_nome(self):
-        """Retorna o nome de quem criou a solicitação."""
-        if not self.created_by:
+        """
+        Retorna o nome de quem criou a solicitação.
+        
+        IMPORTANTE: Em arquitetura multi-banco, o relacionamento created_by
+        pode não funcionar corretamente. Por isso, buscamos manualmente
+        o usuário no banco atual usando created_by_user_id.
+        """
+        if not self.created_by_user_id:
             return 'N/A'
-
-        user = self.created_by
-        if user.role == 'supervisor' and user.supervisor:
-            return user.supervisor.nome
-        elif user.role == 'gerente' and user.gerente:
-            return user.gerente.nome
-        elif user.role == 'admin':
-            return 'Administrador'
-        else:
-            return user.email
+        
+        # Busca usuário no banco atual
+        from app.models import User
+        from app.config.tenant_utils import query_tenant
+        
+        try:
+            user = query_tenant(User).filter_by(id=self.created_by_user_id).first()
+            
+            if not user:
+                return 'N/A'
+            
+            # Retorna nome baseado no role
+            if user.role == 'supervisor':
+                from app.models import Supervisor
+                supervisor = query_tenant(Supervisor).filter_by(user_id=user.id).first()
+                return supervisor.nome if supervisor else user.email
+            elif user.role == 'gerente':
+                from app.models import Gerente
+                gerente = query_tenant(Gerente).filter_by(user_id=user.id).first()
+                return gerente.nome if gerente else user.email
+            elif user.role == 'admin':
+                return 'Administrador'
+            elif user.role == 'operador':
+                return 'Operador'
+            else:
+                return user.email
+        except Exception as e:
+            print(f"[ERRO] get_criador_nome: {e}")
+            return 'N/A'
 
     def __repr__(self):
         return f'<Solicitacao {self.id} - {self.colaborador.nome} - {self.tipo_corrida}>'

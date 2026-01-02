@@ -40,18 +40,20 @@
             </select>
         </div>
         
-        <!-- Filtro de Planta (Admin, Operador e Gerente) -->
+        <!-- NOVO: Filtro de Planta (apenas para Gerente) -->
+        {% if current_user.role == 'gerente' %}
         <div class="col-md-2">
-            <label for="planta_id" class="form-label fw-bold">Planta</label>
+            <label for="planta_id" class="form-label">Planta</label>
             <select class="form-select" id="planta_id" name="planta_id">
                 <option value="">Todas</option>
-                {% for planta in plantas_filtro %}
+                {% for planta in plantas_gerente %}
                 <option value="{{ planta.id }}" {% if filtros.get('planta_id')|string == planta.id|string %}selected{% endif %}>
                     {{ planta.nome }}
                 </option>
                 {% endfor %}
             </select>
         </div>
+        {% endif %}
 
         <div class="col-md-2">
             <label for="status" class="form-label">Status</label>
@@ -130,7 +132,7 @@
                         data-bloco-id="{{ solicitacao.colaborador.bloco_id or '' }}"
                         data-tipo="{{ solicitacao.tipo_corrida }}">
                         <td><strong>#{{ solicitacao.id }}</strong></td>
-                        <td>{{ solicitacao.get_criador_nome() }}</td>
+                        <td>{{ solicitacao.created_by.nome if solicitacao.created_by else 'N/A' }}</td>
                         <td>{{ solicitacao.colaborador.nome }}</td>
                         <td>
                             <span class="badge bg-info">

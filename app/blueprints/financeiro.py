@@ -6,6 +6,7 @@ Gerenciamento de Contas a Receber e Contas a Pagar
 from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import login_required, current_user
 from app import db
+from app.utils.user_sync import get_current_user_id_in_current_db
 from app.config.tenant_utils import query_tenant, get_or_404_tenant
 from app.models import (
     FinContasReceber, FinReceberViagens,
@@ -134,7 +135,7 @@ def gerar_fatura():
                 data_vencimento=datetime.strptime(
                     data_vencimento, '%Y-%m-%d').date(),
                 status='Aberto',
-                created_by_user_id=current_user.id
+                created_by_user_id=get_current_user_id_in_current_db()
             )
 
             db.session.add(titulo)
@@ -414,7 +415,7 @@ def gerar_pagamento():
                 data_vencimento=datetime.strptime(
                     data_vencimento, '%Y-%m-%d').date(),
                 status='Aberto',
-                created_by_user_id=current_user.id
+                created_by_user_id=get_current_user_id_in_current_db()
             )
 
             db.session.add(titulo)

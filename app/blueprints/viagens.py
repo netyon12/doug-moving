@@ -8,6 +8,7 @@ Gestão de viagens.
 from app.services.notification_service import notification_service
 from .admin import admin_bp
 from app import query_filters
+from app.utils.user_sync import get_current_user_id_in_current_db
 from ..decorators import permission_required
 from ..models import (
     User, Empresa, Planta, CentroCusto, Turno, Bloco, Bairro,
@@ -598,7 +599,7 @@ def viagem_hora_parada_salvar(viagem_id):
                 valor_adicional=valor_adicional,
                 repasse_adicional=repasse_adicional,
                 observacoes=observacoes,
-                created_by_user_id=current_user.id
+                created_by_user_id=get_current_user_id_in_current_db()
             )
             get_tenant_session().add(hora_parada)
             mensagem = f'Hora parada adicionada à viagem #{viagem.id} com sucesso!'

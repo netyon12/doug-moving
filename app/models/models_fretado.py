@@ -67,8 +67,8 @@ class Fretado(db.Model):
     observacoes = db.Column(db.Text, nullable=True)  # Observações gerais
 
     # === AUDITORIA E TIMESTAMPS ===
-    created_by_user_id = db.Column(db.Integer, db.ForeignKey(
-        'user.id'), nullable=True)  # Quem criou
+    # NOTA: Sem Foreign Key para compatibilidade multi-tenant
+    created_by_user_id = db.Column(db.Integer, nullable=True)  # Quem criou
     data_criacao = db.Column(
         db.DateTime, nullable=False, default=horario_brasil)
     data_atualizacao = db.Column(
@@ -80,8 +80,7 @@ class Fretado(db.Model):
     empresa = db.relationship('Empresa', foreign_keys=[empresa_id])
     planta = db.relationship('Planta', foreign_keys=[planta_id])
     bloco = db.relationship('Bloco', foreign_keys=[bloco_id])
-    created_by = db.relationship(
-        'User', foreign_keys=[created_by_user_id], backref='fretados_criados')
+    # NOTA: Relacionamento created_by removido (incompatível com multi-tenant)
 
     def __repr__(self):
         return f'<Fretado {self.id} - {self.nome_colaborador} - {self.grupo_bloco}>'

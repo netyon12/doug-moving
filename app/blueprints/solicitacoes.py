@@ -354,8 +354,10 @@ def nova_solicitacao():
                 if not colaborador:
                     continue
 
-                # Obtém o ID do usuário logado
-                user_id = current_user.id if current_user.is_authenticated else None
+                # Obtém o ID do usuário logado NO BANCO ATUAL
+                # IMPORTANTE: Não usar current_user.id diretamente (pode ser de outro banco)
+                from app.utils.user_sync import get_current_user_id_in_current_db
+                user_id = get_current_user_id_in_current_db()
 
                 dados_solicitacao = {
                     'colaborador_id': colab_id,

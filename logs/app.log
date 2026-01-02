@@ -8833,3 +8833,1049 @@ AttributeError: type object 'Solicitacao' has no attribute 'usuario_criador'
 [2025-12-31 19:29:25] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
 [2025-12-31 19:29:25] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
 [2025-12-31 19:29:26] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: edmilson@nsg.com.br (gerente)
+[2025-12-31 19:32:18] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:117]: Sistema iniciado - Ambiente: DESENVOLVIMENTO (Local) - Nivel: DEBUG - Logs: stdout + logs/app.log
+[2025-12-31 19:32:18] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:188]: [OK] Middleware Multi-Tenant inicializado
+[2025-12-31 19:32:18] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2025-12-31 19:32:18] INFO in notification_service [H:\Meu Drive\Python_Project\doug\app\services\notification_service.py:23]: [INFO] Sistema de notificacoes DESATIVADO
+[2025-12-31 19:32:21] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:71]: [OK] Blueprint Admin carregado (v2.0.0)
+[2025-12-31 19:32:21] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2025-12-31 19:32:32] INFO in database_config [H:\Meu Drive\Python_Project\doug\app\config\database_config.py:130]: Criando engine para empresa: NSG PKG (is_local=False)
+[2025-12-31 19:32:35] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2025-12-31 19:32:35] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:60]: Buscando empresa no banco padrão: nsg
+[2025-12-31 19:32:35] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: nsg
+[2025-12-31 19:32:37] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: edmilson@nsg.com.br (gerente) -> Empresa: NSG PKG
+[2025-12-31 19:32:37] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:32:37] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:32:37] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:32:38] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:32:38] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:32:38] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:32:45] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:32:45] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:32:45] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:32:52] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:32:52] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:32:52] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:32:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:32:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:32:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:33:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:08] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:08] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:33:08] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:33:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:33:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:32] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:32] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:33:32] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:38] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:38] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:33:38] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:33:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2025-12-31 19:33:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2025-12-31 19:33:48] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-31 19:33:49] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: edmilson@nsg.com.br (gerente)
+[2025-12-31 19:33:54] INFO in database_config [H:\Meu Drive\Python_Project\doug\app\config\database_config.py:130]: Criando engine para empresa: LEAR (is_local=False)
+[2025-12-31 19:33:57] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2025-12-31 19:33:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:60]: Buscando empresa no banco padrão: lear
+[2025-12-31 19:33:57] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: lear
+[2025-12-31 19:33:59] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: ksouza10@lear.com (gerente) -> Empresa: LEAR
+[2025-12-31 19:33:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:33:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:33:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:00] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:00] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:34:00] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:04] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:04] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:34:04] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:25] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:25] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:34:25] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:29] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:29] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:34:29] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:34:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:34:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:34:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:34:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:34:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:35:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:35:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:35:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:35:08] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:35:08] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:35:08] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:35:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:35:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:35:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:35:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:35:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:35:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:36:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:36:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:36:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:36:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:36:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2025-12-31 19:36:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:36:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2025-12-31 19:36:17] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2025-12-31 19:36:17] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: ksouza10@lear.com (gerente)
+[2026-01-02 15:17:12] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /login [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: server closed the connection unexpectedly
+	This probably means the server terminated abnormally
+	before or while processing the request.
+server closed the connection unexpectedly
+	This probably means the server terminated abnormally
+	before or while processing the request.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py", line 236, in login
+    return render_template('login.html')
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 147, in render_template
+    return _render(app, template, context)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\templating.py", line 128, in _render
+    app.update_template_context(context)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 994, in update_template_context
+    context.update(func())
+                   ~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\app\__init__.py", line 238, in inject_timeout_config
+    ).first()
+      ~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2819, in first
+    return self.limit(1)._iter().first()
+           ~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2903, in _iter
+    result = self.session.execute(
+        statement,
+        params,
+        execution_options={"_sa_orm_load_options": self.load_options},
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1712, in execute
+    result = conn._execute_20(statement, params or {}, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1631, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 332, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, multiparams, params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1498, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1862, in _execute_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, statement, parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2043, in _handle_dbapi_exception
+    util.raise_(
+    ~~~~~~~~~~~^
+        sqlalchemy_exception, with_traceback=exc_info[2], from_=e
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) server closed the connection unexpectedly
+	This probably means the server terminated abnormally
+	before or while processing the request.
+server closed the connection unexpectedly
+	This probably means the server terminated abnormally
+	before or while processing the request.
+
+[SQL: SELECT configuracao.id AS configuracao_id, configuracao.chave AS configuracao_chave, configuracao.valor AS configuracao_valor 
+FROM configuracao 
+WHERE configuracao.chave = %(chave_1)s 
+ LIMIT %(param_1)s]
+[parameters: {'chave_1': 'timeout_inatividade_minutos', 'param_1': 1}]
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+[2026-01-02 15:17:22] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2026-01-02 15:17:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 15:17:23] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: operacao@gomobilidade.com.br (operador) -> Empresa: LEAR
+[2026-01-02 15:17:23] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 15:17:23] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 15:17:23] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 15:17:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 15:17:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 15:17:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 15:18:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 15:18:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 15:18:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 15:18:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 15:18:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 15:18:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 15:18:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 15:18:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 15:18:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 15:18:20] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2026-01-02 15:18:20] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:375]: Troca de empresa: operacao@gomobilidade.com.br -> NSG PKG
+[2026-01-02 15:18:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:18:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 15:18:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:18:44] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:18:44] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 15:18:44] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:18:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:18:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 15:18:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:18:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:18:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 15:18:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:19:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:19:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 15:19:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:19:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:19:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 15:19:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:19:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:19:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 15:19:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:19:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:19:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 15:19:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:19:07] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:205]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '1'), ('planta_id', '1'), ('tipo_corrida', 'entrada'), ('colaborador_id[]', '6'), ('horario_entrada[]', '2026-01-02T18:00'), ('horario_saida[]', ''), ('horario_desligamento[]', ''), ('turno_entrada[]', '1° Turno'), ('turno_saida[]', ''), ('turno_desligamento[]', '')])
+[2026-01-02 15:19:08] ERROR in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:604]: [ERRO] Erro ao criar solicitação: (psycopg2.errors.ForeignKeyViolation) insert or update on table "solicitacao" violates foreign key constraint "solicitacao_created_by_user_id_fkey"
+DETAIL:  Key (created_by_user_id)=(57) is not present in table "user".
+
+[SQL: INSERT INTO solicitacao (colaborador_id, supervisor_id, empresa_id, planta_id, bloco_id, tipo_linha, tipo_corrida, horario_entrada, horario_saida, horario_desligamento, turno_entrada_id, turno_saida_id, turno_desligamento_id, status, viagem_id, fretado_id, valor, valor_repasse, created_by_user_id, data_criacao, data_atualizacao) VALUES (%(colaborador_id)s, %(supervisor_id)s, %(empresa_id)s, %(planta_id)s, %(bloco_id)s, %(tipo_linha)s, %(tipo_corrida)s, %(horario_entrada)s, %(horario_saida)s, %(horario_desligamento)s, %(turno_entrada_id)s, %(turno_saida_id)s, %(turno_desligamento_id)s, %(status)s, %(viagem_id)s, %(fretado_id)s, %(valor)s, %(valor_repasse)s, %(created_by_user_id)s, %(data_criacao)s, %(data_atualizacao)s) RETURNING solicitacao.id]
+[parameters: {'colaborador_id': '6', 'supervisor_id': 4, 'empresa_id': '1', 'planta_id': '1', 'bloco_id': 19, 'tipo_linha': 'EXTRA', 'tipo_corrida': 'entrada', 'horario_entrada': datetime.datetime(2026, 1, 2, 18, 0), 'horario_saida': None, 'horario_desligamento': None, 'turno_entrada_id': 1, 'turno_saida_id': None, 'turno_desligamento_id': None, 'status': 'Pendente', 'viagem_id': None, 'fretado_id': None, 'valor': 91.16, 'valor_repasse': 63.0, 'created_by_user_id': 57, 'data_criacao': datetime.datetime(2026, 1, 2, 15, 19, 8, 419858), 'data_atualizacao': datetime.datetime(2026, 1, 2, 15, 19, 8, 419885)}]
+(Background on this error at: https://sqlalche.me/e/14/gkpj)
+[2026-01-02 15:19:08] ERROR in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:605]: Traceback completo:
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.ForeignKeyViolation: insert or update on table "solicitacao" violates foreign key constraint "solicitacao_created_by_user_id_fkey"
+DETAIL:  Key (created_by_user_id)=(57) is not present in table "user".
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py", line 549, in nova_solicitacao
+    get_tenant_session().flush()  # Para obter o ID
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 3383, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 3522, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 70, in __exit__
+    compat.raise_(
+    ~~~~~~~~~~~~~^
+        exc_value,
+        ^^^^^^^^^^
+        with_traceback=exc_tb,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 3483, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 456, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\unitofwork.py", line 630, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 245, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\persistence.py", line 1238, in _emit_insert_statements
+    result = connection._execute_20(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1631, in _execute_20
+    return meth(self, args_10style, kwargs_10style, execution_options)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 332, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, multiparams, params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1498, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1862, in _execute_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, statement, parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2043, in _handle_dbapi_exception
+    util.raise_(
+    ~~~~~~~~~~~^
+        sqlalchemy_exception, with_traceback=exc_info[2], from_=e
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1819, in _execute_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, statement, parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 732, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.ForeignKeyViolation) insert or update on table "solicitacao" violates foreign key constraint "solicitacao_created_by_user_id_fkey"
+DETAIL:  Key (created_by_user_id)=(57) is not present in table "user".
+
+[SQL: INSERT INTO solicitacao (colaborador_id, supervisor_id, empresa_id, planta_id, bloco_id, tipo_linha, tipo_corrida, horario_entrada, horario_saida, horario_desligamento, turno_entrada_id, turno_saida_id, turno_desligamento_id, status, viagem_id, fretado_id, valor, valor_repasse, created_by_user_id, data_criacao, data_atualizacao) VALUES (%(colaborador_id)s, %(supervisor_id)s, %(empresa_id)s, %(planta_id)s, %(bloco_id)s, %(tipo_linha)s, %(tipo_corrida)s, %(horario_entrada)s, %(horario_saida)s, %(horario_desligamento)s, %(turno_entrada_id)s, %(turno_saida_id)s, %(turno_desligamento_id)s, %(status)s, %(viagem_id)s, %(fretado_id)s, %(valor)s, %(valor_repasse)s, %(created_by_user_id)s, %(data_criacao)s, %(data_atualizacao)s) RETURNING solicitacao.id]
+[parameters: {'colaborador_id': '6', 'supervisor_id': 4, 'empresa_id': '1', 'planta_id': '1', 'bloco_id': 19, 'tipo_linha': 'EXTRA', 'tipo_corrida': 'entrada', 'horario_entrada': datetime.datetime(2026, 1, 2, 18, 0), 'horario_saida': None, 'horario_desligamento': None, 'turno_entrada_id': 1, 'turno_saida_id': None, 'turno_desligamento_id': None, 'status': 'Pendente', 'viagem_id': None, 'fretado_id': None, 'valor': 91.16, 'valor_repasse': 63.0, 'created_by_user_id': 57, 'data_criacao': datetime.datetime(2026, 1, 2, 15, 19, 8, 419858), 'data_atualizacao': datetime.datetime(2026, 1, 2, 15, 19, 8, 419885)}]
+(Background on this error at: https://sqlalche.me/e/14/gkpj)
+[2026-01-02 15:25:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:25:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 15:25:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:25:11] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:25:11] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 15:25:11] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:25:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 15:25:16] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2026-01-02 15:25:16] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: operacao@gomobilidade.com.br (operador)
+[2026-01-02 15:59:23] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:117]: Sistema iniciado - Ambiente: DESENVOLVIMENTO (Local) - Nivel: DEBUG - Logs: stdout + logs/app.log
+[2026-01-02 15:59:23] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:188]: [OK] Middleware Multi-Tenant inicializado
+[2026-01-02 15:59:24] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2026-01-02 15:59:24] INFO in notification_service [H:\Meu Drive\Python_Project\doug\app\services\notification_service.py:23]: [INFO] Sistema de notificacoes DESATIVADO
+[2026-01-02 15:59:27] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:71]: [OK] Blueprint Admin carregado (v2.0.0)
+[2026-01-02 15:59:27] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2026-01-02 16:00:14] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2026-01-02 16:00:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:60]: Buscando empresa no banco padrão: lear
+[2026-01-02 16:00:14] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: lear
+[2026-01-02 16:00:17] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: operacao@gomobilidade.com.br (operador) -> Empresa: LEAR
+[2026-01-02 16:00:17] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:00:17] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:00:17] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:00:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:00:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:00:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:02:36] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:02:36] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:02:36] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:02:39] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:02:39] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:02:39] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:02:40] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2026-01-02 16:02:40] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:375]: Troca de empresa: operacao@gomobilidade.com.br -> NSG PKG
+[2026-01-02 16:02:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:60]: Buscando empresa no banco padrão: nsg
+[2026-01-02 16:02:43] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: nsg
+[2026-01-02 16:02:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:02:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:02:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:02:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:02:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:03:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:03:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:09] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:09] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:03:09] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:03:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:03:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:03:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:03:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:27] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:205]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '1'), ('planta_id', '1'), ('tipo_corrida', 'entrada'), ('colaborador_id[]', '6'), ('horario_entrada[]', '2026-01-02T18:00'), ('horario_saida[]', ''), ('horario_desligamento[]', ''), ('turno_entrada[]', '1° Turno'), ('turno_saida[]', ''), ('turno_desligamento[]', '')])
+[2026-01-02 16:03:31] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:03:31] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:03:31] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:05:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:05:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:05:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:05:13] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:05:13] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:05:13] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:05:14] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2026-01-02 16:05:14] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:375]: Troca de empresa: operacao@gomobilidade.com.br -> LEAR
+[2026-01-02 16:05:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:05:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:05:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:05:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:05:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:05:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:06:07] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:06:07] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:06:07] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:07:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:17] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:17] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:07:17] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:27] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:27] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:07:27] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:07:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:07:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:07:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:36] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:36] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:07:36] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:37] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:205]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '2'), ('planta_id', '1'), ('tipo_corrida', 'entrada'), ('colaborador_id[]', '63'), ('horario_entrada[]', '2026-01-02T18:00'), ('horario_saida[]', ''), ('horario_desligamento[]', ''), ('turno_entrada[]', '1° Turno'), ('turno_saida[]', ''), ('turno_desligamento[]', '')])
+[2026-01-02 16:07:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:07:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:07:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:07:50] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:07:51] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2026-01-02 16:07:52] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:375]: Troca de empresa: operacao@gomobilidade.com.br -> NSG PKG
+[2026-01-02 16:07:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:07:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:07:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:08:08] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:08:10] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2026-01-02 16:08:10] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: operacao@gomobilidade.com.br (operador)
+[2026-01-02 16:08:20] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2026-01-02 16:08:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:08:21] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2026-01-02 16:08:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:08:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:08:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:08:23] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:08:23] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:08:23] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:08:52] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:08:52] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:08:52] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:08:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:08:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:08:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:09:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:03] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:03] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:09:03] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:09:18] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:09:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:09:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:09:19] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:09:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:09:29] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:205]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '2'), ('planta_id', '1'), ('tipo_corrida', 'entrada'), ('colaborador_id[]', '10'), ('horario_entrada[]', '2026-01-02T18:00'), ('horario_saida[]', ''), ('horario_desligamento[]', ''), ('turno_entrada[]', '1° Turno'), ('turno_saida[]', ''), ('turno_desligamento[]', '')])
+[2026-01-02 16:11:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:11:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:11:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:11:07] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:11:07] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:11:07] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:11:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:11:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:11:10] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:11:11] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2026-01-02 16:11:12] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:375]: Troca de empresa: admin@netyonsolutions.com -> NSG PKG
+[2026-01-02 16:11:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:25] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:25] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:25] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:49] DEBUG in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:205]: Nova solicitação recebida: ImmutableMultiDict([('empresa_id', '1'), ('planta_id', '1'), ('tipo_corrida', 'entrada'), ('colaborador_id[]', '1'), ('horario_entrada[]', '2026-01-02T18:00'), ('horario_saida[]', ''), ('horario_desligamento[]', ''), ('turno_entrada[]', '1° Turno'), ('turno_saida[]', ''), ('turno_desligamento[]', '')])
+[2026-01-02 16:11:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:11:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:11:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:12:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:12:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:12:01] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:12:02] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/agrupamento [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 72, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py", line 85, in agrupamento
+    db.joinedload(Solicitacao.created_by),
+                  ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'Solicitacao' has no attribute 'created_by'
+[2026-01-02 16:12:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:12:43] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2026-01-02 16:12:43] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2026-01-02 16:12:52] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2026-01-02 16:12:52] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:12:54] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: operacao@gomobilidade.com.br (operador) -> Empresa: LEAR
+[2026-01-02 16:12:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:12:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:12:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:12:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:12:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:12:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:13:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:13:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:13:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:13:18] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/agrupamento [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 72, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py", line 85, in agrupamento
+    db.joinedload(Solicitacao.created_by),
+                  ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'Solicitacao' has no attribute 'created_by'
+[2026-01-02 16:13:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:13:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:13:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:13:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:13:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:13:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:13:25] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2026-01-02 16:13:26] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:375]: Troca de empresa: operacao@gomobilidade.com.br -> NSG PKG
+[2026-01-02 16:13:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:13:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:13:28] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:13:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:13:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:13:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:13:36] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/agrupamento [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 72, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py", line 85, in agrupamento
+    db.joinedload(Solicitacao.created_by),
+                  ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: type object 'Solicitacao' has no attribute 'created_by'
+[2026-01-02 16:17:15] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:117]: Sistema iniciado - Ambiente: DESENVOLVIMENTO (Local) - Nivel: DEBUG - Logs: stdout + logs/app.log
+[2026-01-02 16:17:15] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:188]: [OK] Middleware Multi-Tenant inicializado
+[2026-01-02 16:17:15] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2026-01-02 16:17:15] INFO in notification_service [H:\Meu Drive\Python_Project\doug\app\services\notification_service.py:23]: [INFO] Sistema de notificacoes DESATIVADO
+[2026-01-02 16:17:18] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:71]: [OK] Blueprint Admin carregado (v2.0.0)
+[2026-01-02 16:17:18] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2026-01-02 16:17:29] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:60]: Buscando empresa no banco padrão: nsg
+[2026-01-02 16:17:29] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: nsg
+[2026-01-02 16:17:29] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:17:29] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:17:37] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:17:37] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:17:37] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:17:45] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:17:45] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:17:45] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:17:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:17:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:17:48] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:17:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:17:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:17:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:17:52] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2026-01-02 16:17:52] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:375]: Troca de empresa: operacao@gomobilidade.com.br -> LEAR
+[2026-01-02 16:17:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:60]: Buscando empresa no banco padrão: lear
+[2026-01-02 16:17:54] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: lear
+[2026-01-02 16:17:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:17:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:18:13] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:18:13] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:18:13] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:18:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:18:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:18:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:18:39] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:18:39] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:18:39] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:18:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:18:53] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2026-01-02 16:18:54] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: operacao@gomobilidade.com.br (operador)
+[2026-01-02 16:19:05] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2026-01-02 16:19:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:19:05] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2026-01-02 16:19:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:19:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:19:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:19:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:19:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:19:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:19:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:19:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:19:40] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:19:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:19:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:19:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:19:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:19:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:19:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:20:13] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:20:13] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:20:13] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:22:32] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:22:32] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2026-01-02 16:22:33] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2026-01-02 16:24:29] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:117]: Sistema iniciado - Ambiente: DESENVOLVIMENTO (Local) - Nivel: DEBUG - Logs: stdout + logs/app.log
+[2026-01-02 16:24:29] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:188]: [OK] Middleware Multi-Tenant inicializado
+[2026-01-02 16:24:29] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2026-01-02 16:24:29] INFO in notification_service [H:\Meu Drive\Python_Project\doug\app\services\notification_service.py:23]: [INFO] Sistema de notificacoes DESATIVADO
+[2026-01-02 16:24:32] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:71]: [OK] Blueprint Admin carregado (v2.0.0)
+[2026-01-02 16:24:32] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2026-01-02 16:24:52] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2026-01-02 16:24:53] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:60]: Buscando empresa no banco padrão: lear
+[2026-01-02 16:24:53] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: lear
+[2026-01-02 16:24:56] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: admin@netyonsolutions.com (admin) -> Empresa: LEAR
+[2026-01-02 16:24:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:24:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:24:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:24:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:24:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:24:57] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:25:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:25:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:25:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:25:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:25:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:25:34] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:25:39] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:25:39] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:25:39] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:25:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:25:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:25:46] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:25:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:25:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:25:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:32:44] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:117]: Sistema iniciado - Ambiente: DESENVOLVIMENTO (Local) - Nivel: DEBUG - Logs: stdout + logs/app.log
+[2026-01-02 16:32:44] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:188]: [OK] Middleware Multi-Tenant inicializado
+[2026-01-02 16:32:45] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2026-01-02 16:32:45] INFO in notification_service [H:\Meu Drive\Python_Project\doug\app\services\notification_service.py:23]: [INFO] Sistema de notificacoes DESATIVADO
+[2026-01-02 16:32:51] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:71]: [OK] Blueprint Admin carregado (v2.0.0)
+[2026-01-02 16:32:51] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2026-01-02 16:33:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:60]: Buscando empresa no banco padrão: lear
+[2026-01-02 16:33:02] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: lear
+[2026-01-02 16:33:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:33:02] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:33:06] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/agrupamento [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\base.py", line 1694, in _entity_namespace_key
+    return getattr(ns, key)
+AttributeError: type object 'Planta' has no attribute 'status'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 72, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py", line 157, in agrupamento
+    plantas_filtro = query_tenant(Planta).filter_by(status='Ativo').order_by(Planta.nome).all()
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 1803, in filter_by
+    _entity_namespace_key(from_entity, key) == value
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\base.py", line 1696, in _entity_namespace_key
+    util.raise_(
+    ~~~~~~~~~~~^
+        exc.InvalidRequestError(
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        replace_context=err,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+sqlalchemy.exc.InvalidRequestError: Entity namespace for "planta" has no property "status"
+[2026-01-02 16:33:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:33:06] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:33:09] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:33:09] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:33:09] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:33:09] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/agrupamento [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\base.py", line 1694, in _entity_namespace_key
+    return getattr(ns, key)
+AttributeError: type object 'Planta' has no attribute 'status'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 72, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py", line 157, in agrupamento
+    plantas_filtro = query_tenant(Planta).filter_by(status='Ativo').order_by(Planta.nome).all()
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 1803, in filter_by
+    _entity_namespace_key(from_entity, key) == value
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\base.py", line 1696, in _entity_namespace_key
+    util.raise_(
+    ~~~~~~~~~~~^
+        exc.InvalidRequestError(
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        replace_context=err,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+sqlalchemy.exc.InvalidRequestError: Entity namespace for "planta" has no property "status"
+[2026-01-02 16:33:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:33:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:33:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:33:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:33:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:33:16] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:33:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:33:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:33:42] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:33:43] ERROR in app [H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py:1741]: Exception on /admin/agrupamento [GET]
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\base.py", line 1694, in _entity_namespace_key
+    return getattr(ns, key)
+AttributeError: type object 'Planta' has no attribute 'status'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\flask_login\utils.py", line 290, in decorated_view
+    return current_app.ensure_sync(func)(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\app\decorators.py", line 72, in decorated_function
+    return f(*args, **kwargs)
+  File "H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py", line 157, in agrupamento
+    plantas_filtro = query_tenant(Planta).filter_by(status='Ativo').order_by(Planta.nome).all()
+                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 1803, in filter_by
+    _entity_namespace_key(from_entity, key) == value
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\sql\base.py", line 1696, in _entity_namespace_key
+    util.raise_(
+    ~~~~~~~~~~~^
+        exc.InvalidRequestError(
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+        replace_context=err,
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "H:\Meu Drive\Python_Project\doug\venv\Lib\site-packages\sqlalchemy\util\compat.py", line 208, in raise_
+    raise exception
+sqlalchemy.exc.InvalidRequestError: Entity namespace for "planta" has no property "status"
+[2026-01-02 16:35:53] INFO in logging_config [H:\Meu Drive\Python_Project\doug\app\logging_config.py:117]: Sistema iniciado - Ambiente: DESENVOLVIMENTO (Local) - Nivel: DEBUG - Logs: stdout + logs/app.log
+[2026-01-02 16:35:54] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:188]: [OK] Middleware Multi-Tenant inicializado
+[2026-01-02 16:35:54] INFO in solicitacoes [H:\Meu Drive\Python_Project\doug\app\blueprints\solicitacoes.py:37]: Módulo solicitacoes carregado
+[2026-01-02 16:35:54] INFO in notification_service [H:\Meu Drive\Python_Project\doug\app\services\notification_service.py:23]: [INFO] Sistema de notificacoes DESATIVADO
+[2026-01-02 16:36:00] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:71]: [OK] Blueprint Admin carregado (v2.0.0)
+[2026-01-02 16:36:00] INFO in admin [H:\Meu Drive\Python_Project\doug\app\blueprints\admin.py:72]:    Módulos ativos: dashboard, cadastros, colaboradores, solicitacoes, agrupamento, viagens, fretados, configuracoes
+[2026-01-02 16:36:12] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:60]: Buscando empresa no banco padrão: lear
+[2026-01-02 16:36:12] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: lear
+[2026-01-02 16:36:12] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:36:12] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:36:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:36:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:36:15] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:36:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:36:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:36:43] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:36:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:36:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:36:51] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:36:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:36:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:36:56] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:36:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:36:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:36:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:37:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:37:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:37:14] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:37:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:37:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:37:20] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:37:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:37:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:37:22] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:37:23] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2026-01-02 16:37:24] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:375]: Troca de empresa: admin@netyonsolutions.com -> NSG PKG
+[2026-01-02 16:37:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:60]: Buscando empresa no banco padrão: nsg
+[2026-01-02 16:37:26] INFO in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:90]: Engine criado para empresa: nsg
+[2026-01-02 16:37:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:37:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:37:37] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:37:37] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:37:37] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:37:44] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:37:44] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:37:44] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:37:47] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:37:48] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2026-01-02 16:37:48] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: admin@netyonsolutions.com (admin)
+[2026-01-02 16:37:58] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: LEAR (slug=lear, local=False)
+[2026-01-02 16:37:58] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:37:58] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:232]: Login bem-sucedido: operacao@gomobilidade.com.br (operador) -> Empresa: LEAR
+[2026-01-02 16:37:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:37:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:37:59] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:00] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:00] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:38:00] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:38:21] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:38:26] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:31] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:31] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:38:31] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:36] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:36] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:38:36] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:38] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:38] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: lear
+[2026-01-02 16:38:38] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: lear
+[2026-01-02 16:38:38] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:135]: Empresa ativa definida: NSG PKG (slug=nsg, local=False)
+[2026-01-02 16:38:39] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:375]: Troca de empresa: operacao@gomobilidade.com.br -> NSG PKG
+[2026-01-02 16:38:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:38:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:38:41] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:38:45] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:38:45] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:38:45] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:38:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:38:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:38:54] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:38:55] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:568]: [RETRY] Sessão do banco de dados limpa antes do agrupamento
+[2026-01-02 16:38:55] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:585]: [LOCK] Lock adquirido para grupo [9]: lock_id=1871040816
+[2026-01-02 16:38:55] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:600]: [INFO] Processando 1 solicitação(ões): IDs [9]
+[2026-01-02 16:38:55] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:666]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['SJC4'], mesmo_grupo_bloco=True
+[2026-01-02 16:38:55] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:815]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2026-01-02 16:38:55] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:883]: [>>>] Tentando atualizar 1 solicitações: [9]
+[2026-01-02 16:38:56] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:894]: [...] UPDATE em massa retornou: 1 registro(s)
+[2026-01-02 16:38:56] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:900]: [SAVE] Flush executado e cache limpo
+[2026-01-02 16:38:56] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:951]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2026-01-02 16:38:56] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:585]: [LOCK] Lock adquirido para grupo [10]: lock_id=1951246547
+[2026-01-02 16:38:56] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:600]: [INFO] Processando 1 solicitação(ões): IDs [10]
+[2026-01-02 16:38:56] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:666]: [DEBUG] DEBUG FRETADO: len(solicitacoes)=1, grupos_blocos_unicos=['CPV2'], mesmo_grupo_bloco=True
+[2026-01-02 16:38:56] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:815]: [AVISO] CRIANDO VIAGEM: len=1, mesmo_grupo=True
+[2026-01-02 16:38:57] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:883]: [>>>] Tentando atualizar 1 solicitações: [10]
+[2026-01-02 16:38:57] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:894]: [...] UPDATE em massa retornou: 1 registro(s)
+[2026-01-02 16:38:57] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:900]: [SAVE] Flush executado e cache limpo
+[2026-01-02 16:38:57] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:951]: [OK] SUCESSO: Todas as 1 solicitações foram atualizadas corretamente
+[2026-01-02 16:38:57] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:968]: [OK] COMMIT REALIZADO: 2 viagem(ns), 0 fretado(s), 2 solicitação(ões) agrupada(s)
+[2026-01-02 16:38:57] DEBUG in notification_service [H:\Meu Drive\Python_Project\doug\app\services\notification_service.py:49]: [INFO] Notificacao desativada: 2 viagem(ns) criada(s)
+[2026-01-02 16:38:57] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:1021]: [>>>] Iniciando envio de notificação em lote sobre 2 viagem(ns) criada(s)...
+[2026-01-02 16:38:57] INFO in agrupamento [H:\Meu Drive\Python_Project\doug\app\blueprints\agrupamento.py:1002]: [OK] 2 motorista(s) notificado(s) sobre 2 nova(s) viagem(ns)
+[2026-01-02 16:39:00] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:39:00] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:39:00] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:39:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:39:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:168]: Request configurado para empresa: nsg
+[2026-01-02 16:39:05] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:39:24] DEBUG in db_middleware [H:\Meu Drive\Python_Project\doug\app\config\db_middleware.py:55]: Usando engine em cache para: nsg
+[2026-01-02 16:39:25] INFO in db_helper [H:\Meu Drive\Python_Project\doug\app\config\db_helper.py:147]: Empresa ativa removida da sessão
+[2026-01-02 16:39:25] INFO in auth [H:\Meu Drive\Python_Project\doug\app\blueprints\auth.py:275]: Logout: operacao@gomobilidade.com.br (operador)

@@ -29,15 +29,15 @@ class FinContasReceber(db.Model):
     status = db.Column(db.String(20), nullable=False, default='Aberto')
     numero_nota_fiscal = db.Column(db.String(100))
     observacoes = db.Column(db.Text)
-    created_by_user_id = db.Column(
-        db.Integer, db.ForeignKey('user.id'), nullable=False)
+    # NOTA: Sem Foreign Key para compatibilidade multi-tenant
+    created_by_user_id = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relacionamentos
     empresa = db.relationship('Empresa', backref='titulos_receber')
-    created_by = db.relationship('User', backref='titulos_receber_criados')
+    # NOTA: Relacionamento created_by removido (incompatível com multi-tenant)
     viagens = db.relationship(
         'FinReceberViagens', back_populates='conta_receber', cascade="all, delete-orphan")
 
@@ -88,15 +88,15 @@ class FinContasPagar(db.Model):
     forma_pagamento = db.Column(db.String(50))
     comprovante_pagamento = db.Column(db.String(255))  # Caminho do arquivo
     observacoes = db.Column(db.Text)
-    created_by_user_id = db.Column(
-        db.Integer, db.ForeignKey('user.id'), nullable=False)
+    # NOTA: Sem Foreign Key para compatibilidade multi-tenant
+    created_by_user_id = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(
         db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relacionamentos
     motorista = db.relationship('Motorista', backref='titulos_pagar')
-    created_by = db.relationship('User', backref='titulos_pagar_criados')
+    # NOTA: Relacionamento created_by removido (incompatível com multi-tenant)
     viagens = db.relationship(
         'FinPagarViagens', back_populates='conta_pagar', cascade="all, delete-orphan")
 
