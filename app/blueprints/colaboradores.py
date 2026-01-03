@@ -468,7 +468,7 @@ def cadastrar_motorista():
     # GET: renderizar formulário
     # Buscar empresas disponíveis para o seletor (Multi-Tenant)
     empresas_disponiveis = []
-    if current_user.role == 'admin':
+    if current_user.role in ['admin', 'operador']:
         empresas_disponiveis = query_tenant(Empresa).filter(
             Empresa.status == 'Ativo',
             Empresa.slug_licenciado.isnot(None)
@@ -539,7 +539,7 @@ def editar_motorista(motorista_id):
             motorista.veiculo_obs = request.form.get('observacoes')
 
             # 2. Atualizar empresas de acesso (Multi-Tenant) - Somente Admin
-            if current_user.role == 'admin':
+            if current_user.role in ['admin', 'operador']:
                 empresas_acesso_lista = request.form.getlist('empresas_acesso')
                 motorista.empresas_acesso = ','.join(
                     empresas_acesso_lista) if empresas_acesso_lista else None
@@ -593,7 +593,7 @@ def editar_motorista(motorista_id):
     # GET: renderizar formulário
     # Buscar empresas disponíveis para o seletor (Multi-Tenant)
     empresas_disponiveis = []
-    if current_user.role == 'admin':
+    if current_user.role in ['admin', 'operador']:
         empresas_disponiveis = query_tenant(Empresa).filter(
             Empresa.status == 'Ativo',
             Empresa.slug_licenciado.isnot(None)

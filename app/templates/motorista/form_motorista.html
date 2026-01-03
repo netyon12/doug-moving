@@ -81,8 +81,8 @@
                             </select>
                         </div>
 
-                        <!-- Seção Multi-Tenant: Empresas de Acesso (Somente Admin) -->
-                        {% if current_user.role == 'admin' and empresas_disponiveis %}
+                        <!-- Seção Multi-Tenant: Empresas de Acesso (Admin e Operador) -->
+                        {% if current_user.role in ['admin', 'operador'] and empresas_disponiveis %}
                         <h5 class="mt-4 mb-3 border-bottom pb-2">
                             <i class="bi bi-building"></i> Empresas de Acesso
                         </h5>
